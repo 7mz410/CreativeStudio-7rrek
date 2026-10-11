@@ -20,7 +20,7 @@
 | sf7aat (صفحات) | Acrobat | PdfCraft | لاحقاً: بعد effectat |
 | aswat (أصوات) | Audition | Audacity/Tenacity (GPL) أو SoundCraft، يحتاج فحصاً | لاحقاً: تحويل الكلام العربي لنص |
 
-اللوغوهات (SVG) موجودة في `docs/shibshib/suite/`، وأصلها في `~/Documents/ShibShib/logos` (الشعار الرئيسي: `shibshib_main.svg`). النصوص فيها outlines؛ النسخ القابلة للتعديل (نص حي بخط Nobulina) في `~/Documents/ShibShib/logos-editable/` (محلية، مش على GitHub). بعد أي تعديل على اللوغوهات: انسخها لـ `suite/`، وأعد توليد `rsm-white.svg`، وأضف أي ملف جديد لـ `ASSETS.md`. أيقونة البرنامج تأتي من `mark-rsm-white.svg` (عبر `packaging/icons.sh`).
+اللوغوهات (SVG) موجودة في `docs/shibshib/suite/`، وأصلها في `~/Documents/ShibShib/logos` (الشعار الرئيسي: `shibshib_main.svg`). النصوص فيها outlines؛ النسخ القابلة للتعديل (نص حي بخط Bricolage Grotesque ExtraBold) في `~/Documents/ShibShib/logos-editable/` (محلية، مش على GitHub). بعد أي تعديل على اللوغوهات: انسخها لـ `suite/`، وأعد توليد `rsm-white.svg`، وأضف أي ملف جديد لـ `ASSETS.md`. أيقونة البرنامج تأتي من `mark-rsm-white.svg` (عبر `packaging/icons.sh`).
 
 ## 2. الأماكن المهمة
 
@@ -202,3 +202,5 @@ python3 shibshib/ar-work/assemble.py                    # بناء ar.tsv
 - screenshot قبل أي تسليم واجهة.
 
 - 2026-10-10 end of day: sf7aat web build/deploy started (gh-pages, sf7aat.shibshib.art). Next session: verify the site, switch the sf7aat card from "قريباً" to "جرّبه الآن", delete sf7aat/target.
+
+- 2026-10-11: الخط الإنجليزي للهوية صار **Bricolage Grotesque** (OFL، مجاني تجارياً) بدل Nobulina (رخصته شخصية بس، والتجارية 249$). الـ wordmark بكل اللوغوهات ExtraBold (outlines)، والموقع كله بالإنجليزي فيه. العربي ضل IBM Plex Sans Arabic. السكربت: `wm.py` (بالـ scratchpad، مش محفوظ). نسخ الويب والديسكتوب للبرامج بتاخذ اللوغو الجديد مع البناء الجاي.
