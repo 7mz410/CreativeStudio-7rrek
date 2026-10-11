@@ -1,4 +1,13 @@
-# ShibShib — ملف المشروع (اقرأه أولاً)
+# Creative Studio (سابقاً ShibShib) — ملف المشروع (اقرأه أولاً)
+
+> **قرار 2026-10-11: المشروع صار اسمه Creative Studio.** (بعد مشاورات حمزة)
+> - الاسم بيضل إنجليزي (Creative Studio)؛ أسماء البرامج بس، بدون بادئة: rsm، ttshat، tlween، tsweer، effectat، sf7aat (صفحات، الاسم القديم معتمد)، trteeb، 7rrek، mzika، aswat، sharek. بالعربي: رسم، تتشات، تلوين…
+> - برامج جديدة: klmat (كلمات، WordCraft)، arqam (أرقام، GridCraft)، shoof (شوف، DeckCraft)، muhandes (مهندس، CADCraft)، aswat من SoundCraft، والـ launcher.
+> - الهوية: `~/Documents/ShibShib/logos/Creative_Studio/` (نجمة لكل برنامج). الألوان: أحمر `#eb1b3c`، كحلي `#0d2d3f`. الخط: Bricolage Grotesque. `brand_ID.svg` / `brand_ID_W.svg` = الوردمارك.
+> - أيقونة كل برنامج: النجمة على مربع كحلي. أيقونة الـ launcher: نجمة حمرا بس على خلفية شفافة.
+> - الدومين الجديد: `studio.creative.ps`، والبرامج `<app>.studio.creative.ps` (DNS بالـ cPanel تبع مدى، حمزة بيضيف السجلات وأنا بدلّه). الدومين القديم shibshib.art بيضل متل ما هو.
+> - الريبوهات بتتغيّر لـ `CreativeStudio-<app>`، والفولدر المحلي لـ `~/Documents/CreativeStudio`.
+> - باقي التنفيذ: تغيير أسماء الريبوهات والفولدر، `rebrand.py` بكل ريبو (ShibShib → Creative Studio، اللوغوهات والأيقونات الجديدة)، شاشة التحميل، الموقع الجديد على studio.creative.ps.
 
 آخر تحديث: 2026-10-10 (بعد جلسة البرينستورم). هذا الملف هو نقطة البداية لأي جلسة جديدة. اقرأه بدل إعادة استكشاف المشروع، وحدّثه في نهاية كل جلسة.
 
