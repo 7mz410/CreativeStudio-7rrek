@@ -1,4 +1,4 @@
-//! ShibShib: Help › AI Agents. AI agents (Claude, Gemini and other MCP clients) drive the app
+//! Creative Studio: Help › AI Agents. AI agents (Claude, Gemini and other MCP clients) drive the app
 //! through the localhost control channel and `vectorcraft-cli mcp`. This window turns the channel
 //! on (it then also starts with the app) and adds the app's MCP server to an agent's settings.
 //! The desktop app provides the work through [`AgentsService`]; without it (the web) the window
@@ -45,7 +45,7 @@ pub trait AgentsService {
 }
 
 fn open_id() -> egui::Id {
-    egui::Id::new("shibshib_agents_open")
+    egui::Id::new("studio_agents_open")
 }
 
 /// Help › AI Agents… asked for the window (commands have no egui context; the next frame opens it).
@@ -65,9 +65,9 @@ pub fn show(app: &mut VectorcraftApp, ctx: &Context) {
     }
     let t = Tokens::get(ctx);
     let mut started = None;
-    let mut error: Option<String> = ctx.data(|d| d.get_temp(egui::Id::new("shibshib_agents_error")));
+    let mut error: Option<String> = ctx.data(|d| d.get_temp(egui::Id::new("studio_agents_error")));
     egui::Window::new(tl!("AI Agents"))
-        .id(egui::Id::new("shibshib_agents"))
+        .id(egui::Id::new("studio_agents"))
         .open(&mut open)
         .resizable(false)
         .collapsible(false)
@@ -124,10 +124,10 @@ pub fn show(app: &mut VectorcraftApp, ctx: &Context) {
         d.insert_temp(open_id(), open);
         match &error {
             Some(e) => {
-                d.insert_temp(egui::Id::new("shibshib_agents_error"), e.clone());
+                d.insert_temp(egui::Id::new("studio_agents_error"), e.clone());
             }
             None => {
-                d.remove::<String>(egui::Id::new("shibshib_agents_error"));
+                d.remove::<String>(egui::Id::new("studio_agents_error"));
             }
         }
     });

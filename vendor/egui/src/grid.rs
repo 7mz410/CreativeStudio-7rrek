@@ -91,7 +91,7 @@ pub(crate) struct GridLayout {
     col: usize,
     row: usize,
 
-    /// ShibShib: columns run from the right ([`crate::is_rtl`] when the grid was made).
+    /// Creative Studio: columns run from the right ([`crate::is_rtl`] when the grid was made).
     rtl: bool,
 }
 

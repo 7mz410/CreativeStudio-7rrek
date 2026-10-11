@@ -60,14 +60,14 @@ pub const PREVIEW_MAX: u32 = 256;
 pub const EXTENSION: &str = "vectorcraft";
 /// Extension and format name from before the project was renamed (DrawCraft): still opened.
 pub const LEGACY_EXTENSION: &str = "drawcraft";
-/// ShibShib rsm saves documents as `.rsm` (the same contents as `.vectorcraft`).
-pub const SHIBSHIB_EXTENSION: &str = "rsm";
+/// rsm saves documents as `.rsm` (the same contents as `.vectorcraft`).
+pub const STUDIO_EXTENSION: &str = "rsm";
 /// Most bytes a compressed file may unpack to (a guard against decompression bombs).
 const MAX_UNPACKED: u64 = 512 << 20;
 
 /// Is `ext` (without the dot, any case) a native document extension?
 pub fn is_native_ext(ext: &str) -> bool {
-    ext.eq_ignore_ascii_case(SHIBSHIB_EXTENSION) || ext.eq_ignore_ascii_case(EXTENSION) || ext.eq_ignore_ascii_case(LEGACY_EXTENSION)
+    ext.eq_ignore_ascii_case(STUDIO_EXTENSION) || ext.eq_ignore_ascii_case(EXTENSION) || ext.eq_ignore_ascii_case(LEGACY_EXTENSION)
 }
 
 /// Does the file name or path end in a native document extension?

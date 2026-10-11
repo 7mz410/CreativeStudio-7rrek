@@ -2541,7 +2541,7 @@ impl Ui {
         let total_spacing = spacing * (num_columns as f32 - 1.0);
         let column_width = (self.available_width() - total_spacing) / (num_columns as f32);
         let top_left = self.cursor().min;
-        // ShibShib: the first column is the rightmost one when right to left.
+        // Creative Studio: the first column is the rightmost one when right to left.
         let rtl = crate::layout::is_rtl();
 
         let mut columns: Vec<Self> = (0..num_columns)
@@ -2602,7 +2602,7 @@ impl Ui {
         let total_spacing = spacing * (NUM_COL as f32 - 1.0);
         let column_width = (self.available_width() - total_spacing) / (NUM_COL as f32);
         let top_left = self.cursor().min;
-        // ShibShib: the first column is the rightmost one when right to left.
+        // Creative Studio: the first column is the rightmost one when right to left.
         let rtl = crate::layout::is_rtl();
 
         let mut columns = core::array::from_fn(|col_idx| {

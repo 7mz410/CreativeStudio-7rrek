@@ -239,7 +239,7 @@ pub struct Services {
     pub print: Option<Box<dyn print::PrintService>>,
     /// The macOS menu bar, when the desktop app installed one: the in-window menus are hidden then.
     pub native_menu: Option<native_menu::NativeMenu>,
-    /// ShibShib: Help › AI Agents (desktop): the control channel for agents and their settings.
+    /// Creative Studio: Help › AI Agents (desktop): the control channel for agents and their settings.
     pub agents: Option<Box<dyn agents::AgentsService>>,
     /// Show file dialogs off the UI thread (desktop Linux, where a dialog in line holds the window
     /// and the compositor finds it not answering): what asked runs again with the answer
@@ -463,7 +463,7 @@ impl VectorcraftApp {
         self
     }
 
-    /// ShibShib: take requests from a control channel started while the app runs (Help › AI Agents).
+    /// Creative Studio: take requests from a control channel started while the app runs (Help › AI Agents).
     pub fn set_control(&mut self, rx: Receiver<ControlRequest>) {
         self.control_rx = Some(rx);
     }
@@ -796,7 +796,7 @@ impl VectorcraftApp {
     fn logic_frame(&mut self, ctx: &egui::Context) {
         let lang = self.ui_language();
         i18n::set_current(lang);
-        // ShibShib: Arabic lays the interface out right to left (vendor/egui). The switch is
+        // Creative Studio: Arabic lays the interface out right to left (vendor/egui). The switch is
         // process-wide, so unit tests, which run in parallel, leave it off (tests/rtl.rs covers it).
         #[cfg(not(test))]
         egui::set_rtl(crate::i18n::bidi::RTL_CODES.contains(&lang.code()));

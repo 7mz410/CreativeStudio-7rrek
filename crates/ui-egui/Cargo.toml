@@ -9,7 +9,7 @@ description = "VectorCraft egui frontend (menus, panels, tools and canvas); swap
 workspace = true
 
 [dependencies]
-# ShibShib: visual ordering for right-to-left catalogs (i18n/bidi.rs).
+# Creative Studio: visual ordering for right-to-left catalogs (i18n/bidi.rs).
 unicode-bidi = "0.3.18"
 vectorcraft-geom = { workspace = true }
 vectorcraft-color = { workspace = true }

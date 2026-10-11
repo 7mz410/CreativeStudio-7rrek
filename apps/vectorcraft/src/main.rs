@@ -29,7 +29,7 @@ mod mac_menu;
 #[cfg(target_os = "macos")]
 mod open_documents;
 mod printing;
-mod shibshib_agents;
+mod studio_agents;
 #[cfg(all(windows, not(target_vendor = "win7")))]
 mod system_fonts;
 mod window;
@@ -543,8 +543,8 @@ fn main() -> std::process::ExitCode {
                     let rx = control_server::start(port, cc.egui_ctx.clone());
                     app = app.with_control(rx);
                 }
-                // ShibShib: Help › AI Agents; allowed agents connect from the start.
-                let mut agents = shibshib_agents::Agents::new(prefs_path().and_then(|p| Some(p.parent()?.to_path_buf())), cc.egui_ctx.clone());
+                // Creative Studio: Help › AI Agents; allowed agents connect from the start.
+                let mut agents = studio_agents::Agents::new(prefs_path().and_then(|p| Some(p.parent()?.to_path_buf())), cc.egui_ctx.clone());
                 if control_port.is_some() {
                     // `--control` already serves agents on its own port.
                     agents.mark_started();

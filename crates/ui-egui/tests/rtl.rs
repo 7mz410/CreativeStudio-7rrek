@@ -1,4 +1,4 @@
-//! ShibShib: the right-to-left switch in the vendored egui (`vendor/egui`, `egui::set_rtl`). It is
+//! Creative Studio: the right-to-left switch in the vendored egui (`vendor/egui`, `egui::set_rtl`). It is
 //! process-wide, so it is tested here, in its own test binary, rather than among the unit tests.
 #![allow(clippy::unwrap_used)]
 

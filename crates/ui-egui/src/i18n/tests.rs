@@ -429,7 +429,7 @@ const KEEPS_MENU_NAMES: [&str; 9] = ["ar", "cs", "es", "fr", "it", "ja", "pt-br"
 /// names and the perspective grid presets (names, shown untranslated wherever else they appear).
 /// Each language's own name in the Language menu is left alone too.
 const MENU_KEEP_AS_IS: &[&str] = &[
-    "ShibShib rsm",
+    "rsm",
     "OpenType",
     "Essentials",
     "Essentials Classic",

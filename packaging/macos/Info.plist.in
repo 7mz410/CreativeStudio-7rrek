@@ -7,13 +7,13 @@
   <key>CFBundleDevelopmentRegion</key>
   <string>en</string>
   <key>CFBundleDisplayName</key>
-  <string>ShibShib rsm</string>
+  <string>rsm</string>
   <key>CFBundleName</key>
-  <string>ShibShib rsm</string>
+  <string>rsm</string>
   <key>CFBundleExecutable</key>
   <string>VectorCraft</string>
   <key>CFBundleIdentifier</key>
-  <string>com.shibshib.rsm</string>
+  <string>ps.creative.studio.rsm</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
@@ -53,7 +53,7 @@
   <key>CFBundleDocumentTypes</key>
   <array>
     <dict>
-      <key>CFBundleTypeName</key><string>ShibShib rsm Document</string>
+      <key>CFBundleTypeName</key><string>rsm Document</string>
       <key>LSItemContentTypes</key><array><string>ai.storyteller.vectorcraft.document</string></array>
       <key>CFBundleTypeRole</key><string>Editor</string>
       <key>LSHandlerRank</key><string>Owner</string>
@@ -125,7 +125,7 @@
       <key>UTTypeIdentifier</key>
       <string>ai.storyteller.vectorcraft.document</string>
       <key>UTTypeDescription</key>
-      <string>ShibShib rsm Document</string>
+      <string>rsm Document</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>

@@ -51,7 +51,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	Менше значення точніше відтворює обведення; більше дає менше точок і плавніші криві.
 	A new preset starting from the selected one	Новий набір на основі вибраного
 	A saved copy of the selected preset	Збережена копія вибраного набору
-	About ShibShib rsm	Про програму ShibShib rsm
+	About rsm	Про програму rsm
 	above	зверху
 	Absolute Position	Абсолютна позиція
 	Accurate	Точний
@@ -154,7 +154,7 @@
 	Appearance Panel	Панель «Оформлення»
 	Appearance panel	Панель «Оформлення»
 	Applies when the linked file is relinked or updated.	Використовується при повторній прив’язці або оновленні пов’язаного файлу.
-	Applies the next time ShibShib rsm starts.	Застосовується при наступному запуску ShibShib rsm.
+	Applies the next time rsm starts.	Застосовується при наступному запуску rsm.
 	Apply	Застосувати
 	Apply Brush	Застосувати пензель
 	Apply Character Style	Застосувати стиль символу
@@ -192,7 +192,7 @@
 	Artboard {number}	Монтажна область {number}
 	Artboard:	Монтажна область:
 	Artboards	Монтажні області
-	ShibShib Project	Веб-сайт ArtCraft
+	Creative Studio Project	Веб-сайт ArtCraft
 	Artwork Colors	Кольори малюнка
 	As Multiple Assets	Як кілька ресурсів
 	As Single Asset	Як один ресурс
@@ -1953,7 +1953,7 @@
 	Quarter Space	Четверта шпація
 	Quick Actions	Швидкі дії
 	Quickly start a new file	Швидко створити новий файл
-	Quit ShibShib rsm	Вийти з ShibShib rsm
+	Quit rsm	Вийти з rsm
 	Radar Graph Tool	Інструмент «Пелюсткова діаграма»
 	Radial	Радіальний
 	Radial Glows	Радіальні світіння
@@ -2152,7 +2152,7 @@
 	Revert	Повернути
 	Revert to the saved version of “{name}”?	Повернутися до збереженої версії «{name}»?
 	Replace “{name}”, the file this document was opened from?	Замінити «{name}» — файл, з якого відкрито цей документ?
-	Opening it left out what ShibShib rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	При відкритті було пропущено те, що ShibShib rsm поки що не вміє читати ({what}), тому заміна файлу втратить це назавжди. Щоб зберегти це, збережіть документ під іншим ім’ям.
+	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	При відкритті було пропущено те, що rsm поки що не вміє читати ({what}), тому заміна файлу втратить це назавжди. Щоб зберегти це, збережіть документ під іншим ім’ям.
 	Revolve…	Обертання…
 	RGB Color	Колір RGB
 	Right	Праворуч
@@ -2910,10 +2910,10 @@
 	Vector Halftone	Векторний напівтон
 	Vector Halftone…	Векторний напівтон…
 	Vector illustration — fast, open, scriptable.	Векторне малювання — швидке, відкрите, кероване сценаріями.
-	ShibShib rsm didn't quit normally last time. These documents had unsaved changes:	ShibShib rsm не завершився нормально минулого разу. У цих документах були незбережені зміни:
-	ShibShib rsm Help…	Довідка ShibShib rsm…
-	ShibShib Website	ShibShib rsm на getartcraft.com
-	ShibShib rsm on GitHub	ShibShib rsm на GitHub
+	rsm didn't quit normally last time. These documents had unsaved changes:	rsm не завершився нормально минулого разу. У цих документах були незбережені зміни:
+	rsm Help…	Довідка rsm…
+	Creative Studio Website	rsm на getartcraft.com
+	rsm on GitHub	rsm на GitHub
 	Vectors	Вектори
 	Version {version} — open-source vector illustration in pure Rust.	Версія {version} — векторне малювання з відкритим кодом, написане на Rust.
 	Version:	Версія:
@@ -2952,7 +2952,7 @@
 	Web Snap:	Прив’язка до web:
 	Weight	Товщина
 	Weight:	Товщина:
-	Welcome to ShibShib rsm	Ласкаво просимо до ShibShib rsm
+	Welcome to rsm	Ласкаво просимо до rsm
 	When pasting text	При вставці тексту
 	White	Білий
 	Widget Position:	Положення віджету:
@@ -3446,7 +3446,7 @@ axis	Both	Обидві
 @msg	node {_1} is not text	вузол {_1} не є текстом
 @msg	not a DXF drawing	не є кресленням DXF
 @msg	not a VectorCraft file: {0}	не є файлом VectorCraft: {0}
-@msg	not a ShibShib rsm shortcut set (missing `overrides`)	не є набором поєднань клавіш ShibShib rsm (відсутнє `overrides`)
+@msg	not a rsm shortcut set (missing `overrides`)	не є набором поєднань клавіш rsm (відсутнє `overrides`)
 @msg	not a graphic style library (format `{_1}`)	не є бібліотекою графічних стилів (формат `{_1}`)
 @msg	not a stored central record	не є збереженим центральним записом
 @msg	not a valid plug-in module: {0}	не є допустимим модулем: {0}
@@ -3696,7 +3696,7 @@ axis	Both	Обидві
 @msg	its editing data doesn't say where its art is	у даних редагування не зазначено, де знаходиться графіка
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	цей файл збережений без сумісності з PDF, і його дані редагування не вдається прочитати ({why})
 	Services	Служби
-	Hide ShibShib rsm	Приховати ShibShib rsm
+	Hide rsm	Приховати rsm
 	Zoom	Масштаб
 	Bring All to Front	Усі вікна на передній план
 	Settings	Налаштування
@@ -3704,7 +3704,7 @@ axis	Both	Обидві
 	On: one locked object showing the document, updated when it changes.	Увімк.: один заблокований об’єкт, який показує документ і оновлюється під час його зміни.
 	Off: an editable copy of its art, embedded in this document.	Вимк.: редагована копія графіки, вбудована в цей документ.
 	Images: link to the file instead of only embedding it.	Зображення: пов’язувати із файлом замість простого впровадження.
-	ShibShib rsm documents: one locked object, updated when the file changes.	Документи ShibShib rsm: один заблокований об’єкт, який оновлюється під час зміни файлу.
+	rsm documents: one locked object, updated when the file changes.	Документи rsm: один заблокований об’єкт, який оновлюється під час зміни файлу.
 	A file dialog is open: choose there first	Відкрито вікно вибору файлу: спочатку зробіть вибір у ньому
 	Shaper	Формоутворення
 	Expand Shaper Group	Розібрати групу формоутворення

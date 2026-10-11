@@ -1,6 +1,6 @@
-# ShibShib rsm app icon
+# rsm app icon
 
-**Artwork:** the ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`), white on a black tile. It
+**Artwork:** the rsm star (`docs/studio/rsm.svg`) on a navy (#0d2d3f) tile. It
 replaces upstream VectorCraft's dragon icon.
 
 **Palette:** ink `#ffffff` on field `#000000`.

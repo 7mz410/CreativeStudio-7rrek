@@ -309,7 +309,7 @@ fn category_fields(ui: &mut egui::Ui, d: &mut Dialog, cat: &str) {
                 });
                 if sp.key == "gpuPreference" {
                     // The window's graphics device is chosen once, when the app starts.
-                    ui.label(egui::RichText::new(tl!("Applies the next time ShibShib rsm starts.")).color(t.text_dim).size(11.0));
+                    ui.label(egui::RichText::new(tl!("Applies the next time rsm starts.")).color(t.text_dim).size(11.0));
                 }
             }
             PrefKind::Color => {
@@ -522,7 +522,7 @@ mod tests {
         out.shapes.iter().for_each(|c| texts(&c.shape, &mut shown));
         assert!(shown.iter().any(|t| t.starts_with("Graphics Processor")), "{shown:?}");
         assert!(shown.iter().any(|t| t == "Automatic"), "{shown:?}");
-        assert!(shown.iter().any(|t| t == "Applies the next time ShibShib rsm starts."), "{shown:?}");
+        assert!(shown.iter().any(|t| t == "Applies the next time rsm starts."), "{shown:?}");
         a.ui.dialog.as_mut().unwrap().fields.insert("gpuPreference".into(), json!("highPerformance"));
         confirm(&mut a).unwrap();
         assert_eq!(a.session.prefs.gpu_preference, "highPerformance");

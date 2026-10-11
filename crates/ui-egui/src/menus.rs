@@ -298,10 +298,10 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{} opens the Save PDF dialog; with params = document.exportPdf options written to path (asked when missing; viewAfterSaving opens the file) → {path, bytes, warnings}",
     ),
-    ("help.about", "About ShibShib rsm", "", "{}"),
+    ("help.about", "About rsm", "", "{}"),
     ("help.agents", "AI Agents…", "", "{} opens the AI Agents window: allow agents to control the app, connect agent apps"),
     ("help.commandPalette", "Search Commands…", "Cmd+Shift+/", "{}"),
-    ("app.quit", "Quit ShibShib rsm", "Cmd+Q", "{}"),
+    ("app.quit", "Quit rsm", "Cmd+Q", "{}"),
     (
         "ui.swatchOptions",
         "Swatch Options…",
@@ -1906,9 +1906,9 @@ pub fn menu_tree() -> Vec<(&'static str, Vec<Item>)> {
     let panel = |label: &'static str, id: &'static str| cp(label, "window.panel", json!({ "panel": id }));
     vec![
         (
-            "ShibShib rsm",
+            "rsm",
             vec![
-                c("About ShibShib rsm", "help.about"),
+                c("About rsm", "help.about"),
                 c("Upstream Community on Discord", "help.discord"),
                 Sep,
                 c("Settings…", "edit.preferences"),
@@ -1922,7 +1922,7 @@ pub fn menu_tree() -> Vec<(&'static str, Vec<Item>)> {
                 Sep,
                 sub("UI Brightness", Brightness::ALL.iter().map(|b| cp(b.label(), "window.brightness", json!({"brightness": b.id()}))).collect()),
                 Sep,
-                c("Quit ShibShib rsm", "app.quit"),
+                c("Quit rsm", "app.quit"),
             ],
         ),
         (
@@ -2537,15 +2537,15 @@ pub fn menu_tree() -> Vec<(&'static str, Vec<Item>)> {
             "Help",
             vec![
                 c("Upstream Community on Discord", "help.discord"),
-                c("ShibShib Project", "help.website"),
-                c("ShibShib Website", "help.appPage"),
-                c("ShibShib rsm on GitHub", "help.github"),
+                c("Creative Studio Project", "help.website"),
+                c("Creative Studio Website", "help.appPage"),
+                c("rsm on GitHub", "help.github"),
                 Sep,
                 c("AI Agents…", "help.agents"),
                 c("Search Commands…", "help.commandPalette"),
-                todos("ShibShib rsm Help…", "F1"),
+                todos("rsm Help…", "F1"),
                 Sep,
-                c("About ShibShib rsm", "help.about"),
+                c("About rsm", "help.about"),
             ],
         ),
     ]

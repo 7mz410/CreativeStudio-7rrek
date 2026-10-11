@@ -9,7 +9,7 @@
 # back to English. Left in English on purpose (`MENU_KEEP_AS_IS` in the tests): the product name,
 # language names, OpenType, the built-in workspace names and the bracketed perspective grid preset
 # names.
-	About ShibShib rsm	O aplikaci ShibShib rsm
+	About rsm	O aplikaci rsm
 	Align to Path	Zarovnat k cestě
 	Cut Path at Selected Anchor Points	Rozdělit cestu ve vybraných kotevních bodech
 	Upstream Community on Discord	Připojit se k našemu Discordu
@@ -20,7 +20,7 @@
 	Medium Dark	Středně tmavý
 	Medium Light	Středně světlý
 	Light	Světlý
-	Quit ShibShib rsm	Ukončit ShibShib rsm
+	Quit rsm	Ukončit rsm
 	File	Soubor
 	New…	Nový…
 	New from Template…	Nový ze šablony…
@@ -563,11 +563,11 @@
 	Save Swatch Library…	Uložit knihovnu vzorníku…
 	Symbol Libraries	Knihovny symbolů
 	Help	Nápověda
-	ShibShib Project	Web ArtCraft
-	ShibShib Website	ShibShib rsm na getartcraft.com
-	ShibShib rsm on GitHub	ShibShib rsm na GitHubu
+	Creative Studio Project	Web ArtCraft
+	Creative Studio Website	rsm na getartcraft.com
+	rsm on GitHub	rsm na GitHubu
 	Search Commands…	Hledat příkazy…
-	ShibShib rsm Help…	Nápověda ShibShib rsm…
+	rsm Help…	Nápověda rsm…
 	Automatic	Automaticky
 	Isolate Selected Group	Izolovat vybranou skupinu
 	Exit Isolation Mode	Ukončit izolovaný režim
@@ -619,7 +619,7 @@
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	Služby
-	Hide ShibShib rsm	Skrýt ShibShib rsm
+	Hide rsm	Skrýt rsm
 	Hide Others	Skrýt ostatní
 	Minimize	Minimalizovat
 	Zoom	Zvětšit

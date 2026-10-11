@@ -3,10 +3,10 @@ Copyright (c) 2026 ArtCraft Team and the VectorCraft contributors.
 Licensed under the MIT License or the Apache License, Version 2.0, at your option
 (LICENSE-MIT, LICENSE-APACHE).
 
-ShibShib rsm
-This product is a modified version of VectorCraft, maintained by the ShibShib contributors
-(https://github.com/7mz410/ShibShib-rsm). The modifications are in this repository's git history
-after the fork from https://github.com/storytold/vectorcraft and are summarised in shibshib/CHANGES.md.
+rsm
+This product is a modified version of VectorCraft, maintained by the Creative Studio contributors
+(https://github.com/7mz410/CreativeStudio-rsm). The modifications are in this repository's git history
+after the fork from https://github.com/storytold/vectorcraft and are summarised in studio/CHANGES.md.
 
 The ArtCraft name and logos are trademarks of the ArtCraft Team. This fork does not include
 or use them as branding; upstream's docs/brand/ directory was removed as its brand licence requires.

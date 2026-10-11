@@ -241,7 +241,7 @@ pub fn install_fonts(ctx: &egui::Context) {
     add(&mut fonts, "SourceSans3", include_bytes!("../../../assets/fonts/SourceSans3-Regular.ttf"));
     add(&mut fonts, "SourceSans3-Semibold", include_bytes!("../../../assets/fonts/SourceSans3-Semibold.ttf"));
     add(&mut fonts, "JetBrainsMono", include_bytes!("../../../assets/fonts/JetBrainsMono-Regular.ttf"));
-    // ShibShib: Arabic UI text, right after the Latin faces in every family.
+    // Creative Studio: Arabic UI text, right after the Latin faces in every family.
     add(&mut fonts, "IBMPlexSansArabic", include_bytes!("../../../assets/fonts/IBMPlexSansArabic-Regular.ttf"));
     add(&mut fonts, "IBMPlexSansArabic-SemiBold", include_bytes!("../../../assets/fonts/IBMPlexSansArabic-SemiBold.ttf"));
     let mut fallback: Vec<String> = fonts.families.get(&FontFamily::Proportional).cloned().unwrap_or_default();

@@ -146,7 +146,7 @@ fn package(s: &mut Session, p: &Value) -> Result<Value> {
 
     // The document, linking to the copies.
     let mut doc = (*st.doc).clone();
-    let doc_name = format!("{stem}.{}", vectorcraft_format::SHIBSHIB_EXTENSION);
+    let doc_name = format!("{stem}.{}", vectorcraft_format::STUDIO_EXTENSION);
     if let Some(root) = &root
         && let Some(d) = super::links::with_relative_paths(&doc, &root.join(&doc_name).to_string_lossy())
     {

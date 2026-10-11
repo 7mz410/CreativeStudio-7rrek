@@ -2,7 +2,7 @@
 
 Every non-code asset in this repository (icons, images, fonts, example art, colour profiles, presets) is listed here with its author, source and licence. `cargo xtask assets` (part of `cargo xtask ci`) fails if an asset file is missing from this table.
 
-**Policy (mandatory):** VectorCraft contains **no Adobe iconography, images, artwork, presets, swatch/brush/symbol/pattern libraries or ICC profiles**. Every asset is either original work by VectorCraft contributors, or third-party material under an open licence (OSI open source, public domain / CC0, or Creative Commons that allows redistribution), and it is attributed below. Screenshots of Adobe software are never committed. The ShibShib name and logos in `docs/shibshib/` belong to the ShibShib project. This fork carries no ArtCraft marks: upstream's `docs/brand/` was removed as its brand licence requires of forks.
+**Policy (mandatory):** VectorCraft contains **no Adobe iconography, images, artwork, presets, swatch/brush/symbol/pattern libraries or ICC profiles**. Every asset is either original work by VectorCraft contributors, or third-party material under an open licence (OSI open source, public domain / CC0, or Creative Commons that allows redistribution), and it is attributed below. Screenshots of Adobe software are never committed. The Creative Studio name and logos in `docs/studio/` belong to the Creative Studio project. This fork carries no ArtCraft marks: upstream's `docs/brand/` was removed as its brand licence requires of forks.
 
 Generated-in-code art is original and has no file to list. This covers the default swatches, brushes, symbols, patterns, graphic styles, image-trace presets and the vector tool cursors (`crates/ui-egui/src/cursors.rs`).
 
@@ -12,48 +12,47 @@ Generated-in-code art is original and has no file to list. This covers the defau
 
 | Asset | Author | Source | Licence | Notes |
 |---|---|---|---|---|
-| `docs/shibshib/logo-rsm-black.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | Project logo; replaces the upstream brand |
-| `docs/shibshib/logo-rsm-original.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | Project logo; replaces the upstream brand |
-| `docs/shibshib/logo-rsm-white.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | Project logo; replaces the upstream brand |
-| `docs/shibshib/mark-rsm-black.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | Project logo; replaces the upstream brand |
-| `docs/shibshib/mark-rsm-white.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | Project logo; replaces the upstream brand |
-| `docs/shibshib/suite/7rrek.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/effectat.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/main_logo.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/rsm-white.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/rsm.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/sharek.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/tlween.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/trteeb.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/tsweer.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/aswat.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/mzika.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/shibshib_main.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
-| `docs/shibshib/suite/ttshat.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | ShibShib logo | ShibShib suite logo |
+| `docs/studio/7rrek.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/arqam.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/aswat.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/brand_ID.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/brand_ID_W.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/effectat.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/klmat.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/muhandes.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/mzika.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/rsm.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/sf7aat.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/sharek.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/shoof.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/tlween.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/trteeb.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/tsweer.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
+| `docs/studio/ttshat.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | Creative Studio logo | Creative Studio logo |
 | `assets/app-icon/LICENSE.txt` | (licence/readme text) | VectorCraft | MIT OR Apache-2.0 |  |
 | `assets/app-icon/README.md` | (licence/readme text) | VectorCraft | MIT OR Apache-2.0 |  |
-| `assets/app-icon/rsm-document.svg` | Hamza Abu Ayyash (ShibShib) | Original artwork | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | Finder icon for `.rsm` documents |
-| `assets/app-icon/rsm-document.icns` | Hamza Abu Ayyash (ShibShib) | Rendered from `assets/app-icon/rsm-document.svg` with resvg and iconutil | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | Finder icon for `.rsm` documents |
-| `assets/app-icon/hicolor/128x128/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/hicolor/16x16/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/hicolor/24x24/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/hicolor/256x256/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/hicolor/32x32/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/hicolor/48x48/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/hicolor/512x512/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/hicolor/64x64/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/hicolor/scalable/apps/ai.storyteller.vectorcraft.svg` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/vectorcraft-1024.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/vectorcraft-macos-512.png` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/vectorcraft-small.svg` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/vectorcraft.icns` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/vectorcraft.ico` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
-| `assets/app-icon/vectorcraft.svg` | Hamza Abu Ayyash (ShibShib) | Original ShibShib rsm mark (`docs/shibshib/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (ShibShib rsm mark) |
+| `assets/app-icon/rsm-document.svg` | Hamza Abu Ayyash (Creative Studio) | Original artwork | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | Finder icon for `.rsm` documents |
+| `assets/app-icon/rsm-document.icns` | Hamza Abu Ayyash (Creative Studio) | Rendered from `assets/app-icon/rsm-document.svg` with resvg and iconutil | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | Finder icon for `.rsm` documents |
+| `assets/app-icon/hicolor/128x128/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/hicolor/16x16/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/hicolor/24x24/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/hicolor/256x256/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/hicolor/32x32/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/hicolor/48x48/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/hicolor/512x512/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/hicolor/64x64/apps/ai.storyteller.vectorcraft.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/hicolor/scalable/apps/ai.storyteller.vectorcraft.svg` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/vectorcraft-1024.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/vectorcraft-macos-512.png` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/vectorcraft-small.svg` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/vectorcraft.icns` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/vectorcraft.ico` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
+| `assets/app-icon/vectorcraft.svg` | Hamza Abu Ayyash (Creative Studio) | Original rsm mark (`docs/studio/mark-rsm-white.svg`) on a black tile, rendered by `packaging/icons.sh` | MIT OR Apache-2.0 (`assets/app-icon/LICENSE.txt`) | App icon (rsm mark) |
 | `packaging/macos/dmg/background.svg` | Xus Badia (contributed in #493) | Original artwork for VectorCraft's DMG window; links the app icon `assets/app-icon/vectorcraft-small.svg` | MIT OR Apache-2.0 (licensed by the contributor under the project licence) | DMG background source. Text in Inter and JetBrains Mono (OFL-1.1, `assets/fonts`), not embedded; paper grain generated by an SVG `feTurbulence` filter |
 | `packaging/macos/dmg/background.tiff` | Xus Badia (contributed in #493) | Rendered from `packaging/macos/dmg/background.svg` by `packaging/macos/dmg/generate.py` | MIT OR Apache-2.0 | 1x + 2x DMG background; includes the app icon (see its rows), text rendered from OFL-1.1 fonts and LittleCMS's built-in sRGB profile ("No copyright, use freely") |
 | `packaging/macos/dmg/DS_Store` | Xus Badia (layout, #493) | Written by `packaging/macos/dmg/generate.py` | MIT OR Apache-2.0 | Finder view settings for the DMG (window, icon size and positions, background alias); no machine data |
-| `assets/fonts/IBMPlexSansArabic-Regular.ttf` | IBM Corp. (Mike Abbink, Bold Monday) | https://github.com/google/fonts/tree/main/ofl/ibmplexsansarabic | OFL-1.1 (`assets/fonts/OFL-IBMPlexSansArabic.txt`) | ShibShib: Arabic UI font |
-| `assets/fonts/IBMPlexSansArabic-SemiBold.ttf` | IBM Corp. (Mike Abbink, Bold Monday) | https://github.com/google/fonts/tree/main/ofl/ibmplexsansarabic | OFL-1.1 (`assets/fonts/OFL-IBMPlexSansArabic.txt`) | ShibShib: Arabic UI font |
+| `assets/fonts/IBMPlexSansArabic-Regular.ttf` | IBM Corp. (Mike Abbink, Bold Monday) | https://github.com/google/fonts/tree/main/ofl/ibmplexsansarabic | OFL-1.1 (`assets/fonts/OFL-IBMPlexSansArabic.txt`) | Creative Studio: Arabic UI font |
+| `assets/fonts/IBMPlexSansArabic-SemiBold.ttf` | IBM Corp. (Mike Abbink, Bold Monday) | https://github.com/google/fonts/tree/main/ofl/ibmplexsansarabic | OFL-1.1 (`assets/fonts/OFL-IBMPlexSansArabic.txt`) | Creative Studio: Arabic UI font |
 | `assets/fonts/OFL-IBMPlexSansArabic.txt` | (licence text) | upstream project | — |  |
 | `assets/fonts/Inter-Medium.ttf` | Rasmus Andersson / The Inter Project Authors | https://github.com/rsms/inter | OFL-1.1 (`assets/fonts/OFL-Inter.txt`) | Open-source typeface, not product iconography or artwork |
 | `assets/fonts/Inter-Regular.ttf` | Rasmus Andersson / The Inter Project Authors | https://github.com/rsms/inter | OFL-1.1 (`assets/fonts/OFL-Inter.txt`) | Open-source typeface, not product iconography or artwork |

@@ -58,7 +58,7 @@ impl Widget for RadioButton<'_> {
         let mut icon_size = Vec2::splat(icon_width);
         icon_size.y = icon_size.y.at_least(min_size.y);
         let rect_id = Id::new("egui::radio_button");
-        // ShibShib: the box goes after the text (on its right) when right to left.
+        // Creative Studio: the box goes after the text (on its right) when right to left.
         if crate::layout::is_rtl() {
             atoms.push_right(Atom::custom(rect_id, icon_size));
         } else {

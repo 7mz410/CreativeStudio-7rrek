@@ -1,11 +1,11 @@
-# Arabic (ar) catalog, ShibShib addition. Same format as zh-hant.tsv:  context <TAB> source <TAB> translation
+# Arabic (ar) catalog, Creative Studio addition. Same format as zh-hant.tsv:  context <TAB> source <TAB> translation
 #
 # Written from the meaning of the English labels in Modern Standard Arabic, using the terms Arabic
 # designers know for vector illustration (لوحة الرسم، الطبقات، التعبئة، الحدود، القلم، نقطة الربط).
 # Plurals have six forms: zero|one|two|few|many|other (see `plural_arabic` in i18n/mod.rs).
 # Rows are stored in logical order; i18n/bidi.rs puts them in visual order when the catalog loads.
 #
-# Coverage: being completed in batches (shibshib/ar-work). Strings without a row show in English.
+# Coverage: being completed in batches (studio/ar-work). Strings without a row show in English.
 	Radial Blur…	تمويه شعاعي…
 	Smart Blur…	تمويه ذكي…
 	Sharpen	زيادة الحدة
@@ -46,7 +46,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	القيمة الأقل تتبع الخط بدقة؛ والأعلى تعطي نقاطاً أقل ومنحنيات أنعم.
 	A new preset starting from the selected one	إعداد جديد يبدأ من الإعداد المحدد
 	A saved copy of the selected preset	نسخة محفوظة من الإعداد المحدد
-	About ShibShib rsm	حول ShibShib rsm
+	About rsm	حول rsm
 	above	أعلى
 	Absolute Position	موضع مطلق
 	Accurate	دقيق
@@ -149,7 +149,7 @@
 	Appearance Panel	لوحة المظهر
 	Appearance panel	لوحة المظهر
 	Applies when the linked file is relinked or updated.	يُطبَّق عند إعادة ربط الملف المرتبط أو تحديثه.
-	Applies the next time ShibShib rsm starts.	يُطبَّق عند تشغيل ShibShib rsm في المرة القادمة.
+	Applies the next time rsm starts.	يُطبَّق عند تشغيل rsm في المرة القادمة.
 	Apply Brush	تطبيق الفرشاة
 	Apply Character Style	تطبيق نمط الحروف
 	Apply Effect	تطبيق التأثير
@@ -186,7 +186,7 @@
 	Artboard {number}	لوحة الرسم {number}
 	Artboard:	لوحة الرسم:
 	Artboards	لوحات الرسم
-	ShibShib Project	مشروع ShibShib
+	Creative Studio Project	مشروع Creative Studio
 	Artwork Colors	ألوان العمل
 	As Multiple Assets	كأصول متعددة
 	As Single Asset	كأصل واحد
@@ -1942,7 +1942,7 @@
 	Quarter Space	ربع مسافة
 	Quick Actions	إجراءات سريعة
 	Quickly start a new file	ابدأ ملفاً جديداً بسرعة
-	Quit ShibShib rsm	إنهاء ShibShib rsm
+	Quit rsm	إنهاء rsm
 	Radar Graph Tool	أداة الرسم البياني الراداري
 	Radial	شعاعي
 	Radial Glows	توهجات شعاعية
@@ -2140,7 +2140,7 @@
 	Revert	الرجوع
 	Revert to the saved version of “{name}”?	الرجوع إلى النسخة المحفوظة من «{name}»؟
 	Replace “{name}”, the file this document was opened from?	استبدال «{name}»، الملف الذي فُتح منه هذا المستند؟
-	Opening it left out what ShibShib rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	فتحه أهمل ما لا يستطيع ShibShib rsm قراءته بعد ({what})، لذا استبداله يفقد ذلك نهائياً. احفظه باسم آخر للاحتفاظ به.
+	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	فتحه أهمل ما لا يستطيع rsm قراءته بعد ({what})، لذا استبداله يفقد ذلك نهائياً. احفظه باسم آخر للاحتفاظ به.
 	Revolve…	دوران حول محور…
 	RGB Color	لون RGB
 	Right	يمين
@@ -2876,10 +2876,10 @@
 	Vector Halftone	نقطية نصفية متجهية
 	Vector Halftone…	نقطية نصفية متجهية…
 	Vector illustration — fast, open, scriptable.	رسم متجهي — سريع، مفتوح، قابل للبرمجة.
-	ShibShib rsm didn't quit normally last time. These documents had unsaved changes:	لم يُغلق ShibShib rsm بشكل طبيعي في المرة السابقة. هذه المستندات فيها تغييرات غير محفوظة:
-	ShibShib rsm Help…	مساعدة ShibShib rsm…
-	ShibShib Website	موقع شبشب
-	ShibShib rsm on GitHub	ShibShib rsm على GitHub
+	rsm didn't quit normally last time. These documents had unsaved changes:	لم يُغلق rsm بشكل طبيعي في المرة السابقة. هذه المستندات فيها تغييرات غير محفوظة:
+	rsm Help…	مساعدة rsm…
+	Creative Studio Website	موقع Creative Studio
+	rsm on GitHub	rsm على GitHub
 	Vectors	المتجهات
 	Version {version} — open-source vector illustration in pure Rust.	الإصدار {version} — رسم متجهي مفتوح المصدر بلغة Rust.
 	Version:	الإصدار:
@@ -2918,7 +2918,7 @@
 	Web Snap:	محاذاة الويب:
 	Weight	السماكة
 	Weight:	السماكة:
-	Welcome to ShibShib rsm	أهلاً بك في شبشب رسم
+	Welcome to rsm	أهلاً بك في رسم
 	When pasting text	عند لصق النص
 	White	أبيض
 	Widget Position:	موضع الأداة:
@@ -3263,7 +3263,7 @@ axis	Both	كلاهما
 @msg	can't encode the document: {0}	تعذّر ترميز المستند: {0}
 @msg	can't parse shortcut `{c}`	تعذّر تحليل الاختصار `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	تعذّر تحليل الاختصار `{s}` لـ `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	تعذّر الحفظ بالإصدار {0}: ShibShib rsm يكتب الإصدارات من {MIN_VERSION} إلى {VERSION}
+@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	تعذّر الحفظ بالإصدار {0}: rsm يكتب الإصدارات من {MIN_VERSION} إلى {VERSION}
 @msg	can't write .{ext} images	تعذّرت كتابة صور .{ext}
 @msg	cannot distort a zero-size bounding box	تعذّر تشويه إطار محيط بحجم صفر
 @msg	cannot read PDF: {0}	تعذّرت قراءة PDF: {0}
@@ -3286,7 +3286,7 @@ axis	Both	كلاهما
 @msg	empty brush stroke	ضربة فرشاة فارغة
 @msg	empty cutter	أداة قطع فارغة
 @msg	empty path	مسار فارغ
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	إصدار الملف {0} أحدث مما يدعمه ShibShib rsm هذا ({VERSION})
+@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	إصدار الملف {0} أحدث مما يدعمه rsm هذا ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	النقطة الحرة {i} تحتاج `at` [x, y] و`color` صالحاً
 @msg	give both `start` and `end` [x, y] (or neither)	أعطِ `start` و`end` معاً [x, y] (أو لا شيء منهما)
 @msg	give corners of the path: anchors between two straight sides	أعطِ زوايا المسار: نقاط ربط بين جانبين مستقيمين
@@ -3303,9 +3303,9 @@ axis	Both	كلاهما
 @msg	invalid PDF setting: {0}	إعداد PDF غير صالح: {0}
 @msg	invalid image data for `{0}`	بيانات صورة غير صالحة لـ `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	معاملات غير صالحة لـ `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	ليست صورة يقرأها ShibShib rsm
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	يستخدم `{at}`، وهو غير معروف لقارئ PostScript في ShibShib rsm
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	يستخدم `{at}`، وهو غير معروف لقارئ PostScript في ShibShib rsm، في {procs}
+@msg	is not an image VectorCraft reads	ليست صورة يقرأها rsm
+@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	يستخدم `{at}`، وهو غير معروف لقارئ PostScript في rsm
+@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	يستخدم `{at}`، وهو غير معروف لقارئ PostScript في rsm، في {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	فُتحت معاينة Windows metafile بدلاً منه، وقد يبسّط ذلك العمل
 @msg	its preview was placed instead, at screen resolution	وُضعت معاينته بدلاً منه، بدقة الشاشة
 @msg	join needs open paths	الوصل يحتاج مسارات مفتوحة
@@ -3406,8 +3406,8 @@ axis	Both	كلاهما
 @msg	no user workspace `{from}`	لا توجد مساحة عمل مستخدم `{from}`
 @msg	node {_1} is not text	العقدة {_1} ليست نصاً
 @msg	not a DXF drawing	ليس رسماً بصيغة DXF
-@msg	not a VectorCraft file: {0}	ليس ملف ShibShib rsm: {0}
-@msg	not a ShibShib rsm shortcut set (missing `overrides`)	ليست مجموعة اختصارات ShibShib rsm (`overrides` مفقود)
+@msg	not a VectorCraft file: {0}	ليس ملف rsm: {0}
+@msg	not a rsm shortcut set (missing `overrides`)	ليست مجموعة اختصارات rsm (`overrides` مفقود)
 @msg	not a graphic style library (format `{_1}`)	ليست مكتبة أنماط رسومية (الصيغة `{_1}`)
 @msg	not a stored central record	ليس سجلاً مركزياً مخزّناً
 @msg	not a valid plug-in module: {0}	ليست وحدة إضافة صالحة: {0}
@@ -3626,9 +3626,9 @@ axis	Both	كلاهما
 @msg	Sent to {_1}	أُرسل إلى {_1}
 @msg	{_1} files	ملفات {_1}
 @msg	The graphics were lost and have been restarted	فُقدت الرسوميات وأُعيد تشغيلها
-@msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	معالج الرسوميات الأول لم يستطع عرض النافذة، فأُعيد تشغيل ShibShib rsm على {summary}
-@msg	Loading VectorCraft…	جارٍ تحميل ShibShib rsm…
-@msg	VectorCraft failed to start: {e}	فشل تشغيل ShibShib rsm: {e}
+@msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	معالج الرسوميات الأول لم يستطع عرض النافذة، فأُعيد تشغيل rsm على {summary}
+@msg	Loading VectorCraft…	جارٍ تحميل rsm…
+@msg	VectorCraft failed to start: {e}	فشل تشغيل rsm: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	يلزم متصفح يدعم WebGPU أو WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	فُقدت الرسوميات وتعذّرت إعادة تشغيلها.
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	تغييراتك غير المحفوظة محفوظة في هذا المتصفح: أعد تحميل الصفحة لاستعادتها.
@@ -3640,7 +3640,7 @@ axis	Both	كلاهما
 @msg	"{0}" is not a colour: write it as #rrggbb	"{0}" ليس لوناً: اكتبه بصيغة #rrggbb
 @msg	this isn't a flat-colour logo ({_1}% of its solid areas match a few flat colours), so Flat Logo mode would turn its gradients into patches: use Color mode instead	هذا ليس شعاراً بألوان مسطّحة ({_1}% من مساحاته المصمتة تطابق ألواناً مسطّحة قليلة)، لذا وضع الشعار المسطّح سيحوّل تدرّجاته إلى رقع: استخدم وضع الألوان بدلاً منه
 	Services	الخدمات
-	Hide ShibShib rsm	إخفاء ShibShib rsm
+	Hide rsm	إخفاء rsm
 	Zoom	تكبير
 	Bring All to Front	إحضار الكل إلى الأمام
 	Settings	الإعدادات
@@ -3648,7 +3648,7 @@ axis	Both	كلاهما
 	On: one locked object showing the document, updated when it changes.	تشغيل: كائن مقفل واحد يعرض المستند، ويتحدث عند تغيّره.
 	Off: an editable copy of its art, embedded in this document.	إيقاف: نسخة قابلة للتعديل من العمل، مضمّنة في هذا المستند.
 	Images: link to the file instead of only embedding it.	الصور: ربط بالملف بدلاً من تضمينه فقط.
-	ShibShib rsm documents: one locked object, updated when the file changes.	مستندات ShibShib rsm: كائن مقفل واحد، يتحدث عند تغيّر الملف.
+	rsm documents: one locked object, updated when the file changes.	مستندات rsm: كائن مقفل واحد، يتحدث عند تغيّر الملف.
 	A file dialog is open: choose there first	مربع حوار ملف مفتوح: اختر منه أولاً
 	Shaper	المُشكِّل
 	Expand Shaper Group	توسيع مجموعة المُشكِّل

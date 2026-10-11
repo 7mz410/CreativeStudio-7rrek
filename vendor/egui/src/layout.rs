@@ -125,22 +125,22 @@ pub struct Layout {
     pub cross_justify: bool,
 }
 
-// ShibShib: a process-wide right-to-left switch (Arabic). When it is on, the default layout and
+// Creative Studio: a process-wide right-to-left switch (Arabic). When it is on, the default layout and
 // the layouts egui's panels and menus start from run from the right, so `ui.horizontal` and
 // friends follow (they already honour `prefer_right_to_left`).
 static RTL: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
-/// ShibShib: lay the interface out right to left (or back).
+/// Creative Studio: lay the interface out right to left (or back).
 pub fn set_rtl(on: bool) {
     RTL.store(on, std::sync::atomic::Ordering::Relaxed);
 }
 
-/// ShibShib: is the interface laid out right to left?
+/// Creative Studio: is the interface laid out right to left?
 pub fn is_rtl() -> bool {
     RTL.load(std::sync::atomic::Ordering::Relaxed)
 }
 
-/// ShibShib: the cross alignment a top-down layout starts from: left, or right when [`is_rtl`].
+/// Creative Studio: the cross alignment a top-down layout starts from: left, or right when [`is_rtl`].
 pub fn start_align() -> Align {
     if is_rtl() { Align::RIGHT } else { Align::LEFT }
 }
@@ -148,7 +148,7 @@ pub fn start_align() -> Align {
 impl Default for Layout {
     fn default() -> Self {
         // TODO(emilk): Get from `Style` instead.
-        Self::top_down(start_align()) // ShibShib: right-to-left aware.
+        Self::top_down(start_align()) // Creative Studio: right-to-left aware.
     }
 }
 

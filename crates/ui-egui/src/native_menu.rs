@@ -35,7 +35,7 @@ use crate::VectorcraftApp;
 use crate::i18n::{Lang, tr, tr_ctx};
 use crate::menus::{self, Entry};
 
-pub const APP_NAME: &str = "ShibShib rsm";
+pub const APP_NAME: &str = "rsm";
 /// Hide VectorCraft: an item of ours (AppKit's always takes ⌘H, which is View › Hide Edges).
 pub const HIDE: &str = "app.hide";
 /// Hide Others: an item of ours, so a command bound to ⌥⌘H keeps it.
@@ -46,7 +46,7 @@ pub const MINIMIZE: &str = "window.minimize";
 /// The labels the Mac layout adds to the menus (translated like every menu string:
 /// [`crate::menus::menu_strings`]).
 pub const MAC_LABELS: &[&str] =
-    &["Settings", "Appearance", "Services", "Hide ShibShib rsm", "Hide Others", "Show All", "Minimize", "Zoom", "Bring All to Front"];
+    &["Settings", "Appearance", "Services", "Hide rsm", "Hide Others", "Show All", "Minimize", "Zoom", "Bring All to Front"];
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct MenuBar {
@@ -307,7 +307,7 @@ pub fn mac_layout(bar: &MenuBar, lang: Lang) -> Layout {
             None => Some(sc),
         }
     };
-    let hide = Item::system(HIDE, "Hide ShibShib rsm", key("Ctrl+Cmd+H", "Hide"), lang);
+    let hide = Item::system(HIDE, "Hide rsm", key("Ctrl+Cmd+H", "Hide"), lang);
     let hide_others = Item::system(HIDE_OTHERS, "Hide Others", key("Cmd+Alt+H", "Hide Others"), lang);
     let minimize = Item::system(MINIMIZE, "Minimize", key("Ctrl+Cmd+M", "Minimize"), lang);
 
@@ -499,7 +499,7 @@ pub fn sync(app: &mut VectorcraftApp, ctx: &egui::Context) {
     let Some(menu) = app.services.native_menu.as_mut() else { return };
     if !menu.logged {
         for c in &layout.clashes {
-            log::info!("menu: {} is {} on macOS and {} in ShibShib rsm, which keeps it", c.shortcut, c.system, c.command);
+            log::info!("menu: {} is {} on macOS and {} in rsm, which keeps it", c.shortcut, c.system, c.command);
         }
         menu.logged = true;
     }

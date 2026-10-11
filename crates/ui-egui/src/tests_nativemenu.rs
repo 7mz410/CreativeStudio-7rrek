@@ -69,7 +69,7 @@ fn find<'a>(bar: &'a MenuBar, command: &str) -> &'a native_menu::Item {
 fn vectorcraft_gets_a_mac_app_menu() {
     let bar = bar(&app(true));
     let titles: Vec<&str> = bar.menus.iter().map(|m| m.title.as_str()).collect();
-    assert_eq!(titles, ["ShibShib rsm", "File", "Edit", "Object", "Type", "Select", "Effect", "View", "Window", "Help"]);
+    assert_eq!(titles, ["rsm", "File", "Edit", "Object", "Type", "Select", "Effect", "View", "Window", "Help"]);
     let app_menu = &bar.menus[0];
     assert_eq!(app_menu.role, MenuRole::App);
     assert_eq!(
@@ -94,10 +94,10 @@ fn vectorcraft_gets_a_mac_app_menu() {
         let it = find(&bar, command);
         (it.label.as_str(), it.shortcut)
     };
-    assert_eq!(shown("help.about"), ("About ShibShib rsm", None));
-    assert_eq!(shown("app.quit"), ("Quit ShibShib rsm", Some("Cmd+Q")), "Quit is the app's own, so unsaved documents are asked about");
+    assert_eq!(shown("help.about"), ("About rsm", None));
+    assert_eq!(shown("app.quit"), ("Quit rsm", Some("Cmd+Q")), "Quit is the app's own, so unsaved documents are asked about");
     // ⌘H stays View › Hide Edges (Illustrator's); Hide takes ⌃⌘H.
-    assert_eq!(shown(native_menu::HIDE), ("Hide ShibShib rsm", Some("Ctrl+Cmd+H")));
+    assert_eq!(shown(native_menu::HIDE), ("Hide rsm", Some("Ctrl+Cmd+H")));
     assert_eq!(shown(native_menu::HIDE_OTHERS), ("Hide Others", Some("Cmd+Alt+H")));
     assert_eq!(find(&bar, "view.edges").shortcut, Some("Cmd+H"));
     assert_eq!(bar.menu(MenuRole::Help).map(|m| m.title.as_str()), Some("Help"));
@@ -198,7 +198,7 @@ fn the_window_menu_has_the_system_items() {
     let window = ids(&bar.menu(MenuRole::Window).unwrap().children);
     assert_eq!(window[..3], [native_menu::MINIMIZE.to_string(), "<Zoom>".into(), "---".into()]);
     assert_eq!(window[window.len() - 2..], ["---".to_string(), "<BringAllToFront>".into()]);
-    assert_eq!(window[3], "window.newWindow", "then ShibShib rsm's own items");
+    assert_eq!(window[3], "window.newWindow", "then rsm's own items");
     assert_eq!(find(&bar, native_menu::MINIMIZE).shortcut, Some("Ctrl+Cmd+M"));
     assert!(!window.iter().any(|i| i == "window.brightness"), "the theme is only in the app menu");
     assert_eq!(Standard::Zoom.label(), "Zoom");

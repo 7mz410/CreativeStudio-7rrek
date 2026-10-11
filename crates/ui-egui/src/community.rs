@@ -56,7 +56,7 @@ fn link(app: &mut VectorcraftApp, ui: &mut Ui, icon: &str, label: &str, cmd: &st
 pub fn links(app: &mut VectorcraftApp, ui: &mut Ui) {
     let l = app.session.execute("help.links", &serde_json::json!({})).unwrap_or_default();
     let s = |k: &str| l[k].as_str().unwrap_or("").to_string();
-    link(app, ui, "external-link", tl!("ShibShib Website"), "help.appPage", &s("appPage"));
+    link(app, ui, "external-link", tl!("Creative Studio Website"), "help.appPage", &s("appPage"));
     link(app, ui, "git-branch", tl!("Source code on GitHub"), "help.github", &s("github"));
 }
 
@@ -78,9 +78,9 @@ mod tests {
             *opened.lock().unwrap(),
             [
                 "https://discord.gg/artcraft",
-                "https://shibshib.art",
-                "https://shibshib.art",
-                "https://github.com/7mz410/ShibShib-rsm"
+                "https://studio.creative.ps",
+                "https://studio.creative.ps",
+                "https://github.com/7mz410/CreativeStudio-rsm"
             ]
         );
         // The control channel / MCP path returns the URL without opening a browser.

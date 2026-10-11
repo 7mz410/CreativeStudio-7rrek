@@ -1,4 +1,4 @@
-//! ShibShib: right-to-left catalogs. egui shapes each word (so Arabic letters join) but lays the
+//! Creative Studio: right-to-left catalogs. egui shapes each word (so Arabic letters join) but lays the
 //! words of a line out left to right, so a right-to-left translation is stored with its words
 //! already in visual order: the Unicode bidirectional algorithm splits each line into runs, and
 //! the words inside every right-to-left run are reversed. Letters inside a word keep their
@@ -147,7 +147,7 @@ mod tests {
     #[test]
     fn arabic_words_are_reversed_latin_kept() {
         assert_eq!(visual("ملف جديد"), "جديد ملف");
-        assert_eq!(visual("أهلاً بك في ShibShib rsm"), "ShibShib rsm في بك أهلاً");
+        assert_eq!(visual("أهلاً بك في rsm"), "rsm في بك أهلاً");
         assert_eq!(visual("Open"), "Open");
         // A placeholder stays whole so it can still be filled in.
         assert_eq!(visual("{n} طبقة"), "طبقة {n}");
