@@ -204,3 +204,5 @@ python3 shibshib/ar-work/assemble.py                    # بناء ar.tsv
 - 2026-10-10 end of day: sf7aat web build/deploy started (gh-pages, sf7aat.shibshib.art). Next session: verify the site, switch the sf7aat card from "قريباً" to "جرّبه الآن", delete sf7aat/target.
 
 - 2026-10-11: الخط الإنجليزي للهوية صار **Bricolage Grotesque** (OFL، مجاني تجارياً) بدل Nobulina (رخصته شخصية بس، والتجارية 249$). الـ wordmark بكل اللوغوهات ExtraBold (outlines)، والموقع كله بالإنجليزي فيه. العربي ضل IBM Plex Sans Arabic. السكربت: `wm.py` (بالـ scratchpad، مش محفوظ). نسخ الويب والديسكتوب للبرامج بتاخذ اللوغو الجديد مع البناء الجاي.
+
+- 2026-10-11 قرارات حمزة: الأولوية نكبّر السويت. mzika وaswat بيستنّوا. ما في موعد إطلاق. الترتيب الجاي: trteeb (DesignCraft صار public، v0.6.0، MIT/Apache، فيه ويب) ← MCP موحّد ← 7rrek. sf7aat: انشال زر Discord (الشاشة الرئيسية والشريط العلوي).
