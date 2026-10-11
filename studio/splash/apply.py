@@ -71,6 +71,7 @@ def main():
     for app, (rel, colour) in APPS.items():
         logo = os.path.join(ROOT, "logos", "Creative_Studio", ("saf7at" if app == "sf7aat" else app) + ".svg")
         shoe = re.sub(r"<\?xml[^>]*\?>\s*", "", open(logo).read()).strip()
+        shoe = re.sub(r"<title>.*?</title>", "", shoe, flags=re.S)
         path = os.path.join(ROOT, rel)
         src = open(path).read()
         s = scene(app, shoe)
