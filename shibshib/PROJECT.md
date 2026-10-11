@@ -206,3 +206,5 @@ python3 shibshib/ar-work/assemble.py                    # بناء ar.tsv
 - 2026-10-11: الخط الإنجليزي للهوية صار **Bricolage Grotesque** (OFL، مجاني تجارياً) بدل Nobulina (رخصته شخصية بس، والتجارية 249$). الـ wordmark بكل اللوغوهات ExtraBold (outlines)، والموقع كله بالإنجليزي فيه. العربي ضل IBM Plex Sans Arabic. السكربت: `wm.py` (بالـ scratchpad، مش محفوظ). نسخ الويب والديسكتوب للبرامج بتاخذ اللوغو الجديد مع البناء الجاي.
 
 - 2026-10-11 قرارات حمزة: الأولوية نكبّر السويت. mzika وaswat بيستنّوا. ما في موعد إطلاق. الترتيب الجاي: trteeb (DesignCraft صار public، v0.6.0، MIT/Apache، فيه ويب) ← MCP موحّد ← 7rrek. sf7aat: انشال زر Discord (الشاشة الرئيسية والشريط العلوي).
+
+- 2026-10-11: storytold نزّلوا craft-launcher وsoundcraft وwordcraft وgridcraft وdeckcraft وcadcraft (كلها Apache-2.0، Rust). قرار حمزة: **aswat صار fork من soundcraft** (بدل Audacity). الترتيب: trteeb ← launcher باسم شبشب (يثبّت ويحدّث كل البرامج) ← aswat (soundcraft) ← MCP موحّد ← 7rrek. برامج المكتب (word/grid/deck) وcadcraft: لاحقاً، حمزة بيعمل أسماء وهويات. mzika لسا LMMS أو soundcraft، نقرر بعدين.
