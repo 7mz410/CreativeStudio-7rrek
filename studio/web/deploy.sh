@@ -8,7 +8,7 @@ for a in "$@"; do
   echo "===== $a"
   cd $CS/$a || continue
   case $a in
-    rsm) (cd apps/vectorcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
+    rsm|7rrek) (cd apps/vectorcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     tlween) (cd apps/photocraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     3urood) (cd apps/deckcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     arqam) (cd apps/gridcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
