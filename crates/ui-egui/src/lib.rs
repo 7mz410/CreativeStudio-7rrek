@@ -1253,11 +1253,17 @@ impl VectorcraftApp {
             if self.ui.screen_mode < 3 {
                 chrome::doc_tabs(self, ui);
             }
-            // 7rrek: the Timeline, under the canvas inside the document area.
+            // 7rrek: the Timeline takes a strip under the canvas inside the document area.
             if self.ui.screen_mode < 3 && self.session.active().is_some() {
-                timeline::timeline(self, ui);
+                let full = ui.available_rect_before_wrap();
+                let h = timeline::height(self).min(full.height() * 0.5);
+                let strip = egui::Rect::from_min_max(egui::pos2(full.min.x, full.max.y - h), full.max);
+                let above = egui::Rect::from_min_max(full.min, egui::pos2(full.max.x, full.max.y - h));
+                ui.scope_builder(egui::UiBuilder::new().max_rect(strip), |ui| timeline::timeline(self, ui));
+                ui.scope_builder(egui::UiBuilder::new().max_rect(above), |ui| canvas::show(self, ui));
+            } else {
+                canvas::show(self, ui);
             }
-            canvas::show(self, ui);
         });
         dock::floating_panel(self, &ctx);
         floating::show(self, &ctx);

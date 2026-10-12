@@ -30,6 +30,13 @@ fn playback_id() -> egui::Id {
     egui::Id::new("7rrek-playback")
 }
 
+/// The Timeline's height for the active document (its rows, up to [`MAX_ROWS_SHOWN`]).
+pub fn height(app: &VectorcraftApp) -> f32 {
+    let rows = app.session.active().map_or(1, |st| st.doc.layers.len());
+    BAR_H + RULER_H + rows.clamp(1, MAX_ROWS_SHOWN) as f32 * ROW_H + 6.0
+}
+
+/// Draw the Timeline filling `ui` (the caller gives it its strip of the window).
 pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     // Read the timeline straight from the document: a command call every frame would count as
     // activity (and, on macOS, rebuild the menus).
@@ -40,21 +47,20 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     let current = info["current"].as_u64().unwrap_or(1) as u32;
     let fps = info["fps"].as_u64().unwrap_or(12).max(1) as u32;
     let onion = info["onion"].as_bool().unwrap_or(false);
-    let shown = rows.len().clamp(1, MAX_ROWS_SHOWN) as f32;
-    let height = BAR_H + RULER_H + shown * ROW_H + 6.0;
 
     tick(app, ui, fps);
 
-    egui::Panel::bottom("timeline").exact_size(height).frame(egui::Frame::NONE.fill(t.panel).stroke(Stroke::new(1.0, t.border))).show(ui, |ui| {
-        ui.vertical(|ui| {
-            // The control bar gets its own strip; the grid scrolls in the space under it.
-            let (bar, _) = ui.allocate_exact_size(vec2(ui.available_width(), BAR_H), Sense::hover());
-            ui.scope_builder(egui::UiBuilder::new().max_rect(bar).layout(egui::Layout::left_to_right(egui::Align::Center)), |ui| {
-                controls(app, ui, &t, current, frames, fps, onion);
-            });
-            egui::ScrollArea::both().id_salt("timeline-grid").auto_shrink([false, false]).show(ui, |ui| {
-                grid(app, ui, &t, &rows, current, frames);
-            });
+    let full = ui.max_rect();
+    ui.painter().rect_filled(full, 0.0, t.panel);
+    ui.painter().line_segment([full.left_top(), full.right_top()], Stroke::new(1.0, t.border));
+    let bar = Rect::from_min_size(full.min, vec2(full.width(), BAR_H));
+    ui.scope_builder(egui::UiBuilder::new().max_rect(bar).layout(egui::Layout::left_to_right(egui::Align::Center)), |ui| {
+        controls(app, ui, &t, current, frames, fps, onion);
+    });
+    let below = Rect::from_min_max(pos2(full.min.x, bar.max.y), full.max);
+    ui.scope_builder(egui::UiBuilder::new().max_rect(below), |ui| {
+        egui::ScrollArea::both().id_salt("timeline-grid").auto_shrink([false, false]).show(ui, |ui| {
+            grid(app, ui, &t, &rows, current, frames);
         });
     });
 }
@@ -252,5 +258,39 @@ mod tests {
         }
         let now = app.run("anim.info", json!({})).unwrap()["current"].as_u64().unwrap();
         assert!(now > 8, "the playhead moved on from frame 8: {now}");
+    }
+}
+
+#[cfg(test)]
+mod snapshot_probe {
+    use serde_json::json;
+    use vectorcraft_engine::Session;
+
+    use crate::VectorcraftApp;
+
+    #[test]
+    #[ignore = "writes a PNG of the whole window for a look; run by hand"]
+    fn whole_window_png() {
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.run("file.new", json!({})).unwrap();
+        app.run("anim.keyframe", json!({"frame": 1})).unwrap();
+        app.run("shape.ellipse", json!({"x": 100, "y": 300, "width": 80, "height": 80})).unwrap();
+        app.run("anim.blankKeyframe", json!({"frame": 6})).unwrap();
+        let mut ready = false;
+        let mut h = egui_kittest::Harness::builder().with_size(egui::vec2(1000.0, 200.0)).wgpu().build_ui_state(
+            move |ui, app: &mut VectorcraftApp| {
+                if !ready {
+                    crate::theme::install_fonts(ui.ctx());
+                    crate::theme::apply(ui.ctx(), Default::default());
+                    ready = true;
+                    return;
+                }
+                egui::CentralPanel::default().show(ui, |ui| super::timeline(app, ui));
+            },
+            app,
+        );
+        h.run_steps(4);
+        let path = std::env::var("TIMELINE_PNG").unwrap_or_else(|_| "/tmp/timeline.png".into());
+        h.render().unwrap().save(path).unwrap();
     }
 }
