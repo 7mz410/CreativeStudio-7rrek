@@ -3023,7 +3023,7 @@
 	Vector Halftone	矢量半色调
 	Vector Halftone…	矢量半调…
 	Vector illustration — fast, open, scriptable.	矢量插画　—　快速、开放、可脚本化。
-	7rrek	7rrek
+	rsm	7rrek
 	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek 上次未正常退出。以下文档有未存储的更改：
 	7rrek Help…	7rrek 说明…
 	Creative Studio Website	getartcraft.com 上的 7rrek
@@ -3801,3 +3801,13 @@ lighting	Light	光源
 	They connect on this computer only.	它们仅在这台电脑上连接。
 	Adds this app to the agent's settings.	将本应用添加到智能体的设置中。
 	Restart the agent app afterwards.	之后请重启智能体应用。
+	Clear Keyframe	清除关键帧
+	Export Animated GIF…	导出动画 GIF…
+	Frame Rate	帧速率
+	Go to Frame	转到帧
+	Insert Blank Keyframe	插入空白关键帧
+	Insert Keyframe	插入关键帧
+	Next Frame	下一帧
+	Previous Frame	上一帧
+	Timeline	时间轴
+	Timeline Length	时间轴长度

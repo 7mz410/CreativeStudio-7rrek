@@ -18,6 +18,7 @@ pub mod background;
 mod brand;
 pub mod canvas;
 pub mod chrome;
+// 7rrek (Creative Studio): the animation timeline.
 mod clipboard_probe;
 pub mod community;
 pub mod control;
@@ -54,6 +55,7 @@ pub mod state;
 pub mod sysclip;
 pub mod theme;
 pub mod thumb_worker;
+pub mod timeline;
 pub mod titlebar;
 pub mod toolbar;
 mod touch;
@@ -1246,6 +1248,10 @@ impl VectorcraftApp {
         }
         if self.ui.dock && self.ui.screen_mode < 3 {
             dock::show(self, ui);
+        }
+        // 7rrek: the Timeline sits under the canvas, between the toolbar and the dock.
+        if self.ui.screen_mode < 3 && self.session.active().is_some() {
+            timeline::timeline(self, ui);
         }
         egui::CentralPanel::default().frame(egui::Frame::NONE.fill(t.pasteboard)).show(ui, |ui| {
             if self.ui.screen_mode < 3 {

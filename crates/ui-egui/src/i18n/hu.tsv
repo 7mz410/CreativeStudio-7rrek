@@ -4607,3 +4607,13 @@ theme	Appearance	Kinézet
 	They connect on this computer only.	Csak ezen a számítógépen csatlakoznak.
 	Adds this app to the agent's settings.	Hozzáadja ezt az alkalmazást az ügynök beállításaihoz.
 	Restart the agent app afterwards.	Utána indítsd újra az ügynökalkalmazást.
+	Clear Keyframe	Kulcskocka törlése
+	Export Animated GIF…	Animált GIF exportálása…
+	Frame Rate	Képkockasebesség
+	Go to Frame	Ugrás képkockára
+	Insert Blank Keyframe	Üres kulcskocka beszúrása
+	Insert Keyframe	Kulcskocka beszúrása
+	Next Frame	Következő képkocka
+	Previous Frame	Előző képkocka
+	Timeline	Idővonal
+	Timeline Length	Idővonal hossza

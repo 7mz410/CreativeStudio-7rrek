@@ -35,7 +35,7 @@ Upstream's own README, with the full feature list and build instructions, is in
 
 | App | What it's for | Based on |
 |---|---|---|
-| [rsm](https://github.com/7mz410/CreativeStudio-rsm) | Vector illustration | VectorCraft |
+| [rsm](https://github.com/7mz410/CreativeStudio-7rrek) | Vector illustration | VectorCraft |
 | [lamasat](https://github.com/7mz410/CreativeStudio-lamasat) | Photo library and raw development | LightCraft |
 | [tlween](https://github.com/7mz410/CreativeStudio-tlween) | Image editing | PhotoCraft |
 | [tsweer](https://github.com/7mz410/CreativeStudio-tsweer) | Video editing | FilmCraft |

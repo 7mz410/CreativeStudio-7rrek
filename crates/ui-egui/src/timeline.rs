@@ -1,0 +1,243 @@
+//! 7rrek (Creative Studio): the Timeline panel under the canvas.
+//!
+//! A thin view of `anim.info`: one row per top-level layer, a column per frame, a dot where a
+//! keyframe starts and a band while it holds, and the playhead. Everything it changes goes through
+//! the `anim.*` commands. Playback is view state kept in egui's memory: while it plays, the panel
+//! steps `anim.next` at the document's frame rate.
+
+use egui::{Align2, Color32, Rect, Sense, Stroke, Ui, pos2, vec2};
+use serde_json::{Value, json};
+
+use crate::VectorcraftApp;
+
+use crate::theme::{self, Tokens};
+
+const NAME_W: f32 = 140.0;
+const CELL_W: f32 = 14.0;
+const ROW_H: f32 = 20.0;
+const BAR_H: f32 = 30.0;
+const RULER_H: f32 = 16.0;
+const MAX_ROWS_SHOWN: usize = 6;
+
+#[derive(Clone, Copy, Default)]
+struct Playback {
+    playing: bool,
+    /// Seconds since the last step.
+    acc: f32,
+}
+
+fn playback_id() -> egui::Id {
+    egui::Id::new("7rrek-playback")
+}
+
+pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
+    // Read the timeline straight from the document: a command call every frame would count as
+    // activity (and, on macOS, rebuild the menus).
+    let Some(info) = app.session.active().map(|st| info_of(&st.doc)) else { return };
+    let t = Tokens::get(ui.ctx());
+    let rows = info["rows"].as_array().cloned().unwrap_or_default();
+    let frames = info["frames"].as_u64().unwrap_or(1).max(1) as u32;
+    let current = info["current"].as_u64().unwrap_or(1) as u32;
+    let fps = info["fps"].as_u64().unwrap_or(12).max(1) as u32;
+    let shown = rows.len().clamp(1, MAX_ROWS_SHOWN) as f32;
+    let height = BAR_H + RULER_H + shown * ROW_H + 6.0;
+
+    tick(app, ui, fps);
+
+    egui::Panel::bottom("timeline").exact_size(height).frame(egui::Frame::NONE.fill(t.panel).stroke(Stroke::new(1.0, t.border))).show(ui, |ui| {
+        controls(app, ui, &t, current, frames, fps);
+        egui::ScrollArea::both().id_salt("timeline-grid").auto_shrink([false, false]).show(ui, |ui| {
+            grid(app, ui, &t, &rows, current, frames);
+        });
+    });
+}
+
+fn info_of(doc: &vectorcraft_doc::Document) -> Value {
+    use vectorcraft_engine::cmd::anim::Anim;
+    let a = Anim::of(doc);
+    let rows: Vec<Value> = doc
+        .layers
+        .iter()
+        .rev()
+        .map(|r| {
+            let keys: Vec<Value> = a.row_keys(r).into_iter().map(|(f, id)| json!({"frame": f, "id": id.0})).collect();
+            json!({"id": r.id.0, "name": r.name.clone().unwrap_or_default(), "keys": keys})
+        })
+        .collect();
+    json!({"fps": a.fps, "frames": a.frames, "current": a.current, "rows": rows})
+}
+
+/// Step the playhead while playing.
+fn tick(app: &mut VectorcraftApp, ui: &Ui, fps: u32) {
+    let ctx = ui.ctx().clone();
+    let mut pb: Playback = ctx.data(|d| d.get_temp(playback_id())).unwrap_or_default();
+    if !pb.playing {
+        return;
+    }
+    pb.acc += ctx.input(|i| i.stable_dt).min(0.5);
+    let step = 1.0 / fps as f32;
+    if pb.acc >= step {
+        pb.acc %= step;
+        let _ = app.run("anim.next", json!({}));
+    }
+    ctx.data_mut(|d| d.insert_temp(playback_id(), pb));
+    ctx.request_repaint();
+}
+
+fn set_playing(ui: &Ui, on: bool) {
+    ui.ctx().data_mut(|d| d.insert_temp(playback_id(), Playback { playing: on, acc: 0.0 }));
+}
+
+fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32) {
+    let playing = ui.ctx().data(|d| d.get_temp::<Playback>(playback_id())).is_some_and(|p| p.playing);
+    ui.allocate_ui_with_layout(vec2(ui.available_width(), BAR_H), egui::Layout::left_to_right(egui::Align::Center), |ui| {
+        ui.add_space(8.0);
+        ui.label(egui::RichText::new("Timeline").font(theme::semibold(12.0)).color(t.text_strong));
+        ui.add_space(10.0);
+        if ui.small_button("⏮").on_hover_text("First Frame").clicked() {
+            let _ = app.run("anim.goto", json!({"frame": 1}));
+        }
+        if ui.small_button("◀").on_hover_text("Previous Frame").clicked() {
+            let _ = app.run("anim.prev", json!({}));
+        }
+        let play = if playing { "⏸" } else { "▶" };
+        if ui.small_button(play).on_hover_text(if playing { "Pause" } else { "Play" }).clicked() {
+            set_playing(ui, !playing);
+        }
+        if ui.small_button("▶|").on_hover_text("Next Frame").clicked() {
+            let _ = app.run("anim.next", json!({}));
+        }
+        if ui.small_button("⏭").on_hover_text("Last Frame").clicked() {
+            let _ = app.run("anim.goto", json!({"frame": frames}));
+        }
+        ui.add_space(8.0);
+        ui.label(egui::RichText::new(format!("{current} / {frames}")).size(12.0).color(t.text));
+        ui.add_space(12.0);
+        ui.label(egui::RichText::new("FPS").size(11.5).color(t.text_dim));
+        let mut f = fps;
+        if ui.add(egui::DragValue::new(&mut f).range(1..=60)).changed() {
+            let _ = app.run("anim.setFps", json!({"fps": f}));
+        }
+        ui.label(egui::RichText::new("Frames").size(11.5).color(t.text_dim));
+        let mut n = frames;
+        if ui.add(egui::DragValue::new(&mut n).range(1..=10_000)).changed() {
+            let _ = app.run("anim.setFrames", json!({"frames": n}));
+        }
+        ui.add_space(12.0);
+        if ui.button("Keyframe").on_hover_text("Insert Keyframe").clicked() {
+            run_reporting(app, "anim.keyframe");
+        }
+        if ui.button("Blank Keyframe").on_hover_text("Insert Blank Keyframe").clicked() {
+            run_reporting(app, "anim.blankKeyframe");
+        }
+        if ui.button("Clear Keyframe").clicked() {
+            run_reporting(app, "anim.removeKeyframe");
+        }
+    });
+}
+
+fn run_reporting(app: &mut VectorcraftApp, id: &str) {
+    if let Err(e) = app.run(id, json!({})) {
+        app.status(e);
+    }
+}
+
+fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], current: u32, frames: u32) {
+    let width = NAME_W + frames as f32 * CELL_W + 8.0;
+    let height = RULER_H + rows.len().max(1) as f32 * ROW_H;
+    let (area, resp) = ui.allocate_exact_size(vec2(width, height), Sense::click_and_drag());
+    let p = ui.painter_at(area);
+    let x0 = area.min.x + NAME_W;
+    let col = |f: u32| x0 + (f - 1) as f32 * CELL_W;
+
+    // Frame ruler: a tick per frame, numbers every 5.
+    for f in 1..=frames {
+        let x = col(f);
+        let major = f == 1 || f % 5 == 0;
+        p.line_segment([pos2(x, area.min.y + if major { 2.0 } else { 9.0 }), pos2(x, area.min.y + RULER_H)], Stroke::new(1.0, t.ruler_tick));
+        if major {
+            p.text(pos2(x + 2.0, area.min.y + 1.0), Align2::LEFT_TOP, f.to_string(), egui::FontId::proportional(9.5), t.text_dim);
+        }
+    }
+
+    for (i, row) in rows.iter().enumerate() {
+        let y = area.min.y + RULER_H + i as f32 * ROW_H;
+        let band = Rect::from_min_size(pos2(area.min.x, y), vec2(width, ROW_H));
+        p.rect_filled(band, 0.0, if i % 2 == 0 { t.panel } else { t.panel_darker });
+        let name = row["name"].as_str().unwrap_or("");
+        p.text(pos2(area.min.x + 8.0, y + ROW_H / 2.0), Align2::LEFT_CENTER, name, egui::FontId::proportional(11.5), t.text);
+        let keys: Vec<u32> = row["keys"].as_array().into_iter().flatten().filter_map(|k| k["frame"].as_u64()).map(|f| f as u32).collect();
+        for (k, f) in keys.iter().enumerate() {
+            let end = keys.get(k + 1).copied().unwrap_or(frames + 1);
+            let span = Rect::from_min_max(pos2(col(*f), y + 3.0), pos2(col(end), y + ROW_H - 3.0));
+            p.rect_filled(span, 3.0, t.accent.gamma_multiply(0.25));
+            p.circle_filled(pos2(col(*f) + CELL_W / 2.0, y + ROW_H / 2.0), 3.5, t.accent);
+        }
+    }
+
+    // The playhead.
+    let x = col(current) + CELL_W / 2.0;
+    p.line_segment([pos2(x, area.min.y), pos2(x, area.max.y)], Stroke::new(1.5, Color32::from_rgb(0xeb, 0x1b, 0x3c)));
+
+    // Click or drag on the frames: go there (and to that row's layer).
+    if let Some(pos) = resp.interact_pointer_pos().filter(|_| resp.clicked() || resp.dragged())
+        && pos.x >= x0
+    {
+        let f = (((pos.x - x0) / CELL_W).floor() as u32 + 1).clamp(1, frames);
+        if f != current {
+            set_playing(ui, false);
+            let _ = app.run("anim.goto", json!({"frame": f}));
+        }
+        let i = ((pos.y - area.min.y - RULER_H) / ROW_H).floor();
+        if resp.clicked()
+            && i >= 0.0
+            && let Some(id) = rows.get(i as usize).and_then(|r| r["id"].as_u64())
+        {
+            let _ = app.run("layer.setCurrent", json!({"id": id}));
+            let _ = app.run("anim.goto", json!({"frame": f}));
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+    use vectorcraft_engine::Session;
+
+    use crate::VectorcraftApp;
+    use crate::tests_labels::painted_text;
+
+    fn app_with_keys() -> VectorcraftApp {
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.run("file.new", json!({"width": 300, "height": 300})).unwrap();
+        app.run("anim.keyframe", json!({"frame": 1})).unwrap();
+        app.run("shape.ellipse", json!({"x": 20, "y": 20, "width": 40, "height": 40})).unwrap();
+        app.run("anim.blankKeyframe", json!({"frame": 6})).unwrap();
+        app.run("anim.goto", json!({"frame": 8})).unwrap();
+        app
+    }
+
+    #[test]
+    fn the_timeline_shows_rows_frames_and_controls() {
+        let mut app = app_with_keys();
+        let text = painted_text(&mut app, super::timeline);
+        for s in ["Timeline", "8 / 24", "Keyframe", "Blank Keyframe", "Clear Keyframe", "Layer 1", "1", "5", "10"] {
+            assert!(text.lines().any(|l| l == s), "{s} in {text}");
+        }
+    }
+
+    #[test]
+    fn playing_steps_frames_at_the_frame_rate() {
+        let mut app = app_with_keys();
+        app.run("anim.setFps", json!({"fps": 10})).unwrap();
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        ctx.data_mut(|d| d.insert_temp(super::playback_id(), super::Playback { playing: true, acc: 0.0 }));
+        for _ in 0..3 {
+            let input = egui::RawInput { predicted_dt: 0.1, ..Default::default() };
+            ctx.run_ui(input, |ui| super::timeline(&mut app, ui)).textures_delta.clear();
+        }
+        let now = app.run("anim.info", json!({})).unwrap()["current"].as_u64().unwrap();
+        assert!(now > 8, "the playhead moved on from frame 8: {now}");
+    }
+}

@@ -60,3 +60,8 @@ python3 studio/rebrand.py      # re-apply the branding
   `anim.goto` / `next` / `prev` (view state), `anim.keyframe`, `anim.blankKeyframe`,
   `anim.removeKeyframe`, `anim.setFps`, `anim.setFrames`, `anim.exportGif`. The timing is kept in
   the document's preserved extra data (`"animation"`), so the file format is unchanged.
+- Timeline panel (`crates/ui-egui/src/timeline.rs`) under the canvas: play/pause at the frame
+  rate, first/previous/next/last frame, frame rate and length, Insert Keyframe / Blank Keyframe /
+  Clear Keyframe, a row per top-level layer with keyframe dots, hold bands and the playhead;
+  clicking a frame goes there and to that row's layer. Labels of the new commands in every
+  complete catalog (`studio/i18n/*.tsv`).

@@ -141,13 +141,13 @@ pub fn specs() -> Vec<CommandSpec> {
     vec![
         cmd!(query "anim.info", "Timeline", [], None, "{} → {fps, frames, current, rows: [{id, name, keys: [{frame, id}]}]}", has_doc, info),
         cmd!(query "anim.goto", "Go to Frame", [], None, "{frame} show a frame (1-based). View state: not an undo step → {frame}", has_doc, goto),
-        cmd!(query "anim.next", "Next Frame", ["Animation"], Some("."), "{} the next frame, wrapping to the first. View state: not an undo step → {frame}", has_doc, next),
-        cmd!(query "anim.prev", "Previous Frame", ["Animation"], Some(","), "{} the previous frame, wrapping to the last. View state: not an undo step → {frame}", has_doc, prev),
+        cmd!(query "anim.next", "Next Frame", [], None, "{} the next frame, wrapping to the first. View state: not an undo step → {frame}", has_doc, next),
+        cmd!(query "anim.prev", "Previous Frame", [], None, "{} the previous frame, wrapping to the last. View state: not an undo step → {frame}", has_doc, prev),
         cmd!(
             "anim.keyframe",
             "Insert Keyframe",
-            ["Animation"],
-            Some("F6"),
+            [],
+            None,
             "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), blank?: bool} a keyframe in the row at the frame: a copy of the art in effect there, or empty with `blank` → {id, frame}",
             has_doc,
             keyframe
@@ -155,8 +155,8 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "anim.blankKeyframe",
             "Insert Blank Keyframe",
-            ["Animation"],
-            Some("F7"),
+            [],
+            None,
             "{row?, frame?} as anim.keyframe with blank: true → {id, frame}",
             has_doc,
             blank_keyframe
@@ -164,8 +164,8 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "anim.removeKeyframe",
             "Clear Keyframe",
-            ["Animation"],
-            Some("Shift+F6"),
+            [],
+            None,
             "{row?, frame?} delete the row's keyframe at the frame and its art → {deleted}",
             has_doc,
             remove_keyframe
@@ -175,7 +175,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             query "anim.exportGif",
             "Export Animated GIF…",
-            ["File", "Export"],
+            [],
             None,
             "{path, scale?: (default 1), artboard?: index (default 0), from?, to?} every frame of the artboard as an animated GIF at the frame rate → {path, frames, width, height}",
             has_doc,

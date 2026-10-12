@@ -4182,3 +4182,13 @@ lighting	Light	الضوء
 @msg	the file stopped being read (please report this bug)	توقفت قراءة الملف (يرجى الإبلاغ عن هذا الخطأ)
 	Concentric Dividers:	فواصل متحدة المركز:
 	Radial Dividers:	فواصل شعاعية:
+	Clear Keyframe	مسح الإطار المفتاحي
+	Export Animated GIF…	تصدير GIF متحرك…
+	Frame Rate	معدل الإطارات
+	Go to Frame	الانتقال إلى إطار
+	Insert Blank Keyframe	إدراج إطار مفتاحي فارغ
+	Insert Keyframe	إدراج إطار مفتاحي
+	Next Frame	الإطار التالي
+	Previous Frame	الإطار السابق
+	Timeline	الخط الزمني
+	Timeline Length	طول الخط الزمني

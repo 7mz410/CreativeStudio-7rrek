@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parent.parent
 NAME, NAME_AR = '7rrek', 'حرّك'
 
 EXACT = [
-    ('CreativeStudio-rsm', 'CreativeStudio-7rrek'),
-    ('rsm.studio.creative.ps', '7rrek.studio.creative.ps'),
-    ('ps.creative.studio.rsm', 'ps.creative.studio.7rrek'),
-    ('"studio-rsm"', '"studio-7rrek"'),
+    ('CreativeStudio-' + 'rsm', 'CreativeStudio-7rrek'),
+    ('rsm' + '.studio.creative.ps', '7rrek.studio.creative.ps'),
+    ('ps.creative.studio.' + 'rsm', 'ps.creative.studio.7rrek'),
+    ('"studio-' + 'rsm"', '"studio-7rrek"'),
 ]
 # The app's name, not the `.rsm` extension: `"rsm"` alone (an extension list entry), `.rsm`,
 # `rsm-document` and `rsm/` paths are left as they are.
@@ -49,7 +49,7 @@ def main():
     tracked = subprocess.run(['git', '-C', str(ROOT), 'ls-files'], capture_output=True, text=True).stdout.split()
     for rel in tracked:
         p = ROOT / rel
-        if not p.is_file() or rel.startswith('studio/ar-work') or p.suffix in ('.png', '.icns', '.ico', '.ttf', '.otf'):
+        if not p.is_file() or rel.startswith('studio/ar-work') or rel == 'studio/anim_brand.py' or p.suffix in ('.png', '.icns', '.ico', '.ttf', '.otf'):
             continue
         try:
             s = p.read_text(encoding='utf-8')
@@ -59,13 +59,13 @@ def main():
         for a, b in EXACT:
             o = o.replace(a, b)
         if rel.endswith('.rs') and (rel.startswith('crates/ui-egui/') or rel.startswith('apps/') or rel in (
-                'crates/engine/src/cmd/help.rs',)):
+                'crates/engine/src/cmd/help.rs', 'crates/engine/src/cmd/fileio/mod.rs')):
             o = code(o)
         elif rel.startswith('crates/ui-egui/src/i18n/') and rel.endswith('.tsv'):
             rows = []
             for line in o.split('\n'):
                 cells = line.split('\t')
-                if len(cells) >= 3 and not line.startswith('#'):
+                if len(cells) >= 3 and not line.startswith('#') and cells[1] != 'rsm':
                     named = APP.search(cells[1]) is not None
                     cells = [cells[0]] + [rename_app(c) for c in cells[1:]]
                     if rel.endswith('/ar.tsv') and named:

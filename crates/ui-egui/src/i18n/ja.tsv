@@ -4203,3 +4203,13 @@ lighting	Light	ライト
 	They connect on this computer only.	接続はこのコンピュータ内に限られます。
 	Adds this app to the agent's settings.	このアプリをエージェントの設定に追加します。
 	Restart the agent app afterwards.	追加後にエージェントアプリを再起動してください。
+	Clear Keyframe	キーフレームを消去
+	Export Animated GIF…	アニメーション GIF を書き出し…
+	Frame Rate	フレームレート
+	Go to Frame	フレームへ移動
+	Insert Blank Keyframe	空白キーフレームを挿入
+	Insert Keyframe	キーフレームを挿入
+	Next Frame	次のフレーム
+	Previous Frame	前のフレーム
+	Timeline	タイムライン
+	Timeline Length	タイムラインの長さ
