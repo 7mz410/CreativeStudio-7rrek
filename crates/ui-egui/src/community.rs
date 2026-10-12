@@ -80,7 +80,7 @@ mod tests {
                 "https://discord.gg/artcraft",
                 "https://studio.creative.ps",
                 "https://studio.creative.ps",
-                "https://github.com/7mz410/CreativeStudio-rsm"
+                "https://github.com/7mz410/CreativeStudio-7rrek"
             ]
         );
         // The control channel / MCP path returns the URL without opening a browser.

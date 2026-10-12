@@ -88,7 +88,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	Une valeur faible suit le contour de près ; une valeur élevée donne moins de points et des courbes plus lisses.
 	A new preset starting from the selected one	Un nouveau paramètre prédéfini basé sur celui sélectionné
 	A saved copy of the selected preset	Une copie enregistrée du paramètre prédéfini sélectionné
-	About rsm	À propos de rsm
+	About 7rrek	À propos de 7rrek
 	above	au-dessus
 	Absolute Position	Position absolue
 	Accurate	Précis
@@ -191,7 +191,7 @@
 	Appearance Panel	Panneau Aspect
 	Appearance panel	Panneau Aspect
 	Applies when the linked file is relinked or updated.	S’applique lorsque le fichier lié est de nouveau lié ou mis à jour.
-	Applies the next time rsm starts.	S’applique au prochain démarrage de rsm.
+	Applies the next time 7rrek starts.	S’applique au prochain démarrage de 7rrek.
 	Apply	Appliquer
 	Apply Brush	Appliquer la forme
 	Apply Character Style	Appliquer le style de caractère
@@ -2084,7 +2084,7 @@
 	Quarter Space	Quart d’espace
 	Quick Actions	Actions rapides
 	Quickly start a new file	Commencer rapidement un nouveau fichier
-	Quit rsm	Quitter rsm
+	Quit 7rrek	Quitter 7rrek
 	Radar Graph Tool	Outil Graphe radar
 	Radial	Radial
 	Radial Glows	Halos radiaux
@@ -2208,7 +2208,7 @@
 	{count} folder(s) or file(s) couldn't be read	{count} dossier(s) ou fichier(s) illisible(s)
 	The search stopped at its limit: search a smaller folder.	La recherche s’est arrêtée à sa limite : recherchez dans un dossier plus petit.
 	Copy only fonts you own or are licensed to install.	Ne copiez que des polices qui vous appartiennent ou dont la licence vous autorise l’installation.
-	rsm copies the fonts to {folder}.	rsm copie les polices dans {folder}.
+	7rrek copies the fonts to {folder}.	7rrek copie les polices dans {folder}.
 	Registered Trademark Symbol	Symbole de marque déposée
 	Registration marks	Repères de montage
 	Registry name:	Nom du registre :
@@ -2315,7 +2315,7 @@
 	Revert	Version précédente
 	Revert to the saved version of “{name}”?	Revenir à la version enregistrée de « {name} » ?
 	Replace “{name}”, the file this document was opened from?	Remplacer « {name} », le fichier à partir duquel ce document a été ouvert ?
-	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Son ouverture a laissé de côté ce que rsm ne sait pas encore lire ({what}) : le remplacer le perd définitivement. Enregistrez sous un autre nom pour le conserver.
+	Opening it left out what 7rrek can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Son ouverture a laissé de côté ce que 7rrek ne sait pas encore lire ({what}) : le remplacer le perd définitivement. Enregistrez sous un autre nom pour le conserver.
 	Revolve…	Révolution…
 	RGB Color	Couleur RVB
 	Right	Droite
@@ -3130,10 +3130,10 @@
 	Vector Halftone	Trame de demi-teintes vectorielle
 	Vector Halftone…	Trame de demi-teintes vectorielle…
 	Vector illustration — fast, open, scriptable.	Illustration vectorielle — rapide, ouverte, scriptable.
-	rsm didn't quit normally last time. These documents had unsaved changes:	rsm ne s’est pas fermé normalement la dernière fois. Ces documents comportaient des modifications non enregistrées :
-	rsm Help…	Aide de rsm…
-	Creative Studio Website	rsm sur getartcraft.com
-	rsm on GitHub	rsm sur GitHub
+	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek ne s’est pas fermé normalement la dernière fois. Ces documents comportaient des modifications non enregistrées :
+	7rrek Help…	Aide de 7rrek…
+	Creative Studio Website	7rrek sur getartcraft.com
+	7rrek on GitHub	7rrek sur GitHub
 	Vectors	Vecteurs
 	Version {version} — open-source vector illustration in pure Rust.	Version {version} — illustration vectorielle open source en pur Rust.
 	Version:	Version :
@@ -3173,7 +3173,7 @@
 	Web Snap:	Magnétisme Web :
 	Weight	Épaisseur
 	Weight:	Épaisseur :
-	Welcome to rsm	Bienvenue dans rsm
+	Welcome to 7rrek	Bienvenue dans 7rrek
 	When pasting text	Lors du collage de texte
 	White	Blanc
 	Widget Position:	Position du widget :
@@ -3685,7 +3685,7 @@ axis	Both	Les deux
 @msg	node {_1} is not text	le nœud {_1} n’est pas du texte
 @msg	not a DXF drawing	ce n’est pas un dessin DXF
 @msg	not a VectorCraft file: {0}	ce n’est pas un fichier VectorCraft : {0}
-@msg	not a rsm shortcut set (missing `overrides`)	ce n’est pas un jeu de raccourcis rsm (`overrides` manquant)
+@msg	not a 7rrek shortcut set (missing `overrides`)	ce n’est pas un jeu de raccourcis 7rrek (`overrides` manquant)
 @msg	not a graphic style library (format `{_1}`)	ce n’est pas une bibliothèque de styles graphiques (format `{_1}`)
 @msg	not a stored central record	ce n’est pas un enregistrement central stocké
 @msg	not a valid plug-in module: {0}	ce n’est pas un module de plug-in valide : {0}
@@ -3965,7 +3965,7 @@ axis	Both	Les deux
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	Services
-	Hide rsm	Masquer rsm
+	Hide 7rrek	Masquer 7rrek
 	Zoom	Zoom
 	Bring All to Front	Tout ramener au premier plan
 	Settings	Réglages
@@ -3973,7 +3973,7 @@ axis	Both	Les deux
 	On: one locked object showing the document, updated when it changes.	Activé : un objet verrouillé qui affiche le document et se met à jour quand celui-ci change.
 	Off: an editable copy of its art, embedded in this document.	Désactivé : une copie modifiable de son illustration, incorporée dans ce document.
 	Images: link to the file instead of only embedding it.	Images : lier le fichier au lieu de seulement l’incorporer.
-	rsm documents: one locked object, updated when the file changes.	Documents rsm : un objet verrouillé, mis à jour quand le fichier change.
+	7rrek documents: one locked object, updated when the file changes.	Documents 7rrek : un objet verrouillé, mis à jour quand le fichier change.
 	A file dialog is open: choose there first	Une boîte de dialogue de fichiers est ouverte : faites d’abord votre choix dans celle-ci
 	The document was closed while its file dialog was open	Le document a été fermé pendant que sa boîte de dialogue de fichiers était ouverte
 	The dialog was closed before its file dialog answered	La boîte de dialogue a été fermée avant la réponse de sa boîte de dialogue de fichiers

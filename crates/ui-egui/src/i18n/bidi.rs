@@ -147,7 +147,7 @@ mod tests {
     #[test]
     fn arabic_words_are_reversed_latin_kept() {
         assert_eq!(visual("ملف جديد"), "جديد ملف");
-        assert_eq!(visual("أهلاً بك في rsm"), "rsm في بك أهلاً");
+        assert_eq!(visual("أهلاً بك في 7rrek"), "7rrek في بك أهلاً");
         assert_eq!(visual("Open"), "Open");
         // A placeholder stays whole so it can still be filled in.
         assert_eq!(visual("{n} طبقة"), "طبقة {n}");

@@ -366,7 +366,7 @@ pub fn export_json(set: &str, overrides: &BTreeMap<String, String>) -> Value {
 }
 
 pub fn import_json(v: &Value) -> Result<(String, BTreeMap<String, String>), String> {
-    let o = v.get("overrides").and_then(Value::as_object).ok_or("not a rsm shortcut set (missing `overrides`)")?;
+    let o = v.get("overrides").and_then(Value::as_object).ok_or("not a 7rrek shortcut set (missing `overrides`)")?;
     let mut out = BTreeMap::new();
     for (k, v) in o {
         let s = v.as_str().ok_or_else(|| format!("shortcut for `{k}` must be a string"))?;
@@ -458,7 +458,7 @@ pub fn run_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Resu
         "shortcuts.export" => {
             let v = export_json(&app.ui.shortcut_set, &app.ui.shortcut_overrides);
             let bytes = serde_json::to_vec_pretty(&v).unwrap_or_default();
-            let path = s("path").or_else(|| crate::picks::save(app, &crate::FilePick::named("rsm Shortcuts.json")));
+            let path = s("path").or_else(|| crate::picks::save(app, &crate::FilePick::named("7rrek Shortcuts.json")));
             match path {
                 Some(path) => match app.services.write.as_mut() {
                     Some(w) => w(&path, &bytes).map(|_| json!({"path": path})),
@@ -468,7 +468,7 @@ pub fn run_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Resu
                 None if app.file_dialog_open() => Err("cancelled".into()),
                 None => match app.services.download.as_mut() {
                     Some(dl) => {
-                        dl("rsm Shortcuts.json", &bytes);
+                        dl("7rrek Shortcuts.json", &bytes);
                         Ok(Value::Null)
                     }
                     None => Ok(v),

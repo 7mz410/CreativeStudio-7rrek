@@ -15,7 +15,7 @@ use vectorcraft_ui_egui::agents::{AgentApp, AgentsService};
 /// The port agents connect to (`vectorcraft-cli mcp` tries it first).
 pub const PORT: u16 = 7979;
 /// Our entry in an agent app's `mcpServers`.
-const SERVER_NAME: &str = "studio-rsm";
+const SERVER_NAME: &str = "studio-7rrek";
 
 pub struct Agents {
     settings: Option<PathBuf>,

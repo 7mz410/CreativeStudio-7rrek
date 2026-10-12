@@ -23,7 +23,7 @@
 	Paste Design	Vložit návrh
 	Select Unused	Vybrat nepoužité
 	Glowing Edges…	Zářící okraje…
-	About rsm	O aplikaci rsm
+	About 7rrek	O aplikaci 7rrek
 	Align to Path	Zarovnat k cestě
 	Cut Path at Selected Anchor Points	Rozdělit cestu ve vybraných kotevních bodech
 	Upstream Community on Discord	Připojit se k našemu Discordu
@@ -33,7 +33,7 @@
 	Medium Dark	Středně tmavý
 	Medium Light	Středně světlý
 	Light	Světlý
-	Quit rsm	Ukončit rsm
+	Quit 7rrek	Ukončit 7rrek
 	File	Soubor
 	New…	Nový…
 	New from Template…	Nový ze šablony…
@@ -598,10 +598,10 @@
 	Symbol Libraries	Knihovny symbolů
 	Help	Nápověda
 	Creative Studio Project	Web ArtCraft
-	Creative Studio Website	rsm na getartcraft.com
-	rsm on GitHub	rsm na GitHubu
+	Creative Studio Website	7rrek na getartcraft.com
+	7rrek on GitHub	7rrek na GitHubu
 	Search Commands…	Hledat příkazy…
-	rsm Help…	Nápověda rsm…
+	7rrek Help…	Nápověda 7rrek…
 	Automatic	Automaticky
 	Isolate Selected Group	Izolovat vybranou skupinu
 	Exit Isolation Mode	Ukončit izolovaný režim
@@ -654,7 +654,7 @@
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	Služby
-	Hide rsm	Skrýt rsm
+	Hide 7rrek	Skrýt 7rrek
 	Hide Others	Skrýt ostatní
 	Minimize	Minimalizovat
 	Zoom	Zvětšení
@@ -2044,7 +2044,7 @@ lighting	Light	Světlo
 	{count} folder(s) or file(s) couldn't be read	Nepodařilo se přečíst složek nebo souborů: {count}
 	The search stopped at its limit: search a smaller folder.	Hledání se zastavilo na limitu: prohledejte menší složku.
 	Copy only fonts you own or are licensed to install.	Kopírujte jen písma, která vlastníte nebo máte licenci instalovat.
-	rsm copies the fonts to {folder}.	rsm zkopíruje písma do {folder}.
+	7rrek copies the fonts to {folder}.	7rrek zkopíruje písma do {folder}.
 	Apply to All ({count} more missing)	Použít na všechny (chybí ještě {count})
 	Ignore	Ignorovat
 	Linked File Not Found	Propojený soubor nebyl nalezen
@@ -2132,7 +2132,7 @@ lighting	Light	Světlo
 	On: one locked object showing the document, updated when it changes.	Zapnuto: jeden zamčený objekt zobrazující dokument, aktualizovaný při jeho změně.
 	Off: an editable copy of its art, embedded in this document.	Vypnuto: upravitelná kopie jeho kresby vložená do tohoto dokumentu.
 	Images: link to the file instead of only embedding it.	Obrázky: propojit se souborem místo pouhého vložení.
-	rsm documents: one locked object, updated when the file changes.	Dokumenty rsm: jeden zamčený objekt, aktualizovaný při změně souboru.
+	7rrek documents: one locked object, updated when the file changes.	Dokumenty 7rrek: jeden zamčený objekt, aktualizovaný při změně souboru.
 	Alignment:	Zarovnání:
 	Applies when the linked file is relinked or updated.	Platí při opětovném propojení nebo aktualizaci propojeného souboru.
 	Bounds (Fill Proportionally)	Hranice (vyplnit proporcionálně)
@@ -2258,7 +2258,7 @@ lighting	Light	Světlo
 	3 Color Job	Zakázka se 3 barvami
 	Recover Documents	Obnovit dokumenty
 	Restored documents open unsaved: save them to keep them.	Obnovené dokumenty se otevřou neuložené: pokud je chcete zachovat, uložte je.
-	rsm didn't quit normally last time. These documents had unsaved changes:	rsm se minule neukončil normálně. Tyto dokumenty měly neuložené změny:
+	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek se minule neukončil normálně. Tyto dokumenty měly neuložené změny:
 	Do you want to save the changes you made to “{name}”?	Chcete uložit změny provedené v dokumentu „{name}“?
 	Don't Save	Neukládat
 	Your changes will be lost if you don't save them.	Pokud změny neuložíte, budou ztraceny.
@@ -3313,7 +3313,7 @@ effect	Regular	Pravidelný
 	Quickly start a new file	Rychle začít nový soubor
 	Recent Files	Nedávné soubory
 	Vector illustration — fast, open, scriptable.	Vektorová ilustrace — rychlá, otevřená, skriptovatelná.
-	Welcome to rsm	Vítejte ve rsmu
+	Welcome to 7rrek	Vítejte ve rsmu
 	Discord	Discord
 	Join our Discord	Připojit se k našemu Discordu
 	Join the ArtCraft community on Discord (discord.gg/artcraft)	Připojte se ke komunitě ArtCraft na Discordu (discord.gg/artcraft)
@@ -3359,7 +3359,7 @@ effect	Regular	Pravidelný
 	Opened with {} note(s): {}	Otevřeno, poznámky ({}): {}
 	Revert to the saved version of “{name}”?	Vrátit se k uložené verzi dokumentu „{name}“?
 	Replace “{name}”, the file this document was opened from?	Nahradit „{name}“, soubor, ze kterého byl tento dokument otevřen?
-	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Při otevírání bylo vynecháno, co rsm zatím neumí přečíst ({what}), takže nahrazením se to nenávratně ztratí. Chcete-li to zachovat, uložte dokument pod jiným názvem.
+	Opening it left out what 7rrek can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Při otevírání bylo vynecháno, co 7rrek zatím neumí přečíst ({what}), takže nahrazením se to nenávratně ztratí. Chcete-li to zachovat, uložte dokument pod jiným názvem.
 	Saved {path}	Uloženo: {path}
 	Saved {path} with {} note(s): {first}	Uloženo: {path}, poznámky ({}): {first}
 	Saving	Ukládání
@@ -3368,7 +3368,7 @@ effect	Regular	Pravidelný
 	Dashed Line	Čárkovaná čára
 	Panel menu	Nabídka panelu
 	Unembed…	Zrušit vložení…
-	Applies the next time rsm starts.	Projeví se při příštím spuštění rsmu.
+	Applies the next time 7rrek starts.	Projeví se při příštím spuštění rsmu.
 	Enable Contextual Task Bar	Povolit kontextový panel úloh
 	Next	Další
 	OK	OK
@@ -3874,7 +3874,7 @@ effect	Regular	Pravidelný
 @msg	node {_1} is not text	uzel {_1} není text
 @msg	not a DXF drawing	nejde o výkres DXF
 @msg	not a VectorCraft file: {0}	nejde o soubor VectorCraft: {0}
-@msg	not a rsm shortcut set (missing `overrides`)	nejde o sadu klávesových zkratek rsm (chybí `overrides`)
+@msg	not a 7rrek shortcut set (missing `overrides`)	nejde o sadu klávesových zkratek 7rrek (chybí `overrides`)
 @msg	not a graphic style library (format `{_1}`)	nejde o knihovnu grafických stylů (formát `{_1}`)
 @msg	not a stored central record	nejde o uložený centrální záznam
 @msg	not a valid plug-in module: {0}	neplatný modul zásuvného modulu: {0}
@@ -4483,7 +4483,7 @@ file-filter	PDF presets	Přednastavení PDF
 file-filter	Print presets	Přednastavení tisku
 file-filter	SVG Compressed	Komprimované SVG
 file-filter	PDF-compatible .ai	.ai kompatibilní s PDF
-file-filter	rsm Template	Šablona rsm
+file-filter	7rrek Template	Šablona 7rrek
 file-filter	Templates	Šablony
 diagnostics	render	vykreslení
 diagnostics	ui	rozhraní

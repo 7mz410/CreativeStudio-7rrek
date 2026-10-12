@@ -364,10 +364,10 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{} opens the Save PDF dialog; with params = document.exportPdf options written to path (asked when missing; viewAfterSaving opens the file) → {path, bytes, warnings}",
     ),
-    ("help.about", "About rsm", "", "{}"),
+    ("help.about", "About 7rrek", "", "{}"),
     ("help.agents", "AI Agents…", "", "{} opens the AI Agents window: allow agents to control the app, connect agent apps"),
     ("help.commandPalette", "Search Commands…", "Cmd+Shift+/", "{}"),
-    ("app.quit", "Quit rsm", "Cmd+Q", "{}"),
+    ("app.quit", "Quit 7rrek", "Cmd+Q", "{}"),
     (
         "ui.swatchOptions",
         "Swatch Options…",
@@ -2034,7 +2034,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
             // Quit from File, Language and Appearance synthesized). It stays first: `from_tree`
             // gives the first menu the App role.
             "rsm",
-            vec![c("About rsm", "help.about"), c("Upstream Community on Discord", "help.discord")],
+            vec![c("About 7rrek", "help.about"), c("Upstream Community on Discord", "help.discord")],
         ),
         (
             "File",
@@ -2664,13 +2664,13 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 c("Upstream Community on Discord", "help.discord"),
                 c("Creative Studio Project", "help.website"),
                 c("Creative Studio Website", "help.appPage"),
-                c("rsm on GitHub", "help.github"),
+                c("7rrek on GitHub", "help.github"),
                 Sep,
                 c("AI Agents…", "help.agents"),
                 c("Search Commands…", "help.commandPalette"),
-                todos("rsm Help…", "F1"),
+                todos("7rrek Help…", "F1"),
                 Sep,
-                c("About rsm", "help.about"),
+                c("About 7rrek", "help.about"),
             ],
         ),
     ]

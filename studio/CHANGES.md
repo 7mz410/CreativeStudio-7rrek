@@ -1,4 +1,8 @@
-# rsm changes to VectorCraft
+# 7rrek: changes from upstream VectorCraft
+
+7rrek (حرّك) starts from rsm, the Creative Studio fork of VectorCraft: everything below came with
+it, and `studio/anim_brand.py` gives it its own name over rsm's (the `.rsm` document format is
+shared). Animation work is listed in the 7rrek section at the end.
 
 rsm is a fork of [VectorCraft](https://github.com/storytold/vectorcraft) by the ArtCraft
 team. As the Apache License 2.0 asks, this file lists what the fork changes. Upstream code keeps
@@ -8,7 +12,7 @@ its copyright and licence (MIT OR Apache-2.0); see `NOTICE`.
 
 - App name in the interface, window title, macOS menus and About box: "rsm".
 - App icon: the rsm mark (`docs/studio/`), regenerated with `packaging/icons.sh`.
-- macOS bundle name and identifier (`ps.creative.studio.rsm`).
+- macOS bundle name and identifier (`ps.creative.studio.7rrek`).
 - Help menu links point to the rsm repository.
 - Upstream's ArtCraft brand files (`docs/brand/`) are removed.
 - The upstream community Discord button (title bar, start screen) and the ArtCraft website link are
@@ -47,3 +51,7 @@ python3 studio/rebrand.py      # re-apply the branding
   choice is saved in `studio-agents.json` next to the preferences), and add the app's MCP server
   to Claude Desktop, Claude Code or Gemini CLI. Strings for other languages: `studio/i18n/`.
 - Checkboxes and radio buttons put their box on the right in the right-to-left interface.
+
+## 7rrek
+
+- Name 7rrek (حرّك), icon and links (`studio/anim_brand.py`, `docs/studio/7rrek.svg`).

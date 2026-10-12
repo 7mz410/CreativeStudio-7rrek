@@ -9,7 +9,7 @@ rsm is a soft fork: upstream moves fast, and our changes are kept small so merge
 easy. The branding is applied by a script after each merge rather than by hand-edited conflicts,
 because re-running the script is reliable and conflicts in renamed strings are noisy.
 
-Repo: `~/Documents/CreativeStudio/rsm` (`origin` = 7mz410/CreativeStudio-rsm, `upstream` = storytold/vectorcraft).
+Repo: `~/Documents/CreativeStudio/rsm` (`origin` = 7mz410/CreativeStudio-7rrek, `upstream` = storytold/vectorcraft).
 Read `studio/PROJECT.md` first if this session hasn't.
 
 ## Steps

@@ -46,7 +46,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	القيمة الأقل تتبع الخط بدقة؛ والأعلى تعطي نقاطاً أقل ومنحنيات أنعم.
 	A new preset starting from the selected one	إعداد جديد يبدأ من الإعداد المحدد
 	A saved copy of the selected preset	نسخة محفوظة من الإعداد المحدد
-	About rsm	حول رسم
+	About 7rrek	حول حرّك
 	above	أعلى
 	Absolute Position	موضع مطلق
 	Accurate	دقيق
@@ -149,7 +149,7 @@
 	Appearance Panel	لوحة المظهر
 	Appearance panel	لوحة المظهر
 	Applies when the linked file is relinked or updated.	يُطبَّق عند إعادة ربط الملف المرتبط أو تحديثه.
-	Applies the next time rsm starts.	يُطبَّق عند تشغيل رسم في المرة القادمة.
+	Applies the next time 7rrek starts.	يُطبَّق عند تشغيل حرّك في المرة القادمة.
 	Apply Brush	تطبيق الفرشاة
 	Apply Character Style	تطبيق نمط الحروف
 	Apply Effect	تطبيق التأثير
@@ -1942,7 +1942,7 @@
 	Quarter Space	ربع مسافة
 	Quick Actions	إجراءات سريعة
 	Quickly start a new file	ابدأ ملفاً جديداً بسرعة
-	Quit rsm	إنهاء رسم
+	Quit 7rrek	إنهاء حرّك
 	Radar Graph Tool	أداة الرسم البياني الراداري
 	Radial	شعاعي
 	Radial Glows	توهجات شعاعية
@@ -2140,7 +2140,7 @@
 	Revert	الرجوع
 	Revert to the saved version of “{name}”?	الرجوع إلى النسخة المحفوظة من «{name}»؟
 	Replace “{name}”, the file this document was opened from?	استبدال «{name}»، الملف الذي فُتح منه هذا المستند؟
-	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	فتحه أهمل ما لا يستطيع رسم قراءته بعد ({what})، لذا استبداله يفقد ذلك نهائياً. احفظه باسم آخر للاحتفاظ به.
+	Opening it left out what 7rrek can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	فتحه أهمل ما لا يستطيع حرّك قراءته بعد ({what})، لذا استبداله يفقد ذلك نهائياً. احفظه باسم آخر للاحتفاظ به.
 	Revolve…	دوران حول محور…
 	RGB Color	لون RGB
 	Right	يمين
@@ -2876,10 +2876,10 @@
 	Vector Halftone	نقطية نصفية متجهية
 	Vector Halftone…	نقطية نصفية متجهية…
 	Vector illustration — fast, open, scriptable.	رسم متجهي — سريع، مفتوح، قابل للبرمجة.
-	rsm didn't quit normally last time. These documents had unsaved changes:	لم يُغلق رسم بشكل طبيعي في المرة السابقة. هذه المستندات فيها تغييرات غير محفوظة:
-	rsm Help…	مساعدة رسم…
+	7rrek didn't quit normally last time. These documents had unsaved changes:	لم يُغلق حرّك بشكل طبيعي في المرة السابقة. هذه المستندات فيها تغييرات غير محفوظة:
+	7rrek Help…	مساعدة حرّك…
 	Creative Studio Website	موقع Creative Studio
-	rsm on GitHub	رسم على GitHub
+	7rrek on GitHub	حرّك على GitHub
 	Vectors	المتجهات
 	Version {version} — open-source vector illustration in pure Rust.	الإصدار {version} — رسم متجهي مفتوح المصدر بلغة Rust.
 	Version:	الإصدار:
@@ -2918,7 +2918,7 @@
 	Web Snap:	محاذاة الويب:
 	Weight	السماكة
 	Weight:	السماكة:
-	Welcome to rsm	أهلاً بك في رسم
+	Welcome to 7rrek	أهلاً بك في حرّك
 	When pasting text	عند لصق النص
 	White	أبيض
 	Widget Position:	موضع الأداة:
@@ -3407,7 +3407,7 @@ axis	Both	كلاهما
 @msg	node {_1} is not text	العقدة {_1} ليست نصاً
 @msg	not a DXF drawing	ليس رسماً بصيغة DXF
 @msg	not a VectorCraft file: {0}	ليس ملف رسم: {0}
-@msg	not a rsm shortcut set (missing `overrides`)	ليست مجموعة اختصارات رسم (`overrides` مفقود)
+@msg	not a 7rrek shortcut set (missing `overrides`)	ليست مجموعة اختصارات حرّك (`overrides` مفقود)
 @msg	not a graphic style library (format `{_1}`)	ليست مكتبة أنماط رسومية (الصيغة `{_1}`)
 @msg	not a stored central record	ليس سجلاً مركزياً مخزّناً
 @msg	not a valid plug-in module: {0}	ليست وحدة إضافة صالحة: {0}
@@ -3640,7 +3640,7 @@ axis	Both	كلاهما
 @msg	"{0}" is not a colour: write it as #rrggbb	"{0}" ليس لوناً: اكتبه بصيغة #rrggbb
 @msg	this isn't a flat-colour logo ({_1}% of its solid areas match a few flat colours), so Flat Logo mode would turn its gradients into patches: use Color mode instead	هذا ليس شعاراً بألوان مسطّحة ({_1}% من مساحاته المصمتة تطابق ألواناً مسطّحة قليلة)، لذا وضع الشعار المسطّح سيحوّل تدرّجاته إلى رقع: استخدم وضع الألوان بدلاً منه
 	Services	الخدمات
-	Hide rsm	إخفاء رسم
+	Hide 7rrek	إخفاء حرّك
 	Zoom	تكبير
 	Bring All to Front	إحضار الكل إلى الأمام
 	Settings	الإعدادات
@@ -3648,7 +3648,7 @@ axis	Both	كلاهما
 	On: one locked object showing the document, updated when it changes.	تشغيل: كائن مقفل واحد يعرض المستند، ويتحدث عند تغيّره.
 	Off: an editable copy of its art, embedded in this document.	إيقاف: نسخة قابلة للتعديل من العمل، مضمّنة في هذا المستند.
 	Images: link to the file instead of only embedding it.	الصور: ربط بالملف بدلاً من تضمينه فقط.
-	rsm documents: one locked object, updated when the file changes.	مستندات رسم: كائن مقفل واحد، يتحدث عند تغيّر الملف.
+	7rrek documents: one locked object, updated when the file changes.	مستندات حرّك: كائن مقفل واحد، يتحدث عند تغيّر الملف.
 	A file dialog is open: choose there first	مربع حوار ملف مفتوح: اختر منه أولاً
 	Shaper	المُشكِّل
 	Expand Shaper Group	توسيع مجموعة المُشكِّل
@@ -3873,7 +3873,7 @@ axis	Both	كلاهما
 	{count} folder(s) or file(s) couldn't be read	تعذّرت قراءة {count} مجلد أو ملف
 	The search stopped at its limit: search a smaller folder.	توقف البحث عند حده: ابحث في مجلد أصغر.
 	Copy only fonts you own or are licensed to install.	انسخ فقط الخطوط التي تملكها أو المرخّص لك بتثبيتها.
-	rsm copies the fonts to {folder}.	ينسخ رسم الخطوط إلى {folder}.
+	7rrek copies the fonts to {folder}.	ينسخ حرّك الخطوط إلى {folder}.
 	Find Linked Files	بحث عن الملفات المرتبطة
 	Find Linked Files in Folder…	بحث عن الملفات المرتبطة في مجلد…
 	Choose the file to relink each linked file to. Files with the size and contents saved with the link come first.	اختر الملف الذي يُعاد ربط كل ملف مرتبط به. الملفات التي لها نفس الحجم والمحتوى المحفوظين مع الرابط تأتي أولاً.

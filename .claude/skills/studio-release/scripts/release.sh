@@ -6,8 +6,8 @@
 # Run from anywhere; the repo is ~/Documents/CreativeStudio/rsm unless STUDIO_ROOT is set.
 set -euo pipefail
 ROOT="${STUDIO_ROOT:-$HOME/Documents/CreativeStudio/rsm}"
-REPO_URL="https://github.com/7mz410/CreativeStudio-rsm.git"
-DOMAIN="rsm.studio.creative.ps"
+REPO_URL="https://github.com/7mz410/CreativeStudio-7rrek.git"
+DOMAIN="7rrek.studio.creative.ps"
 # rustup comes from Homebrew and is keg-only; it provides the wasm32 target trunk needs.
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 

@@ -9,7 +9,7 @@ pub(super) fn show(app: &mut VectorcraftApp, ctx: &egui::Context) {
         return;
     }
     let mut open = true;
-    egui::Window::new(tl!("About rsm"))
+    egui::Window::new(tl!("About 7rrek"))
         .collapsible(false)
         .resizable(false)
         .open(&mut open)

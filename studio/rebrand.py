@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 NAME = 'rsm'
-REPO = 'https://github.com/7mz410/CreativeStudio-rsm'
+REPO = 'https://github.com/7mz410/CreativeStudio-7rrek'
 SITE = 'https://studio.creative.ps'
 # Persisted names that saved preferences and files refer to; renaming them would break those.
 KEEP = ('VectorCraft Default',)
@@ -231,7 +231,7 @@ def rebrand_catalog(path: Path, sources: set) -> bool:
 def rebrand_plist(path: Path) -> bool:
     src = path.read_text(encoding='utf-8')
     out = re.sub(r'(<key>CFBundle(?:Display)?Name</key>\s*<string>)VectorCraft(</string>)', rf'\g<1>{NAME}\2', src)
-    out = out.replace('<string>ai.storyteller.vectorcraft</string>', '<string>ps.creative.studio.rsm</string>')
+    out = out.replace('<string>ai.storyteller.vectorcraft</string>', '<string>ps.creative.studio.7rrek</string>')
     if out != src:
         path.write_text(out, encoding='utf-8')
     return out != src

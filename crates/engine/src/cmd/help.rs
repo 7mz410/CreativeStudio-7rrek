@@ -17,7 +17,7 @@ pub fn app_page_url() -> String {
 
 /// This app's source repository.
 pub fn github_url() -> String {
-    "https://github.com/7mz410/CreativeStudio-rsm".to_string()
+    "https://github.com/7mz410/CreativeStudio-7rrek".to_string()
 }
 
 pub fn specs() -> Vec<CommandSpec> {
@@ -25,7 +25,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(query "help.discord", "Upstream Community on Discord", ["Help"], None, "{} → {url} the upstream ArtCraft community Discord", always, |_, _| url(DISCORD_URL.into())),
         cmd!(query "help.website", "Creative Studio Project", ["Help"], None, "{} → {url}", always, |_, _| url(WEBSITE_URL.into())),
         cmd!(query "help.appPage", "Creative Studio Website", ["Help"], None, "{} → {url} this app's page", always, |_, _| url(app_page_url())),
-        cmd!(query "help.github", "rsm on GitHub", ["Help"], None, "{} → {url} source code, issues and releases", always, |_, _| url(github_url())),
+        cmd!(query "help.github", "7rrek on GitHub", ["Help"], None, "{} → {url} source code, issues and releases", always, |_, _| url(github_url())),
         cmd!(query "help.links", "Links", [], None, "{} → {discord, website, appPage, github}", always, |_, _| {
             Ok(json!({ "discord": DISCORD_URL, "website": WEBSITE_URL, "appPage": app_page_url(), "github": github_url() }))
         }),
@@ -45,7 +45,7 @@ mod tests {
         let mut s = Session::new();
         assert_eq!(s.execute("help.discord", &json!({})).unwrap()["url"], "https://discord.gg/artcraft");
         assert_eq!(s.execute("help.appPage", &json!({})).unwrap()["url"], "https://studio.creative.ps");
-        assert_eq!(s.execute("help.github", &json!({})).unwrap()["url"], "https://github.com/7mz410/CreativeStudio-rsm");
+        assert_eq!(s.execute("help.github", &json!({})).unwrap()["url"], "https://github.com/7mz410/CreativeStudio-7rrek");
         assert_eq!(s.execute("help.links", &json!({})).unwrap()["website"], "https://studio.creative.ps");
     }
 }
