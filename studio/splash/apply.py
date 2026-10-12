@@ -21,6 +21,7 @@ APPS = {
     "effectat": ("effectat/apps/effectcraft-web/web/index.html", "#eb1b3c"),
     "sf7aat": ("sf7aat/apps/pdfcraft-web/index.html", "#eb1b3c"),
     "trteeb": ("trteeb/apps/designcraft-web/index.html", "#eb1b3c"),
+    "klmat": ("klmat/apps/wordcraft-web/index.html", "#eb1b3c"),
 }
 
 CSS = """
