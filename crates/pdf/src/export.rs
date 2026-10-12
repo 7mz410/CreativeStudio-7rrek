@@ -605,10 +605,11 @@ fn cover(s: &mut Surface, page: Rect, level: u8, opacity: f32) {
 
 /// An alpha mask of constant `alpha` over the page. A group drawn through it is a transparency
 /// group of that opacity that, unlike the writer's opacity groups, is not isolated.
+/// The cover is white, so a reader that takes every soft mask as a luminosity mask shows the same.
 fn constant_mask(s: &mut Surface, page: Rect, alpha: f32) -> krilla::mask::Mask {
     let mut sb = s.stream_builder();
     let mut ms = sb.surface();
-    cover(&mut ms, page, 0, alpha);
+    cover(&mut ms, page, 255, alpha);
     ms.finish();
     krilla::mask::Mask::new(sb.finish(), krilla::mask::MaskType::Alpha)
 }
@@ -880,7 +881,13 @@ impl Exporter<'_> {
     /// A luminosity mask that is 1 − the knockout shape of `c`: white, then black through an alpha
     /// mask of `c` (at full object opacity without its own mask, unless those define its shape).
     fn knockout_mask(&mut self, s: &mut Surface, c: &Node, page: Rect) -> krilla::mask::Mask {
-        let shape = if c.knockout_shape { c.clone() } else { Node { opacity: 1.0, mask: None, ..c.clone() } };
+        let shape = if c.knockout_shape {
+            c.clone()
+        } else {
+            let mut s = c.clone().with_mask(None);
+            s.opacity = 1.0;
+            s
+        };
         let mut sb = s.stream_builder();
         let mut ms = sb.surface();
         cover(&mut ms, page, 255, 1.0);
@@ -948,7 +955,7 @@ impl Exporter<'_> {
             }
             pushes += 1;
         }
-        if let Some(m) = n.mask.as_deref()
+        if let Some(m) = n.extras().mask.as_deref()
             && !m.disabled
         {
             let mask = self.soft_mask(s, m, page);

@@ -378,7 +378,7 @@ fn image_roundtrip() {
         link: None,
         placement: Default::default(),
     };
-    add(&mut d, Node::new(NodeId(0), NodeKind::Image(im)));
+    add(&mut d, Node::new(NodeId(0), NodeKind::Image(Box::new(im))));
     let out = roundtrip(&d);
     let l = leaves(&out);
     assert_eq!(l.len(), 1);
@@ -469,7 +469,7 @@ fn import_invalid_dash_array_strokes_solid() {
     // And the exporter never writes an invalid array back.
     let mut d2 = doc(100.0, 100.0);
     let mut n = rect_node(Rect::new(10.0, 10.0, 90.0, 90.0), Color::rgb(1.0, 0.0, 0.0));
-    n.appearance = Appearance::basic(Paint::None, Paint::solid(Color::BLACK), 2.0);
+    n.appearance = Appearance::basic(Paint::None, Paint::solid(Color::BLACK), 2.0).into();
     if let Some(AppearanceItem::Stroke(st)) = n.appearance.items.last_mut() {
         st.dash = Some(Dash { pattern: vec![-5.0, 3.0], offset: 0.0, align_corners: false });
     }
@@ -606,7 +606,7 @@ fn opacity_mask_exports_as_luminosity_soft_mask() {
     let mut d = doc(100.0, 100.0);
     let mut n = rect_node(Rect::new(10.0, 10.0, 90.0, 90.0), Color::rgb(1.0, 0.0, 0.0));
     let art = rect_node(Rect::new(10.0, 10.0, 50.0, 90.0), Color::WHITE);
-    n.mask = Some(Box::new(vectorcraft_doc::OpacityMask::new(art, true)));
+    n.extras_mut().mask = Some(Box::new(vectorcraft_doc::OpacityMask::new(art, true)));
     add(&mut d, n);
     let bytes = export(&d, &PdfOptions::uncompressed()).unwrap();
     let text = String::from_utf8_lossy(&bytes);

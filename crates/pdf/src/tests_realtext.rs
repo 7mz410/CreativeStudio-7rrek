@@ -248,17 +248,33 @@ fn digits_unnamed(text: &str) -> Vec<u8> {
     out
 }
 
-/// #708: a glyph whose ToUnicode value is U+FFFD isn't type showing "�". This subset font has no
-/// character map of its own, so the digits keep their outlines, drawn as the file draws them, and
-/// a warning names the font.
+/// #708, #811: a glyph whose ToUnicode value is U+FFFD isn't type showing "�". This subset font
+/// has no character map of its own, but the font is installed: each digit is found by its outline
+/// there, so the whole text stays one type object, with no outlines left behind.
 #[test]
-fn glyphs_mapped_to_the_replacement_character_keep_their_outlines() {
+fn unnamed_glyphs_of_an_installed_font_are_found_by_their_outline() {
     let bytes = digits_unnamed("Tel 02-12345");
     let report = import_with_report(&bytes, &ImportOptions { text_as: TextAs::Text, ..Default::default() }).unwrap();
-    let all = texts(&report.document).concat();
-    assert!(!all.contains('\u{FFFD}') && all.contains("Tel"), "no replacement characters: {all:?}");
-    assert!(ink(&report.document).width() > 50.0, "the digits are outlines");
-    assert!(report.warnings.iter().any(|w| w.contains("U+FFFD")), "{:?}", report.warnings);
+    assert_eq!(texts(&report.document), ["Tel 02-12345"]);
+    let mut paths = 0;
+    report.document.walk(|n| paths += usize::from(matches!(n.kind, NodeKind::Path { .. } | NodeKind::Compound { .. })));
+    assert_eq!(paths, 0, "no outlines left: {:?}", report.warnings);
+    assert!(!report.warnings.iter().any(|w| w.contains("U+FFFD")), "{:?}", report.warnings);
+}
+
+/// #811: an outline is named only by a glyph that draws it exactly; one moved off its place, or an
+/// empty glyph (which every space draws), stays unnamed and keeps its outlines.
+#[test]
+fn glyphs_are_named_only_by_an_exact_outline() {
+    let db = FontDb::global();
+    let face = db.face("Source Sans 3", "Regular").unwrap();
+    let k = 1000.0 / face.units_per_em();
+    let pdf_space = |c: char| Affine::new([k, 0.0, 0.0, -k, 0.0, 0.0]) * db.outline(&face, face.glyph_for(c)).as_ref().clone();
+    for c in ['R', 'a', '7', '&', 'é'] {
+        assert_eq!(crate::import::identify_glyph(&face, &pdf_space(c)), Some(c));
+    }
+    assert_eq!(crate::import::identify_glyph(&face, &(Affine::translate((100.0, 0.0)) * pdf_space('R'))), None);
+    assert_eq!(crate::import::identify_glyph(&face, &BezPath::new()), None);
 }
 
 /// #708: where the embedded font program has a character map, a glyph's character comes from it.
@@ -312,4 +328,47 @@ fn type_in_another_installed_version_reopens_in_that_version() {
         });
         assert_eq!(found, [("Hamburgefonstiv".to_string(), version.map(String::from))], "{version:?}");
     }
+}
+
+/// The glyph origins of the type objects of `d`, in document space, in order.
+fn origins(d: &Document) -> Vec<Point> {
+    let mut out = vec![];
+    d.walk(|n| {
+        if let NodeKind::Text(t) = &n.kind {
+            out.extend(vectorcraft_text::layout(FontDb::global(), t).glyphs.iter().map(|g| t.xf * g.origin));
+        }
+    });
+    out
+}
+
+/// Type spaced glyph by glyph (character tightening, optical kerning) comes back with each glyph
+/// in its place, not evened out by one tracking value; evenly spaced type keeps one run.
+#[test]
+fn glyphs_spaced_each_their_own_way_keep_their_place() {
+    let runs = [("T", 0.0), ("i", -120.0), ("g", 160.0), ("h", -60.0), ("tl", 0.0), ("y", 0.0)];
+    let mut t = TextObject::point(Point::new(20.0, 100.0), "", style(40.0));
+    t.runs = runs.iter().map(|(s, tr)| TextRun { text: s.to_string(), style: CharStyle { tracking: *tr, ..style(40.0) }, inline: None }).collect();
+    let d = doc(vec![t]);
+    let want = origins(&d);
+    let back = import_as(&pdf(&d, false).bytes, TextAs::default());
+    let got = origins(&back);
+    assert_eq!(got.len(), want.len(), "{:?}", texts(&back));
+    for (g, w) in got.iter().zip(&want) {
+        assert!((g.x - w.x).abs() < 0.1 && (g.y - w.y).abs() < 0.1, "{got:?}\nvs {want:?}");
+    }
+    let mut runs_back = 0;
+    back.walk(|n| {
+        if let NodeKind::Text(t) = &n.kind {
+            runs_back += t.runs.len();
+        }
+    });
+    assert!(runs_back > 1, "one tracking can't place them");
+    // Evenly tracked: one run.
+    let even = doc(vec![TextObject::point(Point::new(20.0, 100.0), "Tightly", CharStyle { tracking: -50.0, ..style(40.0) })]);
+    let back = import_as(&pdf(&even, false).bytes, TextAs::default());
+    back.walk(|n| {
+        if let NodeKind::Text(t) = &n.kind {
+            assert_eq!(t.runs.len(), 1, "{:?}", t.runs.iter().map(|r| r.style.tracking).collect::<Vec<_>>());
+        }
+    });
 }

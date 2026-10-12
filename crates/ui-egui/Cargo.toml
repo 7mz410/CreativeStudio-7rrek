@@ -11,15 +11,18 @@ workspace = true
 [dependencies]
 # Creative Studio: visual ordering for right-to-left catalogs (i18n/bidi.rs).
 unicode-bidi = "0.3.18"
+craft-ui = { workspace = true }
 vectorcraft-geom = { workspace = true }
 vectorcraft-color = { workspace = true }
 vectorcraft-doc = { workspace = true }
+vectorcraft-brush = { workspace = true }
 vectorcraft-render = { workspace = true }
 vectorcraft-text = { workspace = true }
 vectorcraft-tools = { workspace = true }
 vectorcraft-engine = { workspace = true }
 vectorcraft-svg = { workspace = true }
 vectorcraft-effects = { workspace = true }
+vectorcraft-three-d = { workspace = true }
 vectorcraft-plugins = { workspace = true }
 vectorcraft-pdf = { workspace = true }
 vectorcraft-cad = { workspace = true }
@@ -33,6 +36,7 @@ serde_json = { workspace = true }
 log = { workspace = true }
 
 [dev-dependencies]
+egui_kittest = { workspace = true, features = ["wgpu", "snapshot"] }
 vectorcraft-testkit = { workspace = true }
 wat = { workspace = true }
 

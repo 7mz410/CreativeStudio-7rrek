@@ -3724,3 +3724,461 @@ axis	Both	كلاهما
 	They connect on this computer only.	يتصلون على هذا الجهاز فقط.
 	Adds this app to the agent's settings.	يضيف هذا البرنامج إلى إعدادات الوكيل.
 	Restart the agent app afterwards.	أعد تشغيل برنامج الوكيل بعدها.
+	Glowing Edges…	حواف متوهجة…
+	Glowing Edges	حواف متوهجة
+	Edge Width	عرض الحافة
+	Edge Brightness	سطوع الحافة
+	Smoothness	النعومة
+	Pixelate	تبكسل
+	Color Halftone…	نقاط طباعة ملونة…
+	Crystallize…	تبلور…
+	Mezzotint…	نقش ميزوتنت…
+	Pointillize…	تنقيط…
+	Color Halftone	نقاط طباعة ملونة
+	Crystallize	تبلور
+	Mezzotint	نقش ميزوتنت
+	Pointillize	تنقيط
+	Max. Radius	أقصى نصف قطر
+	Channel 1	القناة 1
+	Channel 2	القناة 2
+	Channel 3	القناة 3
+	Channel 4	القناة 4
+	Cell Size	حجم الخلية
+	Fine Dots	نقاط ناعمة
+	Medium Dots	نقاط متوسطة
+	Grainy Dots	نقاط محببة
+	Coarse Dots	نقاط خشنة
+	Short Lines	خطوط قصيرة
+	Medium Lines	خطوط متوسطة
+	Long Lines	خطوط طويلة
+	Short Strokes	ضربات قصيرة
+	Medium Strokes	ضربات متوسطة
+	Long Strokes	ضربات طويلة
+	Side Length:	طول الضلع:
+	Make Sides Equal	تساوي الأضلاع
+	Can't open “{name}”.	تعذّر فتح “{name}”.
+	Halo	هالة
+	Rays	أشعة
+	Rings	حلقات
+	Diameter:	القطر:
+	Brightness:	السطوع:
+	Growth:	النمو:
+	Fuzziness:	الضبابية:
+	Number:	العدد:
+	Longest:	الأطول:
+	Path:	المسار:
+	Largest:	الأكبر:
+	Direction:	الاتجاه:
+	Symbolism Tools Options	خيارات أدوات الرموز
+	Symbol Set Density:	كثافة مجموعة الرموز:
+	Graph Design	تصميم الرسم البياني
+	Graph Marker	علامة الرسم البياني
+	New Design	تصميم جديد
+	Delete Design	حذف التصميم
+	Paste Design	لصق التصميم
+	Select Unused	تحديد غير المستخدم
+	Import Data…	استيراد بيانات…
+	Transpose	تبديل الصفوف والأعمدة
+	Switch x/y	تبديل x/y
+	Number of Decimals:	عدد الخانات العشرية:
+	Column Width:	عرض العمود:
+	No Legend	بدون مفتاح
+	Standard Legend	مفتاح عادي
+	Legends in Wedges	المفتاح داخل الشرائح
+	Ratio	نسبة
+	Even	متساوٍ
+	Stacked	مكدّس
+	Highlight Variable	إبراز المتغير
+	Thai	التايلندية
+	More Align options	خيارات محاذاة أخرى
+	More Paragraph options	خيارات فقرة أخرى
+	Reshape Spine Segment	إعادة تشكيل مقطع العمود الفقري
+	Calligraphic Brush Options	خيارات فرشاة الخط
+	Bristle Brush Options	خيارات فرشاة الشعيرات
+	Scatter Brush Options	خيارات فرشاة التبعثر
+	Art Brush Options	خيارات الفرشاة الفنية
+	Pattern Brush Options	خيارات فرشاة النقش
+	Scatter:	التبعثر:
+	Rotation:	التدوير:
+	Rotation relative to:	التدوير بالنسبة إلى:
+	Brush Scale Options	خيارات تحجيم الفرشاة
+	Scale Proportionately	تحجيم متناسب
+	Stretch to Fit Stroke Length	مطّ لملاءمة طول الحدود
+	Stretch Between Guides	مطّ بين الأدلة
+	Start:	البداية:
+	End:	النهاية:
+	Left to Right	من اليسار إلى اليمين
+	Right to Left	من اليمين إلى اليسار
+	Top to Bottom	من الأعلى إلى الأسفل
+	Bottom to Top	من الأسفل إلى الأعلى
+	Flip:	قلب:
+	Outer Corner Tile	بلاطة الزاوية الخارجية
+	Side Tile	بلاطة الجانب
+	Inner Corner Tile	بلاطة الزاوية الداخلية
+	Start Tile	بلاطة البداية
+	End Tile	بلاطة النهاية
+	Fit	ملاءمة
+	Stretch to fit	مطّ للملاءمة
+	Add space to fit	إضافة مسافة للملاءمة
+	Approximate path	مسار تقريبي
+	Colorization	التلوين
+	Tints	درجات فاتحة
+	Tints and Shades	درجات فاتحة وداكنة
+	Hue Shift	إزاحة الصبغة
+	Key Color:	اللون الأساسي:
+	Roundness:	الاستدارة:
+	Fixed	ثابت
+	Pressure	الضغط
+	Shape:	الشكل:
+	Bristle Length:	طول الشعيرات:
+	Bristle Density:	كثافة الشعيرات:
+	Bristle Thickness:	سماكة الشعيرات:
+	Paint Opacity:	عتامة الطلاء:
+	Stiffness:	الصلابة:
+	Round Point	رأس مدبّب دائري
+	Flat Point	رأس مدبّب مسطّح
+	Round Blunt	دائري كليل
+	Flat Blunt	مسطّح كليل
+	Round Curve	منحنٍ دائري
+	Flat Curve	منحنٍ مسطّح
+	Round Angle	زاوية دائرية
+	Flat Angle	زاوية مسطّحة
+	Round Fan	مروحة دائرية
+	Flat Fan	مروحة مسطّحة
+	Proportional Metrics	مقاييس متناسبة
+	Digits	الأرقام
+	Arabic	عربية
+	Hindi	هندية
+	Farsi	فارسية
+	Horizontal Dividers:	فواصل أفقية:
+	Vertical Dividers:	فواصل عمودية:
+	List Folder	محتويات المجلد
+	Begin Undo Group	بداية مجموعة تراجع
+	End Undo Group	نهاية مجموعة تراجع
+	Missing Fonts	خطوط مفقودة
+	Missing Fonts Dialog	نافذة الخطوط المفقودة
+	These fonts aren't available. Their text shows in another font.	هذه الخطوط غير متوفرة، ونصها يظهر بخط آخر.
+	Search Fonts Folder	البحث في مجلد خطوط
+	Find in Folder…	بحث في مجلد…
+	Find Fonts in Folder…	بحث عن خطوط في مجلد…
+	Find Font Files	بحث عن ملفات الخطوط
+	Add Font Files	إضافة ملفات خطوط
+	Add Fonts	إضافة خطوط
+	Find Fonts	بحث عن خطوط
+	Stop	إيقاف
+	Searching…	جارٍ البحث…
+	Not found	غير موجود
+	{folders} folder(s) and {files} file(s) searched	تم البحث في {folders} مجلد و{files} ملف
+	{count} folder(s) skipped, such as other apps' and the system's folders and hidden ones	تم تخطي {count} مجلد، مثل مجلدات البرامج الأخرى والنظام والمجلدات المخفية
+	{count} folder(s) or file(s) couldn't be read	تعذّرت قراءة {count} مجلد أو ملف
+	The search stopped at its limit: search a smaller folder.	توقف البحث عند حده: ابحث في مجلد أصغر.
+	Copy only fonts you own or are licensed to install.	انسخ فقط الخطوط التي تملكها أو المرخّص لك بتثبيتها.
+	rsm copies the fonts to {folder}.	ينسخ رسم الخطوط إلى {folder}.
+	Find Linked Files	بحث عن الملفات المرتبطة
+	Find Linked Files in Folder…	بحث عن الملفات المرتبطة في مجلد…
+	Choose the file to relink each linked file to. Files with the size and contents saved with the link come first.	اختر الملف الذي يُعاد ربط كل ملف مرتبط به. الملفات التي لها نفس الحجم والمحتوى المحفوظين مع الرابط تأتي أولاً.
+	Same file	نفس الملف
+	Same size	نفس الحجم
+	Don't Relink	بدون إعادة ربط
+	Copy into the document's folder	نسخ إلى مجلد المستند
+	Select Segments	تحديد المقاطع
+	Ridges per segment:	عدد التموجات لكل مقطع:
+	Corner	زاوية
+	Relative	نسبي
+	Absolute	مطلق
+	No results	لا نتائج
+	No items in this library match “{query}”.	لا عناصر في هذه المكتبة تطابق “{query}”.
+	Right-click an item to move it into this group.	انقر بالزر الأيمن على عنصر لنقله إلى هذه المجموعة.
+	New Group	مجموعة جديدة
+	New Group…	مجموعة جديدة…
+	Move to Group	نقل إلى مجموعة
+	No Group	بدون مجموعة
+	Rename Group…	إعادة تسمية المجموعة…
+	Delete Group	حذف المجموعة
+	Import Library…	استيراد مكتبة…
+	Export Library…	تصدير المكتبة…
+	Import Library	استيراد مكتبة
+	Export Library	تصدير المكتبة
+	New Library Group	مجموعة مكتبة جديدة
+	Rename Library Group	إعادة تسمية مجموعة المكتبة
+	Delete Library Group	حذف مجموعة المكتبة
+	Move Library Item to Group	نقل عنصر المكتبة إلى مجموعة
+	Toolbar: Add Tool	شريط الأدوات: إضافة أداة
+	Toolbar: Remove Tool	شريط الأدوات: إزالة أداة
+	Toolbar: Reset	شريط الأدوات: إعادة تعيين
+	Update Changed Links	تحديث الروابط المتغيرة
+	New Variable	متغير جديد
+	Delete Variable	حذف المتغير
+	List Variables	قائمة المتغيرات
+	Bind Variable	ربط المتغير
+	Unbind Variable	فك ربط المتغير
+	New Data Set	مجموعة بيانات جديدة
+	Delete Data Set	حذف مجموعة البيانات
+	List Data Sets	قائمة مجموعات البيانات
+	Select Data Set	تحديد مجموعة بيانات
+	Next Data Set	مجموعة البيانات التالية
+	Previous Data Set	مجموعة البيانات السابقة
+	Data Sets	مجموعات البيانات
+	New Variable…	متغير جديد…
+	New Data Set…	مجموعة بيانات جديدة…
+	Edit Data Set…	تعديل مجموعة البيانات…
+	Data Set	مجموعة البيانات
+	Kind	النوع
+	Variable	متغير
+	no document	لا يوجد مستند
+	no data set to edit	لا توجد مجموعة بيانات للتعديل
+	Make Text Dynamic	جعل النص ديناميكياً
+	Make Visibility Dynamic	جعل الظهور ديناميكياً
+	Capture Data Set	التقاط مجموعة بيانات
+	Update Data Set	تحديث مجموعة البيانات
+	Rename Data Set…	إعادة تسمية مجموعة البيانات…
+	Variable Options…	خيارات المتغير…
+	Select Bound Object	تحديد الكائن المرتبط
+	Select All Bound Objects	تحديد كل الكائنات المرتبطة
+	Multiple objects	كائنات متعددة
+	New Name	الاسم الجديد
+	no variable to rename	لا يوجد متغير لإعادة تسميته
+	no data set to rename	لا توجد مجموعة بيانات لإعادة تسميتها
+	Horizontal & Vertical Align Center	توسيط أفقي وعمودي
+	{count} linked image(s) changed on disk. Show the new versions?	تغيّرت {count} صورة مرتبطة على القرص. عرض النسخ الجديدة؟
+	Drag to move out of the set	اسحب للنقل خارج المجموعة
+@msg	its type is to come in as outlines, which only its page has	نصه سيأتي كمخططات، وهي موجودة في صفحته فقط
+@msg	`freeform.lines` must be an array	يجب أن يكون `freeform.lines` مصفوفة
+@msg	axis must be "vertical", "horizontal" or an angle in degrees, not `{v}`	يجب أن يكون المحور "vertical" أو "horizontal" أو زاوية بالدرجات، وليس `{v}`
+@msg	closing needs three anchors	الإغلاق يحتاج ثلاث نقاط ربط
+@msg	freeform line {i} must be an array of point indices	يجب أن يكون الخط الحر {i} مصفوفة من أرقام النقاط
+@msg	give corners of the path: anchors where its sides meet at an angle	حدد زوايا المسار: نقاط الربط التي تلتقي فيها أضلاعه بزاوية
+@msg	give horizontal or vertical	حدد أفقي أو عمودي
+@msg	no brush selected	لا توجد فرشاة محددة
+@msg	object {id} is not a selected top-level object	الكائن {id} ليس كائناً محدداً في المستوى الأعلى
+@msg	the guide is on a hidden or locked layer	الدليل على طبقة مخفية أو مقفلة
+@msg	the target layer is locked or hidden	الطبقة الهدف مقفلة أو مخفية
+@msg	this PostScript file can't be read ({why}): save it as PDF or SVG in the app that made it	تعذّرت قراءة ملف PostScript هذا ({why}): احفظه بصيغة PDF أو SVG من البرنامج الذي أنشأه
+@msg	Updated {_1} linked file(s) changed on disk	تم تحديث {_1} ملف مرتبط تغيّر على القرص
+@msg	below and above must name a panel floating in another group	يجب أن يسمي below وabove لوحة عائمة في مجموعة أخرى
+@msg	give only one of onto, below and above	حدد واحداً فقط من onto وbelow وabove
+@msg	column must be true or a number from 1	يجب أن يكون العمود true أو رقماً من 1
+@msg	No fonts are missing in this document	لا توجد خطوط مفقودة في هذا المستند
+@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	لا يبحث رسم في مجلدات البرامج الأخرى أو النظام: {path}
+@msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	لا يبحث رسم في مجلد Shared أو Public في Users: {path}
+@msg	{path} is not a folder	{path} ليس مجلداً
+@msg	the search couldn't start: try again in a moment	تعذّر بدء البحث: حاول مرة أخرى بعد قليل
+@msg	searching a folder isn't available on the web	البحث في مجلد غير متاح على الويب
+@msg	every search thread stopped on an internal error (please report this bug)	توقفت كل عمليات البحث بسبب خطأ داخلي (يرجى الإبلاغ عن هذا الخطأ)
+@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	مجلد الخطوط الخاص برسم غير محدد هنا: يحدده تطبيق سطح المكتب وvectorcraft-cli
+@msg	choose the font files to add	اختر ملفات الخطوط لإضافتها
+@msg	{n} font file(s) are now in {folder}	أصبح {n} ملف خط في {folder}
+@msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	أصبح {n} ملف خط في {folder}؛ وتعذّرت إضافة {failed}: {reason}
+@msg	{n} font(s) aren't available here: their text shows in another font	{n} خط غير متوفر هنا: نصه يظهر بخط آخر
+@msg	not a file	ليس ملفاً
+@msg	not a font file	ليس ملف خط
+@msg	that document is no longer open	لم يعد هذا المستند مفتوحاً
+@msg	larger than 256 MB	أكبر من 256 ميغابايت
+@msg	the files come to more than 1 GB: add fewer at a time	مجموع الملفات أكبر من 1 غيغابايت: أضف عدداً أقل في كل مرة
+@msg	every numbered name for it is taken in the Fonts folder	كل الأسماء المرقّمة له مستخدمة في مجلد الخطوط
+@msg	every numbered name for {name} is taken in the document's folder	كل الأسماء المرقّمة لـ {name} مستخدمة في مجلد المستند
+@msg	No linked files to look for	لا توجد ملفات مرتبطة للبحث عنها
+@msg	Relinked {n} image(s); {name} couldn't be relinked: {reason}	أُعيد ربط {n} صورة؛ وتعذّر إعادة ربط {name}: {reason}
+	The document was closed while its file dialog was open	أُغلق المستند بينما كانت نافذة الملفات مفتوحة
+	The dialog was closed before its file dialog answered	أُغلقت النافذة قبل أن تستجيب نافذة الملفات
+@msg	`id` is the step reference {r}, which only `run` and `command_batch` resolve	`id` هو مرجع الخطوة {r}، ولا يحلّه إلا `run` و`command_batch`
+@msg	`ids` must be an array of object ids, not {v}	يجب أن يكون `ids` مصفوفة من أرقام الكائنات، وليس {v}
+@msg	`corners` must be an array of anchor indices, not {v}	يجب أن يكون `corners` مصفوفة من أرقام نقاط الربط، وليس {v}
+@msg	`{text}`: step {i}'s result has no such value (write $$ for a literal $)	`{text}`: نتيجة الخطوة {i} لا تحتوي هذه القيمة (اكتب $$ لعلامة $ حرفية)
+@msg	`{text}`: there is no step {i} before this one (steps count from 0; write $$ for a literal $)	`{text}`: لا توجد خطوة {i} قبل هذه (الخطوات تبدأ من 0؛ اكتب $$ لعلامة $ حرفية)
+@msg	object ids are non-negative integers, not {v}	أرقام الكائنات أعداد صحيحة غير سالبة، وليس {v}
+@msg	automation filesystem access is not granted: read authority is absent: {path}	لم يُمنح وصول الأتمتة إلى الملفات: صلاحية القراءة غير موجودة: {path}
+@msg	automation filesystem access is not granted: write authority is absent: {path}	لم يُمنح وصول الأتمتة إلى الملفات: صلاحية الكتابة غير موجودة: {path}
+@msg	automation path rejected: outside the read root {root}: {path}	رُفض مسار الأتمتة: خارج مجلد القراءة {root}: {path}
+@msg	automation path rejected: outside the write root {root}: {path}	رُفض مسار الأتمتة: خارج مجلد الكتابة {root}: {path}
+@msg	automation path rejected: path is empty	رُفض مسار الأتمتة: المسار فارغ
+@msg	automation path rejected: a link that leads nowhere: {path}	رُفض مسار الأتمتة: رابط لا يؤدي إلى أي مكان: {path}
+@msg	automation path rejected: cannot resolve {path}: {e}	رُفض مسار الأتمتة: تعذّر تحديد {path}: {e}
+@msg	automation path rejected: parent traversal below a folder that doesn't exist: {path}	رُفض مسار الأتمتة: صعود إلى مجلد أعلى تحت مجلد غير موجود: {path}
+@msg	automation path rejected: reserved device names are not allowed: {path}	رُفض مسار الأتمتة: أسماء الأجهزة المحجوزة غير مسموحة: {path}
+@msg	Multichannel PSD files can't be read: save it in RGB, CMYK or Grayscale mode	لا يمكن قراءة ملفات PSD متعددة القنوات: احفظها بنظام RGB أو CMYK أو تدرج الرمادي
+@msg	not a PSD file	ليس ملف PSD
+@msg	the PSD file has an unknown colour mode ({m})	ملف PSD بنظام ألوان غير معروف ({m})
+@msg	the PSD file's image data uses an unknown compression ({m})	بيانات صورة ملف PSD تستخدم ضغطاً غير معروف ({m})
+@msg	the PSD image is too large to read ({_1} × {_2} pixels)	صورة PSD أكبر من أن تُقرأ ({_1} × {_2} بكسل)
+@msg	zipped 32-bit PSD image data with prediction can't be read	لا يمكن قراءة بيانات صورة PSD بعمق 32 بت مضغوطة مع التنبؤ
+@msg	{depth}-bit PSD files in this colour mode can't be read	لا يمكن قراءة ملفات PSD بعمق {depth} بت في نظام الألوان هذا
+@msg	the PSD file is cut short	ملف PSD مقطوع
+@msg	the PSD file's header is damaged	ترويسة ملف PSD تالفة
+@msg	the PSD file's image data can't be read: {e}	تعذّرت قراءة بيانات صورة ملف PSD: {e}
+	Video	فيديو
+	De-Interlace…	إزالة التشابك…
+	De-Interlace	إزالة التشابك
+	NTSC Colors	ألوان NTSC
+	Eliminate	حذف
+	Create New Fields by	إنشاء حقول جديدة بواسطة
+	Odd Fields	الحقول الفردية
+	Even Fields	الحقول الزوجية
+	Duplication	التكرار
+	Interpolation	الاستيفاء
+@msg	Imported library {name}	تم استيراد المكتبة {name}
+	RGB:	RGB:
+	CMYK:	CMYK:
+	Texture	ملمس
+	Craquelure…	تشقق…
+	Grain…	تحبّب…
+	Mosaic Tiles…	بلاط فسيفساء…
+	Patchwork…	رقع…
+	Stained Glass…	زجاج معشّق…
+	Texturizer…	إضافة ملمس…
+	Craquelure	تشقق
+	Grain	تحبّب
+	Mosaic Tiles	بلاط فسيفساء
+	Patchwork	رقع
+	Stained Glass	زجاج معشّق
+	Texturizer	إضافة ملمس
+	Crack Spacing	تباعد الشقوق
+	Crack Depth	عمق الشقوق
+	Crack Brightness	سطوع الشقوق
+	Intensity	الشدة
+	Grain Type	نوع الحبيبات
+	Tile Size	حجم البلاطة
+	Grout Width	عرض الفواصل
+	Lighten Grout	تفتيح الفواصل
+	Square Size	حجم المربع
+	Relief	البروز
+	Border Thickness	سماكة الإطار
+	Light Intensity	شدة الضوء
+	Light Direction	اتجاه الضوء
+	Sprinkles	رذاذ
+	Clumped	متكتّل
+	Contrasty	عالي التباين
+	Enlarged	مكبّر
+	Stippled	منقّط
+	Speckle	مرقّط
+	Brick	طوب
+	Burlap	خيش
+	Canvas	قماش
+	Sandstone	حجر رملي
+	Bottom Left	أسفل اليسار
+	Top Left	أعلى اليسار
+	Top Right	أعلى اليمين
+	Bottom Right	أسفل اليمين
+	Edge	حافة
+	System Title Bar	شريط عنوان النظام
+	Value Axis	محور القيم
+	On Left Side	على الجانب الأيسر
+	On Right Side	على الجانب الأيمن
+	On Both Sides	على الجانبين
+	Short	قصير
+	Full Width	العرض الكامل
+	Distort	تشويه
+	Diffuse Glow…	توهج منتشر…
+	Glass…	زجاج…
+	Ocean Ripple…	تموج المحيط…
+	Diffuse Glow	توهج منتشر
+	Glass	زجاج
+	Ocean Ripple	تموج المحيط
+	Graininess	التحبّب
+	Glow Amount	مقدار التوهج
+	Clear Amount	مقدار الصفاء
+	Ripple Size	حجم التموج
+	Ripple Magnitude	قوة التموج
+	Blocks	كتل
+	Frosted	مصنفر
+	Tiny Lens	عدسة صغيرة
+	Rename Data Set	إعادة تسمية مجموعة البيانات
+	Rename Variable	إعادة تسمية المتغير
+	Variable Options	خيارات المتغير
+	Edit Data Set	تعديل مجموعة البيانات
+	Define a variable first	أنشئ متغيراً أولاً
+	Text	نص
+	Visibility	الظهور
+	Activate Panel	تفعيل اللوحة
+	Change Panel Layout	تغيير تخطيط اللوحات
+	Close Panel	إغلاق اللوحة
+	Move Panel	نقل اللوحة
+	Group with	تجميع مع
+	Resize panels	تغيير حجم اللوحات
+	Resize panel window	تغيير حجم نافذة اللوحة
+@msg	Invalid panel layout; restored the default dock	تخطيط اللوحات غير صالح؛ أُعيد الترتيب الافتراضي
+@msg	action is required	الإجراء مطلوب
+@msg	anchor must name a registered panel	يجب أن يسمي anchor لوحة مسجلة
+@msg	before must name a panel	يجب أن يسمي before لوحة
+@msg	docking action contains an unknown panel or an excessive split path	إجراء الترتيب يحتوي لوحة غير معروفة أو مسار تقسيم زائد
+@msg	group must be true or false	يجب أن تكون المجموعة true أو false
+@msg	move requires a destination panel	النقل يحتاج لوحة وجهة
+@msg	move requires an existing destination panel	النقل يحتاج لوحة وجهة موجودة
+@msg	onto must name a floating panel	يجب أن يسمي onto لوحة عائمة
+@msg	panel group is empty	مجموعة اللوحات فارغة
+@msg	panel must name a registered panel	يجب أن يسمي panel لوحة مسجلة
+@msg	saved panel layout is invalid; reset the workspace first	تخطيط اللوحات المحفوظ غير صالح؛ أعد تعيين مساحة العمل أولاً
+@msg	zone must be a string	يجب أن تكون المنطقة نصاً
+@msg	zone must be tab, center, left, right, top or bottom	يجب أن تكون المنطقة tab أو center أو left أو right أو top أو bottom
+@msg	{key} must be a finite coordinate	يجب أن يكون {key} إحداثياً محدوداً
+@msg	x and y must be provided together	يجب إدخال x وy معاً
+@msg	invalid restored panel group	مجموعة لوحات مستعادة غير صالحة
+	Lighting	الإضاءة
+	Revolve angle	زاوية الدوران
+	Axis side	جهة المحور
+	Rotation X	الدوران X
+	Rotation Y	الدوران Y
+	Rotation Z	الدوران Z
+	Shading	التظليل
+	Direction	الاتجاه
+	Elevation	الارتفاع
+	Ambient	المحيط
+	Segments	المقاطع
+	Show axis	إظهار المحور
+	Reset all	إعادة تعيين الكل
+	Reset to default	إعادة التعيين إلى الافتراضي
+	Reset all Revolve settings to their defaults.	إعادة كل إعدادات الدوران إلى قيمها الافتراضية.
+	Drag values or labels. Double-click a value to type.	اسحب القيم أو التسميات. انقر نقراً مزدوجاً على قيمة لكتابتها.
+	Drag rings to rotate. Shift snaps to 15°.	اسحب الحلقات للتدوير. Shift يثبّت كل 15°.
+	Drag the light, or its rings. Shift snaps to 15°.	اسحب الضوء أو حلقاته. Shift يثبّت كل 15°.
+lighting	Light	الضوء
+	Keep visible surfaces only when expanding	الإبقاء على الأسطح الظاهرة فقط عند التوسيع
+	Trim covered geometry on Expand Appearance. Live preview keeps the full surface. Transparent paints and surfaces exceeding visibility limits retain all faces.	قصّ الأشكال المغطاة عند توسيع المظهر. المعاينة الحية تُبقي السطح كاملاً. الألوان الشفافة والأسطح التي تتجاوز حدود الظهور تحتفظ بكل أوجهها.
+	Accented Edges…	حواف مبرزة…
+	Angled Strokes…	ضربات مائلة…
+	Crosshatch…	تظليل متقاطع…
+	Dark Strokes…	ضربات داكنة…
+	Ink Outlines…	خطوط حبر…
+	Spatter…	رشاش…
+	Sprayed Strokes…	ضربات مرشوشة…
+	Sumi-e…	سومي-إي…
+	Accented Edges	حواف مبرزة
+	Angled Strokes	ضربات مائلة
+	Crosshatch	تظليل متقاطع
+	Dark Strokes	ضربات داكنة
+	Ink Outlines	خطوط حبر
+	Spatter	رشاش
+	Sprayed Strokes	ضربات مرشوشة
+	Sumi-e	سومي-إي
+	Direction Balance	توازن الاتجاه
+	Stroke Length	طول الضربة
+	Sharpness	الحدة
+	Strength	القوة
+	Balance	التوازن
+	Black Intensity	شدة الأسود
+	White Intensity	شدة الأبيض
+	Dark Intensity	شدة الداكن
+	Spray Radius	نصف قطر الرش
+	Stroke Direction	اتجاه الضربة
+	Stroke Width	عرض الضربة
+	Stroke Pressure	ضغط الضربة
+	Right Diagonal	قطري أيمن
+	Left Diagonal	قطري أيسر
+	Vertical Guide	دليل عمودي
+	Horizontal Guide	دليل أفقي
+	Move Guide to Layer	نقل الدليل إلى طبقة
+@msg	invalid native panel set	مجموعة لوحات أصلية غير صالحة
+@msg	missing panel layout	تخطيط اللوحات مفقود
+@msg	unsupported native docking operation	عملية ترتيب أصلية غير مدعومة
+	Linux Display Server	خادم العرض في لينكس
+	X11 (XWayland)	X11 (XWayland)
+	Ruler Origin	أصل المسطرة
+	Reset Ruler Origin	إعادة تعيين أصل المسطرة
+	Artistic	فني
+	Film Grain…	حبيبات الفيلم…
+	Highlight Area	مساحة الإبراز
+@msg	the compressed file unpacks to more than VectorCraft reads ({_1} MB of document, {_2} MB per image)	الملف المضغوط يتجاوز ما يقرؤه رسم ({_1} ميغابايت للمستند، و{_2} ميغابايت لكل صورة)
+@msg	the document is too large to save compressed ({0}): save it with Use Compression off	المستند أكبر من أن يُحفظ مضغوطاً ({0}): احفظه مع إيقاف خيار الضغط
+@msg	the file stopped being read (please report this bug)	توقفت قراءة الملف (يرجى الإبلاغ عن هذا الخطأ)
+	Concentric Dividers:	فواصل متحدة المركز:
+	Radial Dividers:	فواصل شعاعية:

@@ -2,7 +2,8 @@
 //! Draw, Modify, Type, Navigate, Color). Window → Toolbars → Advanced shows every tool group; the
 //! double arrow at the top (or Window → Toolbars → Double Column, `window.toolbarColumns`) lays the
 //! tools out in one or two columns.
-//! Bottom: fill/stroke proxy, colour/gradient/none, drawing modes, screen mode, Edit Toolbar.
+//! Bottom: fill/stroke proxy, colour/gradient/none, drawing modes, screen mode, Edit Toolbar (its
+//! All Tools drawer and the toolbar edits it makes: `edit_toolbar`).
 
 use egui::{Color32, CornerRadius, Sense, Stroke, Ui, pos2, vec2};
 use serde_json::{Value, json};
@@ -69,9 +70,12 @@ pub(crate) fn tip(t: &ToolInfo) -> String {
     }
 }
 
-/// Slots of the current layout: (category label for the first slot of a category, tool ids).
-fn slots(app: &VectorcraftApp) -> Vec<(Option<&'static str>, Vec<&'static str>)> {
-    if app.ui.toolbar_advanced {
+/// Slots of the current layout, as Edit Toolbar left it: (category label for the first slot of a
+/// category, tool ids).
+pub(crate) fn slots(app: &VectorcraftApp) -> Vec<(Option<&'static str>, Vec<&'static str>)> {
+    if let Some(edited) = crate::edit_toolbar::edited_slots(app) {
+        edited
+    } else if app.ui.toolbar_advanced {
         TOOL_GROUPS.iter().map(|g| (None, g.iter().map(|t| t.id).collect())).collect()
     } else {
         BASIC.iter().flat_map(|(cat, ss)| ss.iter().enumerate().map(move |(i, s)| (if i == 0 { Some(*cat) } else { None }, s.to_vec()))).collect()
@@ -122,6 +126,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     // layers in one frame).
     floating(app, ui.ctx());
     flyout(app, ui.ctx());
+    crate::edit_toolbar::drawer(app, ui.ctx());
 }
 
 /// The Tools panel's contents, docked or floating at `floating`.
@@ -129,6 +134,8 @@ fn body(app: &mut VectorcraftApp, ui: &mut Ui, cols: usize, floating: Option<egu
     let t = Tokens::get(ui.ctx());
     let all = slots(app);
     let bounds = ui.max_rect();
+    // The drawer opens beside it; a click in it leaves the drawer open.
+    ui.data_mut(|d| d.insert_temp(crate::edit_toolbar::toolbar_id(), bounds));
     ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
     // Title bar with » and a grip strip: a drag on either floats the panel or moves it.
     let (hdr, hresp) = ui.allocate_exact_size(vec2(ui.available_width(), 14.0), Sense::click_and_drag());
@@ -164,6 +171,10 @@ fn body(app: &mut VectorcraftApp, ui: &mut Ui, cols: usize, floating: Option<egu
             ui.data_mut(|d| d.remove::<egui::Id>(held_id));
         }
         let held: Option<egui::Id> = ui.data(|d| d.get_temp(held_id));
+        // While Edit Toolbar's drawer is open, the tools drag (to new places or into the drawer)
+        // instead of opening their flyouts.
+        let editing = app.ui.tools_drawer;
+        let mut buttons: Vec<(usize, egui::Rect)> = vec![];
         let mut open_flyout: Option<(Vec<&'static str>, egui::Rect)> = None;
         // A group torn off into a floating flyout is raised instead of opening its flyout.
         let mut raise: Option<&'static str> = None;
@@ -215,7 +226,11 @@ fn body(app: &mut VectorcraftApp, ui: &mut Ui, cols: usize, floating: Option<egu
                         let c = rect.center() + vec2(12.5, 10.0);
                         ui.painter().add(egui::Shape::convex_polygon(vec![c, c + vec2(-3.5, 0.0), c + vec2(0.0, -3.5)], t.icon, Stroke::NONE));
                     }
-                    let press = if slot.len() > 1 { flyout_press(ui, &resp, rect) } else { None };
+                    if editing {
+                        buttons.push((k, rect));
+                        resp.dnd_set_drag_payload(crate::edit_toolbar::ToolDrag { tool: shown.id, from_toolbar: true });
+                    }
+                    let press = if slot.len() > 1 && !editing { flyout_press(ui, &resp, rect) } else { None };
                     let alt = ui.input(|inp| inp.modifiers.alt);
                     if press.is_some() {
                         if is_floating(app, slot[0]) {
@@ -242,6 +257,9 @@ fn body(app: &mut VectorcraftApp, ui: &mut Ui, cols: usize, floating: Option<egu
             });
             i += row.len();
         }
+        if editing {
+            crate::edit_toolbar::toolbar_drop(app, ui, &buttons, cols, bounds);
+        }
         if let Some(key) = raise {
             raise_floating(ui.ctx(), key);
         }
@@ -253,7 +271,7 @@ fn body(app: &mut VectorcraftApp, ui: &mut Ui, cols: usize, floating: Option<egu
             });
         }
         ui.add_space(8.0);
-        bottom_controls(app, ui, &t);
+        bottom_controls(app, ui, &t, cols);
     });
 }
 
@@ -312,8 +330,10 @@ pub fn open_options(app: &mut VectorcraftApp, tool: &str) -> Result<serde_json::
             crate::menus::invoke(app, &id, json!({}));
             Ok(json!({ "dialog": dialog }))
         }
-        "gradient" if app.ui.open_panel.as_deref() == Some("gradient") => Ok(json!({ "open": "gradient" })),
-        "gradient" => app.run("window.panel", json!({ "panel": "gradient" })),
+        // The Gradient and Magic Wand tools: their panels.
+        "gradient" | "magicWand" if app.ui.open_panel.as_deref() == Some(tool) => Ok(json!({ "open": tool })),
+        "gradient" | "magicWand" => app.run("window.panel", json!({ "panel": tool })),
+        "artboard" => crate::dialogs::artboard_options::open(app),
         "eyedropper" => {
             crate::dialogs::eyedropper::open(app);
             Ok(json!({ "dialog": crate::dialogs::eyedropper::KIND }))
@@ -326,12 +346,18 @@ pub fn open_options(app: &mut VectorcraftApp, tool: &str) -> Result<serde_json::
             crate::dialogs::perspective_options::open(app);
             Ok(json!({ "dialog": crate::dialogs::perspective_options::KIND }))
         }
+        // The Flare tool: its options, which draw the next flare (OK draws none).
+        "flare" => Ok(crate::dialogs::flare_options::open(app, None)),
         // A double click on the Print Tiling tool puts the pages back where the placement puts them.
         "printTiling" => app.run("print.tiling.set", json!({ "reset": true })),
         // The Liquify tools: their Tool Options (the Global Brush Dimensions and the tool's own).
         _ if vectorcraft_tools::settings::LIQUIFY.contains(&tool) => crate::dialogs::liquify::open(app, tool),
         // The freehand tools: their Tool Options (Fidelity, fill, the tolerances, the brush size).
         _ if crate::dialogs::freehand::TOOLS.contains(&tool) => crate::dialogs::freehand::open(app, tool),
+        // The Symbolism tools: the brush they share.
+        _ if vectorcraft_tools::settings::SYMBOLISM.contains(&tool) => Ok(crate::dialogs::symbolism_options::open(app, tool)),
+        // The graph tools: Graph Type for the selected graph.
+        _ if vectorcraft_tools::extra::is_graph_tool(tool) => crate::menus::graph_dialog(app, "graph.setType"),
         _ if vectorcraft_tools::tool_info(tool).is_none() => Err(format!("unknown tool `{tool}`")),
         _ => Err(format!("the {tool} tool has no options")),
     }
@@ -411,16 +437,21 @@ fn crop_options(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.separator();
 }
 
-fn bottom_controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens) {
-    ui.vertical_centered(|ui| crate::panels::proxy(app, ui, 36.0));
+/// The Fill/Stroke proxy, Color/Gradient/None, the drawing modes, screen mode and Edit Toolbar, as
+/// large as the toolbar's `cols` (one or two) leave room for (#1129): in two columns the proxy and
+/// buttons grow and the three drawing modes show side by side.
+fn bottom_controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, cols: usize) {
+    let two = cols == 2;
+    ui.vertical_centered(|ui| crate::panels::proxy(app, ui, if two { 54.0 } else { 36.0 }));
     ui.add_space(5.0);
     // Color (the last solid colour), Gradient (the last gradient) and None, as commands.
+    let (chip, gap) = if two { (17.0, 4.0) } else { (11.0, 2.0) };
     ui.horizontal(|ui| {
-        ui.add_space((ui.available_width() - 27.0) / 2.0);
-        ui.spacing_mut().item_spacing.x = 2.0;
+        ui.add_space((ui.available_width() - 3.0 * chip - 2.0 * gap) / 2.0);
+        ui.spacing_mut().item_spacing.x = gap;
         let mut clicked = None;
         for (tip, cmd) in [("Color (,)", "paint.lastColor"), ("Gradient (.)", "paint.lastGradient"), ("None (/)", "paint.none")] {
-            let (r, resp) = ui.allocate_exact_size(vec2(7.5, 7.5), Sense::click());
+            let (r, resp) = ui.allocate_exact_size(vec2(chip, chip), Sense::click());
             match cmd {
                 "paint.lastColor" => widgets::paint_chip(ui, r, &Paint::solid(app.session.last_solid)),
                 "paint.lastGradient" => widgets::gradient_chip(ui, r, &app.session.last_gradient.gradient),
@@ -435,22 +466,38 @@ fn bottom_controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens) {
         }
     });
     ui.add_space(6.0);
+    let modes = [
+        (vectorcraft_engine::DrawMode::Normal, "dc-draw-normal", "Draw Normal", "normal"),
+        (vectorcraft_engine::DrawMode::Behind, "dc-draw-behind", "Draw Behind", "behind"),
+        (vectorcraft_engine::DrawMode::Inside, "dc-draw-inside", "Draw Inside", "inside"),
+    ];
+    if two {
+        // Side by side, each one a click away.
+        ui.horizontal(|ui| {
+            ui.add_space((ui.available_width() - 3.0 * 22.0) / 2.0);
+            for (mode, icon, name, id) in modes {
+                if widgets::icon_button(ui, icon, &format!("{} (Shift+D)", tl!(name)), app.session.draw_mode == mode, 22.0).clicked() {
+                    app.run("view.drawMode", json!({ "mode": id })).ok();
+                }
+            }
+        });
+    }
     ui.vertical_centered(|ui| {
-        let modes = ["dc-draw-normal", "dc-draw-behind", "dc-draw-inside"];
-        let names = ["Draw Normal", "Draw Behind", "Draw Inside"];
-        let m = match app.session.draw_mode {
-            vectorcraft_engine::DrawMode::Normal => 0,
-            vectorcraft_engine::DrawMode::Behind => 1,
-            vectorcraft_engine::DrawMode::Inside => 2,
-        };
-        if widgets::icon_button(ui, modes[m], &format!("{} (Shift+D)", tl!(names[m])), m != 0, 26.0).clicked() {
+        // One column: the current mode's button, which cycles them.
+        if !two
+            && let Some((mode, icon, name, _)) = modes.into_iter().find(|m| m.0 == app.session.draw_mode)
+            && widgets::icon_button(ui, icon, &format!("{} (Shift+D)", tl!(name)), mode != vectorcraft_engine::DrawMode::Normal, 26.0).clicked()
+        {
             app.run("view.drawMode", json!({})).ok();
         }
         if widgets::icon_button(ui, "dc-screen-mode", "Change Screen Mode (F)", false, 26.0).clicked() {
             app.run("view.screenMode", json!({})).ok();
         }
-        if widgets::icon_button(ui, "ellipsis", "Edit Toolbar", false, 26.0).clicked() {
-            app.ui.dialog = Some(crate::state::Dialog::new("allTools", json!({})));
+        // Edit Toolbar: the All Tools drawer opens beside the toolbar, by this button.
+        let edit = widgets::icon_button(ui, "ellipsis", "Edit Toolbar", app.ui.tools_drawer, 26.0);
+        ui.data_mut(|d| d.insert_temp(crate::edit_toolbar::button_id(), edit.rect));
+        if edit.clicked() {
+            app.run("window.editToolbar", json!({})).ok();
         }
     });
     let _ = t;
@@ -500,7 +547,7 @@ fn raise_floating(ctx: &egui::Context, key: &str) {
 }
 
 /// A flyout's frame: drop shadow and border (the accent while it flashes).
-fn flyout_frame(t: &Tokens, flash: bool) -> egui::Frame {
+pub(crate) fn flyout_frame(t: &Tokens, flash: bool) -> egui::Frame {
     egui::Frame::NONE
         .fill(t.panel)
         .stroke(if flash { Stroke::new(1.5, t.accent) } else { Stroke::new(1.0, t.input_border) })
@@ -815,6 +862,38 @@ pub(crate) mod tests {
         assert_eq!(frame_in(&mut app, &ctx, 8.0, vec![], 500.0)[0], tools[0]);
     }
 
+    /// #812: double-clicking the Artboard tool opens Artboard Options of the active artboard, a
+    /// graph tool Graph Type for the selected graph, and the Magic Wand tool its panel.
+    #[test]
+    fn more_tools_open_their_options() {
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.run("file.new", json!({"width": 300, "height": 200})).unwrap();
+        // Without the Artboard tool, the window's artboard.
+        assert_eq!(open_options(&mut app, "artboard").unwrap()["dialog"], "artboardOptions");
+        let d = app.ui.dialog.take().unwrap();
+        assert_eq!((d.f64("index", 9.0), d.f64("width", 0.0), d.str("name")), (0.0, 300.0, "Artboard 1".to_string()));
+        // With it, its active artboard.
+        app.run("artboard.new", json!({"x": 400, "y": 0, "width": 100, "height": 50})).unwrap();
+        app.run("tool.select", json!({"tool": "artboard"})).unwrap();
+        app.run("tool.setOption", json!({"key": "active", "value": 1})).unwrap();
+        open_options(&mut app, "artboard").unwrap();
+        let d = app.ui.dialog.take().unwrap();
+        assert_eq!((d.f64("index", 9.0), d.f64("x", 0.0), d.f64("width", 0.0)), (1.0, 400.0, 100.0));
+        // Graph Type needs a selected graph.
+        app.run("select.set", json!({"ids": []})).unwrap();
+        assert!(open_options(&mut app, "pieGraph").is_err());
+        assert!(app.ui.dialog.is_none());
+        app.run("graph.create", json!({"type": "column", "x": 0, "y": 0, "width": 200, "height": 150})).unwrap();
+        assert_eq!(open_options(&mut app, "pieGraph").unwrap()["dialog"], "command");
+        let d = app.ui.dialog.take().unwrap();
+        assert_eq!((d.str("__command"), d.str("type")), ("graph.setType".to_string(), "column".to_string()));
+        // The Magic Wand panel opens, and stays open on a second double-click.
+        open_options(&mut app, "magicWand").unwrap();
+        assert_eq!(app.ui.open_panel.as_deref(), Some("magicWand"));
+        assert_eq!(open_options(&mut app, "magicWand").unwrap()["open"], "magicWand");
+        assert_eq!(app.ui.open_panel.as_deref(), Some("magicWand"));
+    }
+
     /// A double-click at `at`, `time` seconds in (a second apart from the last).
     fn double_click(app: &mut VectorcraftApp, ctx: &egui::Context, time: f64, at: Pos2) {
         let b = |pressed| Event::PointerButton { pos: at, button: PointerButton::Primary, pressed, modifiers: Default::default() };
@@ -1063,6 +1142,25 @@ pub(crate) mod tests {
         frame_in(app, ctx, time, vec![Event::PointerMoved(at), b(true)], height);
         frame_in(app, ctx, time + 0.05, vec![b(false)], height);
         frame_in(app, ctx, time + 0.1, vec![], height)
+    }
+
+    /// The Color, Gradient and None buttons grow with the toolbar, and in two columns the three
+    /// drawing modes sit side by side, each setting its mode (#1129).
+    #[test]
+    fn the_paint_and_drawing_mode_buttons_fit_the_toolbar_width() {
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.run("file.new", serde_json::json!({"width": 200, "height": 200})).unwrap();
+        let ctx = egui::Context::default();
+        frame_in(&mut app, &ctx, 0.0, vec![], 900.0);
+        assert_eq!(widget_rects(&ctx, vec2(11.0, 11.0)).len(), 3, "one column: three 11 pt chips");
+        app.ui.toolbar_double = true;
+        frame_in(&mut app, &ctx, 1.0, vec![], 900.0);
+        assert_eq!(widget_rects(&ctx, vec2(17.0, 17.0)).len(), 3, "two columns: three 17 pt chips");
+        let modes = widget_rects(&ctx, vec2(22.0, 22.0));
+        assert_eq!(modes.len(), 3, "the three drawing modes side by side");
+        assert!(modes.iter().all(|r| (r.top() - modes[0].top()).abs() < 0.5), "{modes:?}");
+        click_in(&mut app, &ctx, 2.0, modes[1].center(), PointerButton::Primary, 900.0);
+        assert_eq!(app.session.draw_mode, vectorcraft_engine::DrawMode::Behind);
     }
 
     /// How many columns of tool buttons `rects` make.

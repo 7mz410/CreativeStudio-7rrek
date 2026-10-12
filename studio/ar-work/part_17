@@ -1,0 +1,458 @@
+	Glowing Edges…
+	Glowing Edges
+	Edge Width
+	Edge Brightness
+	Smoothness
+	Pixelate
+	Color Halftone…
+	Crystallize…
+	Mezzotint…
+	Pointillize…
+	Color Halftone
+	Crystallize
+	Mezzotint
+	Pointillize
+	Max. Radius
+	Channel 1
+	Channel 2
+	Channel 3
+	Channel 4
+	Cell Size
+	Fine Dots
+	Medium Dots
+	Grainy Dots
+	Coarse Dots
+	Short Lines
+	Medium Lines
+	Long Lines
+	Short Strokes
+	Medium Strokes
+	Long Strokes
+	Side Length:
+	Make Sides Equal
+	Can't open “{name}”.
+	Halo
+	Rays
+	Rings
+	Diameter:
+	Brightness:
+	Growth:
+	Fuzziness:
+	Number:
+	Longest:
+	Path:
+	Largest:
+	Direction:
+	Symbolism Tools Options
+	Symbol Set Density:
+	Graph Design
+	Graph Marker
+	New Design
+	Delete Design
+	Paste Design
+	Select Unused
+	Import Data…
+	Transpose
+	Switch x/y
+	Number of Decimals:
+	Column Width:
+	No Legend
+	Standard Legend
+	Legends in Wedges
+	Ratio
+	Even
+	Stacked
+	Highlight Variable
+	Thai
+	More Align options
+	More Paragraph options
+	Reshape Spine Segment
+	Calligraphic Brush Options
+	Bristle Brush Options
+	Scatter Brush Options
+	Art Brush Options
+	Pattern Brush Options
+	Scatter:
+	Rotation:
+	Rotation relative to:
+	Brush Scale Options
+	Scale Proportionately
+	Stretch to Fit Stroke Length
+	Stretch Between Guides
+	Start:
+	End:
+	Left to Right
+	Right to Left
+	Top to Bottom
+	Bottom to Top
+	Flip:
+	Outer Corner Tile
+	Side Tile
+	Inner Corner Tile
+	Start Tile
+	End Tile
+	Fit
+	Stretch to fit
+	Add space to fit
+	Approximate path
+	Colorization
+	Tints
+	Tints and Shades
+	Hue Shift
+	Key Color:
+	Roundness:
+	Fixed
+	Pressure
+	Shape:
+	Bristle Length:
+	Bristle Density:
+	Bristle Thickness:
+	Paint Opacity:
+	Stiffness:
+	Round Point
+	Flat Point
+	Round Blunt
+	Flat Blunt
+	Round Curve
+	Flat Curve
+	Round Angle
+	Flat Angle
+	Round Fan
+	Flat Fan
+	Proportional Metrics
+	Digits
+	Arabic
+	Hindi
+	Farsi
+	Horizontal Dividers:
+	Vertical Dividers:
+	List Folder
+	Begin Undo Group
+	End Undo Group
+	Missing Fonts
+	Missing Fonts Dialog
+	These fonts aren't available. Their text shows in another font.
+	Search Fonts Folder
+	Find in Folder…
+	Find Fonts in Folder…
+	Find Font Files
+	Add Font Files
+	Add Fonts
+	Find Fonts
+	Stop
+	Searching…
+	Not found
+	{folders} folder(s) and {files} file(s) searched
+	{count} folder(s) skipped, such as other apps' and the system's folders and hidden ones
+	{count} folder(s) or file(s) couldn't be read
+	The search stopped at its limit: search a smaller folder.
+	Copy only fonts you own or are licensed to install.
+	rsm copies the fonts to {folder}.
+	Find Linked Files
+	Find Linked Files in Folder…
+	Choose the file to relink each linked file to. Files with the size and contents saved with the link come first.
+	Same file
+	Same size
+	Don't Relink
+	Copy into the document's folder
+	Select Segments
+	Ridges per segment:
+	Corner
+	Relative
+	Absolute
+	No results
+	No items in this library match “{query}”.
+	Right-click an item to move it into this group.
+	New Group
+	New Group…
+	Move to Group
+	No Group
+	Rename Group…
+	Delete Group
+	Import Library…
+	Export Library…
+	Import Library
+	Export Library
+	New Library Group
+	Rename Library Group
+	Delete Library Group
+	Move Library Item to Group
+	Toolbar: Add Tool
+	Toolbar: Remove Tool
+	Toolbar: Reset
+	Update Changed Links
+	New Variable
+	Delete Variable
+	List Variables
+	Bind Variable
+	Unbind Variable
+	New Data Set
+	Delete Data Set
+	List Data Sets
+	Select Data Set
+	Next Data Set
+	Previous Data Set
+	Data Sets
+	New Variable…
+	New Data Set…
+	Edit Data Set…
+	Data Set
+	Kind
+	Variable
+	no document
+	no data set to edit
+	Make Text Dynamic
+	Make Visibility Dynamic
+	Capture Data Set
+	Update Data Set
+	Rename Data Set…
+	Variable Options…
+	Select Bound Object
+	Select All Bound Objects
+	Multiple objects
+	New Name
+	no variable to rename
+	no data set to rename
+	Horizontal & Vertical Align Center
+	{count} linked image(s) changed on disk. Show the new versions?
+	Drag to move out of the set
+@msg	its type is to come in as outlines, which only its page has
+@msg	`freeform.lines` must be an array
+@msg	axis must be "vertical", "horizontal" or an angle in degrees, not `{v}`
+@msg	closing needs three anchors
+@msg	freeform line {i} must be an array of point indices
+@msg	give corners of the path: anchors where its sides meet at an angle
+@msg	give horizontal or vertical
+@msg	no brush selected
+@msg	object {id} is not a selected top-level object
+@msg	the guide is on a hidden or locked layer
+@msg	the target layer is locked or hidden
+@msg	this PostScript file can't be read ({why}): save it as PDF or SVG in the app that made it
+@msg	Updated {_1} linked file(s) changed on disk
+@msg	below and above must name a panel floating in another group
+@msg	give only one of onto, below and above
+@msg	column must be true or a number from 1
+@msg	No fonts are missing in this document
+@msg	VectorCraft doesn't search other apps' or the system's folders: {path}
+@msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}
+@msg	{path} is not a folder
+@msg	the search couldn't start: try again in a moment
+@msg	searching a folder isn't available on the web
+@msg	every search thread stopped on an internal error (please report this bug)
+@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it
+@msg	choose the font files to add
+@msg	{n} font file(s) are now in {folder}
+@msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}
+@msg	{n} font(s) aren't available here: their text shows in another font
+@msg	not a file
+@msg	not a font file
+@msg	that document is no longer open
+@msg	larger than 256 MB
+@msg	the files come to more than 1 GB: add fewer at a time
+@msg	every numbered name for it is taken in the Fonts folder
+@msg	every numbered name for {name} is taken in the document's folder
+@msg	No linked files to look for
+@msg	Relinked {n} image(s); {name} couldn't be relinked: {reason}
+	The document was closed while its file dialog was open
+	The dialog was closed before its file dialog answered
+@msg	`id` is the step reference {r}, which only `run` and `command_batch` resolve
+@msg	`ids` must be an array of object ids, not {v}
+@msg	`corners` must be an array of anchor indices, not {v}
+@msg	`{text}`: step {i}'s result has no such value (write $$ for a literal $)
+@msg	`{text}`: there is no step {i} before this one (steps count from 0; write $$ for a literal $)
+@msg	object ids are non-negative integers, not {v}
+@msg	automation filesystem access is not granted: read authority is absent: {path}
+@msg	automation filesystem access is not granted: write authority is absent: {path}
+@msg	automation path rejected: outside the read root {root}: {path}
+@msg	automation path rejected: outside the write root {root}: {path}
+@msg	automation path rejected: path is empty
+@msg	automation path rejected: a link that leads nowhere: {path}
+@msg	automation path rejected: cannot resolve {path}: {e}
+@msg	automation path rejected: parent traversal below a folder that doesn't exist: {path}
+@msg	automation path rejected: reserved device names are not allowed: {path}
+@msg	Multichannel PSD files can't be read: save it in RGB, CMYK or Grayscale mode
+@msg	not a PSD file
+@msg	the PSD file has an unknown colour mode ({m})
+@msg	the PSD file's image data uses an unknown compression ({m})
+@msg	the PSD image is too large to read ({_1} × {_2} pixels)
+@msg	zipped 32-bit PSD image data with prediction can't be read
+@msg	{depth}-bit PSD files in this colour mode can't be read
+@msg	the PSD file is cut short
+@msg	the PSD file's header is damaged
+@msg	the PSD file's image data can't be read: {e}
+	Video
+	De-Interlace…
+	De-Interlace
+	NTSC Colors
+	Eliminate
+	Create New Fields by
+	Odd Fields
+	Even Fields
+	Duplication
+	Interpolation
+@msg	Imported library {name}
+	RGB:
+	CMYK:
+	Texture
+	Craquelure…
+	Grain…
+	Mosaic Tiles…
+	Patchwork…
+	Stained Glass…
+	Texturizer…
+	Craquelure
+	Grain
+	Mosaic Tiles
+	Patchwork
+	Stained Glass
+	Texturizer
+	Crack Spacing
+	Crack Depth
+	Crack Brightness
+	Intensity
+	Grain Type
+	Tile Size
+	Grout Width
+	Lighten Grout
+	Square Size
+	Relief
+	Border Thickness
+	Light Intensity
+	Light Direction
+	Sprinkles
+	Clumped
+	Contrasty
+	Enlarged
+	Stippled
+	Speckle
+	Brick
+	Burlap
+	Canvas
+	Sandstone
+	Bottom Left
+	Top Left
+	Top Right
+	Bottom Right
+	Edge
+	System Title Bar
+	Value Axis
+	On Left Side
+	On Right Side
+	On Both Sides
+	Short
+	Full Width
+	Distort
+	Diffuse Glow…
+	Glass…
+	Ocean Ripple…
+	Diffuse Glow
+	Glass
+	Ocean Ripple
+	Graininess
+	Glow Amount
+	Clear Amount
+	Ripple Size
+	Ripple Magnitude
+	Blocks
+	Frosted
+	Tiny Lens
+	Rename Data Set
+	Rename Variable
+	Variable Options
+	Edit Data Set
+	Define a variable first
+	Text
+	Visibility
+	Activate Panel
+	Change Panel Layout
+	Close Panel
+	Move Panel
+	Group with
+	Resize panels
+	Resize panel window
+@msg	Invalid panel layout; restored the default dock
+@msg	action is required
+@msg	anchor must name a registered panel
+@msg	before must name a panel
+@msg	docking action contains an unknown panel or an excessive split path
+@msg	group must be true or false
+@msg	move requires a destination panel
+@msg	move requires an existing destination panel
+@msg	onto must name a floating panel
+@msg	panel group is empty
+@msg	panel must name a registered panel
+@msg	saved panel layout is invalid; reset the workspace first
+@msg	zone must be a string
+@msg	zone must be tab, center, left, right, top or bottom
+@msg	{key} must be a finite coordinate
+@msg	x and y must be provided together
+@msg	invalid restored panel group
+	Lighting
+	Revolve angle
+	Axis side
+	Rotation X
+	Rotation Y
+	Rotation Z
+	Shading
+	Direction
+	Elevation
+	Ambient
+	Segments
+	Show axis
+	Reset all
+	Reset to default
+	Reset all Revolve settings to their defaults.
+	Drag values or labels. Double-click a value to type.
+	Drag rings to rotate. Shift snaps to 15°.
+	Drag the light, or its rings. Shift snaps to 15°.
+lighting	Light
+	Keep visible surfaces only when expanding
+	Trim covered geometry on Expand Appearance. Live preview keeps the full surface. Transparent paints and surfaces exceeding visibility limits retain all faces.
+	Accented Edges…
+	Angled Strokes…
+	Crosshatch…
+	Dark Strokes…
+	Ink Outlines…
+	Spatter…
+	Sprayed Strokes…
+	Sumi-e…
+	Accented Edges
+	Angled Strokes
+	Crosshatch
+	Dark Strokes
+	Ink Outlines
+	Spatter
+	Sprayed Strokes
+	Sumi-e
+	Direction Balance
+	Stroke Length
+	Sharpness
+	Strength
+	Balance
+	Black Intensity
+	White Intensity
+	Dark Intensity
+	Spray Radius
+	Stroke Direction
+	Stroke Width
+	Stroke Pressure
+	Right Diagonal
+	Left Diagonal
+	Vertical Guide
+	Horizontal Guide
+	Move Guide to Layer
+@msg	invalid native panel set
+@msg	missing panel layout
+@msg	unsupported native docking operation
+	Linux Display Server
+	X11 (XWayland)
+	Ruler Origin
+	Reset Ruler Origin
+	Artistic
+	Film Grain…
+	Highlight Area
+@msg	the compressed file unpacks to more than VectorCraft reads ({_1} MB of document, {_2} MB per image)
+@msg	the document is too large to save compressed ({0}): save it with Use Compression off
+@msg	the file stopped being read (please report this bug)
+	Concentric Dividers:
+	Radial Dividers:
