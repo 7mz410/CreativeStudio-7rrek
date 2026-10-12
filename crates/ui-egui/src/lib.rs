@@ -1249,13 +1249,13 @@ impl VectorcraftApp {
         if self.ui.dock && self.ui.screen_mode < 3 {
             dock::show(self, ui);
         }
-        // 7rrek: the Timeline sits under the canvas, between the toolbar and the dock.
-        if self.ui.screen_mode < 3 && self.session.active().is_some() {
-            timeline::timeline(self, ui);
-        }
         egui::CentralPanel::default().frame(egui::Frame::NONE.fill(t.pasteboard)).show(ui, |ui| {
             if self.ui.screen_mode < 3 {
                 chrome::doc_tabs(self, ui);
+            }
+            // 7rrek: the Timeline, under the canvas inside the document area.
+            if self.ui.screen_mode < 3 && self.session.active().is_some() {
+                timeline::timeline(self, ui);
             }
             canvas::show(self, ui);
         });
