@@ -25,6 +25,8 @@ pub fn run(root: &Path) -> Result<(), String> {
         .map_err(|e| format!("copy document icon: {e}"))?;
     std::fs::copy(root.join("assets/app-icon/rsm-document.icns"), app.join("Resources/rsm-document.icns"))
         .map_err(|e| format!("copy document icon: {e}"))?;
+    std::fs::copy(root.join("assets/app-icon/rsm-document.icns"), app.join("Resources/rsm-document.icns"))
+        .map_err(|e| format!("copy document icon: {e}"))?;
     let sha = std::env::var("VECTORCRAFT_BUILD_SHA").unwrap_or_else(|_| "unknown".into());
     std::fs::write(app.join("Info.plist"), info_plist(env!("CARGO_PKG_VERSION"), &sha)).map_err(|e| e.to_string())?;
     println!("built {}", root.join("dist/VectorCraft.app").display());

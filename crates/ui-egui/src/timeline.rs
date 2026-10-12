@@ -39,13 +39,14 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     let frames = info["frames"].as_u64().unwrap_or(1).max(1) as u32;
     let current = info["current"].as_u64().unwrap_or(1) as u32;
     let fps = info["fps"].as_u64().unwrap_or(12).max(1) as u32;
+    let onion = info["onion"].as_bool().unwrap_or(false);
     let shown = rows.len().clamp(1, MAX_ROWS_SHOWN) as f32;
     let height = BAR_H + RULER_H + shown * ROW_H + 6.0;
 
     tick(app, ui, fps);
 
     egui::Panel::bottom("timeline").exact_size(height).frame(egui::Frame::NONE.fill(t.panel).stroke(Stroke::new(1.0, t.border))).show(ui, |ui| {
-        controls(app, ui, &t, current, frames, fps);
+        controls(app, ui, &t, current, frames, fps, onion);
         egui::ScrollArea::both().id_salt("timeline-grid").auto_shrink([false, false]).show(ui, |ui| {
             grid(app, ui, &t, &rows, current, frames);
         });
@@ -64,7 +65,7 @@ fn info_of(doc: &vectorcraft_doc::Document) -> Value {
             json!({"id": r.id.0, "name": r.name.clone().unwrap_or_default(), "keys": keys})
         })
         .collect();
-    json!({"fps": a.fps, "frames": a.frames, "current": a.current, "rows": rows})
+    json!({"fps": a.fps, "frames": a.frames, "current": a.current, "rows": rows, "onion": a.onion_before + a.onion_after > 0})
 }
 
 /// Step the playhead while playing.
@@ -88,7 +89,7 @@ fn set_playing(ui: &Ui, on: bool) {
     ui.ctx().data_mut(|d| d.insert_temp(playback_id(), Playback { playing: on, acc: 0.0 }));
 }
 
-fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32) {
+fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32, onion: bool) {
     let playing = ui.ctx().data(|d| d.get_temp::<Playback>(playback_id())).is_some_and(|p| p.playing);
     ui.allocate_ui_with_layout(vec2(ui.available_width(), BAR_H), egui::Layout::left_to_right(egui::Align::Center), |ui| {
         ui.add_space(8.0);
@@ -132,6 +133,12 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         }
         if ui.button("Clear Keyframe").clicked() {
             run_reporting(app, "anim.removeKeyframe");
+        }
+        ui.add_space(8.0);
+        // Onion skin: one keyframe on each side, faint.
+        if ui.selectable_label(onion, "Onion Skin").on_hover_text("Show the keyframes before and after faintly").clicked() {
+            let n = if onion { 0 } else { 1 };
+            let _ = app.run("anim.onion", json!({"before": n, "after": n}));
         }
     });
 }

@@ -24,6 +24,8 @@ const KEY: &str = "animation";
 /// Longest timeline (frames) and fastest frame rate a command accepts.
 const MAX_FRAMES: u32 = 10_000;
 const MAX_FPS: u32 = 60;
+/// Most keyframes the onion skin shows on each side.
+const MAX_ONION: u32 = 5;
 /// Largest export, in pixels per frame (width × height) and frames.
 const MAX_EXPORT_PIXELS: u64 = 4096 * 4096;
 
@@ -35,11 +37,14 @@ pub struct Anim {
     pub current: u32,
     /// Keyframe sublayer id → its frame.
     pub keys: BTreeMap<u64, u32>,
+    /// Onion skin: how many keyframes before and after the current one show faintly (0: off).
+    pub onion_before: u32,
+    pub onion_after: u32,
 }
 
 impl Default for Anim {
     fn default() -> Self {
-        Self { fps: 12, frames: 24, current: 1, keys: BTreeMap::new() }
+        Self { fps: 12, frames: 24, current: 1, keys: BTreeMap::new(), onion_before: 0, onion_after: 0 }
     }
 }
 
@@ -52,6 +57,8 @@ impl Anim {
         self.fps = self.fps.clamp(1, MAX_FPS);
         self.frames = self.frames.clamp(1, MAX_FRAMES);
         self.current = self.current.clamp(1, self.frames);
+        self.onion_before = self.onion_before.min(MAX_ONION);
+        self.onion_after = self.onion_after.min(MAX_ONION);
         self
     }
 
@@ -76,25 +83,36 @@ impl Anim {
 }
 
 /// `doc` showing `frame`: each animated row shows its keyframe in effect, the others hidden.
-pub fn at_frame(doc: &Document, frame: u32) -> Document {
+/// With `onion`, the document's onion-skin keyframes around it show faintly and locked.
+pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     let anim = Anim::of(doc);
     let mut d = doc.clone();
     for row in &doc.layers {
         let keys = anim.row_keys(row);
-        if keys.is_empty() {
-            continue;
-        }
-        let shown = anim.key_at(row, frame);
-        for (_, id) in keys {
-            if let Some(n) = d.node_mut(id) {
-                n.visible = Some(id) == shown;
-            }
+        let Some(shown) = keys.iter().rposition(|(f, _)| *f <= frame).or((!keys.is_empty()).then_some(usize::MAX)) else { continue };
+        for (i, (_, id)) in keys.iter().enumerate() {
+            let Some(n) = d.node_mut(*id) else { continue };
+            // Distance in keyframes from the one shown (before the first keyframe, nothing is).
+            let dist = if shown == usize::MAX { None } else { Some(i as i64 - shown as i64) };
+            let faint = onion && dist.is_some_and(|k| (k < 0 && -k <= anim.onion_before as i64) || (k > 0 && k <= anim.onion_after as i64));
+            n.visible = dist == Some(0) || faint;
+            n.locked = faint;
+            n.opacity = match dist {
+                Some(0) => 1.0,
+                Some(k) if faint => 0.35 / k.unsigned_abs() as f32,
+                _ => 1.0,
+            };
         }
     }
     let mut a = anim;
     a.current = frame.clamp(1, a.frames);
     a.store(&mut d);
     d
+}
+
+/// `doc` showing `frame` as it renders: no onion skin (exports, frames of a movie).
+pub fn at_frame(doc: &Document, frame: u32) -> Document {
+    at_frame_with(doc, frame, false)
 }
 
 /// The top-level layer (timeline row) that holds `id`.
@@ -127,7 +145,7 @@ fn frame_param(p: &Value, anim: &Anim, cmd: &str) -> Result<u32> {
 fn show(s: &mut Session, frame: u32) -> Result<Value> {
     let st = s.doc_mut()?;
     let row = st.current_layer().and_then(|l| row_of(&st.doc, l));
-    let d = at_frame(&st.doc, frame);
+    let d = at_frame_with(&st.doc, frame, true);
     let anim = Anim::of(&d);
     if let Some(key) = row.and_then(|r| d.node(r)).and_then(|r| anim.key_at(r, frame)) {
         st.active_layer = Some(key);
@@ -169,6 +187,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{row?, frame?} delete the row's keyframe at the frame and its art → {deleted}",
             has_doc,
             remove_keyframe
+        ),
+        cmd!(
+            query "anim.onion",
+            "Onion Skin",
+            [],
+            None,
+            "{before?: 0–5, after?: 0–5} how many keyframes before and after the current one show faintly (0 turns a side off). View state: not an undo step → {before, after}",
+            has_doc,
+            onion
         ),
         cmd!("anim.setFps", "Frame Rate", [], None, "{fps: 1–60} frames per second → {fps}", has_doc, set_fps),
         cmd!("anim.setFrames", "Timeline Length", [], None, "{frames: 1–10000} the timeline's length → {frames}", has_doc, set_frames),
@@ -293,6 +320,27 @@ fn remove_keyframe(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(json!({"deleted": 1}))
 }
 
+fn onion(s: &mut Session, p: &Value) -> Result<Value> {
+    let side = |k: &str, now: u32| -> Result<u32> {
+        match p.get(k) {
+            None | Some(Value::Null) => Ok(now),
+            Some(v) => {
+                v.as_u64().filter(|n| *n <= MAX_ONION as u64).map(|n| n as u32).ok_or_else(|| bad("anim.onion", format!("{k} must be from 0 to 5")))
+            }
+        }
+    };
+    let st = s.doc_mut()?;
+    let mut d = (*st.doc).clone();
+    let mut a = Anim::of(&d);
+    a.onion_before = side("before", a.onion_before)?;
+    a.onion_after = side("after", a.onion_after)?;
+    a.store(&mut d);
+    let current = a.current;
+    st.doc = Arc::new(d);
+    show(s, current)?;
+    Ok(json!({"before": a.onion_before, "after": a.onion_after}))
+}
+
 fn set_fps(s: &mut Session, p: &Value) -> Result<Value> {
     let fps = p
         .get("fps")
@@ -412,11 +460,31 @@ mod tests {
     }
 
     #[test]
+    fn the_onion_skin_shows_neighbours_faintly_but_never_in_exports() {
+        let mut s = session();
+        let k1 = s.execute("anim.keyframe", &json!({"frame": 1})).unwrap()["id"].as_u64().unwrap();
+        let k3 = s.execute("anim.blankKeyframe", &json!({"frame": 3})).unwrap()["id"].as_u64().unwrap();
+        let k5 = s.execute("anim.blankKeyframe", &json!({"frame": 5})).unwrap()["id"].as_u64().unwrap();
+        s.execute("anim.onion", &json!({"before": 1, "after": 1})).unwrap();
+        s.execute("anim.goto", &json!({"frame": 3})).unwrap();
+        let d = s.doc().unwrap().doc.clone();
+        let n = |id: u64| d.node(NodeId(id)).unwrap().clone();
+        assert!(n(k1).visible && n(k1).locked && n(k1).opacity < 0.5, "frame 1 faint");
+        assert!(n(k3).visible && !n(k3).locked && n(k3).opacity == 1.0, "frame 3 itself");
+        assert!(n(k5).visible && n(k5).locked, "frame 5 faint");
+        let clean = at_frame(&d, 3);
+        assert!(!clean.node(NodeId(k1)).unwrap().visible && clean.node(NodeId(k3)).unwrap().opacity == 1.0, "exports see only frame 3");
+        s.execute("anim.onion", &json!({"before": 0, "after": 0})).unwrap();
+        assert!(!s.doc().unwrap().doc.node(NodeId(k1)).unwrap().visible);
+    }
+
+    #[test]
     fn bad_params_are_errors() {
         let mut s = session();
         assert!(s.execute("anim.goto", &json!({"frame": 0})).is_err());
         assert!(s.execute("anim.goto", &json!({"frame": 99})).is_err());
         assert!(s.execute("anim.setFps", &json!({"fps": 0})).is_err());
+        assert!(s.execute("anim.onion", &json!({"before": 9})).is_err());
         assert!(s.execute("anim.setFrames", &json!({"frames": 20000})).is_err());
         s.execute("anim.keyframe", &json!({"frame": 2})).unwrap();
         assert!(s.execute("anim.keyframe", &json!({"frame": 2})).is_err(), "one keyframe per frame");
