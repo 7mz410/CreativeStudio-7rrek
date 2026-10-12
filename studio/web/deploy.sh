@@ -10,6 +10,7 @@ for a in "$@"; do
   case $a in
     rsm) (cd apps/vectorcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     tlween) (cd apps/photocraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
+    arqam) (cd apps/gridcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     klmat) (cd apps/wordcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     trteeb) (cd apps/designcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     sf7aat) (cd apps/pdfcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;

@@ -22,6 +22,7 @@ APPS = {
     "sf7aat": ("sf7aat/apps/pdfcraft-web/index.html", "#eb1b3c"),
     "trteeb": ("trteeb/apps/designcraft-web/index.html", "#eb1b3c"),
     "klmat": ("klmat/apps/wordcraft-web/index.html", "#eb1b3c"),
+    "arqam": ("arqam/apps/gridcraft-web/index.html", "#eb1b3c"),
 }
 
 CSS = """
