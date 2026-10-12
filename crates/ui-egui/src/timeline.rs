@@ -46,9 +46,15 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     tick(app, ui, fps);
 
     egui::Panel::bottom("timeline").exact_size(height).frame(egui::Frame::NONE.fill(t.panel).stroke(Stroke::new(1.0, t.border))).show(ui, |ui| {
-        controls(app, ui, &t, current, frames, fps, onion);
-        egui::ScrollArea::both().id_salt("timeline-grid").auto_shrink([false, false]).show(ui, |ui| {
-            grid(app, ui, &t, &rows, current, frames);
+        ui.vertical(|ui| {
+            // The control bar gets its own strip; the grid scrolls in the space under it.
+            let (bar, _) = ui.allocate_exact_size(vec2(ui.available_width(), BAR_H), Sense::hover());
+            ui.scope_builder(egui::UiBuilder::new().max_rect(bar).layout(egui::Layout::left_to_right(egui::Align::Center)), |ui| {
+                controls(app, ui, &t, current, frames, fps, onion);
+            });
+            egui::ScrollArea::both().id_salt("timeline-grid").auto_shrink([false, false]).show(ui, |ui| {
+                grid(app, ui, &t, &rows, current, frames);
+            });
         });
     });
 }
@@ -91,7 +97,7 @@ fn set_playing(ui: &Ui, on: bool) {
 
 fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32, onion: bool) {
     let playing = ui.ctx().data(|d| d.get_temp::<Playback>(playback_id())).is_some_and(|p| p.playing);
-    ui.allocate_ui_with_layout(vec2(ui.available_width(), BAR_H), egui::Layout::left_to_right(egui::Align::Center), |ui| {
+    {
         ui.add_space(8.0);
         ui.label(egui::RichText::new("Timeline").font(theme::semibold(12.0)).color(t.text_strong));
         ui.add_space(10.0);
@@ -140,7 +146,7 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
             let n = if onion { 0 } else { 1 };
             let _ = app.run("anim.onion", json!({"before": n, "after": n}));
         }
-    });
+    }
 }
 
 fn run_reporting(app: &mut VectorcraftApp, id: &str) {
