@@ -39,9 +39,15 @@ vb = re.search(r'viewBox="([^"]+)"', logo).group(1)
 body = re.sub(r'^<svg[^>]*>|</svg>\s*$', '', logo.strip())
 icon = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><clipPath id="t"><rect width="512" height="512" rx="112"/></clipPath></defs>'
         f'<g clip-path="url(#t)"><rect width="512" height="512" fill="#0d2d3f"/><svg x="80" y="80" width="352" height="352" viewBox="{vb}">{body}</svg></g></svg>\n')
-for svg in (repo / 'assets/app-icon').glob('*.svg'):
-    if 'document' not in svg.name:
-        svg.write_text(icon, encoding='utf-8')
+svgs = [p for p in (repo / 'assets/app-icon').glob('*.svg') if 'document' not in p.name]
+for svg in svgs:
+    svg.write_text(icon, encoding='utf-8')
+if not svgs:  # PNG-only icon set: keep an SVG source and render every PNG from it
+    src = repo / f'assets/app-icon/{app}.svg'
+    src.write_text(icon, encoding='utf-8')
+    for png in (repo / 'assets/app-icon').rglob('*.png'):
+        w = subprocess.run(['sips', '-g', 'pixelWidth', str(png)], capture_output=True, text=True).stdout.split()[-1]
+        subprocess.run(['resvg', '-w', w, '-h', w, str(src), str(png)], check=True)
 if (repo / 'packaging/icons.sh').exists():
     subprocess.run(['bash', str(repo / 'packaging/icons.sh')], check=True, capture_output=True)
 (repo / 'assets/app-icon/README.md').write_text(
