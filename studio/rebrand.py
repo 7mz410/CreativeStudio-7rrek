@@ -247,9 +247,6 @@ def main():
         if rebrand_rust(p):
             changed.append(p)
     sources = source_strings()
-    for p in sorted((ROOT / 'crates/ui-egui/src/i18n').glob('*.tsv')):
-        if rebrand_catalog(p, sources):
-            changed.append(p)
     # Rows for Creative Studio's own UI strings (studio/i18n/<lang>.tsv; Arabic comes from ar-work).
     for extra in sorted((ROOT / 'studio/i18n').glob('*.tsv')):
         cat = ROOT / 'crates/ui-egui/src/i18n' / extra.name
@@ -259,6 +256,9 @@ def main():
         if rows:
             cat.write_text(src.rstrip('\n') + '\n' + '\n'.join(rows) + '\n', encoding='utf-8')
             changed.append(cat)
+    for p in sorted((ROOT / 'crates/ui-egui/src/i18n').glob('*.tsv')):
+        if rebrand_catalog(p, sources):
+            changed.append(p)
     web = ROOT / 'apps/vectorcraft-web/index.html'
     html = web.read_text(encoding='utf-8')
     branded = html.replace('<title>VectorCraft</title>', f'<title>{NAME}</title>').replace('Loading VectorCraft&hellip;', f'Loading {NAME}&hellip;')

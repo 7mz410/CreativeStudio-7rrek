@@ -106,7 +106,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	Um valor menor segue o traço de perto; um valor maior gera menos pontos e curvas mais suaves.
 	A new preset starting from the selected one	Um novo predefinido a partir do selecionado
 	A saved copy of the selected preset	Uma cópia salva do predefinido selecionado
-	About VectorCraft	Sobre o VectorCraft
+	About rsm	Sobre o rsm
 	Absolute Position	Posição Absoluta
 	Accurate	Preciso
 	Abutting	Contíguo
@@ -196,7 +196,7 @@
 	Appearance Panel	Painel Aparência
 	Appearance of Black	Aparência do Preto
 	Appearance panel	Painel de Aparência
-	Applies the next time VectorCraft starts.	Aplica na próxima inicialização do VectorCraft.
+	Applies the next time rsm starts.	Aplica na próxima inicialização do rsm.
 	Applies when the linked file is relinked or updated.	Aplica quando o arquivo vinculado é revinculado ou atualizado.
 	Apply Brush	Aplicar Pincel
 	Apply Character Style	Aplicar Estilo de Caractere
@@ -225,8 +225,7 @@
 	Arrange: Bring to Front	Organizar: Trazer para Frente
 	Arrowheads:	Pontas de Seta:
 	Art using a deleted global swatch keeps its colour.	A arte que usa uma amostra global excluída mantém sua cor.
-	ArtCraft Website	Site do ArtCraft
-	ArtCraft website	Site do ArtCraft
+	Creative Studio Project	Site do ArtCraft
 	Artboard Options	Opções de Mesa de Trabalho
 	Artboard Options: edit with the Artboard tool	Opções de Mesa de Trabalho: edite com a ferramenta Mesa de Trabalho
 	Artboard Options…	Opções de Mesa de Trabalho…
@@ -1126,7 +1125,7 @@
 	Isolate Selected Group	Isolar Grupo Selecionado
 	Italian	Italiano
 	Join	Unir
-	Join Our Discord	Junte-se ao nosso Discord
+	Upstream Community on Discord	Junte-se ao nosso Discord
 	Join Tool	Ferramenta Unir
 	Join our Discord	Junte-se ao nosso Discord
 	Join the ArtCraft community on Discord (discord.gg/artcraft)	Junte-se à comunidade do ArtCraft no Discord (discord.gg/artcraft)
@@ -1740,7 +1739,7 @@
 	Quarter Space	Espaço de Quarto
 	Quick Actions	Ações Rápidas
 	Quickly start a new file	Começar rapidamente um novo arquivo
-	Quit VectorCraft	Sair do VectorCraft
+	Quit rsm	Sair do rsm
 	RECENT	RECENTES
 	RGB Color	Cor RGB
 	Radar Graph Tool	Ferramenta Gráfico de Radar
@@ -1849,7 +1848,7 @@
 	{count} folder(s) or file(s) couldn't be read	{count} pasta(s) ou arquivo(s) não puderam ser lidos
 	The search stopped at its limit: search a smaller folder.	A pesquisa parou no limite: pesquise uma pasta menor.
 	Copy only fonts you own or are licensed to install.	Copie apenas fontes que sejam suas ou que você tenha licença para instalar.
-	VectorCraft copies the fonts to {folder}.	O VectorCraft copia as fontes para {folder}.
+	rsm copies the fonts to {folder}.	O rsm copia as fontes para {folder}.
 	Registered Trademark Symbol	Símbolo de Marca Registrada
 	Registry name:	Nome do registro:
 	Release	Liberar
@@ -1938,7 +1937,7 @@
 	Revert	Reverter
 	Revert to the saved version of “{name}”?	Reverter para a versão salva de “{name}”?
 	Replace “{name}”, the file this document was opened from?	Substituir “{name}”, o arquivo do qual este documento foi aberto?
-	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Ao abri-lo, ficou de fora o que o VectorCraft ainda não consegue ler ({what}), então substituí-lo perde isso para sempre. Salve com outro nome para mantê-lo.
+	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Ao abri-lo, ficou de fora o que o rsm ainda não consegue ler ({what}), então substituí-lo perde isso para sempre. Salve com outro nome para mantê-lo.
 	Revolve…	Revolver…
 	Right Grid:	Grade Direita:
 	Right Indent	Recuo Direito
@@ -2557,10 +2556,10 @@
 	Vector Halftone	Meio-tom Vetorial
 	Vector Halftone…	Meio-tom Vetorial…
 	Vector illustration — fast, open, scriptable.	Ilustração vetorial — rápida, aberta, scriptável.
-	VectorCraft Help…	Ajuda do VectorCraft…
-	VectorCraft didn't quit normally last time. These documents had unsaved changes:	O VectorCraft não fechou normalmente da última vez. Estes documentos tinham alterações não salvas:
-	VectorCraft on GitHub	VectorCraft no GitHub
-	VectorCraft on getartcraft.com	VectorCraft em getartcraft.com
+	rsm Help…	Ajuda do rsm…
+	rsm didn't quit normally last time. These documents had unsaved changes:	O rsm não fechou normalmente da última vez. Estes documentos tinham alterações não salvas:
+	rsm on GitHub	rsm no GitHub
+	Creative Studio Website	rsm em getartcraft.com
 	Vectors	Vetores
 	Version {version} — open-source vector illustration in pure Rust.	Versão {version} — ilustração vetorial de código aberto em Rust puro.
 	Version:	Versão:
@@ -2591,7 +2590,7 @@
 	Web Shift	Web Shift
 	Web Snap:	Web Snap:
 	Weight:	Peso:
-	Welcome to VectorCraft	Bem-vindo ao VectorCraft
+	Welcome to rsm	Bem-vindo ao rsm
 	When pasting text	Ao colar texto
 	White	Branco
 	Widget Position:	Posição do Widget:
@@ -2715,7 +2714,7 @@
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	Serviços
-	Hide VectorCraft	Ocultar o VectorCraft
+	Hide rsm	Ocultar o rsm
 	Hide Others	Ocultar Outros
 	Zoom	Zoom
 	Bring All to Front	Trazer Todas para a Frente
@@ -2724,7 +2723,7 @@
 	On: one locked object showing the document, updated when it changes.	Ativado: um objeto bloqueado que mostra o documento, atualizado quando ele muda.
 	Off: an editable copy of its art, embedded in this document.	Desativado: uma cópia editável da arte, incorporada neste documento.
 	Images: link to the file instead of only embedding it.	Imagens: vincular ao arquivo em vez de apenas incorporá-lo.
-	VectorCraft documents: one locked object, updated when the file changes.	Documentos do VectorCraft: um objeto bloqueado, atualizado quando o arquivo muda.
+	rsm documents: one locked object, updated when the file changes.	Documentos do rsm: um objeto bloqueado, atualizado quando o arquivo muda.
 	A file dialog is open: choose there first	Há uma caixa de diálogo de arquivos aberta: escolha nela primeiro
 	The document was closed while its file dialog was open	O documento foi fechado enquanto sua caixa de diálogo de arquivos estava aberta
 	The dialog was closed before its file dialog answered	O diálogo foi fechado antes que sua caixa de diálogo de arquivos respondesse
@@ -3345,7 +3344,7 @@ axis	Both	Ambos
 @msg	node {_1} is not text	o nó {_1} não é texto
 @msg	not a DXF drawing	não é um desenho DXF
 @msg	not a VectorCraft file: {0}	não é um arquivo do VectorCraft: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	não é um conjunto de atalhos do VectorCraft (falta `overrides`)
+@msg	not a rsm shortcut set (missing `overrides`)	não é um conjunto de atalhos do rsm (falta `overrides`)
 @msg	not a graphic style library (format `{_1}`)	não é uma biblioteca de estilos gráficos (formato `{_1}`)
 @msg	not a stored central record	não é um registro central armazenado
 @msg	not a valid plug-in module: {0}	não é um módulo de plug-in válido: {0}
@@ -3686,3 +3685,17 @@ axis	Both	Ambos
 	Use Outside Rectangle As Frame	Usar Retângulo Externo como Moldura
 	Create Compound Path From Ellipses	Criar Caminho Composto a partir das Elipses
 	Fill Grid	Preencher Grade
+	AI Agents…	Agentes de IA…
+	AI Agents	Agentes de IA
+	Add this to the agent's MCP settings:	Adicione isto às configurações MCP do agente:
+	Agents can connect now.	Os agentes já podem se conectar.
+	Agents need the desktop app.	Os agentes precisam do app para desktop.
+	Allow AI agents to control this app	Permitir que agentes de IA controlem este app
+	Connect	Conectar
+	Connect an agent app	Conectar um app de agente
+	Connected	Conectado
+	Other agents	Outros agentes
+	AI agents such as Claude and Gemini can work in this app while you watch.	Agentes de IA como Claude e Gemini podem trabalhar neste app enquanto você assiste.
+	They connect on this computer only.	Eles se conectam apenas neste computador.
+	Adds this app to the agent's settings.	Adiciona este app às configurações do agente.
+	Restart the agent app afterwards.	Depois reinicie o app do agente.

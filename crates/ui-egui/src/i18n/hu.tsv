@@ -155,7 +155,7 @@
 	A5	A5
 	A6	A6
 	About	Névjegy
-	About VectorCraft	A VectorCraft névjegye
+	About rsm	A rsm névjegye
 	above	fölötte
 	Above Text	Szöveg fölött
 	Absolute	Abszolút
@@ -283,7 +283,7 @@
 	Appearance of Black	A fekete megjelenése
 	Appearance panel	Megjelenés panel
 	Appearance Panel	Megjelenés panel
-	Applies the next time VectorCraft starts.	A VectorCraft következő indításakor lép életbe.
+	Applies the next time rsm starts.	A rsm következő indításakor lép életbe.
 	Applies when the linked file is relinked or updated.	A csatolt fájl újracsatolásakor vagy frissítésekor érvényes.
 	Apply	Alkalmaz
 	Apply Brush	Ecset alkalmazása
@@ -335,8 +335,7 @@
 	Artboard:	Rajztábla:
 	Artboards	Rajztáblák
 	Artboards: {n}	Rajztáblák: {n}
-	ArtCraft Website	Az ArtCraft webhelye
-	ArtCraft website	Az ArtCraft webhelye
+	Creative Studio Project	Az ArtCraft webhelye
 	Artwork Colors	Grafika színei
 	As Multiple Assets	Több elemként
 	As Single Asset	Egy elemként
@@ -1555,7 +1554,7 @@
 	Hide Thumbnail	Bélyegkép elrejtése
 	Hide Thumbnails	Bélyegképek elrejtése
 	Hide Transparency Grid	Átlátszósági rács elrejtése
-	Hide VectorCraft	VectorCraft elrejtése
+	Hide rsm	rsm elrejtése
 	High	Magas
 	High (300 ppi)	Magas (300 ppi)
 	High Contrast	Erős kontraszt
@@ -1695,7 +1694,7 @@
 	Its graphics, colors and text styles are deleted from this machine.	A grafikái, színei és szövegstílusai törlődnek erről a gépről.
 	Japanese	Japán
 	Join	Összekapcsolás
-	Join Our Discord	Csatlakozz a Discordunkhoz
+	Upstream Community on Discord	Csatlakozz a Discordunkhoz
 	Join our Discord	Csatlakozz a Discordunkhoz
 	Join the ArtCraft community on Discord (discord.gg/artcraft)	Csatlakozz az ArtCraft-közösséghez a Discordon (discord.gg/artcraft)
 	Join the lines of each paragraph	Bekezdések sorainak összefűzése
@@ -2283,7 +2282,7 @@
 	Open Swatch Library	Színminta-könyvtár megnyitása
 	Open the URL in the web browser	URL megnyitása a böngészőben
 	Opened with {} note(s): {}	Megnyitva, megjegyzések: {}. {}
-	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Megnyitáskor kimaradt, amit a VectorCraft még nem tud beolvasni ({what}), ezért a fájl felülírásával ez végleg elvész. A megtartásához mentsd más néven.
+	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Megnyitáskor kimaradt, amit a rsm még nem tud beolvasni ({what}), ezért a fájl felülírásával ez végleg elvész. A megtartásához mentsd más néven.
 	Open…	Megnyitás…
 	Optical Margin Alignment	Optikai margóigazítás
 	Optimize for fast web view	Optimalizálás gyors webes megtekintéshez
@@ -2592,7 +2591,7 @@
 	Quarter Space	Negyedkvirt-szóköz
 	Quick Actions	Gyorsműveletek
 	Quickly start a new file	Új fájl gyors létrehozása
-	Quit VectorCraft	Kilépés a VectorCraftból
+	Quit rsm	Kilépés a rsmból
 	Radar Graph Tool	Sugárdiagram
 	Radial	Körkörös
 	Radial Blur	Körkörös elmosás
@@ -3771,15 +3770,15 @@
 	Vector Halftone	Vektoros rácspontos raszter
 	Vector Halftone…	Vektoros rácspontos raszter…
 	Vector illustration — fast, open, scriptable.	Vektoros illusztráció – gyors, nyílt, szkriptelhető.
-	VectorCraft copies the fonts to {folder}.	A VectorCraft ide másolja a betűtípusokat: {folder}.
+	rsm copies the fonts to {folder}.	A rsm ide másolja a betűtípusokat: {folder}.
 	VectorCraft Default	VectorCraft alapértelmezés
 	VectorCraft Defaults	VectorCraft-alapértékek
-	VectorCraft didn't quit normally last time. These documents had unsaved changes:	A VectorCraft legutóbb nem szabályosan lépett ki. Ezekben a dokumentumokban mentetlen módosítások voltak:
-	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft-dokumentumok: egyetlen zárolt objektum, amely a fájl változásakor frissül.
+	rsm didn't quit normally last time. These documents had unsaved changes:	A rsm legutóbb nem szabályosan lépett ki. Ezekben a dokumentumokban mentetlen módosítások voltak:
+	rsm documents: one locked object, updated when the file changes.	rsm-dokumentumok: egyetlen zárolt objektum, amely a fájl változásakor frissül.
 	VectorCraft Generic CMYK (SWOP-like)	VectorCraft általános CMYK (SWOP-szerű)
-	VectorCraft Help…	VectorCraft súgó…
-	VectorCraft on getartcraft.com	A VectorCraft a getartcraft.com oldalon
-	VectorCraft on GitHub	A VectorCraft a GitHubon
+	rsm Help…	rsm súgó…
+	Creative Studio Website	A rsm a getartcraft.com oldalon
+	rsm on GitHub	A rsm a GitHubon
 	VectorCraft Swatches (.vcswatches)	VectorCraft-színminták (.vcswatches)
 	Vectors	Vektorok
 	Version	Verzió
@@ -3846,7 +3845,7 @@
 	WebP	WebP
 	Weight	Vastagság
 	Weight:	Vastagság:
-	Welcome to VectorCraft	Üdvözöl a VectorCraft
+	Welcome to rsm	Üdvözöl a rsm
 	When pasting text	Szöveg beillesztésekor
 	White	Fehér
 	White Intensity	Fehér erőssége
@@ -4309,7 +4308,7 @@ theme	Appearance	Kinézet
 @msg	not a stored central record	nem tárolt központi rekord
 @msg	not a valid plug-in module: {0}	nem érvényes bővítménymodul: {0}
 @msg	not a VectorCraft file: {0}	nem VectorCraft-fájl: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	nem VectorCraft-billentyűparancskészlet (hiányzik: `overrides`)
+@msg	not a rsm shortcut set (missing `overrides`)	nem rsm-billentyűparancskészlet (hiányzik: `overrides`)
 @msg	not an EMF or WMF file	nem EMF- vagy WMF-fájl
 @msg	not found	nem található
 @msg	not in pattern editing mode	nem mintázatszerkesztő módban vagy
@@ -4603,3 +4602,17 @@ theme	Appearance	Kinézet
 	Use Outside Rectangle As Frame	Külső téglalap használata keretként
 	Create Compound Path From Ellipses	Összetett útvonal létrehozása az ellipszisekből
 	Fill Grid	Rács kitöltése
+	AI Agents…	MI-ügynökök…
+	AI Agents	MI-ügynökök
+	Add this to the agent's MCP settings:	Add hozzá ezt az ügynök MCP-beállításaihoz:
+	Agents can connect now.	Az ügynökök most már csatlakozhatnak.
+	Agents need the desktop app.	Az ügynököknek az asztali alkalmazás kell.
+	Allow AI agents to control this app	MI-ügynökök vezérelhetik ezt az alkalmazást
+	Connect	Csatlakozás
+	Connect an agent app	Ügynökalkalmazás csatlakoztatása
+	Connected	Csatlakozva
+	Other agents	Egyéb ügynökök
+	AI agents such as Claude and Gemini can work in this app while you watch.	Az olyan MI-ügynökök, mint a Claude és a Gemini, dolgozhatnak ebben az alkalmazásban, miközben nézed.
+	They connect on this computer only.	Csak ezen a számítógépen csatlakoznak.
+	Adds this app to the agent's settings.	Hozzáadja ezt az alkalmazást az ügynök beállításaihoz.
+	Restart the agent app afterwards.	Utána indítsd újra az ügynökalkalmazást.

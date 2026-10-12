@@ -85,7 +85,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	Меньшее значение точнее повторяет обводку; большее даёт меньше точек и более гладкие кривые.
 	A new preset starting from the selected one	Новый набор на основе выбранного
 	A saved copy of the selected preset	Сохранённая копия выбранного набора
-	About VectorCraft	О программе VectorCraft
+	About rsm	О программе rsm
 	above	сверху
 	Absolute Position	Абсолютная позиция
 	Accurate	Точный
@@ -188,7 +188,7 @@
 	Appearance Panel	Панель «Оформление»
 	Appearance panel	Панель «Оформление»
 	Applies when the linked file is relinked or updated.	Применяется при повторной привязке или обновлении связанного файла.
-	Applies the next time VectorCraft starts.	Применяется при следующем запуске VectorCraft.
+	Applies the next time rsm starts.	Применяется при следующем запуске rsm.
 	Apply	Применить
 	Apply Brush	Применить кисть
 	Apply Character Style	Применить стиль символа
@@ -226,8 +226,7 @@
 	Artboard {number}	Монтажная область {number}
 	Artboard:	Монтажная область:
 	Artboards	Монтажные области
-	ArtCraft Website	Веб-сайт ArtCraft
-	ArtCraft website	Веб-сайт ArtCraft
+	Creative Studio Project	Веб-сайт ArtCraft
 	Artwork Colors	Цвета рисунка
 	As Multiple Assets	Как несколько ресурсов
 	As Single Asset	Как один ресурс
@@ -1311,7 +1310,7 @@
 	Italian	Итальянский
 	Japanese	Японский
 	Join	Соединить
-	Join Our Discord	Присоединяйтесь к нашему Discord
+	Upstream Community on Discord	Присоединяйтесь к нашему Discord
 	Join our Discord	Присоединяйтесь к нашему Discord
 	Join the ArtCraft community on Discord (discord.gg/artcraft)	Присоединяйтесь к сообществу ArtCraft в Discord (discord.gg/artcraft)
 	Join the lines of each paragraph	Соединять строки каждого абзаца
@@ -2084,7 +2083,7 @@
 	Quarter Space	Четвертная шпация
 	Quick Actions	Быстрые действия
 	Quickly start a new file	Быстро создать новый файл
-	Quit VectorCraft	Выйти из VectorCraft
+	Quit rsm	Выйти из rsm
 	Radar Graph Tool	Инструмент «Лепестковая диаграмма»
 	Radial	Радиальный
 	Radial Glows	Радиальные свечения
@@ -2208,7 +2207,7 @@
 	{count} folder(s) or file(s) couldn't be read	Не удалось прочитать папок или файлов: {count}
 	The search stopped at its limit: search a smaller folder.	Поиск остановился на пределе: выберите папку поменьше.
 	Copy only fonts you own or are licensed to install.	Копируйте только шрифты, которые принадлежат вам или которые вы вправе устанавливать по лицензии.
-	VectorCraft copies the fonts to {folder}.	VectorCraft копирует шрифты в {folder}.
+	rsm copies the fonts to {folder}.	rsm копирует шрифты в {folder}.
 	Registered Trademark Symbol	Символ зарегистрированного товарного знака
 	Registration marks	Метки совмещения
 	Registry name:	Имя в реестре:
@@ -2315,7 +2314,7 @@
 	Revert	Вернуть
 	Revert to the saved version of “{name}”?	Вернуться к сохранённой версии «{name}»?
 	Replace “{name}”, the file this document was opened from?	Заменить «{name}» — файл, из которого открыт этот документ?
-	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	При открытии было пропущено то, что VectorCraft пока не умеет читать ({what}), поэтому замена файла потеряет это навсегда. Чтобы сохранить это, сохраните документ под другим именем.
+	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	При открытии было пропущено то, что rsm пока не умеет читать ({what}), поэтому замена файла потеряет это навсегда. Чтобы сохранить это, сохраните документ под другим именем.
 	Revolve…	Вращение…
 	RGB Color	Цвет RGB
 	Right	Справа
@@ -3130,10 +3129,10 @@
 	Vector Halftone	Векторный полутон
 	Vector Halftone…	Векторный полутон…
 	Vector illustration — fast, open, scriptable.	Векторная иллюстрация — быстрая, открытая, программируемая.
-	VectorCraft didn't quit normally last time. These documents had unsaved changes:	VectorCraft не завершился нормально в прошлый раз. В этих документах были несохранённые изменения:
-	VectorCraft Help…	Справка VectorCraft…
-	VectorCraft on getartcraft.com	VectorCraft на getartcraft.com
-	VectorCraft on GitHub	VectorCraft на GitHub
+	rsm didn't quit normally last time. These documents had unsaved changes:	rsm не завершился нормально в прошлый раз. В этих документах были несохранённые изменения:
+	rsm Help…	Справка rsm…
+	Creative Studio Website	rsm на getartcraft.com
+	rsm on GitHub	rsm на GitHub
 	Vectors	Векторы
 	Version {version} — open-source vector illustration in pure Rust.	Версия {version} — векторная иллюстрация с открытым исходным кодом на чистом Rust.
 	Version:	Версия:
@@ -3173,7 +3172,7 @@
 	Web Snap:	Привязка к web:
 	Weight	Толщина
 	Weight:	Толщина:
-	Welcome to VectorCraft	Добро пожаловать в VectorCraft
+	Welcome to rsm	Добро пожаловать в rsm
 	When pasting text	При вставке текста
 	White	Белый
 	Widget Position:	Положение виджета:
@@ -3685,7 +3684,7 @@ axis	Both	Оба
 @msg	node {_1} is not text	узел {_1} не является текстом
 @msg	not a DXF drawing	не является чертежом DXF
 @msg	not a VectorCraft file: {0}	не является файлом VectorCraft: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	не является набором сочетаний клавиш VectorCraft (отсутствует `overrides`)
+@msg	not a rsm shortcut set (missing `overrides`)	не является набором сочетаний клавиш rsm (отсутствует `overrides`)
 @msg	not a graphic style library (format `{_1}`)	не является библиотекой графических стилей (формат `{_1}`)
 @msg	not a stored central record	не является сохранённой центральной записью
 @msg	not a valid plug-in module: {0}	не является допустимым модулем: {0}
@@ -3967,7 +3966,7 @@ axis	Both	Оба
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	Службы
-	Hide VectorCraft	Скрыть VectorCraft
+	Hide rsm	Скрыть rsm
 	Zoom	Масштаб
 	Bring All to Front	Все окна на передний план
 	Settings	Настройки
@@ -3975,7 +3974,7 @@ axis	Both	Оба
 	On: one locked object showing the document, updated when it changes.	Вкл.: один заблокированный объект, показывающий документ и обновляемый при его изменении.
 	Off: an editable copy of its art, embedded in this document.	Выкл.: редактируемая копия его рисунка, внедрённая в этот документ.
 	Images: link to the file instead of only embedding it.	Изображения: связывать с файлом вместо простого внедрения.
-	VectorCraft documents: one locked object, updated when the file changes.	Документы VectorCraft: один заблокированный объект, обновляемый при изменении файла.
+	rsm documents: one locked object, updated when the file changes.	Документы rsm: один заблокированный объект, обновляемый при изменении файла.
 	A file dialog is open: choose there first	Открыто окно выбора файла: сначала сделайте выбор в нём
 	The document was closed while its file dialog was open	Документ был закрыт, пока было открыто его окно выбора файла
 	The dialog was closed before its file dialog answered	Диалоговое окно было закрыто до того, как ответило его окно выбора файла
@@ -4201,3 +4200,17 @@ lighting	Light	Свет
 	Use Outside Rectangle As Frame	Использовать внешний прямоугольник как рамку
 	Create Compound Path From Ellipses	Создать составной контур из эллипсов
 	Fill Grid	Залить сетку
+	AI Agents…	ИИ-агенты…
+	AI Agents	ИИ-агенты
+	Add this to the agent's MCP settings:	Добавьте это в настройки MCP агента:
+	Agents can connect now.	Агенты уже могут подключаться.
+	Agents need the desktop app.	Агентам нужна настольная версия.
+	Allow AI agents to control this app	Разрешить ИИ-агентам управлять этим приложением
+	Connect	Подключить
+	Connect an agent app	Подключить приложение агента
+	Connected	Подключено
+	Other agents	Другие агенты
+	AI agents such as Claude and Gemini can work in this app while you watch.	ИИ-агенты, такие как Claude и Gemini, могут работать в этом приложении у вас на глазах.
+	They connect on this computer only.	Они подключаются только на этом компьютере.
+	Adds this app to the agent's settings.	Добавляет это приложение в настройки агента.
+	Restart the agent app afterwards.	Затем перезапустите приложение агента.

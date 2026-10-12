@@ -14,7 +14,7 @@
 # tested) — and the status and error messages (`@msg` rows at the end, `COMPLETE_MESSAGES`, tested).
 # Left in English on purpose (`MENU_KEEP_AS_IS` in the tests): the product name, language
 # names, OpenType, the built-in workspace names and the bracketed perspective grid preset names.
-	About VectorCraft	VectorCraft について
+	About rsm	rsm について
 	All Scripts	すべての文字
 	Anchors:	アンカー:
 	Any Kind	すべての種類
@@ -45,7 +45,7 @@
 	Favorites	お気に入り
 	Flip	反転
 	Japanese	日本語
-	Join Our Discord	Discord に参加
+	Upstream Community on Discord	Discord に参加
 	Line-end Punctuation Half Width	行末約物半角
 	Mojikumi Set	文字組み
 	Kinsoku Set	禁則処理
@@ -69,7 +69,7 @@
 	Medium Dark	やや暗い
 	Medium Light	やや明るい
 	Light	明るい
-	Quit VectorCraft	VectorCraft を終了
+	Quit rsm	rsm を終了
 	File	ファイル
 	New…	新規…
 	New from Template…	テンプレートから新規…
@@ -644,11 +644,11 @@
 	Save Swatch Library…	スウォッチライブラリを保存…
 	Symbol Libraries	シンボルライブラリ
 	Help	ヘルプ
-	ArtCraft Website	ArtCraft の Web サイト
-	VectorCraft on getartcraft.com	getartcraft.com の VectorCraft
-	VectorCraft on GitHub	GitHub の VectorCraft
+	Creative Studio Project	ArtCraft の Web サイト
+	Creative Studio Website	getartcraft.com の rsm
+	rsm on GitHub	GitHub の rsm
 	Search Commands…	コマンドを検索…
-	VectorCraft Help…	VectorCraft ヘルプ…
+	rsm Help…	rsm ヘルプ…
 	Preview	プレビュー
 	Show Edges	エッジを表示
 	Show Corner Widget	コーナーウィジェットを表示
@@ -832,7 +832,7 @@
 	Appearance Panel	アピアランスパネル
 	Appearance of Black	ブラックのアピアランス
 	Appearance panel	アピアランスパネル
-	Applies the next time VectorCraft starts.	VectorCraft の次回起動時に適用されます。
+	Applies the next time rsm starts.	rsm の次回起動時に適用されます。
 	Applies when the linked file is relinked or updated.	リンクファイルを再リンクまたは更新したときに適用されます。
 	Apply Brush	ブラシを適用
 	Apply Character Style	文字スタイルを適用
@@ -852,7 +852,6 @@
 	Arrange: Bring to Front	重ね順: 最前面へ
 	Arrowheads:	矢印:
 	Art using a deleted global swatch keeps its colour.	削除したグローバルスウォッチを使っているアートは、そのカラーを保持します。
-	ArtCraft website	ArtCraft の Web サイト
 	Artboard Options	アートボードオプション
 	Artboard Options: edit with the Artboard tool	アートボードオプション: アートボードツールで編集
 	Artboard Options…	アートボードオプション…
@@ -2192,7 +2191,7 @@
 	{count} folder(s) or file(s) couldn't be read	{count} 個のフォルダーまたはファイルを読み込めませんでした
 	The search stopped at its limit: search a smaller folder.	検索は上限で停止しました。より小さなフォルダーを検索してください。
 	Copy only fonts you own or are licensed to install.	所有しているフォント、またはインストールするライセンスがあるフォントだけをコピーしてください。
-	VectorCraft copies the fonts to {folder}.	VectorCraft はフォントを {folder} にコピーします。
+	rsm copies the fonts to {folder}.	rsm はフォントを {folder} にコピーします。
 	Registry name:	レジストリ名:
 	Release Compound Shape	複合シェイプを解除
 	Release Opacity Mask	不透明マスクを解除
@@ -2268,7 +2267,7 @@
 	Reverse Path Direction On	パスの方向を反転: オン
 	Revert to the saved version of “{name}”?	「{name}」を保存済みの状態に戻しますか？
 	Replace “{name}”, the file this document was opened from?	このドキュメントの開き元のファイル「{name}」を置き換えますか？
-	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	開いたときに VectorCraft がまだ読み込めない内容（{what}）が除外されたため、置き換えるとそれは完全に失われます。保持するには別の名前で保存してください。
+	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	開いたときに rsm がまだ読み込めない内容（{what}）が除外されたため、置き換えるとそれは完全に失われます。保持するには別の名前で保存してください。
 	Right Grid:	右グリッド:
 	Right Indent	右インデント
 	Right Plane	右面
@@ -2773,7 +2772,7 @@
 	Variation:	バリエーション:
 	Vector Halftone	ベクトルハーフトーン
 	Vector illustration — fast, open, scriptable.	ベクターイラスト — 高速・オープン・スクリプト対応
-	VectorCraft didn't quit normally last time. These documents had unsaved changes:	VectorCraft は前回正常に終了しませんでした。次のドキュメントに未保存の変更があります:
+	rsm didn't quit normally last time. These documents had unsaved changes:	rsm は前回正常に終了しませんでした。次のドキュメントに未保存の変更があります:
 	Vectors	ベクター
 	Version {version} — open-source vector illustration in pure Rust.	バージョン {version} — Rust だけで書かれたオープンソースのベクターイラストアプリ。
 	Version:	バージョン:
@@ -2794,7 +2793,7 @@
 	Web Shift	Web シフト
 	Web Snap:	Web スナップ:
 	Weight:	線幅:
-	Welcome to VectorCraft	VectorCraft へようこそ
+	Welcome to rsm	rsm へようこそ
 	When pasting text	テキストをペーストするとき
 	White	白
 	Widget Position:	ウィジェットの位置:
@@ -3320,7 +3319,7 @@ axis	Both	両方
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	サービス
-	Hide VectorCraft	VectorCraft を隠す
+	Hide rsm	rsm を隠す
 	Zoom	拡大/縮小
 	Bring All to Front	すべてを手前に移動
 	Settings	環境設定
@@ -3329,7 +3328,7 @@ theme	Appearance	外観
 	On: one locked object showing the document, updated when it changes.	オン：ドキュメントを表示するロックされた 1 つのオブジェクト。ドキュメントの変更時に更新されます。
 	Off: an editable copy of its art, embedded in this document.	オフ：アートの編集可能なコピーをこのドキュメントに埋め込みます。
 	Images: link to the file instead of only embedding it.	画像：埋め込むだけでなく、ファイルにリンクします。
-	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft ドキュメント：ロックされた 1 つのオブジェクト。ファイルの変更時に更新されます。
+	rsm documents: one locked object, updated when the file changes.	rsm ドキュメント：ロックされた 1 つのオブジェクト。ファイルの変更時に更新されます。
 	A file dialog is open: choose there first	ファイルダイアログが開いています。先にそちらで選択してください
 	The document was closed while its file dialog was open	ファイルダイアログが開いている間にドキュメントが閉じられました
 	The dialog was closed before its file dialog answered	ファイルダイアログが応答する前にダイアログが閉じられました
@@ -3943,7 +3942,7 @@ theme	Appearance	外観
 @msg	no dialog open	ダイアログが開かれていません
 @msg	no file reader	ファイルの読み込み機能がありません
 @msg	no file writer	ファイルの書き込み機能がありません
-@msg	not a VectorCraft shortcut set (missing `overrides`)	VectorCraft のショートカットセットではありません (`overrides` がありません)
+@msg	not a rsm shortcut set (missing `overrides`)	rsm のショートカットセットではありません (`overrides` がありません)
 @msg	shortcut for `{k}` must be a string	`{k}` のショートカットは文字列で指定してください
 @msg	tool shortcuts must be a single key (optionally with Shift)	ツールのショートカットには 1 つのキーを指定してください (Shift との組み合わせも可)
 @msg	unknown preset (one of {_1})	不明なプリセットです ({_1} のいずれかを指定してください)
@@ -4199,3 +4198,17 @@ lighting	Light	ライト
 	Use Outside Rectangle As Frame	外側の長方形をフレームとして使用
 	Create Compound Path From Ellipses	楕円形から複合パスを作成
 	Fill Grid	グリッドを塗りつぶす
+	AI Agents…	AI エージェント…
+	AI Agents	AI エージェント
+	Add this to the agent's MCP settings:	エージェントの MCP 設定に次を追加してください:
+	Agents can connect now.	エージェントが接続できます。
+	Agents need the desktop app.	エージェントにはデスクトップ版が必要です。
+	Allow AI agents to control this app	AI エージェントにこのアプリの操作を許可
+	Connect	接続
+	Connect an agent app	エージェントアプリを接続
+	Connected	接続済み
+	Other agents	その他のエージェント
+	AI agents such as Claude and Gemini can work in this app while you watch.	Claude や Gemini などの AI エージェントが、見ている前でこのアプリを操作できます。
+	They connect on this computer only.	接続はこのコンピュータ内に限られます。
+	Adds this app to the agent's settings.	このアプリをエージェントの設定に追加します。
+	Restart the agent app afterwards.	追加後にエージェントアプリを再起動してください。
