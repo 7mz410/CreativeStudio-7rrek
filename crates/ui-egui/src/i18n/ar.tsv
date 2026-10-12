@@ -4182,3 +4182,9 @@ lighting	Light	الضوء
 @msg	the file stopped being read (please report this bug)	توقفت قراءة الملف (يرجى الإبلاغ عن هذا الخطأ)
 	Concentric Dividers:	فواصل متحدة المركز:
 	Radial Dividers:	فواصل شعاعية:
+	Create Compound Path From Ellipses	إنشاء مسار مركّب من القطوع الناقصة
+	Fill Grid	تعبئة الشبكة
+	Inside	داخل
+	Outside	خارج
+	Skew:	الإمالة:
+	Use Outside Rectangle As Frame	استخدام المستطيل الخارجي كإطار
