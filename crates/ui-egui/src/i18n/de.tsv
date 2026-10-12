@@ -69,7 +69,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	Ein niedrigerer Wert folgt dem Strich genauer; ein höherer ergibt weniger Punkte und glattere Kurven.
 	A new preset starting from the selected one	Eine neue Vorgabe auf Grundlage der ausgewählten
 	A saved copy of the selected preset	Eine gespeicherte Kopie der ausgewählten Vorgabe
-	About rsm	Über rsm
+	About VectorCraft	Über VectorCraft
 	above	bei mehr als
 	Absolute Position	Absolute Position
 	Accurate	Genau
@@ -172,7 +172,7 @@
 	Appearance Panel	Bedienfeld „Aussehen“
 	Appearance panel	Bedienfeld „Aussehen“
 	Applies when the linked file is relinked or updated.	Gilt, wenn die verknüpfte Datei neu verknüpft oder aktualisiert wird.
-	Applies the next time rsm starts.	Gilt ab dem nächsten Start von rsm.
+	Applies the next time VectorCraft starts.	Gilt ab dem nächsten Start von VectorCraft.
 	Apply	Anwenden
 	Apply Brush	Pinsel anwenden
 	Apply Character Style	Zeichenformat anwenden
@@ -210,7 +210,8 @@
 	Artboard {number}	Zeichenfläche {number}
 	Artboard:	Zeichenfläche:
 	Artboards	Zeichenflächen
-	Creative Studio Project	ArtCraft-Website
+	ArtCraft Website	ArtCraft-Website
+	ArtCraft website	ArtCraft-Website
 	Artwork Colors	Farben der Grafik
 	As Multiple Assets	Als mehrere Assets
 	As Single Asset	Als einzelnes Asset
@@ -1294,7 +1295,7 @@
 	Italian	Italienisch
 	Japanese	Japanisch
 	Join	Zusammenfügen
-	Upstream Community on Discord	Unserem Discord beitreten
+	Join Our Discord	Unserem Discord beitreten
 	Join our Discord	Unserem Discord beitreten
 	Join the ArtCraft community on Discord (discord.gg/artcraft)	Treten Sie der ArtCraft-Community auf Discord bei (discord.gg/artcraft)
 	Join the lines of each paragraph	Die Zeilen jedes Absatzes verbinden
@@ -2036,7 +2037,7 @@
 	Quarter Space	Viertelgeviert-Leerzeichen
 	Quick Actions	Schnellaktionen
 	Quickly start a new file	Schnell eine neue Datei beginnen
-	Quit rsm	rsm beenden
+	Quit VectorCraft	VectorCraft beenden
 	Radar Graph Tool	Netzdiagramm-Werkzeug
 	Radial	Radial
 	Radial Glows	Radiale Leuchteffekte
@@ -2160,7 +2161,7 @@
 	{count} folder(s) or file(s) couldn't be read	{count} Ordner oder Datei(en) konnten nicht gelesen werden
 	The search stopped at its limit: search a smaller folder.	Die Suche hat ihr Limit erreicht: Durchsuchen Sie einen kleineren Ordner.
 	Copy only fonts you own or are licensed to install.	Kopieren Sie nur Schriften, die Ihnen gehören oder für deren Installation Sie eine Lizenz haben.
-	rsm copies the fonts to {folder}.	rsm kopiert die Schriften nach {folder}.
+	VectorCraft copies the fonts to {folder}.	VectorCraft kopiert die Schriften nach {folder}.
 	Registered Trademark Symbol	Symbol für eingetragene Marke
 	Registration marks	Passermarken
 	Registry name:	Registrierungsname:
@@ -2267,7 +2268,7 @@
 	Revert	Zurück zur letzten Version
 	Revert to the saved version of “{name}”?	Zur gespeicherten Version von „{name}“ zurückkehren?
 	Replace “{name}”, the file this document was opened from?	„{name}“ ersetzen, die Datei, aus der dieses Dokument geöffnet wurde?
-	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Beim Öffnen wurde ausgelassen, was rsm noch nicht lesen kann ({what}); beim Ersetzen geht das endgültig verloren. Speichern Sie unter einem anderen Namen, um es zu behalten.
+	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Beim Öffnen wurde ausgelassen, was VectorCraft noch nicht lesen kann ({what}); beim Ersetzen geht das endgültig verloren. Speichern Sie unter einem anderen Namen, um es zu behalten.
 	Revolve…	Kreiseln…
 	RGB Color	RGB-Farbe
 	Right	Rechts
@@ -3033,10 +3034,10 @@ effect	Points	Punkte
 	Vector Halftone	Vektor-Halbton
 	Vector Halftone…	Vektor-Halbton…
 	Vector illustration — fast, open, scriptable.	Vektorillustration – schnell, offen, skriptfähig.
-	rsm didn't quit normally last time. These documents had unsaved changes:	rsm wurde beim letzten Mal nicht normal beendet. Diese Dokumente hatten ungespeicherte Änderungen:
-	rsm Help…	rsm-Hilfe…
-	Creative Studio Website	rsm auf getartcraft.com
-	rsm on GitHub	rsm auf GitHub
+	VectorCraft didn't quit normally last time. These documents had unsaved changes:	VectorCraft wurde beim letzten Mal nicht normal beendet. Diese Dokumente hatten ungespeicherte Änderungen:
+	VectorCraft Help…	VectorCraft-Hilfe…
+	VectorCraft on getartcraft.com	VectorCraft auf getartcraft.com
+	VectorCraft on GitHub	VectorCraft auf GitHub
 	Vectors	Vektoren
 	Version {version} — open-source vector illustration in pure Rust.	Version {version} – Open-Source-Vektorillustration in reinem Rust.
 	Version:	Version:
@@ -3076,7 +3077,7 @@ effect	Points	Punkte
 	Web Snap:	Web-Ausrichtung:
 	Weight	Stärke
 	Weight:	Stärke:
-	Welcome to rsm	Willkommen bei rsm
+	Welcome to VectorCraft	Willkommen bei VectorCraft
 	When pasting text	Beim Einfügen von Text
 	White	Weiß
 	Widget Position:	Widget-Position:
@@ -3589,7 +3590,7 @@ theme	Appearance	Erscheinungsbild
 @msg	node {_1} is not text	Knoten {_1} ist kein Text
 @msg	not a DXF drawing	keine DXF-Zeichnung
 @msg	not a VectorCraft file: {0}	keine VectorCraft-Datei: {0}
-@msg	not a rsm shortcut set (missing `overrides`)	kein rsm-Tastaturbefehlssatz (`overrides` fehlt)
+@msg	not a VectorCraft shortcut set (missing `overrides`)	kein VectorCraft-Tastaturbefehlssatz (`overrides` fehlt)
 @msg	not a graphic style library (format `{_1}`)	keine Grafikstil-Bibliothek (Format `{_1}`)
 @msg	not a stored central record	kein gespeicherter zentraler Eintrag
 @msg	not a valid plug-in module: {0}	kein gültiges Plug-in-Modul: {0}
@@ -3842,6 +3843,8 @@ theme	Appearance	Erscheinungsbild
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	der Verlauf „{name}“ ist in der Datei nicht definiert: Eine einfache Farbe steht an seiner Stelle
 @msg	an image VectorCraft can't read was left out	ein Bild, das VectorCraft nicht lesen kann, wurde ausgelassen
 @msg	an image whose data is cut short was left out	ein Bild mit abgeschnittenen Daten wurde ausgelassen
+@msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	verknüpfte Bilder zeigen die in der Datei gespeicherte Vorschau in niedriger Auflösung, bis ihre Dateien gefunden werden: Verknüpfen Sie sie im Bedienfeld „Verknüpfungen“ neu
+@msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	Flächentext in Rahmen, die für eine Zeile der Schrift, in der er hier erscheint, zu niedrig sind, hat höhere Rahmen bekommen ({_1}): Sonst wäre der Text nicht zu sehen
 @msg	its editing data doesn't say where its art is	seine Bearbeitungsdaten geben nicht an, wo seine Grafik liegt
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	diese Datei wurde ohne PDF-Kompatibilität gespeichert, und ihre Bearbeitungsdaten können nicht gelesen werden ({why})
 @msg	No fonts are missing in this document	In diesem Dokument fehlen keine Schriften
@@ -3868,7 +3871,7 @@ theme	Appearance	Erscheinungsbild
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	Dienste
-	Hide rsm	rsm ausblenden
+	Hide VectorCraft	VectorCraft ausblenden
 	Zoom	Zoomen
 	Bring All to Front	Alle nach vorne bringen
 	Settings	Einstellungen
@@ -3876,7 +3879,7 @@ theme	Appearance	Erscheinungsbild
 	On: one locked object showing the document, updated when it changes.	Ein: ein gesperrtes Objekt, das das Dokument zeigt und aktualisiert wird, wenn es sich ändert.
 	Off: an editable copy of its art, embedded in this document.	Aus: eine bearbeitbare Kopie seiner Grafik, eingebettet in dieses Dokument.
 	Images: link to the file instead of only embedding it.	Bilder: mit der Datei verknüpfen, statt sie nur einzubetten.
-	rsm documents: one locked object, updated when the file changes.	rsm-Dokumente: ein gesperrtes Objekt, das aktualisiert wird, wenn sich die Datei ändert.
+	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft-Dokumente: ein gesperrtes Objekt, das aktualisiert wird, wenn sich die Datei ändert.
 	A file dialog is open: choose there first	Ein Dateidialog ist geöffnet: Treffen Sie zuerst dort Ihre Auswahl
 	The document was closed while its file dialog was open	Das Dokument wurde geschlossen, während sein Dateidialog geöffnet war
 	The dialog was closed before its file dialog answered	Das Dialogfeld wurde geschlossen, bevor sein Dateidialog geantwortet hat
@@ -4150,17 +4153,10 @@ theme	Appearance	Erscheinungsbild
 @msg	the file stopped being read (please report this bug)	das Lesen der Datei wurde abgebrochen (bitte melden Sie diesen Fehler)
 	Concentric Dividers:	Konzentrische Trennlinien:
 	Radial Dividers:	Radiale Trennlinien:
-	AI Agents…	KI-Agenten…
-	AI Agents	KI-Agenten
-	Add this to the agent's MCP settings:	Füge dies zu den MCP-Einstellungen des Agenten hinzu:
-	Agents can connect now.	Agenten können sich jetzt verbinden.
-	Agents need the desktop app.	Agenten brauchen die Desktop-App.
-	Allow AI agents to control this app	KI-Agenten erlauben, diese App zu steuern
-	Connect	Verbinden
-	Connect an agent app	Agenten-App verbinden
-	Connected	Verbunden
-	Other agents	Andere Agenten
-	AI agents such as Claude and Gemini can work in this app while you watch.	KI-Agenten wie Claude und Gemini können in dieser App arbeiten, während du zusiehst.
-	They connect on this computer only.	Sie verbinden sich nur auf diesem Computer.
-	Adds this app to the agent's settings.	Fügt diese App zu den Einstellungen des Agenten hinzu.
-	Restart the agent app afterwards.	Starte die Agenten-App danach neu.
+# Grid tool options (the Rectangular Grid and Polar Grid click dialogs).
+	Skew:	Neigung:
+	Inside	Innen
+	Outside	Außen
+	Use Outside Rectangle As Frame	Äußeres Rechteck als Rahmen verwenden
+	Create Compound Path From Ellipses	Zusammengesetzten Pfad aus Ellipsen erstellen
+	Fill Grid	Raster füllen

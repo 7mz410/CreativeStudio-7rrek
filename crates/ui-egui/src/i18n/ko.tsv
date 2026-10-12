@@ -10,7 +10,7 @@
 	Edge Width	가장자리 너비
 	Edge Brightness	가장자리 밝기
 	Smoothness	부드러움
-	About rsm	rsm 정보
+	About VectorCraft	VectorCraft 정보
 	All Scripts	모든 스크립트
 	Anchors:	앵커:
 	Any Kind	모든 종류
@@ -41,7 +41,7 @@
 	Favorites	즐겨찾기
 	Flip	뒤집기
 	Japanese	일본어
-	Upstream Community on Discord	Discord 참여하기
+	Join Our Discord	Discord 참여하기
 	Line-end Punctuation Half Width	줄 끝 문장 부호 반각
 	Mojikumi Set	모지쿠미 세트
 	Kinsoku Set	긴소쿠 세트
@@ -65,7 +65,7 @@
 	Medium Dark	약간 어둡게
 	Medium Light	약간 밝게
 	Light	밝게
-	Quit rsm	rsm 종료
+	Quit VectorCraft	VectorCraft 종료
 	File	파일
 	New…	새로 만들기…
 	New from Template…	템플릿에서 새로 만들기…
@@ -642,11 +642,11 @@
 	Save Swatch Library…	견본 라이브러리 저장…
 	Symbol Libraries	심볼 라이브러리
 	Help	도움말
-	Creative Studio Project	ArtCraft 웹사이트
-	Creative Studio Website	getartcraft.com의 rsm
-	rsm on GitHub	GitHub의 rsm
+	ArtCraft Website	ArtCraft 웹사이트
+	VectorCraft on getartcraft.com	getartcraft.com의 VectorCraft
+	VectorCraft on GitHub	GitHub의 VectorCraft
 	Search Commands…	명령 검색…
-	rsm Help…	rsm 도움말…
+	VectorCraft Help…	VectorCraft 도움말…
 	Preview	미리 보기
 	Show Edges	가장자리 표시
 	Show Corner Widget	모퉁이 위젯 표시
@@ -827,7 +827,7 @@
 	Appearance Panel	모양새 패널
 	Appearance of Black	검정 표시 방식
 	Appearance panel	모양새 패널
-	Applies the next time rsm starts.	다음에 rsm를 시작할 때 적용됩니다.
+	Applies the next time VectorCraft starts.	다음에 VectorCraft를 시작할 때 적용됩니다.
 	Applies when the linked file is relinked or updated.	링크된 파일을 다시 연결하거나 업데이트할 때 적용됩니다.
 	Apply Brush	브러시 적용
 	Apply Character Style	문자 스타일 적용
@@ -847,6 +847,7 @@
 	Arrange: Bring to Front	배열: 맨 앞으로 가져오기
 	Arrowheads:	화살촉:
 	Art using a deleted global swatch keeps its colour.	삭제된 글로벌 견본을 사용한 아트워크는 색상을 유지합니다.
+	ArtCraft website	ArtCraft 웹사이트
 	Artboard Options	아트보드 옵션
 	Artboard Options: edit with the Artboard tool	아트보드 옵션: 아트보드 도구로 편집
 	Artboard Options…	아트보드 옵션…
@@ -2185,7 +2186,7 @@
 	{count} folder(s) or file(s) couldn't be read	폴더 또는 파일 {count}개를 읽을 수 없음
 	The search stopped at its limit: search a smaller folder.	검색이 한도에서 중단됨: 더 작은 폴더를 검색하세요.
 	Copy only fonts you own or are licensed to install.	소유했거나 설치 라이선스가 있는 글꼴만 복사하세요.
-	rsm copies the fonts to {folder}.	rsm가 글꼴을 {folder}에 복사합니다.
+	VectorCraft copies the fonts to {folder}.	VectorCraft가 글꼴을 {folder}에 복사합니다.
 	Registry name:	등록 이름:
 	Release Compound Shape	컴파운드 모양 해제
 	Release Opacity Mask	불투명 마스크 해제
@@ -2261,7 +2262,7 @@
 	Reverse Path Direction On	패스 방향 반전 켜기
 	Revert to the saved version of “{name}”?	“{name}”을(를) 저장된 버전으로 되돌리시겠습니까?
 	Replace “{name}”, the file this document was opened from?	이 문서를 연 원본 파일 “{name}”을(를) 바꾸시겠습니까?
-	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	파일을 열 때 rsm가 아직 읽지 못하는 내용({what})이 제외되어, 덮어쓰면 해당 내용이 영구적으로 사라집니다. 보존하려면 다른 이름으로 저장하세요.
+	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	파일을 열 때 VectorCraft가 아직 읽지 못하는 내용({what})이 제외되어, 덮어쓰면 해당 내용이 영구적으로 사라집니다. 보존하려면 다른 이름으로 저장하세요.
 	Right Grid:	오른쪽 격자:
 	Right Indent	오른쪽 들여쓰기
 	Right Plane	오른쪽 평면
@@ -2766,7 +2767,7 @@
 	Variation:	변형:
 	Vector Halftone	벡터 하프톤
 	Vector illustration — fast, open, scriptable.	벡터 일러스트레이션 — 빠르고 개방적이며 스크립트 지원.
-	rsm didn't quit normally last time. These documents had unsaved changes:	rsm가 지난번에 정상적으로 종료되지 않았습니다. 다음 문서에 저장되지 않은 변경 사항이 있었습니다:
+	VectorCraft didn't quit normally last time. These documents had unsaved changes:	VectorCraft가 지난번에 정상적으로 종료되지 않았습니다. 다음 문서에 저장되지 않은 변경 사항이 있었습니다:
 	Vectors	벡터
 	Version {version} — open-source vector illustration in pure Rust.	버전 {version} — 순수 Rust로 만든 오픈 소스 벡터 일러스트레이션.
 	Version:	버전:
@@ -2787,7 +2788,7 @@
 	Web Shift	웹 이동
 	Web Snap:	웹 스냅:
 	Weight:	두께:
-	Welcome to rsm	rsm에 오신 것을 환영합니다
+	Welcome to VectorCraft	VectorCraft에 오신 것을 환영합니다
 	When pasting text	텍스트를 붙여넣을 때
 	White	흰색
 	Widget Position:	위젯 위치:
@@ -3306,7 +3307,7 @@ axis	Both	양쪽
 	Drag to the window's left edge to dock	창 왼쪽 가장자리로 드래그하여 고정
 	Float Tool Group	도구 그룹 분리
 	Services	서비스
-	Hide rsm	rsm 숨기기
+	Hide VectorCraft	VectorCraft 숨기기
 	Zoom	확대/축소
 	Bring All to Front	모두 앞으로 가져오기
 	Settings	설정
@@ -3315,7 +3316,7 @@ theme	Appearance	외관
 	On: one locked object showing the document, updated when it changes.	켬: 문서를 보여 주는 잠긴 개체 하나로, 문서가 바뀌면 업데이트됩니다.
 	Off: an editable copy of its art, embedded in this document.	끔: 이 문서에 포함된 편집 가능한 아트웍 복사본입니다.
 	Images: link to the file instead of only embedding it.	이미지: 포함만 하지 않고 파일에 연결합니다.
-	rsm documents: one locked object, updated when the file changes.	rsm 문서: 잠긴 개체 하나로, 파일이 바뀌면 업데이트됩니다.
+	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft 문서: 잠긴 개체 하나로, 파일이 바뀌면 업데이트됩니다.
 	A file dialog is open: choose there first	파일 대화상자가 열려 있습니다. 먼저 그곳에서 선택하세요
 	The document was closed while its file dialog was open	파일 대화상자가 열려 있는 동안 문서가 닫혔습니다
 	The dialog was closed before its file dialog answered	파일 대화상자가 응답하기 전에 대화상자가 닫혔습니다
@@ -3656,6 +3657,8 @@ theme	Appearance	외관
 @msg	its section ending with `%{end}` doesn't end	`%{end}`로 끝나는 구역이 끝나지 않습니다
 @msg	an image VectorCraft can't read was left out	VectorCraft가 읽을 수 없는 이미지는 제외했습니다
 @msg	an image whose data is cut short was left out	데이터가 잘린 이미지는 제외했습니다
+@msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	연결된 그림은 해당 파일을 찾을 때까지 파일에 저장된 저해상도 미리 보기로 표시됩니다: 링크 패널에서 다시 연결하세요
+@msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	표시되는 글꼴의 한 줄보다 낮은 프레임의 영역 문자는 프레임을 더 높였습니다({_1}). 그렇지 않으면 문자가 표시되지 않습니다
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	그레이디언트 “{name}”이(가) 파일에 정의되어 있지 않아 단색으로 대체했습니다
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	칠이나 선이 여러 개인 개체, 효과, 브러시가 있는 개체는 그려진 모양({_1})으로 가져왔습니다: 모양새는 아직 편집할 수 없습니다
 @msg	patterns nested too deeply are filled with mid-grey	너무 깊게 중첩된 패턴은 중간 회색으로 채웁니다
@@ -3918,7 +3921,7 @@ theme	Appearance	외관
 @msg	no dialog open	열린 대화상자가 없습니다
 @msg	no file reader	파일 판독기가 없습니다
 @msg	no file writer	파일 기록기가 없습니다
-@msg	not a rsm shortcut set (missing `overrides`)	rsm 단축키 세트가 아닙니다(`overrides`가 없음)
+@msg	not a VectorCraft shortcut set (missing `overrides`)	VectorCraft 단축키 세트가 아닙니다(`overrides`가 없음)
 @msg	shortcut for `{k}` must be a string	`{k}`의 단축키는 문자열이어야 합니다
 @msg	tool shortcuts must be a single key (optionally with Shift)	도구 단축키는 키 하나여야 합니다(Shift 포함 가능)
 @msg	unknown preset (one of {_1})	알 수 없는 프리셋({_1} 중 하나)
@@ -4159,17 +4162,10 @@ lighting	Light	광원
 @msg	the file stopped being read (please report this bug)	파일 읽기가 중단되었습니다(이 버그를 신고해 주세요)
 	Concentric Dividers:	동심원 구분선:
 	Radial Dividers:	방사형 구분선:
-	AI Agents…	AI 에이전트…
-	AI Agents	AI 에이전트
-	Add this to the agent's MCP settings:	에이전트의 MCP 설정에 다음을 추가하세요:
-	Agents can connect now.	이제 에이전트가 연결할 수 있습니다.
-	Agents need the desktop app.	에이전트에는 데스크톱 앱이 필요합니다.
-	Allow AI agents to control this app	AI 에이전트가 이 앱을 제어하도록 허용
-	Connect	연결
-	Connect an agent app	에이전트 앱 연결
-	Connected	연결됨
-	Other agents	기타 에이전트
-	AI agents such as Claude and Gemini can work in this app while you watch.	Claude, Gemini 같은 AI 에이전트가 이 앱에서 작업하는 모습을 지켜볼 수 있습니다.
-	They connect on this computer only.	이 컴퓨터에서만 연결됩니다.
-	Adds this app to the agent's settings.	이 앱을 에이전트 설정에 추가합니다.
-	Restart the agent app afterwards.	그런 다음 에이전트 앱을 다시 시작하세요.
+# Grid tool options (the Rectangular Grid and Polar Grid click dialogs).
+	Skew:	기울임:
+	Inside	안쪽
+	Outside	바깥쪽
+	Use Outside Rectangle As Frame	바깥쪽 사각형을 프레임으로 사용
+	Create Compound Path From Ellipses	원에서 컴파운드 패스 만들기
+	Fill Grid	격자 칠하기

@@ -56,7 +56,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	數值較小時會貼近筆畫，較大時則錨點較少、曲線較平滑。
 	A new preset starting from the selected one	以所選預設集為基礎建立新預設集
 	A saved copy of the selected preset	所選預設集的已儲存拷貝
-	About rsm	關於 rsm
+	About VectorCraft	關於 VectorCraft
 	above	以上
 	Absolute Position	絕對位置
 	Accurate	精確
@@ -159,7 +159,7 @@
 	Appearance Panel	外觀面板
 	Appearance panel	外觀面板
 	Applies when the linked file is relinked or updated.	重新連結或更新連結檔案時套用。
-	Applies the next time rsm starts.	下次啟動 rsm 時生效。
+	Applies the next time VectorCraft starts.	下次啟動 VectorCraft 時生效。
 	Apply	套用
 	Apply Brush	套用筆刷
 	Apply Character Style	套用字元樣式
@@ -197,7 +197,8 @@
 	Artboard {number}	工作區域 {number}
 	Artboard:	工作區域：
 	Artboards	工作區域
-	Creative Studio Project	ArtCraft 網站
+	ArtCraft Website	ArtCraft 網站
+	ArtCraft website	ArtCraft 網站
 	Artwork Colors	圖稿顏色
 	As Multiple Assets	作為多個資產
 	As Single Asset	作為單一資產
@@ -1287,7 +1288,7 @@
 	Italian	義大利文
 	Japanese	日文
 	Join	連接
-	Upstream Community on Discord	加入我們的 Discord
+	Join Our Discord	加入我們的 Discord
 	Join our Discord	加入我們的 Discord
 	Join the ArtCraft community on Discord (discord.gg/artcraft)	加入 Discord 上的 ArtCraft 社群 (discord.gg/artcraft)
 	Join the lines of each paragraph	合併每個段落的各行
@@ -2065,7 +2066,7 @@
 	Quarter Space	四分之一空格
 	Quick Actions	快速動作
 	Quickly start a new file	快速開始新檔案
-	Quit rsm	結束 rsm
+	Quit VectorCraft	結束 VectorCraft
 	Radar Graph Tool	雷達圖工具
 	Radial	放射狀
 	Radial Glows	放射狀光暈
@@ -2189,7 +2190,7 @@
 	{count} folder(s) or file(s) couldn't be read	有 {count} 個資料夾或檔案無法讀取
 	The search stopped at its limit: search a smaller folder.	搜尋已達上限而停止：請搜尋較小的資料夾。
 	Copy only fonts you own or are licensed to install.	只複製您擁有或已取得安裝授權的字體。
-	rsm copies the fonts to {folder}.	rsm 會將字體複製到 {folder}。
+	VectorCraft copies the fonts to {folder}.	VectorCraft 會將字體複製到 {folder}。
 	Registered Trademark Symbol	註冊商標符號
 	Registration marks	對位標記
 	Registry name:	登錄名稱：
@@ -2296,7 +2297,7 @@
 	Revert	回復
 	Revert to the saved version of “{name}”?	要回復為「{name}」已儲存的版本嗎？
 	Replace “{name}”, the file this document was opened from?	要取代「{name}」（開啟此文件的來源檔案）嗎？
-	Opening it left out what rsm can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	開啟時略過了 rsm 尚無法讀取的內容（{what}），取代該檔案會永久遺失這些內容。若要保留，請以其他名稱儲存。
+	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	開啟時略過了 VectorCraft 尚無法讀取的內容（{what}），取代該檔案會永久遺失這些內容。若要保留，請以其他名稱儲存。
 	Revolve…	迴轉…
 	RGB Color	RGB 色彩
 	Right	右
@@ -3028,6 +3029,8 @@
 	Update Changed Links	更新已變更的連結
 	{count} linked image(s) changed on disk. Show the new versions?	有 {count} 個連結影像已在磁碟上變更。要顯示新版本嗎？
 @msg	Updated {_1} linked file(s) changed on disk	已更新 {_1} 個在磁碟上變更的連結檔案
+@msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	連結的圖片在找到其檔案之前顯示檔案中儲存的低解析度預覽：請在「連結」面板中重新連結
+@msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	框架高度不足以容納所顯示字體一行的區域文字已加高框架 ({_1})：否則文字不會顯示
 	Update Modified Links	更新已修改的連結
 	Updated {} image(s)	已更新 {} 張影像
 	UPPERCASE	全部大寫
@@ -3116,11 +3119,11 @@
 	Vector Halftone	向量半色調
 	Vector Halftone…	向量半色調…
 	Vector illustration — fast, open, scriptable.	向量插圖：快速、開放、可用指令碼操控。
-	rsm	rsm
-	rsm didn't quit normally last time. These documents had unsaved changes:	rsm 上次未正常結束。下列文件有未儲存的變更：
-	rsm Help…	rsm 說明…
-	Creative Studio Website	getartcraft.com 上的 rsm
-	rsm on GitHub	GitHub 上的 rsm
+	VectorCraft	VectorCraft
+	VectorCraft didn't quit normally last time. These documents had unsaved changes:	VectorCraft 上次未正常結束。下列文件有未儲存的變更：
+	VectorCraft Help…	VectorCraft 說明…
+	VectorCraft on getartcraft.com	getartcraft.com 上的 VectorCraft
+	VectorCraft on GitHub	GitHub 上的 VectorCraft
 	Vectors	向量
 	Version {version} — open-source vector illustration in pure Rust.	版本 {version} — 以純 Rust 打造的開放原始碼向量插畫軟體。
 	Version:	版本：
@@ -3161,7 +3164,7 @@
 	Web Snap:	網頁靠齊：
 	Weight	寬度
 	Weight:	寬度：
-	Welcome to rsm	歡迎使用 rsm
+	Welcome to VectorCraft	歡迎使用 VectorCraft
 	When pasting text	貼上文字時
 	White	白色
 	Widget Position:	Widget 位置：
@@ -3349,7 +3352,7 @@ axis	Both	兩者
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	服務
-	Hide rsm	隱藏 rsm
+	Hide VectorCraft	隱藏 VectorCraft
 	Zoom	縮放
 	Bring All to Front	將全部移至最前
 	Settings	設定
@@ -3357,7 +3360,7 @@ axis	Both	兩者
 	On: one locked object showing the document, updated when it changes.	開啟：以單一鎖定物件顯示文件，文件變更時隨之更新。
 	Off: an editable copy of its art, embedded in this document.	關閉：將其圖稿的可編輯副本內嵌在此文件中。
 	Images: link to the file instead of only embedding it.	影像：連結至檔案，而不只是嵌入。
-	rsm documents: one locked object, updated when the file changes.	rsm 文件：單一鎖定物件，檔案變更時隨之更新。
+	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft 文件：單一鎖定物件，檔案變更時隨之更新。
 	A file dialog is open: choose there first	檔案對話方塊已開啟：請先在其中選擇
 	The document was closed while its file dialog was open	檔案對話方塊開啟期間，文件已關閉
 	The dialog was closed before its file dialog answered	檔案對話方塊回應之前，對話方塊已關閉
@@ -3568,17 +3571,10 @@ lighting	Light	光源
 	Highlight Area	亮部範圍
 	Concentric Dividers:	同心分隔線：
 	Radial Dividers:	徑向分隔線：
-	AI Agents…	AI 代理…
-	AI Agents	AI 代理
-	Add this to the agent's MCP settings:	將以下內容加入代理的 MCP 設定：
-	Agents can connect now.	代理現在可以連線。
-	Agents need the desktop app.	代理需要桌面版應用程式。
-	Allow AI agents to control this app	允許 AI 代理控制本應用程式
-	Connect	連線
-	Connect an agent app	連接代理應用程式
-	Connected	已連線
-	Other agents	其他代理
-	AI agents such as Claude and Gemini can work in this app while you watch.	Claude、Gemini 等 AI 代理可以在你眼前操作本應用程式。
-	They connect on this computer only.	它們只在這台電腦上連線。
-	Adds this app to the agent's settings.	將本應用程式加入代理的設定。
-	Restart the agent app afterwards.	之後請重新啟動代理應用程式。
+# Grid tool options (the Rectangular Grid and Polar Grid click dialogs).
+	Skew:	傾斜：
+	Inside	內側
+	Outside	外側
+	Use Outside Rectangle As Frame	使用外部矩形作為框架
+	Create Compound Path From Ellipses	從橢圓形建立複合路徑
+	Fill Grid	格線填色
