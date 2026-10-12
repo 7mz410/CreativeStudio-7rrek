@@ -98,7 +98,9 @@ fn plural_east_slavic(n: u64) -> usize {
 pub static LANGUAGES: [LangInfo; 15] = [
     LangInfo { code: "en", name: "English", source: "", plural: plural_one_other, complete_menus: false, catalog: OnceLock::new() },
     // Arabic (Creative Studio): the whole interface; drawn with IBM Plex Sans Arabic.
-    LangInfo { code: "ar", name: "العربية", source: include_str!("ar.tsv"), plural: plural_arabic, complete_menus: true, catalog: OnceLock::new() },
+    LangInfo {
+        code: "ar", name: "العربية", source: include_str!("ar.tsv"), plural: plural_arabic, complete_menus: true, catalog: OnceLock::new()
+    },
     // Japanese: the whole interface (every menu string and `tl!` literal) and the status and error
     // messages, keeping the product, workspace and perspective preset names in English (`MENU_KEEP_AS_IS`).
     LangInfo { code: "ja", name: "日本語", source: include_str!("ja.tsv"), plural: plural_none, complete_menus: true, catalog: OnceLock::new() },
@@ -202,11 +204,7 @@ pub static LANGUAGES: [LangInfo; 15] = [
 impl LangInfo {
     fn catalog(&self) -> &Catalog {
         self.catalog.get_or_init(|| {
-            if bidi::RTL_CODES.contains(&self.code) {
-                Catalog::parse(&bidi::visual_catalog(self.source))
-            } else {
-                Catalog::parse(self.source)
-            }
+            if bidi::RTL_CODES.contains(&self.code) { Catalog::parse(&bidi::visual_catalog(self.source)) } else { Catalog::parse(self.source) }
         })
     }
 }

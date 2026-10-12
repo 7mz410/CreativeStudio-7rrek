@@ -55,3 +55,8 @@ python3 studio/rebrand.py      # re-apply the branding
 ## 7rrek
 
 - Name 7rrek (حرّك), icon and links (`studio/anim_brand.py`, `docs/studio/7rrek.svg`).
+- Animation engine (`crates/engine/src/cmd/anim.rs`): timeline rows are the top-level layers,
+  keyframes are sublayers that hold until the row's next keyframe. Commands `anim.info`,
+  `anim.goto` / `next` / `prev` (view state), `anim.keyframe`, `anim.blankKeyframe`,
+  `anim.removeKeyframe`, `anim.setFps`, `anim.setFrames`, `anim.exportGif`. The timing is kept in
+  the document's preserved extra data (`"animation"`), so the file format is unchanged.

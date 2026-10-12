@@ -125,10 +125,7 @@ pub fn system_title_bar(app: &VectorcraftApp) -> bool {
 /// marks unsaved changes, like the `*` in the document tabs), or just the app name with no
 /// document open.
 pub fn window_title(app: &VectorcraftApp) -> String {
-    app.session
-        .active()
-        .map(|d| format!("{}{} \u{2014} 7rrek", if d.is_dirty() { "*" } else { "" }, d.title()))
-        .unwrap_or_else(|| "rsm".into())
+    app.session.active().map(|d| format!("{}{} \u{2014} 7rrek", if d.is_dirty() { "*" } else { "" }, d.title())).unwrap_or_else(|| "rsm".into())
 }
 
 /// Keep the OS window title (and the taskbar / Alt-Tab entry) on the active file. Sends

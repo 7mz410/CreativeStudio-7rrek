@@ -131,8 +131,7 @@ fn an_embedded_profile_is_restored() {
     let elsewhere = format!("Studio RGB elsewhere {}", std::process::id());
     let moved = String::from_utf8(file).unwrap().replace(&name, &elsewhere);
     assert!(cms::profile(&elsewhere).is_none());
-    let r =
-        s.execute("document.open", &json!({"name": "moved.rsm", "dataBase64": vectorcraft_format::base64_encode(moved.as_bytes())})).unwrap();
+    let r = s.execute("document.open", &json!({"name": "moved.rsm", "dataBase64": vectorcraft_format::base64_encode(moved.as_bytes())})).unwrap();
     assert!(r["warnings"].as_array().unwrap().is_empty(), "{r}");
     assert_eq!(cms::profile(&elsewhere).map(|p| p.kind), Some(cms::ProfileKind::Rgb));
     assert_eq!(s.doc().unwrap().doc.color_profiles.rgb.as_deref(), Some(elsewhere.as_str()));
@@ -141,10 +140,7 @@ fn an_embedded_profile_is_restored() {
     let mut v: Value = serde_json::from_str(&moved.replace(&elsewhere, &broken)).unwrap();
     v["profiles"][&broken]["data"] = json!("AAAA");
     let r = s
-        .execute(
-            "document.open",
-            &json!({"name": "b.rsm", "dataBase64": vectorcraft_format::base64_encode(&serde_json::to_vec(&v).unwrap())}),
-        )
+        .execute("document.open", &json!({"name": "b.rsm", "dataBase64": vectorcraft_format::base64_encode(&serde_json::to_vec(&v).unwrap())}))
         .unwrap();
     assert!(r["warnings"][0].as_str().unwrap().contains(&broken), "{r}");
 }

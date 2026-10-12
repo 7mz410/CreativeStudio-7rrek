@@ -1,6 +1,8 @@
 //! The command registry. Ids follow Illustrator's menu structure.
 
 pub(crate) mod appearance;
+// 7rrek (Creative Studio): frame-by-frame animation.
+pub mod anim;
 mod assets;
 mod attributes;
 mod brushsym;
@@ -278,6 +280,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(printtiling::specs());
         v.extend(plugin::specs());
         v.extend(cut::specs());
+        v.extend(anim::specs());
         v.extend(halftone::specs());
         v.extend(perspgrid::specs());
         v

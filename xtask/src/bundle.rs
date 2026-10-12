@@ -21,7 +21,8 @@ pub fn run(root: &Path) -> Result<(), String> {
     std::fs::copy(target.join("release/vectorcraft"), app.join("MacOS/VectorCraft")).map_err(|e| format!("copy app: {e}"))?;
     std::fs::copy(target.join("release/vectorcraft-cli"), app.join("MacOS/vectorcraft-cli")).map_err(|e| format!("copy cli: {e}"))?;
     std::fs::copy(root.join("assets/app-icon/vectorcraft.icns"), app.join("Resources/VectorCraft.icns")).map_err(|e| format!("copy icon: {e}"))?;
-    std::fs::copy(root.join("assets/app-icon/rsm-document.icns"), app.join("Resources/rsm-document.icns")).map_err(|e| format!("copy document icon: {e}"))?;
+    std::fs::copy(root.join("assets/app-icon/rsm-document.icns"), app.join("Resources/rsm-document.icns"))
+        .map_err(|e| format!("copy document icon: {e}"))?;
     let sha = std::env::var("VECTORCRAFT_BUILD_SHA").unwrap_or_else(|_| "unknown".into());
     std::fs::write(app.join("Info.plist"), info_plist(env!("CARGO_PKG_VERSION"), &sha)).map_err(|e| e.to_string())?;
     println!("built {}", root.join("dist/VectorCraft.app").display());
@@ -68,7 +69,10 @@ mod tests {
         }
         let read = |p: &str| std::fs::read_to_string(crate::root().join(p)).unwrap();
         let plist = read("packaging/macos/Info.plist.in");
-        assert!(plist.contains("<array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>"), "native format extensions");
+        assert!(
+            plist.contains("<array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>"),
+            "native format extensions"
+        );
         assert!(read("packaging/linux/ai.storyteller.vectorcraft.desktop").contains("Categories=Graphics;2DGraphics;VectorGraphics;"));
         assert!(read("packaging/linux/ai.storyteller.vectorcraft.metainfo.xml.in").contains("<category>VectorGraphics</category>"));
     }
