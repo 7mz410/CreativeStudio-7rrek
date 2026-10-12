@@ -20,6 +20,7 @@ APPS = {
     "tsweer": ("tsweer/apps/filmcraft-web/web/index.html", "#eb1b3c"),
     "effectat": ("effectat/apps/effectcraft-web/web/index.html", "#eb1b3c"),
     "sf7aat": ("sf7aat/apps/pdfcraft-web/index.html", "#eb1b3c"),
+    "trteeb": ("trteeb/apps/designcraft-web/index.html", "#eb1b3c"),
 }
 
 CSS = """
@@ -83,7 +84,7 @@ def main():
                 open(path, "w").write(new)
             print(app, "updated" if new != src else "already current")
             continue
-        loading = re.compile(r"(<div id=\"\w*loading\">)(\s*(?:<p>)?Loading Creative Studio \w+(?:&hellip;|…)(?:</p>)?)")
+        loading = re.compile(r"(<div id=\"\w*loading\">)(\s*(?:<p>)?Loading (?:Creative Studio )?\w+(?:&hellip;|…)(?:</p>)?)")
         img = re.compile(r'(<div id="loading">)<img [^>]*>')
         if img.search(src):
             src = img.sub(lambda m: m.group(1) + s, src, count=1)
