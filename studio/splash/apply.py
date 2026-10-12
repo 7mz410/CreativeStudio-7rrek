@@ -23,6 +23,7 @@ APPS = {
     "trteeb": ("trteeb/apps/designcraft-web/index.html", "#eb1b3c"),
     "klmat": ("klmat/apps/wordcraft-web/index.html", "#eb1b3c"),
     "arqam": ("arqam/apps/gridcraft-web/index.html", "#eb1b3c"),
+    "shoof": ("shoof/apps/deckcraft-web/index.html", "#eb1b3c"),
 }
 
 CSS = """
