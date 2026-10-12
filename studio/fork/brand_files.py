@@ -18,11 +18,11 @@ from pathlib import Path
 repo, app, up, slug, what, what_ar = Path(sys.argv[1]).resolve(), *sys.argv[2:7]
 CS = repo.parent
 SUITE = [  # app, what it's for, upstream
-    ('rsm', 'Vector illustration', 'VectorCraft'), ('ttshat', 'Photo library and raw development', 'LightCraft'),
+    ('rsm', 'Vector illustration', 'VectorCraft'), ('lamasat', 'Photo library and raw development', 'LightCraft'),
     ('tlween', 'Image editing', 'PhotoCraft'), ('tsweer', 'Video editing', 'FilmCraft'),
     ('effectat', 'Motion graphics and effects', 'EffectCraft'), ('sf7aat', 'PDF documents', 'PdfCraft'),
     ('trteeb', 'Page layout', 'DesignCraft'), ('klmat', 'Word processing', 'WordCraft'),
-    ('arqam', 'Spreadsheets', 'GridCraft'), ('shoof', 'Presentations', 'DeckCraft'),
+    ('arqam', 'Spreadsheets', 'GridCraft'), ('3urood', 'Presentations', 'DeckCraft'),
     ('muhandes', 'Computer-aided design', 'CADCraft'),
 ]
 

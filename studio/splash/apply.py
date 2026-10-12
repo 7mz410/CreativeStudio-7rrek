@@ -15,7 +15,7 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 # app: (index.html, colour, how the loading text appears in upstream's page)
 APPS = {
     "rsm": ("rsm/apps/vectorcraft-web/index.html", "#eb1b3c"),
-    "ttshat": ("ttshat/apps/lightcraft-web/index.html", "#eb1b3c"),
+    "lamasat": ("lamasat/apps/lightcraft-web/index.html", "#eb1b3c"),
     "tlween": ("tlween/apps/photocraft-web/index.html", "#eb1b3c"),
     "tsweer": ("tsweer/apps/filmcraft-web/web/index.html", "#eb1b3c"),
     "effectat": ("effectat/apps/effectcraft-web/web/index.html", "#eb1b3c"),
@@ -23,7 +23,7 @@ APPS = {
     "trteeb": ("trteeb/apps/designcraft-web/index.html", "#eb1b3c"),
     "klmat": ("klmat/apps/wordcraft-web/index.html", "#eb1b3c"),
     "arqam": ("arqam/apps/gridcraft-web/index.html", "#eb1b3c"),
-    "shoof": ("shoof/apps/deckcraft-web/index.html", "#eb1b3c"),
+    "3urood": ("3urood/apps/deckcraft-web/index.html", "#eb1b3c"),
 }
 
 CSS = """
@@ -63,11 +63,22 @@ CSS = """
 FONT = '<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&display=swap" rel="stylesheet">'
 
 
+# The Arabic name leads (Lalezar), the Latin one sits under it.
+ARABIC = {"rsm": "رسم", "lamasat": "لمسات", "tlween": "تلوين", "tsweer": "تصوير", "effectat": "تأثيرات",
+          "sf7aat": "صفحات", "trteeb": "ترتيب", "klmat": "كلمات", "arqam": "أرقام", "3urood": "عروض",
+          "muhandes": "مهندس", "7rrek": "حرّك", "aswat": "أصوات", "al7an": "ألحان", "sharek": "شارك"}
+LALEZAR = '<link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">'
+
+
 def scene(app, shoe):
+    name = (
+        f'<b lang="ar" dir="rtl" style="display:block;font-family:Lalezar,\'IBM Plex Sans Arabic\',sans-serif;font-weight:400;font-size:42px;line-height:1.1">{ARABIC.get(app, app)}</b>'
+        f'<small style="display:block;font-size:13px;opacity:.6;margin-top:2px">{app}</small>'
+    )
     return (
-        '<div class="ss-scene"><div class="ss-whoosh"><i></i><i></i><i></i></div><div class="ss-shadow"></div>'
+        f'<div class="ss-scene">{LALEZAR}<div class="ss-whoosh"><i></i><i></i><i></i></div><div class="ss-shadow"></div>'
         f'<div class="ss-shoe">{shoe}</div>'
-        f'<div class="ss-name"><b>{app}</b></div><div class="ss-bar"><span></span></div></div>'
+        f'<div class="ss-name">{name}</div><div class="ss-bar"><span></span></div></div>'
     )
 
 

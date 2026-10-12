@@ -10,12 +10,12 @@ for a in "$@"; do
   case $a in
     rsm) (cd apps/vectorcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     tlween) (cd apps/photocraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
-    shoof) (cd apps/deckcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
+    3urood) (cd apps/deckcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     arqam) (cd apps/gridcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     klmat) (cd apps/wordcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     trteeb) (cd apps/designcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     sf7aat) (cd apps/pdfcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
-    ttshat) cargo xtask web >/dev/null 2>$SP/$a.err; out=target/web ;;
+    lamasat) cargo xtask web >/dev/null 2>$SP/$a.err; out=target/web-site ;;
     *) cargo xtask web >/dev/null 2>$SP/$a.err; out=target/web/dist ;;
   esac
   [ -f $out/index.html ] || { echo "$a: build failed"; tail -5 $SP/$a.err; continue; }

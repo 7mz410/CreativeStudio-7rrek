@@ -285,3 +285,11 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+# Creative Studio: the app's Arabic name in its Arabic interface (studio/arabic_names.py).
+import sys  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import arabic_names  # noqa: E402
+for _p in arabic_names.apply(ROOT, NAME, "رسم"):
+    print("rebranded", _p.relative_to(ROOT))
