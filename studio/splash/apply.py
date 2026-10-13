@@ -15,6 +15,7 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 # app: (index.html, colour, how the loading text appears in upstream's page)
 APPS = {
     "rsm": ("rsm/apps/vectorcraft-web/index.html", "#eb1b3c"),
+    "7rrek": ("7rrek/apps/vectorcraft-web/index.html", "#eb1b3c"),
     "lamasat": ("lamasat/apps/lightcraft-web/index.html", "#eb1b3c"),
     "tlween": ("tlween/apps/photocraft-web/index.html", "#eb1b3c"),
     "tsweer": ("tsweer/apps/filmcraft-web/web/index.html", "#eb1b3c"),

@@ -134,7 +134,8 @@ EXT_FILES = {
     'xtask/src/bundle.rs': [
         ('.map_err(|e| format!("copy icon: {e}"))?;\n',
          '.map_err(|e| format!("copy icon: {e}"))?;\n'
-         '    std::fs::copy(root.join("assets/app-icon/rsm-document.icns"), app.join("Resources/rsm-document.icns")).map_err(|e| format!("copy document icon: {e}"))?;\n'),
+         '    std::fs::copy(root.join("assets/app-icon/rsm-document.icns"), app.join("Resources/rsm-document.icns"))\n'
+         '        .map_err(|e| format!("copy document icon: {e}"))?;\n'),
         ('"<array><string>vectorcraft</string><string>drawcraft</string></array>"',
          '"<array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>"'),
     ],
@@ -247,9 +248,6 @@ def main():
         if rebrand_rust(p):
             changed.append(p)
     sources = source_strings()
-    for p in sorted((ROOT / 'crates/ui-egui/src/i18n').glob('*.tsv')):
-        if rebrand_catalog(p, sources):
-            changed.append(p)
     # Rows for Creative Studio's own UI strings (studio/i18n/<lang>.tsv; Arabic comes from ar-work).
     for extra in sorted((ROOT / 'studio/i18n').glob('*.tsv')):
         cat = ROOT / 'crates/ui-egui/src/i18n' / extra.name
@@ -259,6 +257,9 @@ def main():
         if rows:
             cat.write_text(src.rstrip('\n') + '\n' + '\n'.join(rows) + '\n', encoding='utf-8')
             changed.append(cat)
+    for p in sorted((ROOT / 'crates/ui-egui/src/i18n').glob('*.tsv')):
+        if rebrand_catalog(p, sources):
+            changed.append(p)
     web = ROOT / 'apps/vectorcraft-web/index.html'
     html = web.read_text(encoding='utf-8')
     branded = html.replace('<title>VectorCraft</title>', f'<title>{NAME}</title>').replace('Loading VectorCraft&hellip;', f'Loading {NAME}&hellip;')
