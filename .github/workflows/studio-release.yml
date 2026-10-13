@@ -1,0 +1,24 @@
+# Creative Studio release for 7rrek: a tag push (v0.0.2-test, v0.1.0, ...) builds the unsigned
+# packages for macOS, Windows and Linux through rsm's reusable build-release.yml. A tag with a '-'
+# is a pre-release. Kept apart from upstream's release.yml so merges stay clean.
+name: Studio release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Release 7rrek
+    permissions:
+      contents: write
+    uses: 7mz410/CreativeStudio-rsm/.github/workflows/build-release.yml@main
+    with:
+      app: 7rrek
+      package: vectorcraft
+      version_var: VECTORCRAFT_VERSION
+      bundle: VectorCraft.app
+      tag: ${{ github.ref_name }}
