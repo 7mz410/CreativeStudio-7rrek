@@ -2601,6 +2601,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 c("Insert Keyframe", "anim.keyframe"),
                 c("Insert Blank Keyframe", "anim.blankKeyframe"),
                 c("Clear Keyframe", "anim.removeKeyframe"),
+                c("Motion Tween", "anim.tween"),
                 Sep,
                 c("Previous Frame", "anim.prev"),
                 c("Next Frame", "anim.next"),

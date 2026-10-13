@@ -73,7 +73,8 @@ fn info_of(doc: &vectorcraft_doc::Document) -> Value {
         .iter()
         .rev()
         .map(|r| {
-            let keys: Vec<Value> = a.row_keys(r).into_iter().map(|(f, id)| json!({"frame": f, "id": id.0})).collect();
+            let keys: Vec<Value> =
+                a.row_keys(r).into_iter().map(|(f, id)| json!({"frame": f, "id": id.0, "tween": a.tweens.contains(&id.0)})).collect();
             json!({"id": r.id.0, "name": r.name.clone().unwrap_or_default(), "keys": keys})
         })
         .collect();
@@ -146,6 +147,9 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         if ui.button("Clear Keyframe").clicked() {
             run_reporting(app, "anim.removeKeyframe");
         }
+        if ui.button("Motion Tween").on_hover_text("Move the keyframe's art toward the next keyframe").clicked() {
+            run_reporting(app, "anim.tween");
+        }
         ui.add_space(8.0);
         // Onion skin: one keyframe on each side, faint.
         if ui.selectable_label(onion, "Onion Skin").on_hover_text("Show the keyframes before and after faintly").clicked() {
@@ -199,11 +203,20 @@ fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], curre
         p.rect_filled(band, 0.0, if i % 2 == 0 { t.panel } else { t.panel_darker });
         let name = row["name"].as_str().unwrap_or("");
         p.text(pos2(area.min.x + 8.0, y + ROW_H / 2.0), Align2::LEFT_CENTER, name, egui::FontId::proportional(11.5), t.text);
-        let keys: Vec<u32> = row["keys"].as_array().into_iter().flatten().filter_map(|k| k["frame"].as_u64()).map(|f| f as u32).collect();
-        for (k, f) in keys.iter().enumerate() {
-            let end = keys.get(k + 1).copied().unwrap_or(frames + 1);
+        let keys: Vec<(u32, bool)> = row["keys"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|k| Some((k["frame"].as_u64()? as u32, k["tween"].as_bool().unwrap_or(false))))
+            .collect();
+        for (k, (f, tween)) in keys.iter().enumerate() {
+            let next = keys.get(k + 1).map(|(n, _)| *n);
+            let end = next.unwrap_or(frames + 1);
             let span = Rect::from_min_max(pos2(col(*f), y + 3.0), pos2(col(end), y + ROW_H - 3.0));
-            p.rect_filled(span, 3.0, t.accent.gamma_multiply(0.25));
+            p.rect_filled(span, 3.0, t.accent.gamma_multiply(if *tween && next.is_some() { 0.45 } else { 0.25 }));
+            if *tween && next.is_some() {
+                p.arrow(pos2(col(*f) + CELL_W, span.center().y), vec2(col(end) - col(*f) - CELL_W * 1.5, 0.0), Stroke::new(1.0, t.accent));
+            }
             p.circle_filled(pos2(col(*f) + CELL_W / 2.0, y + ROW_H / 2.0), 3.5, t.accent);
         }
     }
@@ -254,7 +267,7 @@ mod tests {
     fn the_timeline_shows_rows_frames_and_controls() {
         let mut app = app_with_keys();
         let text = painted_text(&mut app, super::timeline);
-        for s in ["Timeline", "8 / 24", "Keyframe", "Blank Keyframe", "Clear Keyframe", "Export GIF…", "Layer 1", "1", "5", "10"] {
+        for s in ["Timeline", "8 / 24", "Keyframe", "Blank Keyframe", "Clear Keyframe", "Motion Tween", "Export GIF…", "Layer 1", "1", "5", "10"] {
             assert!(text.lines().any(|l| l == s), "{s} in {text}");
         }
     }

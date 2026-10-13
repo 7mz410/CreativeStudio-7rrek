@@ -10,12 +10,13 @@
 //! Frames count from 1. Changing frames is a view change, not an edit: it isn't undoable and
 //! doesn't add an undo step; the timeline's edits (keyframes, frame rate, length) are.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use vectorcraft_doc::{Document, Node, NodeId};
+use vectorcraft_geom::{Affine, Rect};
 
 use super::*;
 use crate::EngineError;
@@ -40,11 +41,15 @@ pub struct Anim {
     /// Onion skin: how many keyframes before and after the current one show faintly (0: off).
     pub onion_before: u32,
     pub onion_after: u32,
+    /// Keyframes with a motion tween: their art moves and scales toward the row's next keyframe.
+    pub tweens: BTreeSet<u64>,
+    /// The locked in-between layers the frame shown added (removed on the next frame change).
+    pub ghosts: Vec<u64>,
 }
 
 impl Default for Anim {
     fn default() -> Self {
-        Self { fps: 12, frames: 24, current: 1, keys: BTreeMap::new(), onion_before: 0, onion_after: 0 }
+        Self { fps: 12, frames: 24, current: 1, keys: BTreeMap::new(), onion_before: 0, onion_after: 0, tweens: BTreeSet::new(), ghosts: Vec::new() }
     }
 }
 
@@ -87,6 +92,11 @@ impl Anim {
 pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     let anim = Anim::of(doc);
     let mut d = doc.clone();
+    for g in &anim.ghosts {
+        // Already gone (deleted by hand) is fine.
+        let _ = d.remove(NodeId(*g));
+    }
+    let mut ghosts = Vec::new();
     for row in &doc.layers {
         let keys = anim.row_keys(row);
         let Some(shown) = keys.iter().rposition(|(f, _)| *f <= frame).or((!keys.is_empty()).then_some(usize::MAX)) else { continue };
@@ -103,11 +113,48 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
                 _ => 1.0,
             };
         }
+        if let Some(&(fa, a)) = keys.get(shown)
+            && anim.tweens.contains(&a.0)
+            && let Some(&(fb, b)) = keys.get(shown + 1)
+            && frame > fa
+            && let Some(g) = tween(&mut d, a, b, (frame - fa) as f64 / (fb - fa) as f64)
+        {
+            ghosts.push(g.0);
+        }
     }
     let mut a = anim;
+    a.ghosts = ghosts;
     a.current = frame.clamp(1, a.frames);
     a.store(&mut d);
     d
+}
+
+/// Keyframe `a`'s art `t` (0–1) of the way to keyframe `b`'s, as a locked layer shown in `a`'s
+/// place → its id. The nth object moves and scales from its bounds in `a` toward the nth in `b`.
+// ponytail: bounds only (no rotation or shape morph); match by id or add rotation when asked.
+fn tween(d: &mut Document, a: NodeId, b: NodeId, t: f64) -> Option<NodeId> {
+    let from = d.node(a)?.clone();
+    let to: Vec<Arc<Node>> = d.node(b)?.children().cloned().unwrap_or_default();
+    let mut g = d.reid(&from);
+    g.name = Some("Tween".into());
+    (g.visible, g.locked, g.opacity) = (true, true, 1.0);
+    let mix = |x: f64, y: f64| x + (y - x) * t;
+    for (c, end) in g.children_mut().into_iter().flatten().zip(&to) {
+        let (Some(r0), Some(r1)) = (c.geometric_bounds(), end.geometric_bounds()) else { continue };
+        let r = Rect::new(mix(r0.x0, r1.x0), mix(r0.y0, r1.y0), mix(r0.x1, r1.x1), mix(r0.y1, r1.y1));
+        let k = |a: f64, b: f64| if a > 1e-9 { b / a } else { 1.0 };
+        let m = Affine::translate((r.x0, r.y0))
+            * Affine::scale_non_uniform(k(r0.width(), r.width()), k(r0.height(), r.height()))
+            * Affine::translate((-r0.x0, -r0.y0));
+        let c = Arc::make_mut(c);
+        c.transform(m, true);
+        c.opacity = mix(c.opacity as f64, end.opacity as f64) as f32;
+    }
+    let n = d.node_mut(a)?;
+    (n.visible, n.locked, n.opacity) = (false, false, 1.0);
+    let parent = d.parent_of(a);
+    let at = d.index_path(a)?.last()? + 1;
+    d.insert(parent, at, g).ok()
 }
 
 /// `doc` showing `frame` as it renders: no onion skin (exports, frames of a movie).
@@ -196,6 +243,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{before?: 0–5, after?: 0–5} how many keyframes before and after the current one show faintly (0 turns a side off). View state: not an undo step → {before, after}",
             has_doc,
             onion
+        ),
+        cmd!(
+            "anim.tween",
+            "Motion Tween",
+            [],
+            None,
+            "{row?, frame?, on?: bool (default: toggle)} the keyframe in effect at the frame moves and scales its art toward the row's next keyframe → {id, tween}",
+            has_doc,
+            set_tween
         ),
         cmd!("anim.setFps", "Frame Rate", [], None, "{fps: 1–60} frames per second → {fps}", has_doc, set_fps),
         cmd!("anim.setFrames", "Timeline Length", [], None, "{frames: 1–10000} the timeline's length → {frames}", has_doc, set_frames),
@@ -339,6 +395,28 @@ fn onion(s: &mut Session, p: &Value) -> Result<Value> {
     st.doc = Arc::new(d);
     show(s, current)?;
     Ok(json!({"before": a.onion_before, "after": a.onion_after}))
+}
+
+fn set_tween(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "anim.tween";
+    let row = row_param(s, p, C)?;
+    let d = &s.doc()?.doc;
+    let anim = Anim::of(d);
+    let frame = frame_param(p, &anim, C)?;
+    let key = d.node(row).and_then(|r| anim.key_at(r, frame)).ok_or_else(|| bad(C, format!("no keyframe at frame {frame} on this layer")))?;
+    let on = p.get("on").and_then(Value::as_bool).unwrap_or(!anim.tweens.contains(&key.0));
+    s.edit("Motion Tween", |d, _| {
+        let mut a = Anim::of(d);
+        if on {
+            a.tweens.insert(key.0);
+        } else {
+            a.tweens.remove(&key.0);
+        }
+        a.store(d);
+        Ok(())
+    })?;
+    show(s, anim.current)?;
+    Ok(json!({"id": key.0, "tween": on}))
 }
 
 fn set_fps(s: &mut Session, p: &Value) -> Result<Value> {
@@ -509,6 +587,32 @@ mod tests {
         let back = vectorcraft_format::load(&bytes).unwrap();
         let a = Anim::of(&back);
         assert_eq!((a.fps, a.keys.len()), (24, 1));
+    }
+
+    #[test]
+    fn a_motion_tween_moves_the_art_between_keyframes_without_changing_them() {
+        let mut s = session();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        rect(&mut s, 0.0);
+        s.execute("anim.blankKeyframe", &json!({"frame": 11})).unwrap();
+        rect(&mut s, 100.0);
+        s.execute("anim.goto", &json!({"frame": 1})).unwrap();
+        assert_eq!(s.execute("anim.tween", &json!({})).unwrap()["tween"], true);
+        s.execute("anim.goto", &json!({"frame": 6})).unwrap();
+        let d = &s.doc().unwrap().doc;
+        let ghosts = Anim::of(d).ghosts;
+        assert_eq!(ghosts.len(), 1);
+        let g = d.node(NodeId(ghosts[0])).unwrap();
+        assert!(g.visible && g.locked);
+        let x = g.children().unwrap()[0].geometric_bounds().unwrap().x0;
+        assert!((x - 50.0).abs() < 1e-6, "halfway: {x}");
+        // The keyframes keep their art, and leaving the frame takes the in-between away.
+        s.execute("anim.goto", &json!({"frame": 11})).unwrap();
+        let d = &s.doc().unwrap().doc;
+        assert!(Anim::of(d).ghosts.is_empty());
+        let a = d.layers[0].children().unwrap().iter().find(|c| c.is_layer()).unwrap();
+        assert_eq!(a.children().unwrap()[0].geometric_bounds().unwrap().x0, 0.0);
+        assert_eq!(d.layers[0].children().unwrap().len(), 2, "two keyframes, no leftover tween");
     }
 
     #[cfg(not(target_arch = "wasm32"))]
