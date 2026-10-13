@@ -106,58 +106,58 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
     let playing = ui.ctx().data(|d| d.get_temp::<Playback>(playback_id())).is_some_and(|p| p.playing);
     {
         ui.add_space(8.0);
-        ui.label(egui::RichText::new("Timeline").font(theme::semibold(12.0)).color(t.text_strong));
+        ui.label(egui::RichText::new(tl!("Timeline")).font(theme::semibold(12.0)).color(t.text_strong));
         ui.add_space(10.0);
-        if ui.small_button("⏮").on_hover_text("First Frame").clicked() {
+        if ui.small_button("⏮").on_hover_text(tl!("First Frame")).clicked() {
             let _ = app.run("anim.goto", json!({"frame": 1}));
         }
-        if ui.small_button("◀").on_hover_text("Previous Frame").clicked() {
+        if ui.small_button("◀").on_hover_text(tl!("Previous Frame")).clicked() {
             let _ = app.run("anim.prev", json!({}));
         }
         let play = if playing { "⏸" } else { "▶" };
-        if ui.small_button(play).on_hover_text(if playing { "Pause" } else { "Play" }).clicked() {
+        if ui.small_button(play).on_hover_text(if playing { tl!("Pause") } else { tl!("Play") }).clicked() {
             set_playing(ui, !playing);
         }
-        if ui.small_button("▶|").on_hover_text("Next Frame").clicked() {
+        if ui.small_button("▶|").on_hover_text(tl!("Next Frame")).clicked() {
             let _ = app.run("anim.next", json!({}));
         }
-        if ui.small_button("⏭").on_hover_text("Last Frame").clicked() {
+        if ui.small_button("⏭").on_hover_text(tl!("Last Frame")).clicked() {
             let _ = app.run("anim.goto", json!({"frame": frames}));
         }
         ui.add_space(8.0);
         ui.label(egui::RichText::new(format!("{current} / {frames}")).size(12.0).color(t.text));
         ui.add_space(12.0);
-        ui.label(egui::RichText::new("FPS").size(11.5).color(t.text_dim));
+        ui.label(egui::RichText::new(tl!("FPS")).size(11.5).color(t.text_dim));
         let mut f = fps;
         if ui.add(egui::DragValue::new(&mut f).range(1..=60)).changed() {
             let _ = app.run("anim.setFps", json!({"fps": f}));
         }
-        ui.label(egui::RichText::new("Frames").size(11.5).color(t.text_dim));
+        ui.label(egui::RichText::new(tl!("Frames")).size(11.5).color(t.text_dim));
         let mut n = frames;
         if ui.add(egui::DragValue::new(&mut n).range(1..=10_000)).changed() {
             let _ = app.run("anim.setFrames", json!({"frames": n}));
         }
         ui.add_space(12.0);
-        if ui.button("Keyframe").on_hover_text("Insert Keyframe").clicked() {
+        if ui.button(tl!("Keyframe")).on_hover_text(tl!("Insert Keyframe")).clicked() {
             run_reporting(app, "anim.keyframe");
         }
-        if ui.button("Blank Keyframe").on_hover_text("Insert Blank Keyframe").clicked() {
+        if ui.button(tl!("Blank Keyframe")).on_hover_text(tl!("Insert Blank Keyframe")).clicked() {
             run_reporting(app, "anim.blankKeyframe");
         }
-        if ui.button("Clear Keyframe").clicked() {
+        if ui.button(tl!("Clear Keyframe")).clicked() {
             run_reporting(app, "anim.removeKeyframe");
         }
-        if ui.button("Motion Tween").on_hover_text("Move the keyframe's art toward the next keyframe").clicked() {
+        if ui.button(tl!("Motion Tween")).on_hover_text(tl!("Move the keyframe's art toward the next keyframe")).clicked() {
             run_reporting(app, "anim.tween");
         }
         ui.add_space(8.0);
         // Onion skin: one keyframe on each side, faint.
-        if ui.selectable_label(onion, "Onion Skin").on_hover_text("Show the keyframes before and after faintly").clicked() {
+        if ui.selectable_label(onion, tl!("Onion Skin")).on_hover_text(tl!("Show the keyframes before and after faintly")).clicked() {
             let n = if onion { 0 } else { 1 };
             let _ = app.run("anim.onion", json!({"before": n, "after": n}));
         }
         ui.add_space(8.0);
-        if ui.button("Export GIF…").on_hover_text("Export Animated GIF").clicked() {
+        if ui.button(tl!("Export GIF…")).on_hover_text(tl!("Export Animated GIF")).clicked() {
             run_reporting(app, "anim.exportGifAs");
         }
     }

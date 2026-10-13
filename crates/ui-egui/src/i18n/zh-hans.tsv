@@ -3823,3 +3823,15 @@ lighting	Light	光源
 	Onion Skin	洋葱皮
 	Animation	动画
 	Motion Tween	动作补间
+	Blank Keyframe	空白关键帧
+	Export Animated GIF	导出动画 GIF
+	Export GIF…	导出 GIF…
+	FPS	帧率
+	First Frame	第一帧
+	Frames	帧数
+	Keyframe	关键帧
+	Last Frame	最后一帧
+	Pause	暂停
+	Play	播放
+	Move the keyframe's art toward the next keyframe	将关键帧的图稿移向下一个关键帧
+	Show the keyframes before and after faintly	淡显前后的关键帧

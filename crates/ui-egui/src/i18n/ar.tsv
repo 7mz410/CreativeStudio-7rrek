@@ -4201,3 +4201,15 @@ lighting	Light	الضوء
 	Outside	خارج
 	Skew:	الإمالة:
 	Use Outside Rectangle As Frame	استخدام المستطيل الخارجي كإطار
+	Keyframe	إطار رئيسي
+	Blank Keyframe	إطار رئيسي فارغ
+	FPS	إطار/ث
+	Frames	الإطارات
+	Export GIF…	تصدير GIF…
+	First Frame	الإطار الأول
+	Last Frame	الإطار الأخير
+	Play	تشغيل
+	Pause	إيقاف مؤقت
+	Move the keyframe's art toward the next keyframe	حرّك رسم الإطار الرئيسي نحو الإطار الرئيسي التالي
+	Show the keyframes before and after faintly	اعرض الإطارات الرئيسية السابقة واللاحقة بشفافية
+	Export Animated GIF	تصدير GIF متحرك

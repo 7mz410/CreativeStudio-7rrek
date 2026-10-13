@@ -4227,3 +4227,15 @@ lighting	Light	Свет
 	Onion Skin	Калька
 	Animation	Анимация
 	Motion Tween	Анимация движения
+	Blank Keyframe	Пустой ключевой кадр
+	Export Animated GIF	Экспорт анимированного GIF
+	Export GIF…	Экспорт GIF…
+	FPS	кадр/с
+	First Frame	Первый кадр
+	Frames	Кадры
+	Keyframe	Ключевой кадр
+	Last Frame	Последний кадр
+	Pause	Пауза
+	Play	Воспроизвести
+	Move the keyframe's art toward the next keyframe	Перемещать графику ключевого кадра к следующему
+	Show the keyframes before and after faintly	Показывать соседние ключевые кадры полупрозрачными
