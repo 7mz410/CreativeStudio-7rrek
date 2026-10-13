@@ -152,7 +152,21 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
             let n = if onion { 0 } else { 1 };
             let _ = app.run("anim.onion", json!({"before": n, "after": n}));
         }
+        ui.add_space(8.0);
+        if ui.button("Export GIF…").on_hover_text("Export Animated GIF").clicked() {
+            run_reporting(app, "anim.exportGifAs");
+        }
     }
+}
+
+/// `anim.exportGifAs`: the frames as a GIF at `path`, else a picked file (the web downloads it).
+pub fn export_gif(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> Result<Value, String> {
+    let doc = app.session.active().ok_or("no document")?.doc.clone();
+    let path = crate::io::target_path(app, path, "gif")?;
+    let (bytes, mut info) = vectorcraft_engine::cmd::anim::encode_gif(&doc, p).map_err(|e| e.to_string())?;
+    crate::io::write_to(&mut app.services, &path, &bytes)?;
+    info["path"] = json!(path);
+    Ok(info)
 }
 
 fn run_reporting(app: &mut VectorcraftApp, id: &str) {
@@ -240,9 +254,21 @@ mod tests {
     fn the_timeline_shows_rows_frames_and_controls() {
         let mut app = app_with_keys();
         let text = painted_text(&mut app, super::timeline);
-        for s in ["Timeline", "8 / 24", "Keyframe", "Blank Keyframe", "Clear Keyframe", "Layer 1", "1", "5", "10"] {
+        for s in ["Timeline", "8 / 24", "Keyframe", "Blank Keyframe", "Clear Keyframe", "Export GIF…", "Layer 1", "1", "5", "10"] {
             assert!(text.lines().any(|l| l == s), "{s} in {text}");
         }
+    }
+
+    #[test]
+    fn export_gif_as_writes_the_frames() {
+        let mut app = app_with_keys();
+        app.services.write = Some(Box::new(|p: &str, b: &[u8]| std::fs::write(p, b).map_err(|e| e.to_string())));
+        let path = std::env::temp_dir().join(format!("7rrek-ui-gif-{}.gif", std::process::id()));
+        let _ = std::fs::remove_file(&path);
+        let r = app.run("anim.exportGifAs", json!({"path": path.to_string_lossy(), "scale": 0.25})).unwrap();
+        assert_eq!(r["frames"], 24);
+        assert!(std::fs::read(&path).unwrap().starts_with(b"GIF89a"));
+        let _ = std::fs::remove_file(&path);
     }
 
     #[test]

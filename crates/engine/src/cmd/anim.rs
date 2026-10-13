@@ -78,7 +78,7 @@ impl Anim {
 
     /// The keyframe of `row` in effect at `frame`, if the row has one there.
     pub fn key_at(&self, row: &Node, frame: u32) -> Option<NodeId> {
-        self.row_keys(row).into_iter().filter(|(f, _)| *f <= frame).next_back().map(|(_, id)| id)
+        self.row_keys(row).into_iter().rfind(|(f, _)| *f <= frame).map(|(_, id)| id)
     }
 }
 
@@ -373,12 +373,21 @@ fn set_frames(s: &mut Session, p: &Value) -> Result<Value> {
 }
 
 fn export_gif(s: &mut Session, p: &Value) -> Result<Value> {
+    let path = str_param(p, "path").ok_or_else(|| bad("anim.exportGif", "path is required"))?.to_string();
+    let doc = s.doc()?.doc.clone();
+    let (out, mut info) = encode_gif(&doc, p)?;
+    super::fileio::write_file(&path, &out)?;
+    info["path"] = json!(path);
+    Ok(info)
+}
+
+/// `doc`'s frames as an animated GIF (`anim.exportGif`'s options in `p`, `path` aside) → the bytes
+/// and `{frames, width, height}`. The UI writes them itself so the web can download them.
+pub fn encode_gif(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
     use image::codecs::gif::{GifEncoder, Repeat};
     use image::{Delay, Frame, RgbaImage};
     const C: &str = "anim.exportGif";
-    let path = str_param(p, "path").ok_or_else(|| bad(C, "path is required"))?.to_string();
-    let doc = s.doc()?.doc.clone();
-    let anim = Anim::of(&doc);
+    let anim = Anim::of(doc);
     let scale = f64_or(p, "scale", 1.0);
     if !scale.is_finite() || !(0.05..=8.0).contains(&scale) {
         return Err(bad(C, "scale must be from 0.05 to 8"));
@@ -398,14 +407,13 @@ fn export_gif(s: &mut Session, p: &Value) -> Result<Value> {
         enc.set_repeat(Repeat::Infinite).map_err(|e| EngineError::Other(format!("GIF: {e}")))?;
         let mut r = vectorcraft_render::Renderer::new();
         for f in from..=to {
-            let frame_doc = at_frame(&doc, f);
+            let frame_doc = at_frame(doc, f);
             let img = r.render_region(&frame_doc, rect, scale, true);
             let rgba = RgbaImage::from_raw(img.width, img.height, img.to_straight()).ok_or_else(|| bad(C, "a frame didn't render"))?;
             enc.encode_frame(Frame::from_parts(rgba, 0, 0, delay)).map_err(|e| EngineError::Other(format!("GIF: {e}")))?;
         }
     }
-    super::fileio::write_file(&path, &out)?;
-    Ok(json!({"path": path, "frames": to - from + 1, "width": w, "height": h}))
+    Ok((out, json!({"frames": to - from + 1, "width": w, "height": h})))
 }
 
 #[cfg(test)]

@@ -52,6 +52,7 @@ use Item::Sep;
 
 /// UI-level commands: (id, label, shortcut, params doc).
 pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
+    ("anim.exportGifAs", "Export Animated GIF…", "", "{path?, scale?, from?, to?} anim.exportGif, picking the file (the web downloads it)"),
     (
         "app.language",
         "Interface Language",
@@ -990,6 +991,7 @@ pub fn run_ui_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<R
             Ok(Value::Null)
         }),
         "file.export.png" => io::export(app, Some("png"), s("path"), p),
+        "anim.exportGifAs" => crate::timeline::export_gif(app, s("path"), p),
         "file.documentSetup" => crate::dialogs::open_document_setup(app),
         "edit.preferences" => {
             crate::prefs_dialog::open(app, s("category").as_deref());
@@ -2591,6 +2593,19 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 c("Saved View 8", "view.goto8"),
                 c("Saved View 9", "view.goto9"),
                 c("Saved View 10", "view.goto10"),
+            ],
+        ),
+        (
+            "Animation",
+            vec![
+                c("Insert Keyframe", "anim.keyframe"),
+                c("Insert Blank Keyframe", "anim.blankKeyframe"),
+                c("Clear Keyframe", "anim.removeKeyframe"),
+                Sep,
+                c("Previous Frame", "anim.prev"),
+                c("Next Frame", "anim.next"),
+                Sep,
+                c("Export Animated GIF…", "anim.exportGifAs"),
             ],
         ),
         (
