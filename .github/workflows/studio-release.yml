@@ -20,5 +20,5 @@ jobs:
       app: 7rrek
       package: vectorcraft
       version_var: VECTORCRAFT_VERSION
-      bundle: VectorCraft.app
+      bundle: 7rrek.app
       tag: ${{ github.ref_name }}
