@@ -521,8 +521,8 @@ const fn reader(id: &'static str, label: &'static str, extensions: &'static [&'s
 pub const FORMATS: &[Format] = &[
     Format {
         id: "vectorcraft",
-        label: "rsm",
-        extensions: &[vectorcraft_format::STUDIO_EXTENSION, vectorcraft_format::EXTENSION, vectorcraft_format::LEGACY_EXTENSION],
+        label: "7rrek",
+        extensions: &[vectorcraft_format::STUDIO_EXTENSION, vectorcraft_format::EXTENSION, vectorcraft_format::LEGACY_EXTENSION, "rsm"],
         mime: "application/json",
         read: true,
         write: true,
@@ -659,6 +659,7 @@ pub const FORMATS: &[Format] = &[
 
 /// Every extension `document.open` reads (the "All readable files" filter of open dialogs).
 pub const OPEN_EXTS: &[&str] = &[
+    "7rrek",
     "rsm",
     "vectorcraft",
     "drawcraft",
@@ -719,6 +720,7 @@ pub const DOCX_EXTS: &[&str] = &["docx"];
 /// Every extension File → Place reads: [`OPEN_EXTS`], [`TEXT_EXTS`], [`RTF_EXTS`] and
 /// [`DOCX_EXTS`].
 pub const PLACE_EXTS: &[&str] = &[
+    "7rrek",
     "rsm",
     "vectorcraft",
     "drawcraft",

@@ -192,7 +192,7 @@ mod tests {
     fn save_panels_with_several_formats_get_the_menu() {
         let save = menu_formats(&fileio::save_filters("vectorcraft"));
         assert!(save.len() >= 2, "{save:?}");
-        assert_eq!(save.first().map(|(_, e)| *e), Some(&["rsm"][..]));
+        assert_eq!(save.first().map(|(_, e)| *e), Some(&["7rrek"][..]));
         assert!(menu_formats(&fileio::save_filters("svg")).first().is_some_and(|(_, e)| e.contains(&"svg")));
         assert!(menu_formats(&fileio::template_filters("template")).len() >= 2);
         assert!(menu_formats(&[("PDF", &["pdf"])]).is_empty());

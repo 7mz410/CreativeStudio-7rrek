@@ -52,7 +52,7 @@ pub fn app_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
             // With the macOS menu bar the menus are at the top of the screen instead.
             let menus_end = if app.services.native_menu.is_some() {
                 let full = ui.max_rect();
-                ui.painter().text(full.center(), egui::Align2::CENTER_CENTER, "rsm", egui::FontId::proportional(13.5), t.text);
+                ui.painter().text(full.center(), egui::Align2::CENTER_CENTER, "7rrek", egui::FontId::proportional(13.5), t.text);
                 ui.cursor().min.x
             } else {
                 menus::menu_bar(app, ui)
@@ -101,7 +101,7 @@ pub fn app_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
                 crate::community::discord_button(app, ui, false);
             }
             if app.services.native_menu.is_some() {
-                let title = ui.painter().layout_no_wrap("rsm".into(), egui::FontId::proportional(13.5), t.text);
+                let title = ui.painter().layout_no_wrap("7rrek".into(), egui::FontId::proportional(13.5), t.text);
                 let title_rect = egui::Rect::from_center_size(full.center(), title.size());
                 // Keep the title centered only while the interactive groups leave room for it.
                 if title_rect.left() >= menus_end + 8.0 && title_rect.right() <= ui.min_rect().left() - 8.0 {
@@ -128,7 +128,7 @@ pub fn system_title_bar(app: &VectorcraftApp) -> bool {
 /// marks unsaved changes, like the `*` in the document tabs), or just the app name with no
 /// document open.
 pub fn window_title(app: &VectorcraftApp) -> String {
-    app.session.active().map(|d| format!("{}{} \u{2014} 7rrek", if d.is_dirty() { "*" } else { "" }, d.title())).unwrap_or_else(|| "rsm".into())
+    app.session.active().map(|d| format!("{}{} \u{2014} 7rrek", if d.is_dirty() { "*" } else { "" }, d.title())).unwrap_or_else(|| "7rrek".into())
 }
 
 /// Keep the OS window title (and the taskbar / Alt-Tab entry) on the active file. Sends
@@ -1540,7 +1540,7 @@ mod tests {
 
     #[test]
     fn window_title_with_no_document_is_the_app_name() {
-        assert_eq!(super::window_title(&title_test_app(true)), "rsm");
+        assert_eq!(super::window_title(&title_test_app(true)), "7rrek");
     }
 
     #[test]
@@ -1584,11 +1584,11 @@ mod tests {
         let ctx = egui::Context::default();
         crate::theme::install_fonts(&ctx);
         super::sync_window_title(&mut app, &ctx);
-        assert_eq!(app.last_window_title, "rsm");
+        assert_eq!(app.last_window_title, "7rrek");
         let mut out = ctx.run_ui(egui::RawInput::default(), |_| {});
         out.textures_delta.clear();
         let cmds = out.viewport_output.remove(&egui::ViewportId::ROOT).map(|v| v.commands).unwrap_or_default();
-        assert!(cmds.iter().any(|c| matches!(c, egui::ViewportCommand::Title(t) if t == "rsm")), "{cmds:?}");
+        assert!(cmds.iter().any(|c| matches!(c, egui::ViewportCommand::Title(t) if t == "7rrek")), "{cmds:?}");
         // Same document state again: the cached title stops a repeat command.
         super::sync_window_title(&mut app, &ctx);
         let mut out = ctx.run_ui(egui::RawInput::default(), |_| {});
@@ -2013,12 +2013,12 @@ mod visual_regressions {
                             _ => None,
                         })
                         .collect();
-                    let title = texts.iter().find(|text| text.galley.job.text == "rsm");
+                    let title = texts.iter().find(|text| text.galley.job.text == "7rrek");
                     if width >= 1280.0 {
                         assert!(title.is_some(), "the title remains visible when the header has room");
                     }
                     if let Some(title) = title {
-                        for text in texts.iter().filter(|text| text.galley.job.text != "rsm") {
+                        for text in texts.iter().filter(|text| text.galley.job.text != "7rrek") {
                             assert!(
                                 !title.visual_bounding_rect().intersects(text.visual_bounding_rect()),
                                 "{width}: title overlaps {:?}",

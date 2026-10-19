@@ -25,7 +25,7 @@ fn three_boards(app: &mut crate::VectorcraftApp) {
 
 #[test]
 fn save_as_native_asks_for_its_options_and_writes_every_artboard() {
-    let (mut app, written) = app("/tmp/doc.rsm");
+    let (mut app, written) = app("/tmp/doc.7rrek");
     three_boards(&mut app);
     let r = app.run("file.saveAs", Value::Null).unwrap();
     assert_eq!(r["pending"], "saveOptions");
@@ -47,9 +47,9 @@ fn save_as_native_asks_for_its_options_and_writes_every_artboard() {
     app.ui.dialog.as_mut().unwrap().fields.insert("range".into(), json!("2-3"));
     let r = dialogs::confirm(&mut app).unwrap();
     let names: Vec<String> = written.borrow().iter().map(|(p, _)| p.clone()).collect();
-    assert_eq!(names, ["/tmp/doc.rsm", "/tmp/doc-B.rsm", "/tmp/doc-C.rsm"], "{r}");
+    assert_eq!(names, ["/tmp/doc.7rrek", "/tmp/doc-B.7rrek", "/tmp/doc-C.7rrek"], "{r}");
     let st = app.session.active().unwrap();
-    assert_eq!((st.path.as_deref(), st.is_dirty()), (Some("/tmp/doc.rsm"), false));
+    assert_eq!((st.path.as_deref(), st.is_dirty()), (Some("/tmp/doc.7rrek"), false));
     // Save writes them again with the same options, without asking.
     app.run("shape.ellipse", json!({"x": 50, "y": 40, "width": 10, "height": 10})).unwrap();
     app.run("file.save", Value::Null).unwrap();
@@ -66,7 +66,7 @@ fn save_as_native_asks_for_its_options_and_writes_every_artboard() {
 
 #[test]
 fn save_a_copy_and_save_dont_ask_and_options_reach_the_file() {
-    let (mut app, written) = app("/tmp/plain.rsm");
+    let (mut app, written) = app("/tmp/plain.7rrek");
     // Save of an untitled document goes straight to the file, as before.
     app.run("file.save", Value::Null).unwrap();
     assert!(app.ui.dialog.is_none());
@@ -102,5 +102,5 @@ fn the_web_save_as_dialog_shows_the_native_options() {
     d.fields.insert("separateArtboards".into(), json!(true));
     dialogs::confirm(&mut app).unwrap();
     let names: Vec<String> = written.borrow().iter().map(|(p, _)| p.clone()).collect();
-    assert_eq!(names, ["Untitled-1.rsm", "Untitled-1-Artboard-1.rsm", "Untitled-1-B.rsm", "Untitled-1-C.rsm"]);
+    assert_eq!(names, ["Untitled-1.7rrek", "Untitled-1-Artboard-1.7rrek", "Untitled-1-B.7rrek", "Untitled-1-C.7rrek"]);
 }

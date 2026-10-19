@@ -375,7 +375,7 @@ fn export_extensions_name_every_writable_format() {
     let exts = export_extensions();
     assert_eq!(
         exts,
-        ["rsm", "svg", "svgz", "pdf", "ai", "png", "jpg", "gif", "webp", "tif", "bmp", "vctemplate", "txt", "dxf", "eps", "emf", "wmf", "tga", "psd"]
+        ["7rrek", "svg", "svgz", "pdf", "ai", "png", "jpg", "gif", "webp", "tif", "bmp", "vctemplate", "txt", "dxf", "eps", "emf", "wmf", "tga", "psd"]
     );
     for e in exts {
         assert!(format_for_name(&format!("x.{e}")).is_some_and(|f| f.write), "{e}");
@@ -562,7 +562,7 @@ fn export_for_screens_one_page_per_pdf_unique_names() {
     assert_eq!(image::load_from_memory(&b64(&r["files"][0])).unwrap().width(), 50);
     // A native row: each artboard as a document of its own to edit.
     let r = s.execute("document.exportForScreens", &json!({"range": "1", "formats": [{"format": "vectorcraft"}]})).unwrap();
-    assert!(r["files"][0]["name"].as_str().unwrap().ends_with(".rsm"), "{r}");
+    assert!(r["files"][0]["name"].as_str().unwrap().ends_with(".7rrek"), "{r}");
     let _ = std::fs::remove_dir_all(dir);
 }
 

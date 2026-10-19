@@ -544,8 +544,8 @@ mod tests {
         // The save panel offers every save format, the document's own first.
         let pick = &picks.borrow()[0];
         let labels: Vec<&str> = pick.filters.iter().map(|f| f.0).collect();
-        assert_eq!(labels, ["rsm", "7rrek Template", "PDF", "SVG", "SVG Compressed", "PDF-compatible .ai"]);
-        assert_eq!(pick.name, "Untitled-1.rsm");
+        assert_eq!(labels, ["7rrek", "7rrek Template", "PDF", "SVG", "SVG Compressed", "PDF-compatible .ai"]);
+        assert_eq!(pick.name, "Untitled-1.7rrek");
         let d = dialog(&app);
         assert_eq!((d.kind.as_str(), d.str("path").as_str(), d.str("mode").as_str()), ("svgOptions", "art.svg", "save"));
         assert!(written.borrow().is_empty(), "nothing is written before OK");
@@ -686,11 +686,11 @@ mod tests {
 
     #[test]
     fn save_a_copy_and_template_suggest_their_names() {
-        let (mut app, written, picks) = desktop("copy.rsm");
+        let (mut app, written, picks) = desktop("copy.7rrek");
         let folder = vectorcraft_testkit::temp_dir("save-template-dialog");
         app.session.prefs.templates_folder = folder.to_string_lossy().into_owned();
         app.run("file.saveCopy", json!({})).unwrap();
-        assert_eq!(picks.borrow()[0].name, "Untitled-1 copy.rsm");
+        assert_eq!(picks.borrow()[0].name, "Untitled-1 copy.7rrek");
         assert!(app.ui.dialog.is_none(), "the native format has no options");
         assert!(vectorcraft_format::sniff(&written.borrow()[0].1));
         assert!(app.session.active().unwrap().path.is_none() && app.session.active().unwrap().is_dirty());
@@ -699,7 +699,7 @@ mod tests {
         assert_eq!(pick.name, "Untitled-1 template.vctemplate");
         assert_eq!(pick.folder.as_deref().map(std::path::Path::new), Some(folder.as_path()));
         assert_eq!(pick.filters, [("7rrek Template", &["vctemplate"][..]), ("PDF-compatible .ait template", &["ait"][..])]);
-        assert_eq!(written.borrow()[1].0, "copy.rsm.vctemplate", "the picked name, with the template's extension");
+        assert_eq!(written.borrow()[1].0, "copy.7rrek.vctemplate", "the picked name, with the template's extension");
     }
 
     #[test]
@@ -742,7 +742,7 @@ mod tests {
     #[test]
     fn save_as_template_adds_its_extension_to_a_save_formats_name() {
         for (picked, saved) in
-            [("card.pdf", "card.pdf.vctemplate"), ("card.rsm", "card.rsm.vctemplate"), ("card.svg", "card.svg.vctemplate")]
+            [("card.pdf", "card.pdf.vctemplate"), ("card.7rrek", "card.7rrek.vctemplate"), ("card.svg", "card.svg.vctemplate")]
         {
             let (mut app, written, _) = desktop(picked);
             app.session.prefs.templates_folder = vectorcraft_testkit::temp_dir("save-template-ext").to_string_lossy().into_owned();
@@ -758,7 +758,7 @@ mod tests {
         let (mut app, written) = web();
         app.run("file.saveAs", json!({})).unwrap();
         let d = dialog(&app);
-        assert_eq!((heading(d).as_str(), d.str("path").as_str(), d.str("format").as_str()), ("Save As", "Untitled-1.rsm", "vectorcraft"));
+        assert_eq!((heading(d).as_str(), d.str("path").as_str(), d.str("format").as_str()), ("Save As", "Untitled-1.7rrek", "vectorcraft"));
         frame(&mut app, false);
         let mut d = app.ui.dialog.take().unwrap();
         switch_format(&mut app, &mut d, "pdf");

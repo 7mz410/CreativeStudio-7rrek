@@ -13,7 +13,7 @@ fn run(s: &mut Session, id: &str, p: Value) -> Value {
     s.execute(id, &p).unwrap_or_else(|e| panic!("{id} {p}: {e}"))
 }
 
-/// A saved document `dir/poster.rsm` with two linked files (in `dir/art`) and a line of
+/// A saved document `dir/poster.7rrek` with two linked files (in `dir/art`) and a line of
 /// type.
 fn poster(dir: &Folder) -> Session {
     let (a, b) = (dir.file("art/red.png"), dir.file("art/blue.png"));
@@ -23,7 +23,7 @@ fn poster(dir: &Folder) -> Session {
     place(&mut s, &a);
     place(&mut s, &b);
     run(&mut s, "text.create", json!({"x": 10, "y": 40, "text": "Poster"}));
-    save(&mut s, &dir.file("poster.rsm"));
+    save(&mut s, &dir.file("poster.7rrek"));
     s
 }
 
@@ -62,7 +62,7 @@ fn two_links_and_a_font_are_collected_and_relinked() {
     let out = dir.file("out");
     let r = run(&mut s, "file.package", json!({"folder": out}));
     let files: Vec<&str> = r["files"].as_array().unwrap().iter().map(|f| f.as_str().unwrap()).collect();
-    assert_eq!(files, ["poster.rsm", "Links/red.png", "Links/blue.png", "Fonts/SourceSans3-Regular.ttf", "poster Report.txt"]);
+    assert_eq!(files, ["poster.7rrek", "Links/red.png", "Links/blue.png", "Fonts/SourceSans3-Regular.ttf", "poster Report.txt"]);
     assert_eq!((r["links"].as_u64(), r["fonts"].as_u64(), r["missingLinks"].clone()), (Some(2), Some(1), json!([])));
     let root = std::path::Path::new(&out).join("poster Folder");
     assert_eq!(std::path::Path::new(r["folder"].as_str().unwrap()), root);
@@ -81,7 +81,7 @@ fn two_links_and_a_font_are_collected_and_relinked() {
     assert!(link(&s).iter().all(|l| l.path.contains("art")));
     // The packaged one opens with the copies, even with the originals gone.
     std::fs::remove_dir_all(dir.0.join("art")).unwrap();
-    let r = open(&mut s, &root.join("poster.rsm").to_string_lossy());
+    let r = open(&mut s, &root.join("poster.7rrek").to_string_lossy());
     assert_eq!(r["missingLinks"], json!([]), "{r}");
     for l in link(&s) {
         assert!(std::path::Path::new(&l.path).starts_with(root.join("Links")), "{l:?}");
@@ -111,7 +111,7 @@ fn without_a_folder_the_zip_has_the_same_files() {
     assert_eq!(zip.keys().cloned().collect::<Vec<_>>(), want_sorted);
     assert_eq!(zip["Poster Kit/Links/blue.png"], png(300, 300, BLUE));
     // The packaged document links to the files beside it.
-    let doc = vectorcraft_format::load(&zip["Poster Kit/poster.rsm"]).unwrap();
+    let doc = vectorcraft_format::load(&zip["Poster Kit/poster.7rrek"]).unwrap();
     let mut rel = vec![];
     doc.visit_images(|_, im| rel.push(im.link.clone().unwrap().relative.unwrap()));
     rel.sort();
@@ -129,16 +129,16 @@ fn options_leave_out_links_fonts_and_the_report() {
     let dir = Folder::new("package-options");
     let mut s = poster(&dir);
     let r = run(&mut s, "file.package", json!({"linksFolder": false, "copyFonts": false, "report": false}));
-    assert_eq!(r["files"], json!(["poster.rsm", "red.png", "blue.png"]));
+    assert_eq!(r["files"], json!(["poster.7rrek", "red.png", "blue.png"]));
     let r = run(&mut s, "file.package", json!({"copyLinks": false}));
-    assert_eq!(r["files"], json!(["poster.rsm", "Fonts/SourceSans3-Regular.ttf", "poster Report.txt"]));
+    assert_eq!(r["files"], json!(["poster.7rrek", "Fonts/SourceSans3-Regular.ttf", "poster Report.txt"]));
     let zip = unzip(&vectorcraft_format::base64_decode(r["dataBase64"].as_str().unwrap()).unwrap());
-    let doc = vectorcraft_format::load(&zip["poster Folder/poster.rsm"]).unwrap();
+    let doc = vectorcraft_format::load(&zip["poster Folder/poster.7rrek"]).unwrap();
     doc.visit_images(|_, im| assert!(im.link.as_ref().unwrap().path.contains("art"), "not relinked: the originals"));
     let r = run(&mut s, "file.package", json!({"relink": false}));
     let zip = unzip(&vectorcraft_format::base64_decode(r["dataBase64"].as_str().unwrap()).unwrap());
     assert!(zip.contains_key("poster Folder/Links/red.png"), "copied");
-    let doc = vectorcraft_format::load(&zip["poster Folder/poster.rsm"]).unwrap();
+    let doc = vectorcraft_format::load(&zip["poster Folder/poster.7rrek"]).unwrap();
     doc.visit_images(|_, im| assert!(im.link.as_ref().unwrap().path.contains("art"), "not relinked"));
     assert!(s.execute("file.package", &json!({"name": "../up"})).is_err());
 }
@@ -147,7 +147,7 @@ fn options_leave_out_links_fonts_and_the_report() {
 fn a_package_never_replaces_its_source_or_its_links() {
     let dir = Folder::new("package-overwrite");
     let mut s = poster(&dir);
-    let doc = dir.file("poster.rsm");
+    let doc = dir.file("poster.7rrek");
     let (saved, red) = (std::fs::read(&doc).unwrap(), std::fs::read(dir.file("art/red.png")).unwrap());
     let parent = dir.0.parent().unwrap();
     let name = dir.0.file_name().unwrap().to_string_lossy().into_owned();
@@ -162,7 +162,7 @@ fn a_package_never_replaces_its_source_or_its_links() {
     // Nothing was written.
     assert_eq!(std::fs::read(&doc).unwrap(), saved);
     assert_eq!(std::fs::read(dir.file("art/red.png")).unwrap(), red);
-    assert!(!dir.0.join("art/poster.rsm").exists() && !dir.0.join("poster Report.txt").exists());
+    assert!(!dir.0.join("art/poster.7rrek").exists() && !dir.0.join("poster Report.txt").exists());
 }
 
 #[test]
@@ -171,7 +171,7 @@ fn a_missing_link_is_reported_not_copied() {
     let mut s = poster(&dir);
     std::fs::remove_file(dir.file("art/blue.png")).unwrap();
     // Reopened, the missing file's image shows its preview: nothing to copy.
-    open(&mut s, &dir.file("poster.rsm"));
+    open(&mut s, &dir.file("poster.7rrek"));
     let r = run(&mut s, "file.package", json!({}));
     assert_eq!((r["links"].as_u64(), r["missingLinks"].clone()), (Some(1), json!(["blue.png"])));
     let zip = unzip(&vectorcraft_format::base64_decode(r["dataBase64"].as_str().unwrap()).unwrap());
@@ -253,21 +253,21 @@ fn poster_with_placed_document(dir: &Folder) -> Session {
     write(&image, &png(600, 300, RED));
     let mut part = session();
     place(&mut part, &image);
-    let part_path = dir.file("art/part.rsm");
+    let part_path = dir.file("art/part.7rrek");
     save(&mut part, &part_path);
 
     let mut poster = session();
     let placed = run(&mut poster, "file.place", json!({ "path": part_path, "link": true }));
     assert_eq!(placed["linked"], true, "{placed}");
-    save(&mut poster, &dir.file("poster.rsm"));
+    save(&mut poster, &dir.file("poster.7rrek"));
     poster
 }
 
 /// Every link must point to a packaged copy, including links inside a linked
 /// VectorCraft file. Validate after original assets have been removed.
 fn verify_portable_nested_package(folder: &std::path::Path) {
-    let main = folder.join("poster.rsm");
-    let part = folder.join("Links/part.rsm");
+    let main = folder.join("poster.7rrek");
+    let part = folder.join("Links/part.7rrek");
     let image = folder.join("Links/photo.png");
     assert!(main.is_file() && part.is_file() && image.is_file());
 
@@ -278,7 +278,7 @@ fn verify_portable_nested_package(folder: &std::path::Path) {
     parent.doc().unwrap().doc.visit_placed(|_, p| targets.push(p.link.clone()));
     assert_eq!(targets.len(), 1);
     let link = &targets[0];
-    assert_eq!(link.relative.as_deref(), Some("Links/part.rsm"));
+    assert_eq!(link.relative.as_deref(), Some("Links/part.7rrek"));
     let packaged_part = std::fs::read(&part).unwrap();
     let expected_hash = vectorcraft_doc::links::hash_bytes(&packaged_part);
     assert_eq!(link.hash.as_deref(), Some(expected_hash.as_str()));
@@ -330,21 +330,21 @@ fn package_keeps_distinct_linked_documents_with_colliding_file_names() {
         write(&image, &png(300, 300, color));
         let mut part = session();
         place(&mut part, &image);
-        let name = dir.file(&format!("art{number}/part.rsm"));
+        let name = dir.file(&format!("art{number}/part.7rrek"));
         save(&mut part, &name);
         run(&mut poster, "file.place", json!({ "path": name, "link": true }));
     }
-    save(&mut poster, &dir.file("poster.rsm"));
+    save(&mut poster, &dir.file("poster.7rrek"));
     let result = run(&mut poster, "file.package", json!({ "folder": dir.file("delivery") }));
     assert_eq!(result["links"], 4, "{result}");
     assert_eq!(result["missingLinks"], json!([]));
     let folder = dir.0.join("delivery/poster Folder");
-    let packaged: Vec<_> = result["files"].as_array().unwrap().iter().filter_map(Value::as_str).filter(|name| name.ends_with(".rsm")).collect();
+    let packaged: Vec<_> = result["files"].as_array().unwrap().iter().filter_map(Value::as_str).filter(|name| name.ends_with(".7rrek")).collect();
     assert_eq!(packaged.len(), 3, "both nested documents must be retained: {packaged:?}");
     std::fs::remove_dir_all(dir.0.join("art1")).unwrap();
     std::fs::remove_dir_all(dir.0.join("art2")).unwrap();
     let mut check = session();
-    assert_eq!(open(&mut check, &folder.join("poster.rsm").to_string_lossy())["missingLinks"], json!([]));
+    assert_eq!(open(&mut check, &folder.join("poster.7rrek").to_string_lossy())["missingLinks"], json!([]));
     for name in packaged.into_iter().filter(|n| n.starts_with("Links/")) {
         let mut inner = session();
         let result = open(&mut inner, &folder.join(name).to_string_lossy());
@@ -359,12 +359,12 @@ fn package_finds_nested_assets_after_the_source_tree_moves() {
     let moved = dir.0.join("moved");
     std::fs::create_dir_all(&moved).unwrap();
     std::fs::rename(dir.0.join("art"), moved.join("art")).unwrap();
-    std::fs::rename(dir.0.join("poster.rsm"), moved.join("poster.rsm")).unwrap();
+    std::fs::rename(dir.0.join("poster.7rrek"), moved.join("poster.7rrek")).unwrap();
     // The file paths embedded in both documents still point to the old location.
     // Opening the parent repairs its direct link, but the child must resolve
     // the image from the folder where it was actually found.
     let mut opened = session();
-    open(&mut opened, &moved.join("poster.rsm").to_string_lossy());
+    open(&mut opened, &moved.join("poster.7rrek").to_string_lossy());
     let result = run(&mut opened, "file.package", json!({ "folder": dir.file("delivery") }));
     assert_eq!(result["missingLinks"], json!([]), "moved file's nested link wasn't found: {result}");
     std::fs::remove_dir_all(moved.join("art")).unwrap();
@@ -380,7 +380,7 @@ fn identical_stale_paths_in_different_nested_documents_keep_separate_assets() {
         write(&image, &png(300, 300, color));
         let mut part = session();
         place(&mut part, &image);
-        let name = dir.file(&format!("art{number}/part.rsm"));
+        let name = dir.file(&format!("art{number}/part.7rrek"));
         save(&mut part, &name);
 
         // Two otherwise independent linked documents have the *same* obsolete
@@ -393,7 +393,7 @@ fn identical_stale_paths_in_different_nested_documents_keep_separate_assets() {
         write(&name, &vectorcraft_format::save_file(&saved));
         run(&mut poster, "file.place", json!({ "path": name, "link": true }));
     }
-    save(&mut poster, &dir.file("poster.rsm"));
+    save(&mut poster, &dir.file("poster.7rrek"));
     let result = run(&mut poster, "file.package", json!({ "folder": dir.file("delivery") }));
     assert_eq!(result["links"], 4, "both images and both documents must be copied: {result}");
     assert_eq!(result["missingLinks"], json!([]), "{result}");
@@ -408,7 +408,7 @@ fn identical_stale_paths_in_different_nested_documents_keep_separate_assets() {
     assert_eq!(actual.len(), 2, "stale source paths must not cause asset deduplication");
     assert_ne!(actual[0], actual[1], "different original illustrations must keep different pixels");
     for filename in
-        result["files"].as_array().unwrap().iter().filter_map(Value::as_str).filter(|name| name.starts_with("Links/") && name.ends_with(".rsm"))
+        result["files"].as_array().unwrap().iter().filter_map(Value::as_str).filter(|name| name.starts_with("Links/") && name.ends_with(".7rrek"))
     {
         let mut nested = session();
         let opened = open(&mut nested, &folder.join(filename).to_string_lossy());
@@ -420,7 +420,7 @@ fn identical_stale_paths_in_different_nested_documents_keep_separate_assets() {
 fn packaging_nested_files_preserves_embedded_preview_pdf_and_compression() {
     let dir = Folder::new("package-native-extras");
     let mut parent = poster_with_placed_document(&dir);
-    let source = dir.file("art/part.rsm");
+    let source = dir.file("art/part.7rrek");
     let original = std::fs::read(&source).unwrap();
     let doc = vectorcraft_format::load(&original).unwrap();
     let preview = png(8, 8, BLUE);
@@ -433,7 +433,7 @@ fn packaging_nested_files_preserves_embedded_preview_pdf_and_compression() {
 
     let result = run(&mut parent, "file.package", json!({ "folder": dir.file("delivery") }));
     assert_eq!(result["missingLinks"], json!([]), "{result}");
-    let packaged = std::fs::read(dir.0.join("delivery/poster Folder/Links/part.rsm")).unwrap();
+    let packaged = std::fs::read(dir.0.join("delivery/poster Folder/Links/part.7rrek")).unwrap();
     assert!(packaged.starts_with(&[0x1f, 0x8b]), "compression must be preserved");
     assert_eq!(vectorcraft_format::preview(&packaged), Some(preview));
     assert_eq!(vectorcraft_format::pdf_content(&packaged), Some(pdf));
@@ -455,8 +455,8 @@ fn the_report_lists_a_placed_documents_links_in_a_section_of_its_own() {
     let lines: Vec<&str> = report.lines().collect();
     let sections: Vec<usize> = lines.iter().enumerate().filter(|(_, l)| **l == "LINKED FILES").map(|(i, _)| i).collect();
     let [poster, part] = sections[..] else { panic!("two link sections: {report}") };
-    assert!(lines[poster + 1].ends_with("→ Links/part.rsm"), "the packaged document's section as before: {report}");
-    assert!(lines[part + 1].starts_with("Document: ") && lines[part + 1].ends_with("part.rsm"), "{report}");
+    assert!(lines[poster + 1].ends_with("→ Links/part.7rrek"), "the packaged document's section as before: {report}");
+    assert!(lines[part + 1].starts_with("Document: ") && lines[part + 1].ends_with("part.7rrek"), "{report}");
     assert!(lines[part + 2].ends_with("→ Links/photo.png"), "{report}");
 }
 
@@ -466,7 +466,7 @@ fn the_report_lists_a_placed_documents_links_in_a_section_of_its_own() {
 fn unreadable_placed_document_is_copied_unchanged_with_warning() {
     let dir = Folder::new("package-unreadable-placed");
     let mut parent = poster_with_placed_document(&dir);
-    let damaged = dir.file("art/part.rsm");
+    let damaged = dir.file("art/part.7rrek");
     let bytes = b"not a parseable VectorCraft file".to_vec();
     write(&damaged, &bytes);
 
@@ -478,7 +478,7 @@ fn unreadable_placed_document_is_copied_unchanged_with_warning() {
     assert!(warnings[0].as_str().unwrap().contains("unreadable linked document"), "{result}");
 
     let packaged = dir.0.join("delivery/poster Folder");
-    assert_eq!(std::fs::read(packaged.join("Links/part.rsm")).unwrap(), bytes);
+    assert_eq!(std::fs::read(packaged.join("Links/part.7rrek")).unwrap(), bytes);
     let report = std::fs::read_to_string(packaged.join("poster Report.txt")).unwrap();
     assert!(report.lines().any(|line| line == "LINKED FILES"), "{report}");
     assert!(report.contains("copied unchanged") && report.contains("its own links were not collected"), "{report}");
@@ -487,8 +487,8 @@ fn unreadable_placed_document_is_copied_unchanged_with_warning() {
 #[test]
 fn circular_placed_links_copy_each_document_once_and_warn() {
     let dir = Folder::new("package-placed-cycle");
-    let source = dir.file("root.rsm");
-    let child_path = dir.file("child.rsm");
+    let source = dir.file("root.7rrek");
+    let child_path = dir.file("child.7rrek");
 
     let mut root = session();
     save(&mut root, &source);
@@ -503,16 +503,16 @@ fn circular_placed_links_copy_each_document_once_and_warn() {
     assert_eq!(result["missingLinks"], json!([]), "{result}");
     assert!(result["warnings"].as_array().unwrap().iter().any(|w| w.as_str().unwrap().contains("circular placed-document link")), "{result}");
     let packaged = dir.0.join("delivery/root Folder");
-    let root_doc = vectorcraft_format::load(&std::fs::read(packaged.join("root.rsm")).unwrap()).unwrap();
-    let child_doc = vectorcraft_format::load(&std::fs::read(packaged.join("Links/child.rsm")).unwrap()).unwrap();
+    let root_doc = vectorcraft_format::load(&std::fs::read(packaged.join("root.7rrek")).unwrap()).unwrap();
+    let child_doc = vectorcraft_format::load(&std::fs::read(packaged.join("Links/child.7rrek")).unwrap()).unwrap();
     let mut direct = Vec::new();
     root_doc.visit_placed(|_, p| direct.push(p.link.relative.clone()));
-    assert_eq!(direct, [Some("Links/child.rsm".into())]);
+    assert_eq!(direct, [Some("Links/child.7rrek".into())]);
     let mut back = Vec::new();
     child_doc.visit_placed(|_, p| {
         back.push((p.link.relative.clone(), p.link.hash.clone(), p.link.size));
     });
-    assert_eq!(back, [(Some("../root.rsm".into()), None, None)]);
+    assert_eq!(back, [(Some("../root.7rrek".into()), None, None)]);
     let report = std::fs::read_to_string(packaged.join("root Report.txt")).unwrap();
     assert!(report.lines().any(|line| line == "LINKED FILES"), "{report}");
     assert!(report.contains("stopped following the cycle"), "{report}");
@@ -522,14 +522,14 @@ fn circular_placed_links_copy_each_document_once_and_warn() {
 fn nesting_limit_copies_boundary_file_and_reports_uncollected_links() {
     let dir = Folder::new("package-placed-depth-limit");
     let mut deepest = session();
-    let mut next = dir.file("leaf.rsm");
+    let mut next = dir.file("leaf.7rrek");
     save(&mut deepest, &next);
 
     let mut root = None;
     for depth in (0..=vectorcraft_doc::placed_document::MAX_DEPTH).rev() {
         let mut current = session();
         run(&mut current, "file.place", json!({ "path": next, "link": true }));
-        let name = dir.file(&format!("level{depth}.rsm"));
+        let name = dir.file(&format!("level{depth}.7rrek"));
         save(&mut current, &name);
         next = name;
         if depth == 0 {
@@ -543,8 +543,8 @@ fn nesting_limit_copies_boundary_file_and_reports_uncollected_links() {
     assert_eq!(result["links"].as_u64(), Some(expected_links as u64), "{result}");
     assert!(result["warnings"].as_array().unwrap().iter().any(|w| w.as_str().unwrap().contains("nesting limit reached")), "{result}");
     let folder = dir.0.join("delivery/level0 Folder");
-    let packaged = std::fs::read(folder.join("Links/leaf.rsm")).unwrap();
-    assert_eq!(packaged, std::fs::read(dir.file("leaf.rsm")).unwrap());
+    let packaged = std::fs::read(folder.join("Links/leaf.7rrek")).unwrap();
+    assert_eq!(packaged, std::fs::read(dir.file("leaf.7rrek")).unwrap());
     let report = std::fs::read_to_string(folder.join("level0 Report.txt")).unwrap();
     assert!(report.contains("nesting limit reached"), "{report}");
 }
