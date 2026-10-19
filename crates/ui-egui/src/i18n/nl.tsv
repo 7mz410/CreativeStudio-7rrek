@@ -4082,7 +4082,7 @@ imageTrace	Outline	Contour
 @msg	node {_1} is not text	knooppunt {_1} is geen tekst
 @msg	not a DXF drawing	geen DXF-tekening
 @msg	not a VectorCraft file: {0}	geen VectorCraft-bestand: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	geen VectorCraft-sneltoetsenset (`overrides` ontbreekt)
+@msg	not a 7rrek shortcut set (missing `overrides`)	geen VectorCraft-sneltoetsenset (`overrides` ontbreekt)
 @msg	not a graphic style library (format `{_1}`)	geen bibliotheek met grafische stijlen (indeling `{_1}`)
 @msg	not a stored central record	geen opgeslagen centraal record
 @msg	not a valid plug-in module: {0}	geen geldige plug-inmodule: {0}
@@ -4345,7 +4345,7 @@ imageTrace	Outline	Contour
 @msg	its editing data doesn't say where its art is	zijn bewerkingsgegevens zeggen niet waar de illustratie zich bevindt
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	dit bestand is opgeslagen zonder PDF-compatibiliteit en de bewerkingsgegevens kunnen niet worden gelezen ({why})
 @msg	No fonts are missing in this document	Er ontbreken geen lettertypen in dit document
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft doorzoekt geen mappen van andere apps of van het systeem: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft doorzoekt geen mappen van andere apps of van het systeem: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft doorzoekt de map Gedeeld of Openbaar onder Gebruikers niet: {path}
 @msg	{path} is not a folder	{path} is geen map
 @msg	the search couldn't start: try again in a moment	de zoekopdracht kon niet starten: probeer het over een ogenblik opnieuw

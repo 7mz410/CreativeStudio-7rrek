@@ -4154,7 +4154,7 @@ imageTrace	Outline	Kontur
 @msg	node {_1} is not text	węzeł {_1} nie jest tekstem
 @msg	not a DXF drawing	to nie jest rysunek DXF
 @msg	not a VectorCraft file: {0}	to nie jest plik VectorCraft: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	to nie jest zestaw skrótów VectorCraft (brak `overrides`)
+@msg	not a 7rrek shortcut set (missing `overrides`)	to nie jest zestaw skrótów VectorCraft (brak `overrides`)
 @msg	not a blend	to nie jest przejście
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	to nie jest zestaw skrótów: tekst nie zaczyna się od nazwy z ukośnikiem i otwierającego nawiasu klamrowego
 @msg	This shortcut file is in a form VectorCraft can't read.	Ten plik skrótów ma postać, której VectorCraft nie potrafi odczytać.
@@ -4431,7 +4431,7 @@ imageTrace	Outline	Kontur
 @msg	its editing data doesn't say where its art is	jego dane edycyjne nie określają położenia kompozycji
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	ten plik zapisano bez zgodności z PDF, a jego danych edycyjnych nie można odczytać ({why})
 @msg	No fonts are missing in this document	W tym dokumencie nie brakuje czcionek
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft nie przeszukuje folderów innych aplikacji ani systemowych: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft nie przeszukuje folderów innych aplikacji ani systemowych: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft nie przeszukuje folderu Shared ani Public w Users: {path}
 @msg	{path} is not a folder	{path} nie jest folderem
 @msg	the search couldn't start: try again in a moment	nie udało się rozpocząć wyszukiwania: spróbuj ponownie za chwilę

@@ -4312,7 +4312,7 @@ theme	Appearance	외관
 @msg	no dialog open	열린 대화상자가 없습니다
 @msg	no file reader	파일 판독기가 없습니다
 @msg	no file writer	파일 기록기가 없습니다
-@msg	not a VectorCraft shortcut set (missing `overrides`)	VectorCraft 단축키 세트가 아닙니다(`overrides`가 없음)
+@msg	not a 7rrek shortcut set (missing `overrides`)	VectorCraft 단축키 세트가 아닙니다(`overrides`가 없음)
 @msg	not a blend	블렌드가 아닙니다
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	단축키 세트가 아닙니다: 텍스트가 슬래시 이름과 여는 중괄호로 시작하지 않습니다
 @msg	This shortcut file is in a form VectorCraft can't read.	이 단축키 파일은 VectorCraft가 읽을 수 없는 형식입니다.
@@ -4337,7 +4337,7 @@ theme	Appearance	외관
 @msg	x and y must be finite	x와 y는 유한한 값이어야 합니다
 @msg	t, dx and dy must be finite	t, dx, dy는 유한한 값이어야 합니다
 @msg	No fonts are missing in this document	이 문서에는 누락된 글꼴이 없습니다
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft는 다른 앱이나 시스템의 폴더를 검색하지 않습니다: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft는 다른 앱이나 시스템의 폴더를 검색하지 않습니다: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft는 사용자 폴더의 공유 또는 공용 폴더를 검색하지 않습니다: {path}
 @msg	{path} is not a folder	{path}은(는) 폴더가 아닙니다
 @msg	the search couldn't start: try again in a moment	검색을 시작할 수 없습니다: 잠시 후 다시 시도하세요

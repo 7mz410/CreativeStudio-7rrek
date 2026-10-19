@@ -4070,7 +4070,7 @@ imageTrace	Outline	Kontur
 @msg	node {_1} is not text	knuden {_1} er ikke tekst
 @msg	not a DXF drawing	ikke en DXF-tegning
 @msg	not a VectorCraft file: {0}	ikke en VectorCraft-fil: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	ikke et VectorCraft-genvejssæt (`overrides` mangler)
+@msg	not a 7rrek shortcut set (missing `overrides`)	ikke et VectorCraft-genvejssæt (`overrides` mangler)
 @msg	not a graphic style library (format `{_1}`)	ikke et bibliotek med grafiske stilarter (format `{_1}`)
 @msg	not a stored central record	ikke en gemt central post
 @msg	not a valid plug-in module: {0}	ikke et gyldigt plug-in-modul: {0}
@@ -4333,7 +4333,7 @@ imageTrace	Outline	Kontur
 @msg	its editing data doesn't say where its art is	dens redigeringsdata siger ikke, hvor dens grafik er
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	denne fil blev gemt uden PDF-kompatibilitet, og dens redigeringsdata kan ikke læses ({why})
 @msg	No fonts are missing in this document	Ingen skrifttyper mangler i dette dokument
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft gennemsøger ikke andre programmers eller systemets mapper: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft gennemsøger ikke andre programmers eller systemets mapper: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft gennemsøger ikke mappen Shared eller Public i Users: {path}
 @msg	{path} is not a folder	{path} er ikke en mappe
 @msg	the search couldn't start: try again in a moment	søgningen kunne ikke starte: prøv igen om et øjeblik

@@ -4027,7 +4027,7 @@ axis	Both	Les deux
 @msg	node {_1} is not text	le nœud {_1} n’est pas du texte
 @msg	not a DXF drawing	ce n’est pas un dessin DXF
 @msg	not a VectorCraft file: {0}	ce n’est pas un fichier VectorCraft : {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	ce n’est pas un jeu de raccourcis VectorCraft (`overrides` manquant)
+@msg	not a 7rrek shortcut set (missing `overrides`)	ce n’est pas un jeu de raccourcis VectorCraft (`overrides` manquant)
 @msg	not a blend	ce n’est pas un dégradé de formes
 @msg	not a graphic style library (format `{_1}`)	ce n’est pas une bibliothèque de styles graphiques (format `{_1}`)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	ce n’est pas un jeu de raccourcis, car le texte ne commence pas par un nom précédé d’une barre oblique et une accolade ouvrante
@@ -4303,7 +4303,7 @@ axis	Both	Les deux
 @msg	its editing data doesn't say where its art is	ses données d’édition ne disent pas où se trouve son illustration
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	ce fichier a été enregistré sans compatibilité PDF et ses données d’édition sont illisibles ({why})
 @msg	No fonts are missing in this document	Aucune police ne manque dans ce document
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft ne recherche pas dans les dossiers d’autres apps ni du système : {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft ne recherche pas dans les dossiers d’autres apps ni du système : {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft ne recherche pas dans les dossiers Shared et Public de Users : {path}
 @msg	{path} is not a folder	{path} n’est pas un dossier
 @msg	the search couldn't start: try again in a moment	la recherche n’a pas pu démarrer : réessayez dans un instant

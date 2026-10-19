@@ -43,7 +43,15 @@ def code(text: str) -> str:
 TARGETED = {
     # The app's name where a bare "rsm" literal is the name, not the extension.
     'crates/ui-egui/src/native_menu.rs': [('pub const APP_NAME: &str = "rsm";', 'pub const APP_NAME: &str = "7rrek";')],
-    'crates/ui-egui/src/menus.rs': [('.filter(|(title, _)| *title != "rsm")', '.filter(|(title, _)| *title != "7rrek")')],
+    'crates/ui-egui/src/menus.rs': [('.filter(|(title, _)| *title != "rsm")', '.filter(|(title, _)| *title != "7rrek")'),
+        ('            "rsm",\n            vec![c("About 7rrek"', '            "7rrek",\n            vec![c("About 7rrek"'),
+    ],
+    'crates/engine/src/cmd/findfiles/walk.rs': [
+        ('Err(format!("VectorCraft doesn\'t search other apps', 'Err(format!("7rrek doesn\'t search other apps'),
+    ],
+    'apps/vectorcraft-cli/tests/fileio.rs': [
+        ('Readable formats: .rsm, .vectorcraft', 'Readable formats: .7rrek, .rsm, .vectorcraft'),
+    ],
     'crates/ui-egui/src/tests_nativemenu.rs': [('assert_eq!(titles, ["rsm", "File"', 'assert_eq!(titles, ["7rrek", "File"')],
     'crates/ui-egui/src/i18n/tests.rs': [('.find(|m| m.title == "rsm")', '.find(|m| m.title == "7rrek")')],
     'crates/ui-egui/src/dialogs/about.rs': [('egui::RichText::new("rsm").font(theme::semibold(22.0))', 'egui::RichText::new("7rrek").font(theme::semibold(22.0))')],
@@ -165,6 +173,9 @@ def main():
                     line = '\t'.join(cells)
                 rows.append(line)
             o = '\n'.join(rows)
+            # Catalog keys that name the app by upstream's name where the source says 7rrek.
+            o = o.replace('\tVectorCraft doesn\'t search other apps', '\t7rrek doesn\'t search other apps')
+            o = o.replace('\tnot a VectorCraft shortcut set', '\tnot a 7rrek shortcut set')
         elif rel == 'apps/vectorcraft-web/index.html':
             o = o.replace('<title>rsm', f'<title>{NAME}').replace('Loading rsm&hellip;', f'Loading {NAME}&hellip;')
         elif rel == 'packaging/macos/Info.plist.in':

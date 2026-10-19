@@ -3830,7 +3830,7 @@ effect	Regular	ჩვეულებრივი
 @msg	node {_1} is not text	კვანძი {_1} ტექსტი არ არის
 @msg	not a DXF drawing	ეს არ არის DXF ნახაზი
 @msg	not a VectorCraft file: {0}	ეს არ არის VectorCraft-ის ფაილი: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	ეს არ არის VectorCraft-ის მალსახმობების ნაკრები (აკლია `overrides`)
+@msg	not a 7rrek shortcut set (missing `overrides`)	ეს არ არის VectorCraft-ის მალსახმობების ნაკრები (აკლია `overrides`)
 @msg	not a graphic style library (format `{_1}`)	ეს არ არის გრაფიკული სტილების ბიბლიოთეკა (ფორმატი `{_1}`)
 @msg	not a stored central record	ეს არ არის შენახული ცენტრალური ჩანაწერი
 @msg	not a valid plug-in module: {0}	ეს არ არის პლაგინის სწორი მოდული: {0}
@@ -4086,7 +4086,7 @@ effect	Regular	ჩვეულებრივი
 @msg	its editing data doesn't say where its art is	მისი რედაქტირების მონაცემები არ მიუთითებს, სად არის მისი ნახატი
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	ეს ფაილი PDF-თავსებადობის გარეშეა შენახული და მისი რედაქტირების მონაცემების წაკითხვა ვერ ხერხდება ({why})
 @msg	No fonts are missing in this document	ამ დოკუმენტში შრიფტები არ აკლია
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft არ ეძებს სხვა აპების ან სისტემის საქაღალდეებში: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft არ ეძებს სხვა აპების ან სისტემის საქაღალდეებში: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft არ ეძებს Users-ის Shared ან Public საქაღალდეში: {path}
 @msg	{path} is not a folder	{path} საქაღალდე არ არის
 @msg	the search couldn't start: try again in a moment	ძიება ვერ დაიწყო: ცოტა ხანში სცადეთ ხელახლა

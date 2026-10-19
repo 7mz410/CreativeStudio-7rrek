@@ -4070,7 +4070,7 @@ imageTrace	Outline	Kontur
 @msg	node {_1} is not text	simpul {_1} bukan teks
 @msg	not a DXF drawing	bukan gambar DXF
 @msg	not a VectorCraft file: {0}	bukan berkas VectorCraft: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	bukan set pintasan VectorCraft (tidak ada `overrides`)
+@msg	not a 7rrek shortcut set (missing `overrides`)	bukan set pintasan VectorCraft (tidak ada `overrides`)
 @msg	not a graphic style library (format `{_1}`)	bukan pustaka gaya grafis (format `{_1}`)
 @msg	not a stored central record	bukan rekaman pusat yang tersimpan
 @msg	not a valid plug-in module: {0}	bukan modul plug-in yang valid: {0}
@@ -4333,7 +4333,7 @@ imageTrace	Outline	Kontur
 @msg	its editing data doesn't say where its art is	data pengeditannya tidak menyatakan di mana karya seninya berada
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	berkas ini disimpan tanpa kompatibilitas PDF, dan data pengeditannya tidak dapat dibaca ({why})
 @msg	No fonts are missing in this document	Tidak ada font yang hilang dalam dokumen ini
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft tidak mencari di folder aplikasi lain atau folder sistem: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft tidak mencari di folder aplikasi lain atau folder sistem: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft tidak mencari di folder Shared atau Public di Users: {path}
 @msg	{path} is not a folder	{path} bukan folder
 @msg	the search couldn't start: try again in a moment	pencarian tidak dapat dimulai: coba lagi sebentar lagi

@@ -87,7 +87,7 @@ fn images_open_at_their_pixel_size() {
 #[test]
 fn help_lists_readable_formats() {
     let out = ok(&["--help"]);
-    assert!(out.contains("Readable formats: .rsm, .vectorcraft") && out.contains(".ait") && out.contains(".webp"), "{out}");
+    assert!(out.contains("Readable formats: .7rrek, .rsm, .vectorcraft") && out.contains(".ait") && out.contains(".webp"), "{out}");
 }
 
 #[test]

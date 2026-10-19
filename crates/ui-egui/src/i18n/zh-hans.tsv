@@ -4120,7 +4120,7 @@ imageTrace	Outline	轮廓
 @msg	no dialog open	没有打开的对话框
 @msg	no file reader	没有文件读取器
 @msg	no file writer	没有文件写入器
-@msg	not a VectorCraft shortcut set (missing `overrides`)	不是 VectorCraft 快捷键组 (缺少 `overrides`)
+@msg	not a 7rrek shortcut set (missing `overrides`)	不是 VectorCraft 快捷键组 (缺少 `overrides`)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	不是快捷键组：文本不是以斜杠名称和左花括号开头
 @msg	shortcut for `{k}` must be a string	`{k}` 的快捷键必须是字符串
 @msg	tool shortcuts must be a single key (optionally with Shift)	工具快捷键必须是单个键 (可带 Shift)
@@ -4141,7 +4141,7 @@ imageTrace	Outline	轮廓
 @msg	unknown workspace (one of {_1})	未知工作区 (应为 {_1} 之一)
 @msg	workspace name can't be empty	工作区名称不能为空
 @msg	No fonts are missing in this document	此文档中没有缺失的字体
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft 不会搜索其他应用或系统的文件夹：{path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft 不会搜索其他应用或系统的文件夹：{path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft 不会搜索“用户”中的 Shared 或 Public 文件夹：{path}
 @msg	{path} is not a folder	{path} 不是文件夹
 @msg	the search couldn't start: try again in a moment	无法开始搜索：请稍后重试

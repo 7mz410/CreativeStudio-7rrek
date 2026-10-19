@@ -2351,7 +2351,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
             // App menu from this entry and the other menus (About from Help, Settings from Edit,
             // Quit from File, Language and Appearance synthesized). It stays first: `from_tree`
             // gives the first menu the App role.
-            "rsm",
+            "7rrek",
             vec![c("About 7rrek", "help.about"), c("Upstream Community on Discord", "help.discord")],
         ),
         (

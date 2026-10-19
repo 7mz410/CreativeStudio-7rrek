@@ -4007,7 +4007,7 @@ theme	Appearance	Εμφάνιση
 @msg	node {_1} is not text	ο κόμβος {_1} δεν είναι κείμενο
 @msg	not a DXF drawing	δεν είναι σχέδιο DXF
 @msg	not a VectorCraft file: {0}	δεν είναι αρχείο VectorCraft: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	δεν είναι σύνολο συντομεύσεων VectorCraft (λείπει το `overrides`)
+@msg	not a 7rrek shortcut set (missing `overrides`)	δεν είναι σύνολο συντομεύσεων VectorCraft (λείπει το `overrides`)
 @msg	not a blend	δεν είναι ανάμειξη
 @msg	not a graphic style library (format `{_1}`)	δεν είναι βιβλιοθήκη στυλ γραφικών (μορφή `{_1}`)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	δεν είναι σύνολο συντομεύσεων: το κείμενο δεν αρχίζει με όνομα μετά από κάθετο και ανοιχτή αγκύλη
@@ -4282,7 +4282,7 @@ theme	Appearance	Εμφάνιση
 @msg	its editing data doesn't say where its art is	τα δεδομένα επεξεργασίας του δεν προσδιορίζουν τη θέση του σχεδίου
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	το αρχείο αποθηκεύτηκε χωρίς συμβατότητα PDF και τα δεδομένα επεξεργασίας του δεν μπορούν να διαβαστούν ({why})
 @msg	No fonts are missing in this document	Δεν λείπουν γραμματοσειρές από αυτό το έγγραφο
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	Το VectorCraft δεν αναζητά στους φακέλους άλλων εφαρμογών ή του συστήματος: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	Το VectorCraft δεν αναζητά στους φακέλους άλλων εφαρμογών ή του συστήματος: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	Το VectorCraft δεν αναζητά στους φακέλους Shared ή Public των Χρηστών: {path}
 @msg	{path} is not a folder	το {path} δεν είναι φάκελος
 @msg	the search couldn't start: try again in a moment	η αναζήτηση δεν μπόρεσε να ξεκινήσει: δοκιμάστε ξανά

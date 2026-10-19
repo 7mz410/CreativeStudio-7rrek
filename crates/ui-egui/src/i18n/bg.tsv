@@ -3950,7 +3950,7 @@ axis	Both	И двете
 @msg	node {_1} is not text	възелът {_1} не е текст
 @msg	not a DXF drawing	не е DXF чертеж
 @msg	not a VectorCraft file: {0}	не е файл на VectorCraft: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	не е набор от клавишни комбинации на VectorCraft (липсват `overrides`)
+@msg	not a 7rrek shortcut set (missing `overrides`)	не е набор от клавишни комбинации на VectorCraft (липсват `overrides`)
 @msg	not a blend	не е преливане
 @msg	not a graphic style library (format `{_1}`)	не е библиотека със стилове на графики (формат `{_1}`)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	 не е набор от преки пътища: текстът не започва с име със слъш и отваряща скоба
@@ -4225,7 +4225,7 @@ axis	Both	И двете
 @msg	its editing data doesn't say where its art is	данните му за редактиране не посочват къде се намира неговата графика
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	този файл е записан без съвместимост с PDF и данните му за редактиране не могат да бъдат прочетени ({why})
 @msg	No fonts are missing in this document	В този документ няма липсващи шрифтове
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft не търси в папките на други приложения или на системата: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft не търси в папките на други приложения или на системата: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft не търси в папките Shared или Public в Users: {path}
 @msg	{path} is not a folder	{path} не е папка
 @msg	the search couldn't start: try again in a moment	търсенето не можа да стартира: опитайте отново след малко

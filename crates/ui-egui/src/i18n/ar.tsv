@@ -3959,7 +3959,7 @@ axis	Both	كلاهما
 @msg	give only one of onto, below and above	حدد واحداً فقط من onto وbelow وabove
 @msg	column must be true or a number from 1	يجب أن يكون العمود true أو رقماً من 1
 @msg	No fonts are missing in this document	لا توجد خطوط مفقودة في هذا المستند
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	لا يبحث رسم في مجلدات البرامج الأخرى أو النظام: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	لا يبحث رسم في مجلدات البرامج الأخرى أو النظام: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	لا يبحث رسم في مجلد Shared أو Public في Users: {path}
 @msg	{path} is not a folder	{path} ليس مجلداً
 @msg	the search couldn't start: try again in a moment	تعذّر بدء البحث: حاول مرة أخرى بعد قليل

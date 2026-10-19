@@ -3968,7 +3968,7 @@ theme	Appearance	Erscheinungsbild
 @msg	node {_1} is not text	Knoten {_1} ist kein Text
 @msg	not a DXF drawing	keine DXF-Zeichnung
 @msg	not a VectorCraft file: {0}	keine VectorCraft-Datei: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	kein VectorCraft-Tastaturbefehlssatz (`overrides` fehlt)
+@msg	not a 7rrek shortcut set (missing `overrides`)	kein VectorCraft-Tastaturbefehlssatz (`overrides` fehlt)
 @msg	not a blend	keine Angleichung
 @msg	not a graphic style library (format `{_1}`)	keine Grafikstil-Bibliothek (Format `{_1}`)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	kein Tastaturbefehlssatz: Der Text beginnt nicht mit einem Namen mit Schrägstrich und einer öffnenden geschweiften Klammer
@@ -4243,7 +4243,7 @@ theme	Appearance	Erscheinungsbild
 @msg	its editing data doesn't say where its art is	seine Bearbeitungsdaten geben nicht an, wo seine Grafik liegt
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	diese Datei wurde ohne PDF-Kompatibilität gespeichert, und ihre Bearbeitungsdaten können nicht gelesen werden ({why})
 @msg	No fonts are missing in this document	In diesem Dokument fehlen keine Schriften
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft durchsucht keine Ordner anderer Apps oder des Systems: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft durchsucht keine Ordner anderer Apps oder des Systems: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft durchsucht nicht den Ordner „Shared“ oder „Public“ unter „Users“: {path}
 @msg	{path} is not a folder	{path} ist kein Ordner
 @msg	the search couldn't start: try again in a moment	die Suche konnte nicht gestartet werden: Versuchen Sie es gleich noch einmal

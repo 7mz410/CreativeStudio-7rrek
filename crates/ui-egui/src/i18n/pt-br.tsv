@@ -3613,7 +3613,7 @@ axis	Both	Ambos
 @msg	node {_1} is not text	o nó {_1} não é texto
 @msg	not a DXF drawing	não é um desenho DXF
 @msg	not a VectorCraft file: {0}	não é um arquivo do VectorCraft: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	não é um conjunto de atalhos do VectorCraft (falta `overrides`)
+@msg	not a 7rrek shortcut set (missing `overrides`)	não é um conjunto de atalhos do VectorCraft (falta `overrides`)
 @msg	not a blend	não é uma mesclagem
 @msg	not a graphic style library (format `{_1}`)	não é uma biblioteca de estilos gráficos (formato `{_1}`)
 @msg	not a stored central record	não é um registro central armazenado
@@ -3883,7 +3883,7 @@ axis	Both	Ambos
 @msg	its editing data doesn't say where its art is	seus dados de edição não indicam onde está a arte
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	este arquivo foi salvo sem compatibilidade com PDF e seus dados de edição não podem ser lidos ({why})
 @msg	No fonts are missing in this document	Nenhuma fonte está ausente neste documento
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	O VectorCraft não pesquisa pastas de outros aplicativos nem do sistema: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	O VectorCraft não pesquisa pastas de outros aplicativos nem do sistema: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	O VectorCraft não pesquisa a pasta Compartilhado ou Público em Usuários: {path}
 @msg	{path} is not a folder	{path} não é uma pasta
 @msg	the search couldn't start: try again in a moment	não foi possível iniciar a pesquisa: tente novamente em instantes

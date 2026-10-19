@@ -400,7 +400,7 @@ impl Shared {
             Ok(folder) => match rules.refusal(&folder) {
                 None => Ok(folder),
                 Some(Refusal::Shared) => Err(format!("VectorCraft doesn't search the Shared or Public folder in Users: {path}")),
-                Some(Refusal::Apps) => Err(format!("VectorCraft doesn't search other apps' or the system's folders: {path}")),
+                Some(Refusal::Apps) => Err(format!("7rrek doesn't search other apps' or the system's folders: {path}")),
             },
         };
         let mut w = self.lock();

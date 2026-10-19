@@ -4381,7 +4381,7 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	no dialog open	ダイアログが開かれていません
 @msg	no file reader	ファイルの読み込み機能がありません
 @msg	no file writer	ファイルの書き込み機能がありません
-@msg	not a VectorCraft shortcut set (missing `overrides`)	VectorCraft のショートカットセットではありません (`overrides` がありません)
+@msg	not a 7rrek shortcut set (missing `overrides`)	VectorCraft のショートカットセットではありません (`overrides` がありません)
 @msg	not a blend	ブレンドではありません
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	ショートカットセットではありません: テキストの先頭にスラッシュ付きの名前と開き波かっこがありません
 @msg	shortcut for `{k}` must be a string	`{k}` のショートカットは文字列で指定してください
@@ -4405,7 +4405,7 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	x and y must be finite	x と y には有限の数値を指定してください
 @msg	t, dx and dy must be finite	t、dx、dy には有限の数値を指定してください
 @msg	No fonts are missing in this document	このドキュメントには見つからないフォントはありません
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft は他のアプリやシステムのフォルダーを検索しません: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft は他のアプリやシステムのフォルダーを検索しません: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft は Users 内の Shared フォルダーと Public フォルダーを検索しません: {path}
 @msg	{path} is not a folder	{path} はフォルダーではありません
 @msg	the search couldn't start: try again in a moment	検索を開始できませんでした: しばらくしてからもう一度お試しください

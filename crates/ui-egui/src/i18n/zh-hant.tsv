@@ -2131,7 +2131,7 @@ file-filter	Templates	範本
 @msg	no dialog open	沒有開啟的對話框
 @msg	no file reader	沒有檔案讀取器
 @msg	no file writer	沒有檔案寫入器
-@msg	not a VectorCraft shortcut set (missing `overrides`)	不是 VectorCraft 快速鍵組 (沒有 `overrides`)
+@msg	not a 7rrek shortcut set (missing `overrides`)	不是 VectorCraft 快速鍵組 (沒有 `overrides`)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	不是快速鍵組：文字開頭不是斜線名稱和左大括號
 @msg	shortcut for `{k}` must be a string	`{k}` 的快速鍵必須是字串
 @msg	tool shortcuts must be a single key (optionally with Shift)	工具快速鍵必須是單一按鍵 (可搭配 Shift)
@@ -2152,7 +2152,7 @@ file-filter	Templates	範本
 @msg	unknown workspace (one of {_1})	未知的工作區 (應為 {_1} 其中之一)
 @msg	workspace name can't be empty	工作區名稱不能是空的
 @msg	No fonts are missing in this document	此文件中沒有遺失的字體
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft 不會搜尋其他應用程式或系統的資料夾：{path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft 不會搜尋其他應用程式或系統的資料夾：{path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft 不會搜尋「使用者」中的 Shared 或 Public 資料夾：{path}
 @msg	{path} is not a folder	{path} 不是資料夾
 @msg	the search couldn't start: try again in a moment	無法開始搜尋：請稍後再試
