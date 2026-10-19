@@ -2686,10 +2686,10 @@ lighting	Light	Światło
 	All in One Folder	Wszystko w jednym folderze
 	By Size or Row	Według rozmiaru lub wiersza
 	By Format	Według formatu
-	By Artboard or Item	Według obszaru roboczego lub elementu
+	By Artboard or Item	Według obszaru kompozycji lub elementu
 	By Item, Then Format	Według elementu, potem formatu
 	Document Name	Nazwa dokumentu
-	Artboard or Item Name	Nazwa obszaru roboczego lub elementu
+	Artboard or Item Name	Nazwa obszaru kompozycji lub elementu
 	Number (####)	Numer (####)
 	Date (YYYYMMDD)	Data (RRRRMMDD)
 	Date (YYYY-MM-DD)	Data (RRRR-MM-DD)
@@ -3925,6 +3925,8 @@ imageTrace	Outline	Kontur
 @msg	`{key}` must be a #rrggbb color	`{key}` musi być kolorem #rrggbb
 @msg	`{key}` must be a #rrggbb colour	`{key}` musi być kolorem #rrggbb
 @msg	`{key}` must be a number	`{key}` musi być liczbą
+@msg	`{key}` must be a number, not {v}	`{key}` musi być liczbą, nie {v}
+@msg	{key} must be Unix seconds (an integer) or null	{key} musi być czasem Unix w sekundach (liczbą całkowitą) lub null
 @msg	`{key}` must be a string	`{key}` musi być ciągiem znaków
 @msg	`{key}` must be a whole number	`{key}` musi być liczbą całkowitą
 @msg	`{key}` must be a whole number between {min} and {max} (got {x})	`{key}` musi być liczbą całkowitą od {min} do {max} (podano {x})
@@ -4055,6 +4057,7 @@ imageTrace	Outline	Kontur
 @msg	missing `tool`	brak `tool`
 @msg	missing index	brak indeksu
 @msg	missing number `{key}`	brak liczby `{key}`
+@msg	missing integer `{key}`	brak liczby całkowitej `{key}`
 @msg	multiple windows land with M11.5	wiele okien pojawi się w M11.5
 @msg	name the file	nadaj nazwę plikowi
 @msg	no CSS to copy: select objects with CSS of their own	brak CSS do skopiowania: zaznacz obiekty z własnym CSS
@@ -4179,6 +4182,7 @@ imageTrace	Outline	Kontur
 @msg	object {id} is not a selected top-level object	obiekt {id} nie jest zaznaczonym obiektem najwyższego poziomu
 @msg	page size {w} × {h}	rozmiar strony {w} × {h}
 @msg	page {0} does not exist (the PDF has {1})	strona {0} nie istnieje (PDF ma {1})
+@msg	thumbnail: no page {n} (the file has 1)	thumbnail: strona {n} nie istnieje (plik ma 1)
 @msg	paste unavailable	wklejanie niedostępne
 @msg	path is already closed	ścieżka jest już zamknięta
 @msg	paths contain invalid coordinates	ścieżki zawierają nieprawidłowe współrzędne
@@ -4453,6 +4457,9 @@ imageTrace	Outline	Kontur
 @msg	`{text}`: step {i}'s result has no such value (write $$ for a literal $)	`{text}`: wynik kroku {i} nie ma takiej wartości (wpisz $$, aby uzyskać znak $)
 @msg	`{text}`: there is no step {i} before this one (steps count from 0; write $$ for a literal $)	`{text}`: przed tym krokiem nie ma kroku {i} (kroki liczone od 0; wpisz $$, aby uzyskać znak $)
 @msg	object ids are non-negative integers, not {v}	identyfikatory obiektów to nieujemne liczby całkowite, nie {v}
+@msg	{key} must be an array of non-negative integer object ids	{key} musi być tablicą identyfikatorów obiektów, które są nieujemnymi liczbami całkowitymi
+@msg	invalid object id {value}: expected a non-negative integer	nieprawidłowy identyfikator obiektu {value}: oczekiwano nieujemnej liczby całkowitej
+@msg	no such object id {value}	brak obiektu o identyfikatorze {value}
 @msg	automation filesystem access is not granted: read authority is absent: {path}	nie przyznano dostępu automatyzacji do systemu plików: brak uprawnień do odczytu: {path}
 @msg	automation filesystem access is not granted: write authority is absent: {path}	nie przyznano dostępu automatyzacji do systemu plików: brak uprawnień do zapisu: {path}
 @msg	automation path rejected: outside the read root {root}: {path}	odrzucono ścieżkę automatyzacji: poza katalogiem głównym odczytu {root}: {path}
@@ -5024,7 +5031,7 @@ mark-style	Japanese	Japońskie
 @msg	only http, https and mailto URLs open in the browser, not “{url}”	w przeglądarce otwierają się tylko adresy URL http, https i mailto, a nie „{url}”
 @msg	{id} opens another app: only the person at the keyboard can run it	{id} otwiera inną aplikację: uruchomić to polecenie może tylko osoba przy klawiaturze
 @msg	“{name}” is not a file	„{name}” nie jest plikiem
-	Enable Guides for 9-Slice Scaling	Włącz prowadnice skalowania 9-slice
+	Enable Guides for 9-Slice Scaling	Włącz linie pomocnicze skalowania 9-slice
 @msg	a mask has more than one art block	maska ma więcej niż jeden blok grafiki
 @msg	mask art ends outside a mask dictionary	grafika maski kończy się poza słownikiem maski
 @msg	cancelled; nothing was changed	anulowano; nic nie zostało zmienione
@@ -5056,3 +5063,5 @@ mark-style	Japanese	Japońskie
 	Minimum must not exceed Desired, nor Desired Maximum.	Minimum nie może przekraczać wartości optymalnej, a wartość optymalna maksimum.
 	Justification	Justowanie
 @msg	the file's variables and data sets weren't read (variables: {variables}, data sets: {data_sets}): the Variables panel doesn't list them	zmienne i zestawy danych pliku nie zostały wczytane (zmienne: {variables}, zestawy danych: {data_sets}): panel Zmienne ich nie wyświetla
+# Select by Color (select.color)
+	Select by Color	Zaznacz według koloru

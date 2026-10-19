@@ -5006,6 +5006,7 @@ dependencies = [
  "js-sys",
  "log",
  "rfd",
+ "serde_json",
  "vectorcraft-engine",
  "vectorcraft-format",
  "vectorcraft-text",

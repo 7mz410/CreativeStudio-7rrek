@@ -2344,6 +2344,29 @@ fn reshape_moves_the_grabbed_point_and_its_neighbourhood() {
 }
 
 #[test]
+fn reshape_falloff_follows_arc_length_on_open_paths() {
+    let mut s = session();
+    let id = NodeId(
+        s.execute(
+            "path.create",
+            &json!({
+                "anchors": [{"x": 0, "y": 0}, {"x": 100, "y": 0}, {"x": 200, "y": 0}, {"x": 300, "y": 0}],
+                "closed": false
+            }),
+        )
+        .unwrap()["id"]
+            .as_u64()
+            .unwrap(),
+    );
+    s.execute("path.reshape", &json!({"id": id.0, "x": 300.0, "y": 0.0, "dx": 0.0, "dy": 100.0})).unwrap();
+    let pts: Vec<_> = s.doc().unwrap().doc.node(id).unwrap().path_data().unwrap().subpaths[0].anchors.iter().map(|a| a.p).collect();
+    assert!((pts[3].y - 100.0).abs() < 1e-6, "grabbed end moves full delta: {pts:?}");
+    assert!(pts[0].y.abs() < 1e-6, "far end stays put: {pts:?}");
+    assert!(pts[2].y > 1.0 && pts[2].y < 100.0, "mid-anchor moves partially: {pts:?}");
+    assert!(pts[1].y < pts[2].y, "nearer anchors move more: {pts:?}");
+}
+
+#[test]
 fn graph_tool_drag_creates_a_graph_and_asks_for_data() {
     let mut s = session();
     let v = ViewInfo::default();
@@ -2426,6 +2449,29 @@ fn object_mosaic_refuses_columns_and_rows_that_are_not_whole_numbers() {
         assert_eq!(undo(&s), before, "{p}");
     }
     let r = s.execute("object.createObjectMosaic", &json!({"columns": 2.0, "rows": 1.0})).unwrap();
+    assert_eq!(r["tiles"], json!(2));
+}
+
+/// A new width or height, or a spacing, given as text or as another value that is not a number is an error naming the
+/// key, and no mosaic is made.
+#[test]
+fn object_mosaic_refuses_a_size_or_spacing_given_as_text() {
+    let mut s = session();
+    rect(&mut s, 0.0, 0.0, 100.0, 50.0);
+    s.execute("object.rasterize", &json!({"ppi": 72})).unwrap();
+    let undo = |s: &Session| s.doc().unwrap().history.undo.len();
+    let before = undo(&s);
+    for (p, msg) in [
+        (json!({"width": "200"}), "`width` must be a number, not \"200\""),
+        (json!({"columns": 2, "height": "50 pt"}), "`height` must be a number, not \"50 pt\""),
+        (json!({"spacingX": "4"}), "`spacingX` must be a number, not \"4\""),
+        (json!({"spacingY": [4]}), "`spacingY` must be a number, not [4]"),
+    ] {
+        let r = s.execute("object.createObjectMosaic", &p);
+        assert!(matches!(&r, Err(EngineError::BadParams { msg: m, .. }) if m == msg), "{p}: {r:?}");
+        assert_eq!(undo(&s), before, "{p}");
+    }
+    let r = s.execute("object.createObjectMosaic", &json!({"columns": 2, "rows": 1, "width": 200, "spacingX": null})).unwrap();
     assert_eq!(r["tiles"], json!(2));
 }
 

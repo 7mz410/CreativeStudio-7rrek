@@ -1766,6 +1766,7 @@ file-filter	Templates	模板
 @msg	a key object sits on that point	该点上有关键对象
 @msg	a spine keeps at least two points	脊线至少保留两个点
 @msg	missing number `{key}`	缺少数字 `{key}`
+@msg	missing integer `{key}`	缺少整数 `{key}`
 @msg	index must be ≥ 0	index 不能为负数
 @msg	x and y must be finite	x 和 y 必须是有限值
 @msg	t, dx and dy must be finite	t、dx 和 dy 必须是有限值
@@ -3677,6 +3678,8 @@ imageTrace	Outline	轮廓
 @msg	`freeform.points` must be an array	`freeform.points` 必须是数组
 @msg	`freeform.lines` must be an array	`freeform.lines` 必须是数组
 @msg	`{key}` must be a number	`{key}` 必须是数字
+@msg	`{key}` must be a number, not {v}	`{key}` 必须是数字，而不是 {v}
+@msg	{key} must be Unix seconds (an integer) or null	{key} 必须是以秒为单位的 Unix 时间 (整数) 或 null
 @msg	a freeform gradient keeps at least one point	任意形状渐变至少保留一个点
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	任意形状点 {i} 需要 `at` [x, y] 和有效的 `color`
 @msg	freeform line {i} must be an array of point indices	任意形状线 {i} 必须是由点索引组成的数组
@@ -3910,6 +3913,7 @@ imageTrace	Outline	轮廓
 @msg	cannot read PDF: {0}	无法读取 PDF：{0}
 @msg	invalid PDF setting: {0}	PDF 设置无效：{0}
 @msg	page {0} does not exist (the PDF has {1})	页面 {0} 不存在 (该 PDF 有 {1} 页)
+@msg	thumbnail: no page {n} (the file has 1)	thumbnail：页面 {n} 不存在 (该文件有 1 页)
 @msg	the PDF has no pages	该 PDF 没有页面
 @msg	the PDF is password-protected: give its password	该 PDF 受密码保护：请提供其密码
 @msg	the PDF password is wrong	PDF 密码错误
@@ -4163,6 +4167,9 @@ imageTrace	Outline	轮廓
 @msg	`{text}`: step {i}'s result has no such value (write $$ for a literal $)	`{text}`：步骤 {i} 的结果中没有此值 (要表示 $ 本身，请写 $$)
 @msg	`{text}`: there is no step {i} before this one (steps count from 0; write $$ for a literal $)	`{text}`：此步骤之前没有步骤 {i} (步骤从 0 开始计数；要表示 $ 本身，请写 $$)
 @msg	object ids are non-negative integers, not {v}	对象 id 是非负整数，而不是 {v}
+@msg	{key} must be an array of non-negative integer object ids	{key} 必须是由非负整数对象 id 组成的数组
+@msg	invalid object id {value}: expected a non-negative integer	无效的对象 id {value}：应为非负整数
+@msg	no such object id {value}	没有 id 为 {value} 的对象
 @msg	automation filesystem access is not granted: read authority is absent: {path}	未授予自动化文件系统访问权限：缺少读取权限：{path}
 @msg	automation filesystem access is not granted: write authority is absent: {path}	未授予自动化文件系统访问权限：缺少写入权限：{path}
 @msg	automation path rejected: outside the read root {root}: {path}	已拒绝自动化路径：位于读取根目录 {root} 之外：{path}
@@ -5040,6 +5047,8 @@ lighting	Light	光源
 	Minimum	最小值
 	Justification	对齐设置
 @msg	the file's variables and data sets weren't read (variables: {variables}, data sets: {data_sets}): the Variables panel doesn't list them	文件的变量和数据集未被读取（变量：{variables}，数据集：{data_sets}）：“变量”面板不会列出它们
+# Select by Color (select.color)
+	Select by Color	按颜色选择
 	AI Agents…	AI 智能体…
 	AI Agents	AI 智能体
 	Add this to the agent's MCP settings:	将以下内容添加到智能体的 MCP 设置：

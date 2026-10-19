@@ -4322,6 +4322,8 @@ imageTrace	Outline	Körvonal
 @msg	`{key}` must be a #rrggbb color	`{key}`: #rrggbb szín kell
 @msg	`{key}` must be a #rrggbb colour	`{key}`: #rrggbb szín kell
 @msg	`{key}` must be a number	`{key}`: szám kell
+@msg	`{key}` must be a number, not {v}	`{key}`: szám kell, ez nem az: {v}
+@msg	{key} must be Unix seconds (an integer) or null	{key}: Unix-idő kell másodpercben (egész szám) vagy null
 @msg	`{key}` must be a string	`{key}`: szöveg kell
 @msg	`{key}` must be a whole number	`{key}`: egész szám kell
 @msg	`{key}` must be a whole number between {min} and {max} (got {x})	`{key}`: {min} és {max} közötti egész szám kell (kapott érték: {x})
@@ -4568,6 +4570,7 @@ imageTrace	Outline	Körvonal
 @msg	missing `tool`	hiányzik: `tool`
 @msg	missing index	hiányzik az index
 @msg	missing number `{key}`	hiányzik a szám: `{key}`
+@msg	missing integer `{key}`	hiányzik az egész szám: `{key}`
 @msg	missing panel layout	hiányzik a panelelrendezés
 @msg	move requires a destination panel	az áthelyezéshez célpanel kell
 @msg	move requires an existing destination panel	az áthelyezéshez létező célpanel kell
@@ -4697,6 +4700,9 @@ imageTrace	Outline	Körvonal
 @msg	nothing to warp	nincs mit torzítani
 @msg	nothing to wrap	nincs mit körbefuttatni
 @msg	object ids are non-negative integers, not {v}	az objektumazonosító nemnegatív egész szám, ez nem az: {v}
+@msg	{key} must be an array of non-negative integer object ids	{key}: objektumazonosítók tömbje kell, mindegyik nemnegatív egész szám
+@msg	invalid object id {value}: expected a non-negative integer	érvénytelen objektumazonosító: {value} (nemnegatív egész szám kell)
+@msg	no such object id {value}	nincs ilyen objektumazonosító: {value}
 @msg	object {0} cannot have children	ennek az objektumnak nem lehetnek gyermekei: {0}
 @msg	object {id} is not a path	az objektum nem útvonal: {id}
 @msg	object {id} is not a selected top-level object	az objektum nem kijelölt legfelső szintű objektum: {id}
@@ -4712,6 +4718,7 @@ imageTrace	Outline	Körvonal
 @msg	Packaged {n} file(s){note}	Becsomagolt fájlok: {n}{note}
 @msg	page size {w} × {h}	oldalméret: {w} × {h}
 @msg	page {0} does not exist (the PDF has {1})	nincs ilyen oldal: {0} (a PDF oldalszáma: {1})
+@msg	thumbnail: no page {n} (the file has 1)	thumbnail: nincs ilyen oldal: {n} (a fájl oldalszáma: 1)
 @msg	panel group is empty	a panelcsoport üres
 @msg	panel must name a registered panel	a panel egy regisztrált panelt kell megnevezzen
 @msg	paste unavailable	a beillesztés nem érhető el
@@ -5190,6 +5197,8 @@ imageTrace	Outline	Körvonal
 	Minimum must not exceed Desired, nor Desired Maximum.	A minimum nem haladhatja meg a kívánt értéket, sem a kívánt érték a maximumot.
 	Justification	Sorkizárás
 @msg	the file's variables and data sets weren't read (variables: {variables}, data sets: {data_sets}): the Variables panel doesn't list them	a fájl változói és adatkészletei nem lettek beolvasva (változók: {variables}, adatkészletek: {data_sets}): a Változók panel nem listázza őket
+# Select by Color (select.color)
+	Select by Color	Kijelölés szín szerint
 	AI Agents…	MI-ügynökök…
 	AI Agents	MI-ügynökök
 	Add this to the agent's MCP settings:	Add hozzá ezt az ügynök MCP-beállításaihoz:

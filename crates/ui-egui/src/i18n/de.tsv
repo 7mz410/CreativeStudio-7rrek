@@ -3738,6 +3738,8 @@ theme	Appearance	Erscheinungsbild
 @msg	`{key}` must be a #rrggbb color	`{key}` muss eine Farbe der Form #rrggbb sein
 @msg	`{key}` must be a #rrggbb colour	`{key}` muss eine Farbe der Form #rrggbb sein
 @msg	`{key}` must be a number	`{key}` muss eine Zahl sein
+@msg	`{key}` must be a number, not {v}	`{key}` muss eine Zahl sein, nicht {v}
+@msg	{key} must be Unix seconds (an integer) or null	{key} muss eine Unix-Zeit in Sekunden (eine ganze Zahl) oder null sein
 @msg	`{key}` must be a string	`{key}` muss eine Zeichenfolge sein
 @msg	`{key}` must be a whole number	`{key}` muss eine ganze Zahl sein
 @msg	`{key}` must be a whole number between {min} and {max} (got {x})	`{key}` muss eine ganze Zahl zwischen {min} und {max} sein (erhalten: {x})
@@ -3868,6 +3870,7 @@ theme	Appearance	Erscheinungsbild
 @msg	missing `tool`	`tool` fehlt
 @msg	missing index	der Index fehlt
 @msg	missing number `{key}`	die Zahl `{key}` fehlt
+@msg	missing integer `{key}`	die ganze Zahl `{key}` fehlt
 @msg	multiple windows land with M11.5	mehrere Fenster kommen mit M11.5
 @msg	name the file	benennen Sie die Datei
 @msg	no CSS to copy: select objects with CSS of their own	kein CSS zum Kopieren: Wählen Sie Objekte mit eigenem CSS aus
@@ -3992,6 +3995,7 @@ theme	Appearance	Erscheinungsbild
 @msg	object {id} is not a selected top-level object	Objekt {id} ist kein ausgewähltes Objekt der obersten Stufe
 @msg	page size {w} × {h}	Seitengröße {w} × {h}
 @msg	page {0} does not exist (the PDF has {1})	Seite {0} ist nicht vorhanden (die PDF-Datei hat {1})
+@msg	thumbnail: no page {n} (the file has 1)	thumbnail: Seite {n} ist nicht vorhanden (die Datei hat 1)
 @msg	paste unavailable	Einfügen nicht verfügbar
 @msg	path is already closed	der Pfad ist bereits geschlossen
 @msg	paths contain invalid coordinates	die Pfade enthalten ungültige Koordinaten
@@ -4301,6 +4305,9 @@ theme	Appearance	Erscheinungsbild
 @msg	`{text}`: step {i}'s result has no such value (write $$ for a literal $)	`{text}`: Das Ergebnis von Schritt {i} hat keinen solchen Wert (schreiben Sie $$ für ein literales $)
 @msg	`{text}`: there is no step {i} before this one (steps count from 0; write $$ for a literal $)	`{text}`: Vor diesem Schritt gibt es keinen Schritt {i} (Schritte zählen ab 0; schreiben Sie $$ für ein literales $)
 @msg	object ids are non-negative integers, not {v}	Objekt-IDs sind nicht negative ganze Zahlen, nicht {v}
+@msg	{key} must be an array of non-negative integer object ids	{key} muss ein Array von Objekt-IDs sein, die nicht negative ganze Zahlen sind
+@msg	invalid object id {value}: expected a non-negative integer	ungültige Objekt-ID {value}: erwartet wird eine nicht negative ganze Zahl
+@msg	no such object id {value}	kein Objekt mit der ID {value}
 @msg	automation filesystem access is not granted: read authority is absent: {path}	Dateisystemzugriff für die Automatisierung ist nicht gewährt: Die Leseberechtigung fehlt: {path}
 @msg	automation filesystem access is not granted: write authority is absent: {path}	Dateisystemzugriff für die Automatisierung ist nicht gewährt: Die Schreibberechtigung fehlt: {path}
 @msg	automation path rejected: outside the read root {root}: {path}	Automatisierungspfad abgelehnt: außerhalb des Lesestammordners {root}: {path}
@@ -4384,6 +4391,9 @@ theme	Appearance	Erscheinungsbild
 @msg	not a PSD file	keine PSD-Datei
 @msg	Multichannel PSD files can't be read: save it in RGB, CMYK or Grayscale mode	PSD-Dateien im Mehrkanalmodus können nicht gelesen werden: Speichern Sie die Datei im RGB-, CMYK- oder Graustufenmodus
 @msg	the PSD file has an unknown colour mode ({m})	die PSD-Datei hat einen unbekannten Farbmodus ({m})
+@msg	the PSD file is cut short	die PSD-Datei ist unvollständig
+@msg	the PSD file's header is damaged	der Header der PSD-Datei ist beschädigt
+@msg	the PSD file's image data can't be read: {e}	die Bilddaten der PSD-Datei können nicht gelesen werden: {e}
 @msg	the PSD file's image data uses an unknown compression ({m})	die Bilddaten der PSD-Datei verwenden eine unbekannte Komprimierung ({m})
 @msg	the PSD image is too large to read ({_1} × {_2} pixels)	das PSD-Bild ist zu groß zum Lesen ({_1} × {_2} Pixel)
 @msg	zipped 32-bit PSD image data with prediction can't be read	ZIP-komprimierte 32-Bit-PSD-Bilddaten mit Vorhersage können nicht gelesen werden
@@ -4635,6 +4645,7 @@ lighting	Light	Licht
 	Top Right	Oben rechts
 	Bottom Right	Unten rechts
 effect	Regular	Regelmäßig
+effect	Soft	Weich
 	Bottom Left	Unten links
 # Corner Radius: a field per corner of a live rectangle.
 	Single Corner Radius	Einheitlicher Eckenradius
@@ -4780,6 +4791,8 @@ effect	Regular	Regelmäßig
 	Minimum	Minimum
 	Justification	Abstände
 @msg	the file's variables and data sets weren't read (variables: {variables}, data sets: {data_sets}): the Variables panel doesn't list them	die Variablen und Datensätze der Datei wurden nicht gelesen (Variablen: {variables}, Datensätze: {data_sets}): Das Bedienfeld „Variablen“ listet sie nicht auf
+# Select by Color (select.color)
+	Select by Color	Nach Farbe auswählen
 	AI Agents…	KI-Agenten…
 	AI Agents	KI-Agenten
 	Add this to the agent's MCP settings:	Füge dies zu den MCP-Einstellungen des Agenten hinzu:

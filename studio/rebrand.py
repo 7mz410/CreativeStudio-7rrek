@@ -276,6 +276,9 @@ def main():
             # 7rrek renames the constant on top of this; don't add a second one.
             if a.startswith('pub const LEGACY_EXTENSION') and 'pub const STUDIO_EXTENSION' in out:
                 continue
+            # Cargo.toml: one [patch.crates-io] only, even when the merge kept our other pins in it.
+            if b.startswith('[patch.crates-io]') and '[patch.crates-io]' in out:
+                continue
             if not b or b not in out:
                 out = out.replace(a, b)
         if rel in EXT_TESTS:
