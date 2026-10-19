@@ -1,0 +1,1083 @@
+	Auto Color
+	Change to Artboard Rulers
+	Check Script
+	Check Script…
+	Copy Report
+	rsm read this script without running it.
+	Needs nothing beyond plain JavaScript
+	Needs the script language's own objects or directives
+	Needs the document model
+	Needs files
+	Needs menu commands
+	Needs dialogs
+	Needs features only the reference app has
+	Outside the document
+	Writes, moves or deletes files
+	Opens files in other apps
+	Opens network connections
+	Loads native code
+	Sends messages to other apps
+	Reads or sets environment variables
+	Runs code the checker can't read
+	Changes the reference app's preferences
+	Menu commands
+	Names the script builds as it runs: {count}
+	Document model
+	Object types: {names}
+	Directives
+	Includes
+	Checked
+	Not followed: outside the script's folder
+	Includes itself
+	Not read
+	Not read: a limit was reached
+	Compiled or not text
+	Problems
+	String not closed
+	Comment not closed
+	Regular expression not closed
+	Template literal not closed
+	XML literal not closed
+	Bracket never closed
+	Closing bracket with no opening one
+	Syntax newer than ES3
+	Unknown directive
+	Not valid UTF-8: unreadable bytes were replaced
+	Mixed line endings
+	Nesting too deep to follow
+	line {line}
+	lines {lines}
+	{file}, line {line}
+	Compiled script: ask its author for the .jsx file
+	Too large to check
+	Not a script for the reference app
+	Some lists were cut short at their limit.
+	Color wheel
+	Resize
+	Convert to Straight Lines
+	Corner Point Angle Threshold:
+	Create PDF layers from top-level layers
+	Edit Path
+	Can't save “{name}”.
+	Can't export “{name}”.
+	Use Document Raster Effects Resolution
+	A File per Object
+	Example: {name}
+	Export Preset:
+	Folders:
+	Insert
+	Nothing is selected. Select the art to export, then open this tab again.
+	One File of the Selection
+	Start at:
+	{n} objects selected
+	Delete Export Preset
+	Export Presets
+	Save Export Preset
+	Export Layer
+	Export Selection
+	All in One Folder
+	By Size or Row
+	By Format
+	By Artboard or Item
+	By Item, Then Format
+	Document Name
+	Artboard or Item Name
+	Number (####)
+	Date (YYYYMMDD)
+	Date (YYYY-MM-DD)
+	Time (hhmmss)
+	PDF Print
+	Decrease Font Size by Five Steps
+	Increase Font Size by Five Steps
+	Variable Font
+	Gap Options
+	Gap Detection
+	Paint Stops At:
+	Small Gaps
+	Medium Gaps
+	Large Gaps
+	Gap Preview Color:
+	Close Gaps With Paths
+	First Artboard
+	Previous Artboard
+	Next Artboard
+	Last Artboard
+	Graph Column
+	Column Type:
+	Vertically Scaled
+	Uniformly Scaled
+	Repeating
+	Sliding
+	Each Design Represents:
+	For Fractions:
+	Chop Design
+	Scale Design
+	Symbol Options
+	Symbol Options…
+	Step Backward
+	Step Forward
+	Clear History
+	Set History Limit…
+	Apply Data Set
+	Cancel Pattern Editing
+	Copy Appearance
+	Copy Guide
+	Copy in Perspective
+	Create Slice from Selection
+	Create Slices from Guides
+	Delete All Slices
+	Delete Data Sets
+	Delete Graphic Styles
+	Delete Guide
+	Delete Guides
+	Delete Slice
+	Delete Style
+	Delete Variables
+	Delete View
+	Done Editing Pattern
+	Duplicate Rows
+	Edit Perspective Grid
+	Expand Blend
+	Expand Envelope
+	Expand Image Trace
+	Expand Live Paint
+	Live Shape
+	Make Blend
+	Make Dynamic
+	Make Intertwine
+	Make Live Paint
+	Make Pattern
+	Make Slice
+	Merge Live Paint
+	Mesh Point Color
+	Move Envelope Point
+	Move Plane and Copy Objects
+	Move Plane and Objects
+	Move Slice
+	Move Type on a Path
+	New Guide
+	Place from Library
+	Rearrange Artboards
+	Release Blend
+	Release Envelope
+	Release Intertwine
+	Release Live Paint
+	Release Repeat
+	Release Slice
+	Release Threaded Text
+	Rename Design
+	Rename Style
+	Rename View
+	Reorder Appearance
+	Reorder Artboards
+	Reshape Spine
+	Resize Artboard
+	Resize Slice
+	Resize Type Area
+	Scale in Perspective
+	Shape Builder Delete
+	Sort Swatches
+	Symbol Screener
+	Symbol Scruncher
+	Symbol Shifter
+	Symbol Sizer
+	Symbol Spinner
+	Symbol Stainer
+	Symbol Styler
+	Text Orientation
+	Thread Text
+	Typing
+	Words Longer Than:
+	After First:
+	Before Last:
+	Hyphen Limit:
+	Hyphenation Zone:
+	letters
+	hyphens
+	Hyphenate Capitalized Words
+	Auto Grouping
+	Enhanced
+	Ignore Color
+	Intertwine
+	Arrange Intertwine Area
+	Import Shortcut Set
+	Import Shortcut Set…
+	Each entry of the file is matched to a rsm tool, command or panel. Check the matches and answer what is left.
+	Keys
+	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.
+	Click, then press the key this code stands for (Esc cancels)
+	Press a key…
+	from your earlier imports
+	from the format's public description
+	not known yet
+	Shortcuts
+	In the File
+	In rsm
+	Needs Attention Only
+	Ready
+	Needs a choice
+	Needs a key
+	No equivalent
+	Tools take a single key (optionally with Shift)
+	A later row takes this shortcut
+	Same item as a later row
+	Start from VectorCraft Defaults
+	Add to the Current Shortcuts
+	Remember My Choices
+	{ready} of {total} ready
+	The file is too large to read in full, so only its first part is listed.
+	Report copied
+	Line {line}
+	Line {line}: {name}: {status}
+	Read Shortcut Set File
+	Import Matches
+	Remember Import Matches
+	Forget Import Matches
+@plural	agrees with {n} default shortcut|agrees with {n} default shortcuts
+@plural	{n} part of the file wasn't read|{n} parts of the file weren't read
+	Letter
+	Remove Color Profile…
+	New Artboard Options…
+	Outline Object
+	Pathfinder
+	PostScript:
+	Apply {name}
+	Redefine {name}
+	Rotate View to Selection
+	“{name}” already exists. Replace it?
+	The name in the save panel was “{typed}”; rsm added the file type's extension. Replacing the file overwrites its contents.
+	Trackpad Gesture to Rotate View
+	Sans Serif / Gothic
+	Update Selection
+	Serif / Mincho
+	Show Original Path
+	Precise Cursors
+	Total:
+	Add Guides
+	Event:
+	JavaScript:
+	Add Event
+	Remove Selected Entry
+	Clear Events
+	Link JavaScript Files…
+	JavaScript Files
+	File or URL:
+	Add JavaScript File
+	Remove JavaScript File
+	Lock Variables
+	Unlock Variables
+imageTrace	Outline
+@msg	its editing data is for a {w} × {h} pt page, not the file's {pw} × {ph} pt page
+@msg	its editing data is for a {w} × {h} pt page, the file's {pw} × {ph} pt page at {scale}
+@msg	the art on them differs from the page's in {_1}% of it: they come from its editing data all the same
+@msg	Copied the script report
+@msg	Offset Path: the offset leaves nothing of the selected paths (an inset larger than the shapes)
+@msg	Save writes {_1}, not {_2}: use file.saveAsTemplate to write it
+@msg	This shortcut file is in a form VectorCraft can't read.
+@msg	`{key}` must be a #rrggbb color
+@msg	a key object sits on that point
+@msg	a swatch or color group named `{n}` exists
+@msg	a spine keeps at least two points
+@msg	check a layer to export
+@msg	select the art to export first
+@msg	handle must be in or out
+@msg	index must be ≥ 0
+@msg	missing number `{key}`
+@msg	no saved selection recalled
+@msg	no such spine point
+@msg	no such spine segment
+@msg	not a blend
+@msg	not a shortcut set: the text doesn't start with a slash name and an opening brace
+@msg	no history to clear
+@msg	objects can't be nested more than 32 deep
+@msg	the SVG's elements are nested more than {0} deep
+@msg	select a blend or give `id`
+@msg	select an Intertwine group
+@msg	t, dx and dy must be finite
+@msg	the blend has no spine
+@msg	the spine has no segments
+@msg	this is a PostScript file (an .ai saved in an older format or without PDF compatibility, or an EPS file), not a PDF: File › Open and File › Place read it as EPS
+@msg	variables are locked
+@msg	x and y must be finite
+@msg	{_1} files are written by file.saveAsTemplate
+@msg	{label}…
+@msg	{path}: not a file
+@msg	{path}: {e}
+@msg	{status} ({e})
+@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set
+@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set
+@msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel
+@msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise
+	Drag art, colors and text styles here to reuse them across documents. Libraries are stored on this machine — no account required.
+	1 Color Job
+	2 Color Job
+	3 Color Job
+	CMYK Equivalents
+	3 x 3 Average
+	5 x 5 Average
+	PDF File
+	CMYK profile in effect
+effect	Soft
+	Loaded Texture
+	Load Texture…
+	Texture Image
+	Step up or down
+	X11 (XWayland) When a Pen Is Attached
+	If a drawing tablet's pen doesn't draw, choose an X11 (XWayland) option.
+	Cutout…
+	Cutout
+	Neon Glow…
+	Neon Glow
+	Poster Edges…
+	Poster Edges
+	Levels
+	Edge Simplicity
+	Edge Fidelity
+	Glow Size
+	Glow Brightness
+	Edge Thickness
+	Edge Intensity
+	Posterization
+	Select two or more objects, or a group
+	Back
+	Both sides
+	Classic
+	Cove
+	Depth
+	Front
+	Isometric Bottom
+	Isometric Left
+	Isometric Right
+	Isometric Top
+	Off-Axis Back
+	Off-Axis Bottom
+	Off-Axis Front
+	Off-Axis Left
+	Off-Axis Right
+	Off-Axis Top
+	Ogee
+	Reset all 3D settings to their defaults.
+	Step
+	Taper
+	Twist
+	Volume
+3d	Cap
+3d	Solid
+3d	Hollow
+3d	Bevel
+3d	Rounded
+3d	Space
+	Bevel Shape
+	Bevel Inside
+	Bevel both sides
+	Presets
+@msg	An object takes one 3D effect. Edit the existing effect's options, or remove it first.
+@msg	{label} currently requires a path or compound path. Convert type, images and groups to paths first.
+@msg	{label} requires a shape with at least two anchors
+@msg	The shape is too complex for a 3D effect
+@msg	The 3D surface is too complex; simplify the shape
+	Transform Objects
+@msg	unknown parameter `{key}`; did you mean `{near}`?
+@msg	unknown parameter `{key}`; the command takes no parameters
+@msg	unknown parameter `{key}`; the command takes: {keys}
+	1 Layer
+	1 bit
+	16 Colors
+	16 bit
+	16 bits/pixel
+	2-Up
+	24 bit
+	24 bits/pixel
+	256 Colors
+	2K Cinema
+	2up
+	3 Colors
+	32 bit
+	32 bits/pixel
+	4 bit
+	4-Up
+	4K Cinema
+	4K UHD
+	4up
+	6 Colors
+	8 Colors
+	8 bit
+	8K UHD
+	@{login}: {prs}, {commits}, +{added} / −{deleted} lines (Δ {delta}), +{binary_added} / −{binary_deleted} binary assets, {first} – {last}
+	A3
+	A4
+	A5
+	A6
+	Absolute Colorimetric
+	Adaptive
+	All Affected Objects
+	All Layers
+	All Rasterized Regions
+	All Slices
+	All shortcuts reset to defaults.
+	Alt+Click
+	Alt+Drag
+	Analogous
+	Analogous 2
+	Anchors
+	Any except extracting pages
+	Area Type
+	Arrow
+	Arrow (open)
+	Art & Illustration
+	Art Optimized
+	Art and Bright Colors
+	Ascent
+	Auto Size
+	B4
+	B5
+	Bar
+	Barbed
+	Baseline (Standard)
+	Baseline Optimized
+	Basic
+	Bicubic
+	Black & White
+	Black Outline
+	Bloat
+	Bounding Box
+	Bracket
+	Branding
+	Brown
+	Business Card 3.5 × 2 in
+	Business Card 85 × 55 mm
+	CRLF (Windows)
+	Cap Height
+	Chevron
+	Circle (open)
+	Click, then press the new shortcut (Esc cancels)
+	Clip Group
+	Color Table (4 colors)
+	Command
+	Commenting, filling in form fields and signing
+	Complementary
+	Complementary 2
+	Complete
+	Composite
+	Compound
+	Compound 2
+	Concave
+	Convert to Global
+	Convert to destination
+	Convert to destination (preserve numbers)
+	Cool
+	Copyright and Contact Info
+	Copyrighted
+	Cross
+	Current Colors
+	Current Colors (0)
+	Custom Scale
+	DWG (use DXF)
+	Default Graphic Style
+	Diamond (open)
+	Differences from VectorCraft Default:
+	Differences from [Default]:
+	Diffusion
+	Direct Selection
+	Distance
+	Distance:
+	Do Not Scale
+	Don't include profiles
+	Dot Gain 15%
+	Dot on Bar
+	Double Arrow
+	Double Bar
+	Double Slash
+	Down (right reading)
+	Drop
+	Envelope
+	Envelope #10
+	Envelope DL
+	Exact
+	Expand 1 Selected
+	Expand Object
+	Expanded Patterns
+	Feather
+	Filling in form fields and signing
+	Film & Video
+	First Baseline
+	Fit to Page
+	Fork
+	Freeform
+	GIF, 128 colours
+	Go to Conflict
+	Graphic Styles (4)
+	Gray
+	Gray Gamma 2.2
+	Greeting Card
+	Grey
+	Grid Repeat
+	Group Selection
+	Guide
+	Gutter
+	Gutter:
+	HDTV 1080p
+	HDTV 720p
+	HTML and Images
+	Half Arrow (left)
+	Half Arrow (right)
+	Half Circle
+	Hand
+	Harmony Rules
+	Heavy Ink
+	Hexagon
+	Hexagon (open)
+	High Contrast
+	High Contrast 2
+	High Contrast 3
+	High Fidelity Photo
+	High Quality Print
+	High Resolution
+	High resolution
+	Image Trace (Make and Expand)
+	Images Only
+	Imported. Press OK to keep the imported set.
+	Include all profiles
+	Include destination profile
+	Include tagged source profiles
+	Inserting, deleting and rotating pages
+	Joins:
+	Justify
+	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.
+	Keyboard Shortcuts
+	Kite
+	LF (macOS, Linux)
+	Lab Spot Colors
+	Landscape (flipped)
+	Language Level 2
+	Language Level 3
+	Lasso
+	Leaf
+	Left Complement
+	Legal
+	Length
+	Length:
+	Letterhead A4
+	Letterhead Letter
+	Line Art
+	Linear
+	Logo 1000×1000
+	Low Fidelity Photo
+	Low Resolution
+	Low resolution (150 ppi)
+	Make Text Wrap
+	Maximize Editability
+	Measure
+	Medium Resolution
+	Menu Commands
+	Mesh
+	Minimum
+	Mirror Repeat
+	Mobile
+	Monochromatic
+	Monochrome
+	Muted
+	Negative
+	No Dither
+	No Slices
+	No conversion
+	No downsampling
+	None (Color Preview)
+	Orange
+	Outlined Strokes
+	Outlined Text
+	Oval
+	PDF 1.7
+	PDF/X-1a:2001
+	PDF/X-3:2002
+	PDF/X-4:2010
+	PRs
+	Page Cover 1640×624
+	Part of ArtCraft. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono, Noto Sans SC (OFL). Icons: Lucide (ISC) + VectorCraft.
+	Pattern Swatches
+	Pen
+	Pentagram
+	Perceptual
+	Phone 360×800
+	Phone 375×667
+	Phone 375×812
+	Phone 393×852
+	Phone 412×915
+	Phone 430×932
+	Photo Low Fidelity
+	Pink
+	Pixel
+	Placed Document
+	Plus
+	Points:
+	Portrait (flipped)
+	Positive
+	Poster 18 × 24 in
+	Poster 24 × 36 in
+	Preserve
+	Preserve Appearance
+	Preserve Tints
+	Preset {number}
+	Press Quality
+	Press keys…
+	Print & Proof
+	Printing & Proofing
+	Profile Cover 1500×500
+	Public Domain
+	Pucker
+	Purple
+	RECENT (1)
+	RGB
+	Radial Repeat
+	Rasterized Complex Regions
+	Relative Colorimetric
+	Release Image Trace
+	Release Text Wrap
+	Remove the shortcut
+	Reset Automation
+	Reset Essentials Classic
+	Reset Layout
+	Reset Painting
+	Reset Printing and Proofing
+	Reset Tracing
+	Reset Typography
+	Reset Web
+	Reset to Defaults
+	Restricted Colors
+	Reverse Triangle
+	Right Complement
+	Roman
+	Rotate View
+	Run Length
+	SVG 1.1
+	Save Selection
+	Scale Tints
+	Scale X
+	Scale X:
+	Scale Y
+	Scale Y:
+	Scallop
+	Scissors
+	Selected Slices
+	Selected Styles Only (0)
+	Selected Swatches Only (0)
+	Selective
+	Separations
+	Set:
+	Shades
+	Shades of Gray
+	Shear:
+	Shift+Click
+	Shift+Drag
+	Shortcut
+	Shrink Text to Fit
+	Silhouettes
+	Simplified Chinese
+	Simulate
+	Simulate prints overprints as Overprint Preview shows them; separations always keep them. A preset flattens transparency before printing (PostScript files always flatten it).
+	Sketched Art
+	Slash
+	Smallest File Size
+	Social
+	Social Landscape Post 1200×630
+	Social Portrait Post 1080×1350
+	Social Story 1080×1920
+	Social Tall Post 1000×1500
+	Sort by Hue
+	Sort by Luminance
+	Sort by Popularity
+	Spectrum
+	Split Complementary
+	Spot Colors (0)
+	Square (open)
+	Square 8 × 8 in
+	Subsample
+	Subset
+	Sunshine
+	Swallowtail
+	Symbol
+	TIFF (8-bit Color)
+	TIFF (Black & White)
+	Tablet 1024×1366
+	Tablet 1024×768
+	Tablet 768×1024
+	Tablet 800×1280
+	Tablet 820×1180
+	Tablet 834×1194
+	Tabloid
+	Tag
+	Tag (open)
+	Technical Drawing
+	Tetrad
+	Tetrad 2
+	Tetrad 3
+	Text Displayed in Cell
+	Tile Imageable Areas
+	Tool
+	Touch Type
+	Transparent Objects
+	Triad
+	Triad 2
+	Triad 3
+	Triangle
+	Triangle (open)
+	Triangle to Bar
+	True Colors
+	Twirl
+	Type Optimized
+	UTF-16 (Unicode)
+	Unknown
+	Unsorted
+	Up (right reading)
+	Use Default
+	Variation
+	VectorCraft Default
+	VectorCraft Defaults
+	VectorCraft Generic CMYK (SWOP-like)
+	VectorCraft Swatches (.vcswatches)
+	Vertical Align
+	Vertical Area Type
+	Vertical Type
+	Vertical Type on a Path
+	Video 1920×1080
+	Video 3840×2160
+	Video Banner 2560×1440
+	Video Thumbnail 1280×720
+	Visible & Printable Layers
+	Visible Layers
+	Vivid
+	Warm
+	Watch 184×224
+	Watch 198×242
+	Web 1024×768
+	Web 1280×720
+	Web 1280×800
+	Web 1366×768
+	Web 1440×900
+	Web 1600×900
+	WebP
+	Working RGB
+	Wrinkle
+	X:
+	Y:
+	[Custom]
+	[Default]
+	[High Quality Print]
+	[High Resolution]
+	[Low Resolution]
+	[Medium Resolution]
+	[PDF/X-1a:2001]
+	[PDF/X-3:2002]
+	[PDF/X-4:2010]
+	[Press Quality]
+	[Smallest File Size]
+	[VectorCraft Default]
+	of
+	sRGB IEC61966-2.1
+	x Height
+	▾ Default Actions
+	⚠ {chord} was already used by {names} — it has been removed there.
+@id	file.close
+@id	pathfinder.add
+@msg	this kind of brush has no options dialog yet
+@plural	{n} PR|{n} PRs
+@plural	{n} commit|{n} commits
+@plural	{n} shortcut is assigned more than once|{n} shortcuts are assigned more than once
+diagnostics	render
+diagnostics	ui
+effect	Horizontal
+effect	Points
+effect	Regular
+effect	Vertical
+file-filter	All placeable files
+file-filter	All readable files
+file-filter	Flattener presets
+file-filter	PDF presets
+file-filter	PDF-compatible .ai
+file-filter	Print presets
+file-filter	SVG Compressed
+file-filter	Swatch libraries
+file-filter	Templates
+file-filter	rsm Template
+gradient-kind	Radial
+mark-style	Japanese
+theme	Appearance
+	Load EPS into Clipboard
+@msg	an image of {w} × {h} pixels is too large to draw
+@msg	the image can't be read as a texture
+	Fill and Stroke Controls
+	Coloring Controls
+	Draw Mode Controls
+	Screen Mode Controls
+	Drawer menu
+	Toolbar: Show Controls
+@msg	control must be fillStroke, coloring, drawMode or screenMode
+@msg	unknown control `{name}`: fillStroke, coloring, drawMode or screenMode
+@msg	give a fraction `t` from 0 to 1
+@msg	give the path `id`
+@msg	invalid stroke widths
+@msg	object has no weighted stroke
+	Single Corner Radius
+	Top Left:
+	Top Right:
+	Bottom Left:
+	Bottom Right:
+	Softness
+	Ambient Light
+	Light behind the object
+	Lights
+	Add Light
+	Delete Light
+3d	Light
+	Automation
+	Essentials
+	Essentials Classic
+	Layout
+	OpenType
+	Painting
+	Printing and Proofing
+	Tracing
+	Typography
+	rsm
+	Web
+	[1P-High View]
+	[1P-Low View]
+	[1P-Normal View]
+	[2P-High View]
+	[2P-Low View]
+	[2P-Normal View]
+	[3P-Low View]
+	[3P-Normal View]
+	Legacy (version 7)
+	Transparent Images:
+	Flatten
+	Omit
+	Legacy .ai Options
+	A legacy .ai file holds one artboard: each artboard you check is saved as a separate file.
+	{count} of {total} artboards
+	Check an artboard to save.
+	Hidden Objects:
+	Hidden Layer
+	Make Visible
+	Text:
+	Editable
+	PDF-compatible
+	Dimension
+	Drawing : real size — 1:10 labels 1 unit on the page as 10.
+	Preview (1 inch on the page)
+	Set as Default
+	 out from a highlighted edge to place its dimension  |  
+	 cancels  |  Double-click the tool for options
+	Angular
+	Away from the Line
+	Between Line and Object
+	Drag out from a segment, or click two points, then click to place.
+	Drag out from a corner, or click two straight lines, then click to place.
+	Drag out from a circle or arc for its radius, inwards for its diameter.
+@msg	Choose a circle or a perfect arc
+@msg	Choose a precision from 0 to 6
+	Create Dimension
+	Dimension Tool
+	Dimension Tool Options
+	Display
+	Font Family:
+	Font Style:
+	Precision:
+	Update Dimensions
+@msg	Angles require two straight segments
+@msg	Choose two different points
+@msg	Choose two non-parallel straight segments
+@msg	Choose two nonzero angle arms
+@msg	Dimension point is outside the canvas
+@msg	Dimension size is outside its supported range
+@msg	First measured segment no longer exists
+@msg	Invalid dimension distance
+@msg	Invalid dimension font name
+@msg	Invalid drawing scale
+@msg	Invalid real scale
+@msg	Measured anchor no longer exists
+@msg	Measured segment no longer exists
+@msg	Non-finite dimension
+@msg	Scale must be drawing:real, for example 1:10
+@msg	Scale ratio must be between 1:1000000 and 1000000:1
+@msg	Second measured segment no longer exists
+@msg	Unknown dimension mode
+@msg	Unknown dimension option {k}
+@msg	Unknown dimension style
+@msg	Unknown unit
+	Close the circular ends of open profiles. Partial sweeps keep their cut sides open.
+	Darkness
+	Isolate Selected Object
+	Keep selected
+	Merge only with selection
+	Sample Color from Screen
+	The active document changed while the screen color sampler was open
+	This system has no screen color sampler
+	Color blindness – Tritanopia-type
+	Panels Except Tools and Control
+	Reset Tracking and Kerning
+	Reset Horizontal Scale
+@msg	span must be "object" or "selection", got {v}
+@msg	span: "selection" places a `gradient`, not a swatch
+@msg	span: "selection" places a gradient: give `gradient`
+@msg	span: "selection" places a linear or radial gradient, not a freeform one
+@msg	span: "selection" places the gradient itself: leave out `start` and `end` (they already place it in document coordinates)
+	Make Image Dynamic
+	Import Data Sets…
+	Export Data Sets…
+	Make Graph Dynamic
+	Batch…
+	Source Folder:
+	Destination Folder:
+	Overrides
+	Uses every data set of the open document.
+@msg	Batch: {count} processed
+@msg	Batch: {count} processed, {failed} failed
+@msg	choose a destination folder
+@msg	choose a source folder
+@msg	open a document with data sets
+@msg	the action has no steps
+	Registration:
+	By Layer
+	By Object
+	Clear All
+	Filter
+	Groups
+	Hidden
+	Images
+	Linked Files
+	Locked
+	Color Panel Options
+	Filter Layers Panel Rows
+	Hide Template
+	Show Template
+	Accent Color
+	Amber
+	Coral
+	Violet
+	Sketch
+	Halftone Pattern…
+	Halftone Pattern
+	Pattern Type
+	Dot
+	Color Scheme
+	Modern
+	Export Type:
+	Movie Clip
+@msg	name is empty
+@msg	no symbol named `{n}`
+@msg	Edit Original opens image and document files only; “{name}” is not one
+@msg	only http, https and mailto URLs open in the browser, not “{url}”
+@msg	{id} opens another app: only the person at the keyboard can run it
+@msg	“{name}” is not a file
+	Enable Guides for 9-Slice Scaling
+	Persistent
+	Library Panel Options
+	Artboard {n} of {total}
+	Encoding and writing the file…
+@plural	{n} more export waiting|{n} more exports waiting
+	Continue in Background
+	Cancel Export
+@msg	Export cancelled
+	Desired
+	Word Spacing:
+	Letter Spacing:
+	Glyph Scaling:
+	Auto Leading:
+	Single Word Justification:
+	Full Justify
+	Minimum must not exceed Desired, nor Desired Maximum.
+	Justification
+@msg	`{key}` must be an array of these names: {_1}
+	Mode
+	Blur Mode
+	Edge Only
+	Overlay Edge
+	Path Length
+@msg	its zlib compression is damaged
+@msg	its Zstandard compression is damaged
+@msg	it decompresses to more than {_1} MB
+@msg	the file's layers weren't read ({_1}): it comes in as its page, in one layer
+@msg	the file's layers weren't read from its editing data ({_1}): they come from its PDF part
+@msg	aiVersion 7 writes legacy .ai files; a .ait template is always PDF-compatible
+@msg	`mode` must be grayscale, rgb, hsb, cmyk or websafe
+@msg	the Color Picker is not open
+@msg	the screen color sampler is already open
+@msg	this system has no screen color sampler
+@msg	a mask has more than one art block
+@msg	mask art ends outside a mask dictionary
+@msg	cancelled; nothing was changed
+@msg	a linked image can't become a gradient mesh: embed it first
+@msg	the image has no usable size or position
+@msg	the image's pixels can't be read
+@msg	Persistent libraries not found: {files}
+@msg	`{given}` isn't a library panel (see window.swatchLibrary)
+@msg	library panel `{given}` isn't open
+@msg	too many library panels were opened in this session
+@msg	The image is {_1} × {_2} pixels, more than {LARGE_TRACE_SIDE} on a side: it is traced, but more slowly. A lower-fidelity preset or a smaller copy of the image traces faster.
+@msg	The image was traced at {_1} × {_2} pixels, scaled down from {_3} × {_4} ({_5} megapixels at most).
+swatch	[None]
+swatch	[Registration]
+swatch	White
+swatch	Black
+swatch	Red
+swatch	Orange Red
+swatch	Orange
+swatch	Amber
+swatch	Yellow
+swatch	Yellow Green
+swatch	Lime
+swatch	Green
+swatch	Emerald
+swatch	Teal
+swatch	Aqua
+swatch	Cyan Green
+swatch	Cyan
+swatch	Azure
+swatch	Blue
+swatch	Indigo
+swatch	Violet
+swatch	Purple
+swatch	Magenta
+swatch	Rose
+swatch	Pink
+swatch	Brown
+swatch	Tan
+swatch	Coffee
+swatch	Chocolate
+swatch	Sand
+swatch	Copper
+swatch	Rust
+swatch	Walnut
+swatch	Espresso
+swatch	White, Black
+swatch	Radial White, Black
+swatch	Sunset
+swatch	Ocean
+swatch	Grays
+swatch	Brights
+swatch	Bright Red
+swatch	Bright Yellow
+swatch	Bright Green
+swatch	Bright Blue
+swatch	Bright Violet
+	Automate
+	Include All Subdirectories
+	Override Action "Open" Commands
+	Override Action "Save" Commands
+	Override Action "Export" Commands
+	Stop on Errors
+	Save and Close
+	Play:
+	About VectorCraft
+	Applies the next time VectorCraft starts.
+	Quit VectorCraft
+	VectorCraft copies the fonts to {folder}.
+	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.
+	VectorCraft didn't quit normally last time. These documents had unsaved changes:
+	VectorCraft Help…
+	VectorCraft on GitHub
+	Welcome to VectorCraft
+	Hide VectorCraft
+	VectorCraft documents: one locked object, updated when the file changes.
+@msg	the file's variables and data sets weren't read (variables: {variables}, data sets: {data_sets}): the Variables panel doesn't list them
