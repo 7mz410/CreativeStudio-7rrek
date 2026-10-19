@@ -41,6 +41,16 @@ def code(text: str) -> str:
 # `.rsm` (rsm's extension) still opens, so it is listed after 7rrek in every extension list.
 # A rule runs only while its new text is missing, so a second run changes nothing.
 TARGETED = {
+    # The app's name where a bare "rsm" literal is the name, not the extension.
+    'crates/ui-egui/src/native_menu.rs': [('pub const APP_NAME: &str = "rsm";', 'pub const APP_NAME: &str = "7rrek";')],
+    'crates/ui-egui/src/menus.rs': [('.filter(|(title, _)| *title != "rsm")', '.filter(|(title, _)| *title != "7rrek")')],
+    'crates/ui-egui/src/tests_nativemenu.rs': [('assert_eq!(titles, ["rsm", "File"', 'assert_eq!(titles, ["7rrek", "File"')],
+    'crates/ui-egui/src/i18n/tests.rs': [('.find(|m| m.title == "rsm")', '.find(|m| m.title == "7rrek")')],
+    'crates/ui-egui/src/dialogs/about.rs': [('egui::RichText::new("rsm").font(theme::semibold(22.0))', 'egui::RichText::new("7rrek").font(theme::semibold(22.0))')],
+    'crates/ui-egui/src/dialogs/export_for_screens.rs': [
+        ('    ("rsm", "vectorcraft", None, false),', '    ("7rrek", "vectorcraft", None, false),'),
+        ('"EPS", "AI", "rsm"];', '"EPS", "AI", "7rrek"];'),
+    ],
     'crates/format/src/lib.rs': [
         ('pub const STUDIO_EXTENSION: &str = "rsm";', 'pub const STUDIO_EXTENSION: &str = "7rrek";'),
         ('/// rsm saves documents as `.rsm` (the same contents as `.vectorcraft`).',
@@ -130,7 +140,7 @@ def main():
     tracked = subprocess.run(['git', '-C', str(ROOT), 'ls-files'], capture_output=True, text=True).stdout.split()
     for rel in tracked:
         p = ROOT / rel
-        if not p.is_file() or rel.startswith('studio/ar-work') or rel == 'studio/anim_brand.py' or p.suffix in ('.png', '.icns', '.ico', '.ttf', '.otf'):
+        if not p.is_file() or rel.startswith('studio/ar-work') or rel == 'studio/anim_brand.py' or rel == '.github/workflows/studio-release.yml' or p.suffix in ('.png', '.icns', '.ico', '.ttf', '.otf'):
             continue
         try:
             s = p.read_text(encoding='utf-8')

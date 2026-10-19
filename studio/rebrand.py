@@ -273,6 +273,9 @@ def main():
         src = path.read_text(encoding='utf-8')
         out = src
         for a, b in pairs:
+            # 7rrek renames the constant on top of this; don't add a second one.
+            if a.startswith('pub const LEGACY_EXTENSION') and 'pub const STUDIO_EXTENSION' in out:
+                continue
             if not b or b not in out:
                 out = out.replace(a, b)
         if rel in EXT_TESTS:
