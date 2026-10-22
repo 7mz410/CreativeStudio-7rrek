@@ -5290,3 +5290,141 @@ swatch	Bright Violet	بنفسجي ساطع
 	Move the keyframe's art toward the next keyframe	حرّك رسم الإطار الرئيسي نحو الإطار الرئيسي التالي
 	Show the keyframes before and after faintly	اعرض الإطارات الرئيسية السابقة واللاحقة بشفافية
 	Export Animated GIF	تصدير GIF متحرك
+# Upstream sync 2026-10-22
+	Add filters from the list above	أضف مرشحات من القائمة أعلاه
+	Add to Stack	إضافة إلى المكدّس
+	Alt key toggles to Smooth Tool	مفتاح Alt يبدّل إلى أداة التنعيم
+	Applied Filters	المرشحات المطبّقة
+	Art Brush	فرشاة فنية
+	Artwork	العمل الفني
+	Auto-Simplify	تبسيط تلقائي
+	Black and white stay as they are. Dark colors become shades of the stroke color and light colors become tints of it.	يبقى الأسود والأبيض كما هما. تصبح الألوان الداكنة ظلالاً للون الحد، والفاتحة درجاتٍ منه.
+	Black becomes the stroke color and white stays white. Other colors become tints of the stroke color by their lightness.	يصبح الأسود بلون الحد ويبقى الأبيض أبيض. تصبح الألوان الأخرى درجاتٍ من لون الحد حسب فتحتها.
+	Bottom-Justified Tab	جدولة بمحاذاة الأسفل
+	Bristle Brush	فرشاة الشعيرات
+	Calligraphic Brush	فرشاة خطية
+	Categories	الفئات
+	Character Direction	اتجاه الحروف
+	Colorization Tips	نصائح التلوين
+	Consider Open Filled Paths as Closed	اعتبار المسارات المفتوحة المعبّأة مغلقة
+	Cursor Swatch Preview	معاينة العينة عند المؤشر
+	Diffuse	انتشار
+	Drag an item here, or right-click one, to put it in this group.	اسحب عنصراً إلى هنا، أو انقر عليه بالزر الأيمن، لوضعه في هذه المجموعة.
+	Drop here to take it out of its group	أفلته هنا لإخراجه من مجموعته
+	Ease In	تسارع تدريجي
+	Ease In Out	تسارع ثم تباطؤ
+	Ease Out	تباطؤ تدريجي
+	Ease Out In	تباطؤ ثم تسارع
+	Effect Gallery	معرض التأثيرات
+	Eyedropper: click the art to sample the key color	القطارة: انقر على العمل الفني لأخذ عينة من اللون الأساسي
+	Filters	المرشحات
+	Gap Length:	طول الفجوة:
+	Highlight:	الإضاءة:
+	Insert Kashidas	إدراج كشيدات
+	Load Variable Library…	تحميل مكتبة المتغيرات…
+	Locate Selected Objects	تحديد موقع الكائنات المحددة
+	Long	طويل
+	New Brush	فرشاة جديدة
+	Open this dialog with these settings next time	افتح مربع الحوار هذا بهذه الإعدادات في المرة القادمة
+	Open this setting's help page	فتح صفحة المساعدة لهذا الإعداد
+	Overlap	تداخل
+	Pattern Brush	فرشاة النقش
+	Pick Color From:	اختيار اللون من:
+	Ramp:	التدرّج:
+	Scatter Brush	فرشاة النثر
+	Select Fills	تحديد التعبئات
+	Select Strokes	تحديد الحدود
+	Select art to make a scatter, art or pattern brush.	حدد عملاً فنياً لإنشاء فرشاة نثر أو فرشاة فنية أو فرشاة نقش.
+	Select artwork to apply effects	حدد عملاً فنياً لتطبيق التأثيرات
+	Selection:	التحديد:
+	Shift:	Shift:
+	Snap to Unit	الالتقاط إلى الوحدة
+	Standard	قياسي
+	Straight Line	خط مستقيم
+	Stylistic	أسلوبي
+	The art keeps its own colors.	يحتفظ العمل الفني بألوانه.
+	The key color becomes the stroke color. The other colors shift their hue by the same amount and keep their saturation and brightness.	يصبح اللون الأساسي بلون الحد. تُزاح ألوان الباقي في التدرّج اللوني بالمقدار نفسه وتحتفظ بتشبّعها وسطوعها.
+	The plug-in writes the whole document.	الإضافة تكتب المستند بالكامل.
+	The samples show this brush on a blue stroke.	تعرض العينات هذه الفرشاة على حد أزرق.
+	Tips	نصائح
+	Top-Justified Tab	جدولة بمحاذاة الأعلى
+	Attach Objects on Path	إلحاق الكائنات بالمسار
+	Bas Relief	نقش بارز
+	Chalk & Charcoal	طباشير وفحم
+	Charcoal	فحم
+	Chrome	كروم
+	Colored Pencil	قلم ملوّن
+	Dry Brush	فرشاة جافة
+	Expand Objects on Path	توسيع الكائنات على المسار
+	Fresco	فريسكو
+	Graphic Pen	قلم رسومي
+	Hard Mix	مزج حاد
+	Load Variable Library	تحميل مكتبة المتغيرات
+	Move Brush	نقل الفرشاة
+	Note Paper	ورق ملاحظات
+	Objects on Path Options	خيارات الكائنات على المسار
+	Paint Daubs	لطخات الطلاء
+	Palette Knife	سكين الألوان
+	Photocopy	نسخة ضوئية
+	Plaster	جبس
+	Plastic Wrap	غلاف بلاستيكي
+	Reticulation	تشبيك
+	Rough Pastels	باستيل خشن
+	Ruby	روبي
+	Scale Text Attributes	تحجيم سمات النص
+	Smudge Stick	عصا التلطيخ
+	Soft Mix	مزج ناعم
+	Sponge	إسفنج
+	Stamp	ختم
+	Torn Edges	حواف ممزقة
+	Underpainting	طلاء تحتي
+	Water Paper	ورق مائي
+	Watercolor	ألوان مائية
+@msg	variables that aren't text were left out: {kinds}	استُبعدت المتغيرات غير النصية: {kinds}
+	 on the canvas to create one (	 على اللوحة لإنشاء واحدة (
+	 selects several, or draws one inside an artboard)	 يحدد عدة لوحات، أو يرسم واحدة داخل لوحة رسم)
+	3D Lighting Preset	إعداد الإضاءة ثلاثية الأبعاد المسبق
+	Attach	إلحاق
+	Bas Relief…	نقش بارز…
+	Brush Art	فن الفرشاة
+	Chalk & Charcoal…	طباشير وفحم…
+	Charcoal…	فحم…
+	Chrome…	كروم…
+	Collapse Panel Group	طي مجموعة اللوحات
+	Colored Pencil…	قلم ملوّن…
+	Dark Rough	خشن داكن
+	Dry Brush…	فرشاة جافة…
+	Effect Gallery Dialog	مربع حوار معرض التأثيرات
+	Effect Gallery…	معرض التأثيرات…
+	Fresco…	فريسكو…
+	Graphic Pen…	قلم رسومي…
+	Hide Live Paint Gaps	إخفاء فجوات التلوين الحي
+	Light Rough	خشن فاتح
+	Locate Library…	تحديد موقع المكتبة…
+	Move Anchor Point	نقل نقطة الربط
+	Move Library Group	نقل مجموعة المكتبة
+	New Without Dialog	جديد بدون مربع حوار
+	Note Paper…	ورق ملاحظات…
+	Objects on Path	كائنات على المسار
+	Objects on Path Tool	أداة الكائنات على المسار
+	Paint Daubs…	لطخات الطلاء…
+	Palette Knife…	سكين الألوان…
+	Photocopy…	نسخة ضوئية…
+	Plaster…	جبس…
+	Plastic Wrap…	غلاف بلاستيكي…
+	Reticulation…	تشبيك…
+	Rough Pastels…	باستيل خشن…
+	Ruby…	روبي…
+	Show Live Paint Gaps	إظهار فجوات التلوين الحي
+	Simple	بسيط
+	Smudge Stick…	عصا التلطيخ…
+	Sparkle	لمعان
+	Sponge…	إسفنج…
+	Stamp…	ختم…
+	Torn Edges…	حواف ممزقة…
+	Touch	لمسة
+	Underpainting…	طلاء تحتي…
+	Water Paper…	ورق مائي…
+	Watercolor…	ألوان مائية…
+	Wide Blurry	عريض ضبابي
+	Wide Sharp	عريض حاد
