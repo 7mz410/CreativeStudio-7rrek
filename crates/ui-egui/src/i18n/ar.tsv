@@ -705,6 +705,7 @@
 	Draw Normal	الرسم العادي
 	Draw:	الرسم:
 	Drawing Mode	وضع الرسم
+	Drop Artwork	إسقاط العمل
 	Drop Shadow	ظل منسدل
 	Drop Shadow…	ظل منسدل…
 	Duotone Gradients	تدرّجات ثنائية اللون
@@ -5259,7 +5260,6 @@ swatch	Bright Violet	بنفسجي ساطع
 	VectorCraft didn't quit normally last time. These documents had unsaved changes:	لم يُغلق VectorCraft بشكل طبيعي في المرة السابقة. كانت هناك تغييرات غير محفوظة في هذه المستندات:
 	VectorCraft Help…	مساعدة VectorCraft…
 	VectorCraft on GitHub	VectorCraft على GitHub
-	Welcome to 7rrek	مرحباً بك في حرّك
 	Hide VectorCraft	إخفاء VectorCraft
 	VectorCraft documents: one locked object, updated when the file changes.	مستندات VectorCraft: كائن واحد مقفل، يُحدّث عند تغيير الملف.
 @msg	the file's variables and data sets weren't read (variables: {variables}, data sets: {data_sets}): the Variables panel doesn't list them	لم تُقرأ متغيرات الملف ومجموعات البيانات (المتغيرات: {variables}، مجموعات البيانات: {data_sets}): لوحة المتغيرات لا تعرضها
