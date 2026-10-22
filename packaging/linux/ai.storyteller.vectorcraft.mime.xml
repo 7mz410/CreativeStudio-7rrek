@@ -6,6 +6,8 @@
   <mime-type type="application/x-vectorcraft">
     <comment>VectorCraft document</comment>
     <icon name="ai.storyteller.vectorcraft"/>
+    <glob pattern="*.7rrek"/>
+    <glob pattern="*.rsm"/>
     <glob pattern="*.vectorcraft"/>
     <glob pattern="*.drawcraft"/>
   </mime-type>

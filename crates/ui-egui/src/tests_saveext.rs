@@ -162,12 +162,12 @@ fn the_file_type_picked_in_the_save_dialog_decides_the_format() {
 }
 
 /// The suggested name's extension typed in another case still gets the picked type's
-/// (`Untitled-1.VECTORCRAFT` with .ai picked is saved as `Untitled-1.ai`), and the picked type's
+/// (`Untitled-1.RSM` with .ai picked is saved as `Untitled-1.ai`), and the picked type's
 /// own extension typed in another case stays as typed (`a.AI` with .ai picked).
 #[test]
 fn the_suggested_names_extension_in_another_case_gets_the_picked_types() {
     for (cmd, answer, expected) in [
-        ("file.save", &["/art/Untitled-1.VECTORCRAFT", "ai"][..], "/art/Untitled-1.ai"),
+        ("file.save", &["/art/Untitled-1.7RREK", "ai"][..], "/art/Untitled-1.ai"),
         ("file.save", &["/art/Untitled-1.7rrek", "svg"], "/art/Untitled-1.svg"),
         ("file.saveAsTemplate", &["/art/Untitled-1.VCTemplate", "ait"], "/art/Untitled-1.ait"),
     ] {
