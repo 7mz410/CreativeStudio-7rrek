@@ -223,8 +223,7 @@
 	Artboard {number}	Çalışma yüzeyi {number}
 	Artboard:	Çalışma yüzeyi:
 	Artboards	Çalışma Yüzeyleri
-	ArtCraft Website	ArtCraft Web Sitesi
-	ArtCraft website	ArtCraft web sitesi
+	Creative Studio Project	ArtCraft Web Sitesi
 	Artwork Colors	Sanat Eseri Renkleri
 	As Multiple Assets	Çoklu Varlıklar Olarak
 	As Single Asset	Tek Varlık Olarak
@@ -1417,7 +1416,7 @@
 	Italian	İtalyan
 	Japanese	Japonca
 	Join	Katıl
-	Join Our Discord	Discord'umuza Katılın
+	Upstream Community on Discord	Discord'umuza Katılın
 	Join our Discord	Discord'umuza katılın
 	Join the ArtCraft community on Discord (discord.gg/artcraft)	Discord'daki ArtCraft topluluğuna katılın (discord.gg/artcraft)
 	Join the lines of each paragraph	Her paragrafın satırlarını birleştirin
@@ -3334,7 +3333,7 @@
 	Vector illustration — fast, open, scriptable.	Vektör illüstrasyonu — hızlı, açık, yazılabilir.
 	VectorCraft didn't quit normally last time. These documents had unsaved changes:	VectorCraft geçen sefer normal şekilde kapanmamıştı. Bu belgelerde kaydedilmemiş değişiklikler vardı:
 	VectorCraft Help…	VectorCraft Yardımı…
-	VectorCraft on getartcraft.com	Getartcraft.com'da VectorCraft
+	Creative Studio Website	Getartcraft.com'da 7rrek
 	VectorCraft on GitHub	GitHub'da VectorCraft
 	Vectors	Vektörler
 	Version {version} — open-source vector illustration in pure Rust.	Sürüm {version} — saf Rust'ta açık kaynaklı vektör çizimi.
@@ -3375,7 +3374,7 @@
 	Web Snap:	Web Snap:
 	Weight	Ağırlık
 	Weight:	Ağırlık:
-	Welcome to VectorCraft	VectorCraft'a hoş geldiniz
+	Welcome to 7rrek	7rrek'a hoş geldiniz
 	When pasting text	Metin yapıştırırken
 	White	Beyaz
 	Widget Position:	Widget Konumu:
@@ -3893,7 +3892,7 @@ axis	Both	Her İkisi
 @msg	node {_1} is not text	{_1} düğümü metin değil
 @msg	not a DXF drawing	DXF çizimi değil
 @msg	not a VectorCraft file: {0}	bir VectorCraft dosyası değil: {0}
-@msg	not a VectorCraft shortcut set (missing `overrides`)	VectorCraft kısayol seti değil ("geçersiz kılmalar" eksik)
+@msg	not a 7rrek shortcut set (missing `overrides`)	7rrek kısayol seti değil ("geçersiz kılmalar" eksik)
 @msg	not a graphic style library (format `{_1}`)	grafik stili kitaplığı değil (`{_1}` biçimi)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	bir kısayol seti değil: metin eğik çizgi adı ve açılış paranteziyle başlamıyor
 @msg	not a stored central record	saklanan merkezi bir kayıt değil
@@ -4160,7 +4159,7 @@ axis	Both	Her İkisi
 @msg	its editing data doesn't say where its art is	düzenleme verileri sanatın nerede olduğunu söylemiyor
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	bu dosya PDF uyumluluğu olmadan kaydedildi ve düzenleme verileri okunamıyor ({why})
 @msg	No fonts are missing in this document	Bu belgede eksik yazı tipi yok
-@msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft diğer uygulamaların veya sistemin klasörlerini aramaz: {path}
+@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft diğer uygulamaların veya sistemin klasörlerini aramaz: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft, Kullanıcılar'daki Paylaşılan veya Genel klasörü aramıyor: {path}
 @msg	{path} is not a folder	{path} bir klasör değil
 @msg	the search couldn't start: try again in a moment	arama başlatılamadı: birazdan tekrar deneyin
@@ -4883,7 +4882,7 @@ file-filter	Print presets	Baskı önayarları
 file-filter	SVG Compressed	Sıkıştırılmış SVG
 file-filter	Swatch libraries	Renk örneği kitaplıkları
 file-filter	Templates	Şablonlar
-file-filter	VectorCraft Template	VectorCraft Şablonu
+file-filter	7rrek Template	7rrek Şablonu
 gradient-kind	Radial	Radyal
 mark-style	Japanese	Japon
 theme	Appearance	Görünüm

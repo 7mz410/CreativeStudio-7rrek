@@ -384,7 +384,7 @@ pub fn export_json(set: &str, overrides: &BTreeMap<String, String>) -> Value {
 }
 
 pub fn import_json(v: &Value) -> Result<(String, BTreeMap<String, String>), String> {
-    let o = v.get("overrides").and_then(Value::as_object).ok_or("not a VectorCraft shortcut set (missing `overrides`)")?;
+    let o = v.get("overrides").and_then(Value::as_object).ok_or("not a 7rrek shortcut set (missing `overrides`)")?;
     let mut out = BTreeMap::new();
     for (k, v) in o {
         let s = v.as_str().ok_or_else(|| format!("shortcut for `{k}` must be a string"))?;
@@ -478,7 +478,7 @@ pub fn run_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Resu
             let bytes = serde_json::to_vec_pretty(&v).unwrap_or_default();
             let pick = crate::FilePick {
                 filters: vec![crate::FilePick::filter("Shortcut sets", &["json"])],
-                ..crate::FilePick::named("VectorCraft Shortcuts.json")
+                ..crate::FilePick::named("7rrek Shortcuts.json")
             };
             let path = s("path").or_else(|| crate::picks::save(app, &pick));
             match path {
@@ -489,7 +489,7 @@ pub fn run_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Resu
                 // Its save dialog is open: the file is written when it answers.
                 None if app.file_dialog_open() => Err("cancelled".into()),
                 None => match app.services.download.as_mut() {
-                    Some(dl) => dl("VectorCraft Shortcuts.json", &bytes).map(|()| Value::Null),
+                    Some(dl) => dl("7rrek Shortcuts.json", &bytes).map(|()| Value::Null),
                     None => Ok(v),
                 },
             }

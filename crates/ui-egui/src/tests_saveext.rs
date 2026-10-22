@@ -168,7 +168,7 @@ fn the_file_type_picked_in_the_save_dialog_decides_the_format() {
 fn the_suggested_names_extension_in_another_case_gets_the_picked_types() {
     for (cmd, answer, expected) in [
         ("file.save", &["/art/Untitled-1.VECTORCRAFT", "ai"][..], "/art/Untitled-1.ai"),
-        ("file.save", &["/art/Untitled-1.VectorCraft", "svg"], "/art/Untitled-1.svg"),
+        ("file.save", &["/art/Untitled-1.7rrek", "svg"], "/art/Untitled-1.svg"),
         ("file.saveAsTemplate", &["/art/Untitled-1.VCTemplate", "ait"], "/art/Untitled-1.ait"),
     ] {
         let (mut app, shown, written) = portal_app();
@@ -181,15 +181,15 @@ fn the_suggested_names_extension_in_another_case_gets_the_picked_types() {
 }
 
 /// A name typed with the extension of a format the save does not write has it replaced, with or
-/// without a picked type: `card.ait` and `card.png` are saved as `card.vectorcraft`, not
-/// `card.ait.vectorcraft`. An extension that names no format stays part of the name.
+/// without a picked type: `card.ait` and `card.png` are saved as `card.7rrek`, not
+/// `card.ait.7rrek`. An extension that names no format stays part of the name.
 #[test]
 fn a_typed_extension_of_a_format_the_save_does_not_write_is_replaced() {
     for (cmd, answer, expected) in [
-        ("file.save", &["/art/card.ait"][..], "/art/card.vectorcraft"),
-        ("file.save", &["/art/card.png"], "/art/card.vectorcraft"),
-        ("file.save", &["/art/My.Card.PNG"], "/art/My.Card.vectorcraft"),
-        ("file.save", &["/art/notes.v2"], "/art/notes.v2.vectorcraft"),
+        ("file.save", &["/art/card.ait"][..], "/art/card.7rrek"),
+        ("file.save", &["/art/card.png"], "/art/card.7rrek"),
+        ("file.save", &["/art/My.Card.PNG"], "/art/My.Card.7rrek"),
+        ("file.save", &["/art/notes.v2"], "/art/notes.v2.7rrek"),
         ("file.save", &["/art/card.png", "ai"], "/art/card.ai"),
         ("file.saveCopy", &["/art/card.tif", "svg"], "/art/card.svg"),
         ("file.saveAsTemplate", &["/art/card.ai"], "/art/card.vctemplate"),
@@ -206,12 +206,12 @@ fn a_typed_extension_of_a_format_the_save_does_not_write_is_replaced() {
 #[test]
 fn a_replaced_extension_asks_before_replacing_a_file_there() {
     let (mut app, shown, written) = portal_app();
-    app.services.exists = Some(Box::new(|p: &str| p == "/art/card.vectorcraft"));
-    assert_eq!(saved_from(&mut app, &shown, &written, "file.save", &["/art/card.png"]), "/art/card.vectorcraft");
+    app.services.exists = Some(Box::new(|p: &str| p == "/art/card.7rrek"));
+    assert_eq!(saved_from(&mut app, &shown, &written, "file.save", &["/art/card.png"]), "/art/card.7rrek");
     assert_eq!(app.ui.dialog.as_ref().map(|d| d.kind.as_str()), Some(dialogs::confirm::REPLACE));
     assert!(written.borrow().is_empty());
     dialogs::confirm(&mut app).unwrap();
-    assert_eq!(*written.borrow(), ["/art/card.vectorcraft"]);
+    assert_eq!(*written.borrow(), ["/art/card.7rrek"]);
 }
 
 /// Save As to the type picked asks for that format's options: the .ai options (Version first),
