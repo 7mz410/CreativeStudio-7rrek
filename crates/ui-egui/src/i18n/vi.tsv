@@ -4714,7 +4714,6 @@ theme	Appearance	Giao diện
 @msg	variables are locked	biến số bị khóa
 @msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft không tìm kiếm trong thư mục của ứng dụng khác hoặc hệ thống: {path}
 @msg	variables that aren't text were left out: {kinds}	các biến số không phải văn bản đã bị bỏ qua: {kinds}
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft không tìm kiếm trong thư mục của ứng dụng khác hoặc hệ thống: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft không tìm kiếm thư mục Shared hoặc Public trong Users: {path}
 @msg	VectorCraft failed to start: {e}	VectorCraft khởi động thất bại: {e}
 @msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Thư mục Phông chữ của VectorCraft chưa được đặt ở đây: ứng dụng máy tính và vectorcraft-cli đặt nó
