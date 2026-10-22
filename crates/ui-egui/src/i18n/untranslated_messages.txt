@@ -239,6 +239,7 @@ a document keeps at most {MAX_VIEWS} views
 a document keeps at most {_1} graph designs
 a document keeps at most {_1} saved selections
 a document links at most {MAX_SVG_SCRIPTS} JavaScript files
+a frame didn't render
 a graph has at most {_1} series, so it transposes with at most that many categories
 a layer can't be merged into its own sublayer
 a layer's form box isn't an array
@@ -465,6 +466,9 @@ format `{f}`: pdf or postscript
 format `{f}`: text or json
 format is `{_1}`
 formats must be an array of rows, not {v}
+fps must be a whole number from 1 to 60
+frame must be a whole number from 1 to {_1}
+frames must be a whole number from 1 to 10000
 frequency must be between 1 and 300 lines per inch
 from and to must be finite
 from must be [x0, y0, x1, y1]
@@ -712,6 +716,7 @@ no guide selected (or give an index)
 no guide {i}
 no item at index {_1}
 no item at index {from}
+no keyframe at frame {frame} on this layer
 no layer
 no layer {id} (see layer.list)
 no layers to export
@@ -753,6 +758,7 @@ no stop {i} (the gradient has {n})
 no style `{name}`
 no such assets (see assets.list)
 no such frame anchor, or the frame would reach past the canvas
+no such layer
 no such object id {value}
 no such objects
 no such rows
@@ -786,6 +792,7 @@ not a closed path
 not a flattener presets file (format `{_1}`)
 not a flattener presets file: {e}
 not a gradient mesh or mesh envelope
+not a layer in this document
 not a layer or group
 not a library file: {e}
 not a mesh envelope point
@@ -868,6 +875,7 @@ pass newName, registration and/or exportType
 pass newName, registration, exportType and/or nineSlice
 passwords can have up to {MAX_PASSWORD} bytes
 path has no open end
+path is required
 paths must be strings
 pattern image pixels are missing
 pattern placement traversal limit exceeded
@@ -931,6 +939,7 @@ save the document first: Package collects a saved document
 save the document first: copy puts the file in its folder
 scale `{s}`: a factor such as 2x, a width (100w), a height (100h) or a resolution (72ppi)
 scale must be a number above 0, at most 64
+scale must be from 0.05 to 8
 scale must be non-zero
 scope must be selection or all (got {other})
 scribble is too long
@@ -1025,6 +1034,7 @@ the character's size can't be measured
 the compound path has no path to put type on
 the container of the listed objects is gone
 the copy `{user_id}` can't be read as a library
+the copy failed
 the copy would leave the canvas
 the data isn't an EMF or WMF picture
 the data isn't an EPS or PostScript picture
@@ -1062,6 +1072,7 @@ the library holds {MAX_ITEMS} items of this kind already
 the module imports `{_1}.{_2}`, but plug-ins get no host imports (no WASI, files or network)
 the module must export its linear memory as `memory`
 the name is empty
+the new layer failed
 the object has no fill, stroke or effect
 the object has no graphic style (pass `name`)
 the object is hidden or locked
@@ -1112,6 +1123,7 @@ there is already a design named `{name}`
 there is already a design named `{to}`
 there is no library: create one first
 these paths are too degenerate for Shaper
+this layer already has a keyframe at frame {frame}
 thumbnail: no page {n} (the PDF has {_1})
 thumbnail: no page {v} (the {what} has {count})
 tileRange of {what}: {e}
@@ -1272,6 +1284,7 @@ zoom must be positive
 {k} must be a number from {min} to {max}
 {k} must be a number or "auto"
 {k} must be a string
+{k} must be from 0 to 5
 {k} must be text
 {k} must be true or false
 {k} must be {{size?, position?}}
@@ -1292,3 +1305,4 @@ zoom must be positive
 {what} points outside memory
 {what} would print more than {MAX_COPIES_PER_SHEET} copies on a sheet: scale it up
 {what} would print on more than {MAX_TILES} tiles: scale it down
+{w} × {h} pixels is outside what an animated GIF export takes
