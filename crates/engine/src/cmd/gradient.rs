@@ -60,7 +60,7 @@ fn select_stop(s: &mut Session, p: &Value) -> Result<Value> {
         None => return Err(bad(C, "missing `index` (a stop index, or null to clear)")),
         Some(Value::Null) => None,
         Some(v) => {
-            let i = v.as_u64().ok_or_else(|| bad(C, "`index` must be a whole number or null"))? as usize;
+            let i = v.as_u64().map(index).ok_or_else(|| bad(C, "`index` must be a whole number or null"))?;
             let n = active_gradient(s).ok_or_else(|| bad(C, "the active paint is not a gradient"))?.gradient.stops.len();
             if i >= n {
                 return Err(bad(C, format!("no stop {i} (the gradient has {n})")));
@@ -117,7 +117,12 @@ pub(crate) fn link_stops(d: &Document, v: &Value) -> Parsed<Value> {
         if d.swatch(&name).is_none() && st.get("color").is_some() {
             continue;
         }
-        let tint = st.get("tint").and_then(Value::as_f64).map(|t| (t / 100.0).clamp(0.0, 1.0) as f32);
+        let tint = st
+            .get("tint")
+            .filter(|v| !v.is_null())
+            .map(|v| v.as_f64().ok_or_else(|| format!("stop {i}: `{k}` must be a number", k = "tint")))
+            .transpose()?;
+        let tint = tint.map(|t| (t / 100.0).clamp(0.0, 1.0) as f32);
         let Paint::Solid { color, swatch, tint } = swatch_solid(d, &name, tint).map_err(|e| format!("stop {i}: {e}"))? else {
             continue;
         };
@@ -372,7 +377,9 @@ pub(crate) fn apply_gradient_edit_in(
 fn edit_gradient(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "paint.editGradient";
     let item = item_target(s, p, C)?;
-    let stroke = edits_stroke(s, p, item, !s.fill_active)?;
+    let stroke = edits_stroke(s, p, item, !s.fill_active, C)?;
+    check_switches(p, &["reverse"], C)?;
+    check_numbers(p, &["angle"], C)?;
     let item = item.of_kind(s, !stroke);
     let ids = item.targets(s, p)?;
     // How the gradient lies on a stroke (the panel's Stroke buttons).
@@ -381,6 +388,7 @@ fn edit_gradient(s: &mut Session, p: &Value) -> Result<Value> {
         Some(_) if !stroke => return Err(bad(C, "`strokeMode` applies to strokes (stroke: true)")),
         Some(m) => Some(StrokeGradientMode::parse(m).ok_or_else(|| bad(C, format!("strokeMode must be within|along|across, got {m}")))?),
     };
+    super::paint::check_keep_model(p, C)?;
     // New RGB stop colors take the document's model; those of the swatches the stops name don't.
     let stored = stop_colors(s, p, p);
     // Stops naming swatches take their colours from them.
@@ -553,7 +561,7 @@ fn set_gradient_geom(s: &mut Session, p: &Value) -> Result<Value> {
     }
     let p = &p;
     let item = item_target(s, p, C)?;
-    let stroke = edits_stroke(s, p, item, !s.fill_active)?;
+    let stroke = edits_stroke(s, p, item, !s.fill_active, C)?;
     let item = item.of_kind(s, !stroke);
     let targets = match item {
         ItemTarget::Top => leaf_targets(s, &ids_param(p, "ids").map_or_else(|| selected_roots(s), |ids| Ok(outermost(&s.doc()?.doc, ids)))?)?,

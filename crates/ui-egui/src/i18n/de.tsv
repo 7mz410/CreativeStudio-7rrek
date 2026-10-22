@@ -288,6 +288,7 @@
 	Blur	Weichzeichnen
 	Bottom	Unten
 	Bottom in Front	Unten im Vordergrund
+	Bottom-Justified Tab	Unten ausgerichteter Tabulator
 	Bottom:	Unten:
 	Bounds	Begrenzung
 	Bounds (Fill Proportionally)	Begrenzung (proportional füllen)
@@ -1035,6 +1036,7 @@
 	Eyedropper Picks Up:	Pipette nimmt auf:
 	Eyedropper Tool	Pipette-Werkzeug
 	Eyedropper: click the art to sample the stop's colour	Pipette: Klicken Sie auf die Grafik, um die Farbe für den Farbstopp aufzunehmen
+	Eyedropper: click the art to sample the key color	Pipette: Klicken Sie auf die Grafik, um die Hauptfarbe aufzunehmen
 	Favorites	Favoriten
 	Feather…	Weiche Kante…
 	Feet	Fuß
@@ -1043,6 +1045,11 @@
 	Fidelity:	Genauigkeit:
 	Figure Space	Ziffernleerzeichen
 	Figure:	Ziffern:
+# Artwork drag between document tabs.
+	Drop Artwork	Grafik ablegen
+@msg	{key} must be [x, y] with finite coordinates	{key} muss [x, y] mit endlichen Koordinaten sein
+@msg	ids must contain 1–10000 object ids	ids muss 1–10000 Objekt-IDs enthalten
+
 	File	Datei
 	File Dimensions	Dateiabmessungen
 	File Format:	Dateiformat:
@@ -1061,8 +1068,17 @@
 	Fill (X), double-click for the Color Picker	Fläche (X), Doppelklick öffnet den Farbwähler
 	Fill and Stroke	Fläche und Kontur
 	Fill new strokes	Neue Striche füllen
+	Alt key toggles to Smooth Tool	Alt-Taste schaltet auf Glätten-Werkzeug um
 	Keep selected	Ausgewählt lassen
 	Merge only with selection	Nur mit Auswahl zusammenfügen
+	Consider Open Filled Paths as Closed	Offene gefüllte Pfade als geschlossen behandeln
+	Pick Color From:	Farbe aufnehmen aus:
+	Artwork	Bildmaterial
+	Cursor Swatch Preview	Farbfeldvorschau am Zeiger
+	Selection:	Auswahl:
+	Freeform	Freiform
+	Straight Line	Gerade Linie
+	Highlight:	Hervorheben:
 	Fill Color	Flächenfarbe
 	Fill New Type Objects With Placeholder Text	Neue Textobjekte mit Platzhaltertext füllen
 	Fill Rule	Füllregel
@@ -1191,6 +1207,10 @@ file-filter	Templates	Vorlagen
 	Large Gaps	Große Lücken
 	Gap Preview Color:	Vorschaufarbe für Lücken:
 	Close Gaps With Paths	Lücken mit Pfaden schließen
+	Show Live Paint Gaps	Lücken beim interaktiven Malen einblenden
+	Hide Live Paint Gaps	Lücken beim interaktiven Malen ausblenden
+	Select Fills	Flächen auswählen
+	Select Strokes	Konturen auswählen
 	Gaussian Blur…	Gaußscher Weichzeichner…
 	General	Allgemein
 	General › Placement › X	Allgemein › Platzierung › X
@@ -1295,6 +1315,7 @@ file-filter	Templates	Vorlagen
 	Hand-Drawn	Handgezeichnet
 	Handles	Griffe
 	Hard Light	Hartes Licht
+	Hard Mix	Hart mischen
 	Harmony Rules:	Harmonieregeln:
 	Harmony Sets	Harmoniesätze
 	Height	Höhe
@@ -1397,6 +1418,12 @@ file-filter	Templates	Vorlagen
 	Release Envelope	Hülle zurückwandeln
 	Release Image Trace	Bildnachzeichner zurückwandeln
 	Release Intertwine	Verflechtung zurückwandeln
+	Objects on Path	Objekte auf Pfad
+	Attach	Anhängen
+	Objects on Path Options	Optionen für Objekte auf Pfad
+	Objects on Path Tool	Objekte-auf-Pfad-Werkzeug
+	Attach Objects on Path	Objekte an Pfad anhängen
+	Expand Objects on Path	Objekte auf Pfad umwandeln
 	Release Live Paint	„Interaktiv malen“ zurückwandeln
 	Release Repeat	Wiederholung zurückwandeln
 	Release Slice	Slice zurückwandeln
@@ -1516,6 +1543,7 @@ file-filter	Templates	Vorlagen
 	Inspect Object	Objekt untersuchen
 	Install Plug-in	Plug-in installieren
 	Install Plug-in…	Plug-in installieren…
+	Open this setting's help page	Hilfeseite zu dieser Einstellung öffnen
 	Installed plug-in {}	Plug-in {} installiert
 	Intensity:	Intensität:
 	Intent:	Renderpriorität:
@@ -1720,6 +1748,7 @@ file-filter	Templates	Vorlagen
 	Load Text into Clipboard	Text in die Zwischenablage laden
 	Local Libraries	Lokale Bibliotheken
 	Locate Object	Objekt ausfindig machen
+	Locate Selected Objects	Ausgewählte Objekte ausfindig machen
 	Location	Speicherort
 	Location:	Ort:
 	Lock	Sperren
@@ -1823,6 +1852,9 @@ file-filter	Templates	Vorlagen
 	Modified:	Geändert:
 	Modify	Ändern
 	Mojikumi	Mojikumi
+	Insert Kashidas	Kashidas einfügen
+	Long	Lang
+	Stylistic	Stilistisch
 	Mojikumi Set	Mojikumi-Satz
 	Kinsoku Set	Kinsoku-Satz
 	Hard	Hart
@@ -1857,6 +1889,7 @@ file-filter	Templates	Vorlagen
 	Move Slices	Slices verschieben
 	Move Spine Point	Achsenpunkt verschieben
 	Reshape Spine Segment	Achsensegment umformen
+	Move Brush	Pinsel verschieben
 	Move Swatch	Farbfeld verschieben
 	Move Up	Nach oben verschieben
 	Move…	Verschieben…
@@ -1901,6 +1934,14 @@ file-filter	Templates	Vorlagen
 	Round Fan	Rund, Fächer
 	Flat Fan	Flach, Fächer
 	New Brush…	Neuer Pinsel…
+	New Brush	Neuer Pinsel
+	Calligraphic Brush	Kalligrafiepinsel
+	Scatter Brush	Spezialpinsel
+	Art Brush	Bildpinsel
+	Bristle Brush	Borstenpinsel
+	Pattern Brush	Musterpinsel
+	Select art to make a scatter, art or pattern brush.	Wählen Sie eine Grafik aus, um einen Spezial-, Bild- oder Musterpinsel zu erstellen.
+	Brush Art	Pinselgrafik
 	New Calligraphic Brush	Neuer Kalligrafiepinsel
 	New Character Style	Neues Zeichenformat
 	New Color Group	Neue Farbgruppe
@@ -1931,6 +1972,7 @@ file-filter	Templates	Vorlagen
 	New View	Neue Ansicht
 	New View…	Neue Ansicht…
 	New Window	Neues Fenster
+	New Without Dialog	Neu ohne Dialogfeld
 	New Workspace	Neuer Arbeitsbereich
 	New Workspace…	Neuer Arbeitsbereich…
 	New {kind} Style…	Neues {kind}format…
@@ -2119,6 +2161,7 @@ file-filter	Templates	Vorlagen
 	Output White	Ausgabe Weiß
 	Output › Mode	Ausgabe › Modus
 	Output:	Ausgabe:
+	Overlap	Überlappung
 	Overlap:	Überlappung:
 	Overlapping	Überlappend
 	Overlay	Ineinanderkopieren
@@ -2321,6 +2364,7 @@ mark-style	Japanese	Japanisch
 	Proof Setup	Proof einrichten
 	Properties	Eigenschaften
 	Proportional Metrics	Proportionale Metrik
+	Character Direction	Zeichenrichtung
 	Digits	Ziffern
 	Arabic	Arabisch
 	Hindi	Hindi
@@ -2515,6 +2559,7 @@ mark-style	Japanese	Japanisch
 	Reorder	Neu anordnen
 	Reorder Appearance Item	Aussehenselement neu anordnen
 	Repeat	Wiederholung
+	Repeat Objects	Wiederholungsobjekte
 	Repeat Options	Wiederholungsoptionen
 	Repeat Pathfinder	Pathfinder wiederholen
 	Repeat Tab	Tabulator wiederholen
@@ -2726,6 +2771,7 @@ mark-style	Japanese	Japanisch
 	Scale Cursor Proportional to UI	Cursor proportional zur Benutzeroberfläche skalieren
 	Scale Lineweights	Linienstärken skalieren
 	Scale Strokes & Effects	Konturen und Effekte skalieren
+	Scale Text Attributes	Textattribute skalieren
 	Scale to Fit Artboard	Auf Zeichenfläche skalieren
 	Scale Tool	Skalieren-Werkzeug
 	Scale:	Skalierung:
@@ -2896,6 +2942,8 @@ mark-style	Japanese	Japanisch
 	Show Note	Notiz einblenden
 	Show Options	Optionen einblenden
 	Show Original Path	Originalpfad einblenden
+	Open this dialog with these settings next time	Dieses Dialogfeld nächstes Mal mit diesen Einstellungen öffnen
+	Auto-Simplify	Automatisch vereinfachen
 	Color Panel Options	Optionen für das Farbbedienfeld
 	Show Package	Paket anzeigen
 	Show Panel	Bedienfeld einblenden
@@ -2993,9 +3041,11 @@ effect	Points	Punkte
 	Snap to Pixel	An Pixel ausrichten
 	Precise Cursors	Präzise Cursor
 	Snap to Point	An Punkt ausrichten
+	Snap to Unit	An Einheit ausrichten
 	Snapping Tolerance	Einrasttoleranz
 	Social Square Post 1080×1080	Quadratischer Social-Media-Beitrag 1080×1080
 	Soft Light	Weiches Licht
+	Soft Mix	Weiche Mischung
 	Solid	Gefüllt
 	Sort by Kind	Nach Art sortieren
 	Sort by Name	Nach Name sortieren
@@ -3163,6 +3213,7 @@ effect	Points	Punkte
 	Text Wrap Options	Textumflussoptionen
 	Text Wrap Options…	Textumflussoptionen…
 	The bounds of the visible art.	Die Begrenzung der sichtbaren Grafik.
+	The plug-in writes the whole document.	Das Plug-in exportiert das ganze Dokument.
 	The cell shows the type object's text as HTML.	Die Zelle zeigt den Text des Textobjekts als HTML.
 	The document has no colour swatches.	Das Dokument enthält keine Farbfelder.
 	The edge of the paper the printer can't reach: the art goes inside it, and the preview shows it dashed.	Der Papierrand, den der Drucker nicht erreicht: Die Grafik liegt innerhalb davon, und die Vorschau zeigt ihn gestrichelt.
@@ -3218,6 +3269,7 @@ effect	Points	Punkte
 	Tools	Werkzeuge
 	Top	Oben
 	Top in Front	Oben im Vordergrund
+	Top-Justified Tab	Oben ausgerichteter Tabulator
 	Top:	Oben:
 	Total Width:	Gesamtbreite:
 	Touch Type	Touch-Type
@@ -3521,7 +3573,8 @@ imageTrace	Outline	Kontur
 	 to sample a color	 nimmt eine Farbe auf
 	 across a selected object to set the gradient direction	 über ein ausgewähltes Objekt legt die Verlaufsrichtung fest
 	 to select an artboard  |  	 wählt eine Zeichenfläche aus  |  
-	 on the canvas to create one	 auf der Arbeitsfläche erstellt eine neue
+	 on the canvas to create one (	 auf der Arbeitsfläche erstellt eine neue (
+	 selects several, or draws one inside an artboard)	 wählt mehrere aus oder erstellt eine neue in einer Zeichenfläche)
 	 a stroke to add a width point  |  	 an einer Kontur fügt einen Breitenpunkt hinzu  |  
 	 to change one side  |  	 ändert nur eine Seite  |  
 	 to select more points  |  	 wählt weitere Punkte aus  |  
@@ -3763,6 +3816,25 @@ theme	Appearance	Erscheinungsbild
 @msg	a PostScript error ({name} in `{op}`: {at})	ein PostScript-Fehler ({name} in `{op}`: {at})
 @msg	a PostScript error ({name} in `{op}`: {at}), in {procs}	ein PostScript-Fehler ({name} in `{op}`: {at}), in {procs}
 @msg	a PostScript error ({name})	ein PostScript-Fehler ({name})
+@msg	a PostScript error ({name} in `{op}`; {meaning})	ein PostScript-Fehler ({name} in `{op}`; {meaning})
+@msg	a PostScript error ({name} in `{op}`; {meaning}), in {procs}	ein PostScript-Fehler ({name} in `{op}`; {meaning}), in {procs}
+@msg	a PostScript error ({name} in `{op}`: {at}; {meaning})	ein PostScript-Fehler ({name} in `{op}`: {at}; {meaning})
+@msg	a PostScript error ({name} in `{op}`: {at}; {meaning}), in {procs}	ein PostScript-Fehler ({name} in `{op}`: {at}; {meaning}), in {procs}
+@msg	a PostScript error ({name}; {meaning})	ein PostScript-Fehler ({name}; {meaning})
+@msg	the program ends a dictionary it didn't begin	das Programm beendet ein Wörterbuch, das es nicht begonnen hat
+@msg	the program opens a file, which the reader can't do	das Programm öffnet eine Datei, was der PostScript-Leser nicht kann
+@msg	the program restores a saved state that was already restored	das Programm stellt einen gesicherten Zustand wieder her, der bereits wiederhergestellt wurde
+@msg	data the program reads is damaged or cut short, or the program asks for a position in a file that has none	Daten, die das Programm liest, sind beschädigt oder abgeschnitten, oder das Programm fragt nach einer Position in einer Datei, die keine hat
+@msg	the program goes past one of the reader's limits	das Programm überschreitet eine der Grenzen des PostScript-Lesers
+@msg	the path has no point to continue from	der Pfad hat keinen Punkt, an dem er fortgesetzt werden kann
+@msg	a value is outside the range the operator takes	ein Wert liegt außerhalb des Bereichs, den der Operator annimmt
+@msg	the operator needs more values than the stack holds	der Operator braucht mehr Werte, als der Stapel enthält
+@msg	part of the program isn't valid PostScript text	ein Teil des Programms ist kein gültiger PostScript-Text
+@msg	a value has the wrong type for the operator	ein Wert hat den falschen Typ für den Operator
+@msg	the program runs, deletes or renames a file, which the reader can't do	das Programm führt eine Datei aus, löscht sie oder benennt sie um, was der PostScript-Leser nicht kann
+@msg	the program asks for a resource that isn't defined	das Programm fordert eine Ressource an, die nicht definiert ist
+@msg	a calculation has no result, as in a division by zero	eine Berechnung hat kein Ergebnis, etwa bei einer Division durch null
+@msg	the operator looks for a mark on the stack and finds none	der Operator sucht eine Marke auf dem Stapel und findet keine
 @msg	a bitmap is empty	eine Bitmap ist leer
 @msg	a bitmap is too large to read	eine Bitmap ist zu groß, um gelesen zu werden
 @msg	a colour index is 0 to {_1}, not {n}	ein Farbindex liegt zwischen 0 und {_1}, nicht {n}
@@ -3796,6 +3868,7 @@ theme	Appearance	Erscheinungsbild
 @msg	background {other}: transparent, white, black or a colour such as "#ff8800"	background {other}: transparent, white, black oder eine Farbe wie "#ff8800"
 @msg	bad color {v}	ungültige Farbe {v}
 @msg	the Color Picker is not open	der Farbwähler ist nicht geöffnet
+@msg	the Simplify slider is not open	der Regler „Vereinfachen“ ist nicht geöffnet
 @msg	the screen color sampler is already open	die Farbaufnahme vom Bildschirm ist bereits geöffnet
 @msg	this system has no screen color sampler	dieses System hat keine Farbaufnahme vom Bildschirm
 @msg	bad colour `{hex}` (#rrggbb)	ungültige Farbe `{hex}` (#rrggbb)
@@ -3844,7 +3917,7 @@ theme	Appearance	Erscheinungsbild
 @msg	give the path `id` and the width point `index`	geben Sie die `id` des Pfads und den `index` des Breitenpunkts an
 @msg	guides are locked	die Hilfslinien sind gesperrt
 @msg	handle must be in or out	handle muss in oder out sein
-@msg	image '{key}' has no pixels and was left out	das Bild '{key}' hat keine Pixel und wurde ausgelassen
+@msg	an image has no pixels and was left out	ein Bild ohne Pixel wurde ausgelassen
 @msg	image data `{_1}` is missing	die Bilddaten `{_1}` fehlen
 @msg	image would be too large; lower the resolution	das Bild wäre zu groß; verringern Sie die Auflösung
 @msg	index must be a number or first, previous, next or last	index muss eine Zahl oder first, previous, next oder last sein
@@ -3889,7 +3962,9 @@ theme	Appearance	Erscheinungsbild
 @msg	no blend options	keine Angleichungsoptionen
 @msg	no bounds	keine Begrenzung
 @msg	no brush named `{name}`	kein Pinsel namens `{name}`
+@msg	a bristle brush name can have at most {max} characters: `{name}` has {count}	der Name eines Borstenpinsels darf höchstens {max} Zeichen lang sein: `{name}` hat {count}
 @msg	no brush selected	kein Pinsel ausgewählt
+@msg	brushes move only within their type	Pinsel lassen sich nur innerhalb ihrer Art verschieben
 @msg	this kind of brush has no options dialog yet	für diese Pinselart gibt es noch kein Optionsdialogfeld
 @msg	no catalog	kein Katalog
 @msg	no changes since the last save	keine Änderungen seit dem letzten Speichern
@@ -3944,6 +4019,7 @@ theme	Appearance	Erscheinungsbild
 @msg	no such action	keine solche Aktion
 @msg	no such anchor	kein solcher Ankerpunkt
 @msg	no such artboard	keine solche Zeichenfläche
+@msg	the artboard is locked	die Zeichenfläche ist gesperrt
 @msg	no such document	kein solches Dokument
 @msg	no such layer or object	keine solche Ebene und kein solches Objekt
 @msg	no such object {0}	kein solches Objekt {0}
@@ -4034,6 +4110,11 @@ theme	Appearance	Erscheinungsbild
 @msg	select a linked image: an embedded one has no file	wählen Sie ein verknüpftes Bild aus: Ein eingebettetes hat keine Datei
 @msg	select a repeat	wählen Sie eine Wiederholung aus
 @msg	select an Intertwine group	wählen Sie eine Verflechtungsgruppe aus
+@msg	select an Objects on Path group	wählen Sie eine Gruppe „Objekte auf Pfad“ aus
+@msg	a path inside a compound path, blend, envelope, repeat or Intertwine group can't take objects	ein Pfad in einem zusammengesetzten Pfad, einer Angleichung, einer Hülle, einer Wiederholung oder einer Verflechtungsgruppe kann keine Objekte aufnehmen
+@msg	a clipping path can't take objects	ein Schnittpfad kann keine Objekte aufnehmen
+@msg	objects inside a blend, envelope, repeat or Intertwine group can't be attached to a path	die Objekte in einer Angleichung, einer Hülle, einer Wiederholung oder einer Verflechtungsgruppe können nicht an einen Pfad angehängt werden
+@msg	a clipping path can't be attached to a path	ein Schnittpfad kann nicht an einen Pfad angehängt werden
 @msg	select a stroke with a variable width	wählen Sie eine Kontur mit variabler Breite aus
 @msg	select a symbol instance	wählen Sie eine Symbolinstanz aus
 @msg	select an Image Trace object	wählen Sie ein Bildnachzeichner-Objekt aus
@@ -4153,6 +4234,7 @@ theme	Appearance	Erscheinungsbild
 @msg	unknown workspace (one of {_1})	unbekannter Arbeitsbereich (einer von {_1})
 @msg	unsupported: {0}	nicht unterstützt: {0}
 @msg	variables are locked	die Variablen sind gesperrt
+@msg	variables that aren't text were left out: {kinds}	die Variablen, die kein Text sind, wurden ausgelassen: {kinds}
 @msg	version {0} files can't be compressed: only version {COMPRESSED_SINCE} and later open compressed files	Dateien der Version {0} können nicht komprimiert werden: Erst Version {COMPRESSED_SINCE} und neuer öffnen komprimierte Dateien
 @msg	width and height are at least 1 pixel	Breite und Höhe betragen mindestens 1 Pixel
 @msg	workspace name can't be empty	der Name des Arbeitsbereichs darf nicht leer sein
@@ -4163,6 +4245,7 @@ theme	Appearance	Erscheinungsbild
 @msg	{_1} files are written by file.saveAsTemplate	{_1}-Dateien werden von file.saveAsTemplate geschrieben
 @msg	{_1} font families available	{_1} Schriftfamilien verfügbar
 @msg	{_1} is a live effect (Effect › Plug-ins)	{_1} ist ein Live-Effekt (Effekt › Plug-ins)
+@msg	{_1} is an exporter (File › Export › Export As…)	{_1} ist ein Export-Plug-in (Datei › Exportieren › Exportieren als…)
 @msg	{_1} is already used by {_2}	{_1} wird bereits von {_2} verwendet
 @msg	{_1} linked file(s) can't be read here: their previews show	{_1} verknüpfte Datei(en) können hier nicht gelesen werden: Ihre Vorschauen werden angezeigt
 @msg	{_1} linked image(s) changed on disk: Update Links shows the new versions	{_1} verknüpfte(s) Bild(er) wurde(n) auf dem Datenträger geändert: „Verknüpfungen aktualisieren“ zeigt die neuen Versionen
@@ -4345,7 +4428,7 @@ theme	Appearance	Erscheinungsbild
 	Move to Group	In Gruppe verschieben
 	No results	Keine Ergebnisse
 	No items in this library match “{query}”.	Keine Elemente in dieser Bibliothek entsprechen „{query}“.
-	Right-click an item to move it into this group.	Klicken Sie mit der rechten Maustaste auf ein Element, um es in diese Gruppe zu verschieben.
+	Drag an item here, or right-click one, to put it in this group.	Ziehen Sie ein Element hierher oder klicken Sie mit der rechten Maustaste darauf, um es in diese Gruppe zu legen.
 @msg	Imported library {name}	Bibliothek {name} importiert
 # Linked files changed on disk.
 	Update Changed Links	Geänderte Verknüpfungen aktualisieren
@@ -4385,6 +4468,13 @@ theme	Appearance	Erscheinungsbild
 	Tints	Farbtöne
 	Tints and Shades	Farbtöne und Schattierungen
 	Hue Shift	Farbtonverschiebung
+	Tips	Tipps
+	Colorization Tips	Tipps zur Färbung
+	The samples show this brush on a blue stroke.	Die Beispiele zeigen diesen Pinsel auf einer blauen Kontur.
+	The art keeps its own colors.	Die Grafik behält ihre eigenen Farben.
+	Black becomes the stroke color and white stays white. Other colors become tints of the stroke color by their lightness.	Schwarz wird zur Konturfarbe und Weiß bleibt weiß. Andere Farben werden zu Farbtönen der Konturfarbe, und je heller eine Farbe ist, desto heller ist ihr Farbton.
+	Black and white stay as they are. Dark colors become shades of the stroke color and light colors become tints of it.	Schwarz bleibt schwarz und Weiß bleibt weiß. Andere Farben werden zu Schattierungen der Konturfarbe, wenn sie dunkel sind, und zu Farbtönen davon, wenn sie hell sind.
+	The key color becomes the stroke color. The other colors shift their hue by the same amount and keep their saturation and brightness.	Die Hauptfarbe wird zur Konturfarbe. Die anderen Farben wandern ebenso weit um den Farbkreis wie die Hauptfarbe und behalten ihre Sättigung und Helligkeit.
 	RGB:	RGB:
 	CMYK:	CMYK:
 # PSD files (opened and placed as their merged image).
@@ -4469,6 +4559,7 @@ theme	Appearance	Erscheinungsbild
 	Activate Panel	Bedienfeld aktivieren
 	Change Panel Layout	Bedienfeldanordnung ändern
 	Close Panel	Bedienfeld schließen
+	Collapse Panel Group	Bedienfeldgruppe minimieren
 	Move Panel	Bedienfeld verschieben
 	Group with	Gruppieren mit
 	Resize panel window	Bedienfeldfenster skalieren
@@ -4479,6 +4570,12 @@ theme	Appearance	Erscheinungsbild
 @msg	before must name a panel	before muss ein Bedienfeld benennen
 @msg	docking action contains an unknown panel or an excessive split path	Die Docking-Aktion enthält ein unbekanntes Bedienfeld oder einen zu langen Teilungspfad
 @msg	group must be true or false	group muss true oder false sein
+@msg	panel floats; collapse its group with window.panel.float {panel, collapsed}	Bedienfeld ist abgelöst; seine Gruppe mit window.panel.float {panel, collapsed} minimieren
+@msg	panel is not in a dock group	Bedienfeld ist in keiner Dock-Gruppe
+@msg	only a dock group above or below others collapses, not one beside another	nur eine Dock-Gruppe über oder unter anderen lässt sich minimieren, nicht eine daneben
+@msg	icon must be true or false	icon muss true oder false sein
+@msg	icon only docks a panel in the icon column, with no anchor	icon dockt ein Bedienfeld nur in der Symbolspalte an, ohne anchor
+@msg	column docks a set as a dock column, with no anchor or icon	column dockt einen Satz als Dock-Spalte an, ohne anchor oder icon
 @msg	move requires a destination panel	Das Verschieben erfordert ein Zielbedienfeld
 @msg	move requires an existing destination panel	Das Verschieben erfordert ein vorhandenes Zielbedienfeld
 @msg	onto must name a floating panel	onto muss ein schwebendes Bedienfeld benennen
@@ -4553,12 +4650,30 @@ lighting	Light	Licht
 	Reset Ruler Origin	Linealursprung zurücksetzen
 	Artistic	Kunstfilter
 	Film Grain…	Filmkörnung…
+	Colored Pencil…	Buntstift…
+	Colored Pencil	Buntstift
+	Simple	Einfach
+	Light Rough	Leicht rau
+	Dark Rough	Dunkel rau
+	Wide Sharp	Breit scharf
+	Wide Blurry	Breit unscharf
+	Sparkle	Funkeln
 	Cutout…	Ausschnitt…
 	Cutout	Ausschnitt
+	Dry Brush…	Trockenpinsel…
+	Dry Brush	Trockenpinsel
 	Neon Glow…	Neonglühen…
+	Palette Knife…	Palettenmesser…
 	Neon Glow	Neonglühen
+	Paint Daubs…	Tupfer…
+	Paint Daubs	Tupfer
+	Palette Knife	Palettenmesser
 	Poster Edges…	Posterkanten…
+	Rough Pastels…	Pastellkreide…
 	Poster Edges	Posterkanten
+	Rough Pastels	Pastellkreide
+	Underpainting…	Untermalung…
+	Underpainting	Untermalung
 	Levels	Stufen
 	Edge Simplicity	Kantenvereinfachung
 	Edge Fidelity	Kantentreue
@@ -4656,6 +4771,9 @@ effect	Soft	Weich
 	Softness	Weichheit
 	Ambient Light	Umgebungslicht
 	Light behind the object	Licht hinter dem Objekt
+	3D Lighting Preset	3D-Beleuchtungsvorgabe
+	Standard	Standard
+	Diffuse	Diffus
 # 3D light management.
 	Lights	Lichter
 	Add Light	Licht hinzufügen
@@ -4702,6 +4820,7 @@ effect	Soft	Weich
 @msg	Measured anchor no longer exists	Der gemessene Ankerpunkt existiert nicht mehr
 @msg	Measured segment no longer exists	Das gemessene Segment existiert nicht mehr
 @msg	Non-finite dimension	Die Bemaßung ist keine endliche Zahl
+@msg	Scale Text Attributes: selected type has no scale to bake	Textattribute skalieren: Der ausgewählte Text weist keine zu übernehmende Skalierung auf
 @msg	Scale must be drawing:real, for example 1:10	Der Maßstab muss Zeichnung:Realität sein, zum Beispiel 1:10
 @msg	Scale ratio must be between 1:1000000 and 1000000:1	Das Maßstabsverhältnis muss zwischen 1:1000000 und 1000000:1 liegen
 @msg	Second measured segment no longer exists	Das zweite gemessene Segment existiert nicht mehr
@@ -4720,6 +4839,7 @@ effect	Soft	Weich
 	Make Image Dynamic	Bild dynamisch machen
 	Import Data Sets…	Datensätze importieren…
 	Export Data Sets…	Datensätze exportieren…
+	Load Variable Library…	Variablenbibliothek laden…
 	Make Graph Dynamic	Diagramm dynamisch machen
 	Batch…	Stapelverarbeitung…
 	Source Folder:	Quellordner:
@@ -4731,6 +4851,7 @@ effect	Soft	Weich
 @msg	choose a destination folder	wählen Sie einen Zielordner
 @msg	choose a source folder	wählen Sie einen Quellordner
 @msg	open a document with data sets	öffnen Sie ein Dokument mit Datensätzen
+@msg	nothing in data set {name} was applied: no object is bound to a variable it has a value for	aus dem Datensatz {name} wurde nichts angewendet: kein Objekt ist an eine Variable gebunden, für die er einen Wert hat
 @msg	the action has no steps	die Aktion hat keine Schritte
 
 # User Interface › Accent Color
@@ -4742,6 +4863,8 @@ effect	Soft	Weich
 	Sketch	Zeichenfilter
 	Halftone Pattern…	Rasterungseffekt…
 	Halftone Pattern	Rasterungseffekt
+	Torn Edges…	Zerrissene Kanten…
+	Torn Edges	Zerrissene Kanten
 	Pattern Type	Musterart
 	Dot	Punkt
 # User Interface › Color Scheme
@@ -4753,6 +4876,29 @@ effect	Soft	Weich
 	Movie Clip	Movieclip
 @msg	name is empty	Name ist leer
 @msg	no symbol named `{n}`	kein Symbol namens `{n}`
+	Smudge Stick…	Wischstift…
+	Smudge Stick	Wischstift
+	Sponge…	Schwamm…
+	Sponge	Schwamm
+	Watercolor…	Aquarell…
+	Watercolor	Aquarell
+	Brush Size	Pinselgröße
+	Texture Coverage	Texturabdeckung
+	Definition	Definition
+	Brush Detail	Pinseldetail
+	Shadow Intensity	Schattenintensität
+	Bas Relief…	Basrelief…
+	Bas Relief	Basrelief
+	Charcoal…	Holzkohle…
+	Charcoal	Holzkohle
+	Photocopy…	Fotokopie…
+	Photocopy	Fotokopie
+	Stamp…	Stempel…
+	Stamp	Stempel
+	Thickness	Stärke
+	Detail	Detail
+	Light/Dark Balance	Hell-Dunkel-Balance
+	Light Direction	Lichtrichtung
 # Links and Attributes: files and URLs handed to other apps.
 @msg	Edit Original opens image and document files only; “{name}” is not one	Original bearbeiten öffnet nur Bild- und Dokumentdateien; „{name}“ gehört nicht dazu
 @msg	only http, https and mailto URLs open in the browser, not “{url}”	nur http-, https- und mailto-URLs werden im Browser geöffnet, nicht „{url}“
@@ -4767,12 +4913,15 @@ effect	Soft	Weich
 @msg	the image's pixels can't be read	die Pixel des Bildes können nicht gelesen werden
 	Persistent	Dauerhaft
 	Library Panel Options	Optionen für das Bibliotheksbedienfeld
+	Locate Library…	Bibliothek ausfindig machen…
 @msg	Persistent libraries not found: {files}	Dauerhafte Bibliotheken nicht gefunden: {files}
 @msg	`{given}` isn't a library panel (see window.swatchLibrary)	`{given}` ist kein Bibliotheksbedienfeld (siehe window.swatchLibrary)
 @msg	library panel `{given}` isn't open	Bibliotheksbedienfeld `{given}` ist nicht geöffnet
+@msg	library panel `{given}` isn't missing its library	dem Bibliotheksbedienfeld `{given}` fehlt seine Bibliothek nicht
 @msg	too many library panels were opened in this session	in dieser Sitzung wurden zu viele Bibliotheksbedienfelder geöffnet
 @msg	The image is {_1} × {_2} pixels, more than {LARGE_TRACE_SIDE} on a side: it is traced, but more slowly. A lower-fidelity preset or a smaller copy of the image traces faster.	Das Bild hat {_1} × {_2} Pixel, mehr als {LARGE_TRACE_SIDE} auf einer Seite: Es wird nachgezeichnet, aber langsamer. Eine Vorgabe mit geringerer Detailtreue oder eine kleinere Kopie des Bildes geht schneller.
 @msg	The image was traced at {_1} × {_2} pixels, scaled down from {_3} × {_4} ({_5} megapixels at most).	Das Bild wurde mit {_1} × {_2} Pixeln nachgezeichnet, verkleinert von {_3} × {_4} (höchstens {_5} Megapixel).
+	Gap Length:	Lückenlänge:
 	Artboard {n} of {total}	Zeichenfläche {n} von {total}
 	Encoding and writing the file…	Datei wird codiert und geschrieben…
 @plural	{n} more export waiting|{n} more exports waiting	{n} weiterer Export wartet|{n} weitere Exporte warten
@@ -4790,6 +4939,14 @@ effect	Soft	Weich
 	Minimum must not exceed Desired, nor Desired Maximum.	Das Minimum darf den optimalen Wert nicht übersteigen, der optimale Wert nicht das Maximum.
 	Minimum	Minimum
 	Justification	Abstände
+	Add filters from the list above	Filter aus der Liste oben hinzufügen
+	Add to Stack	Zum Stapel hinzufügen
+	Applied Filters	Angewendete Filter
+	Categories	Kategorien
+	Choose a filter	Filter wählen
+	Effect Gallery	Effekt-Galerie
+	Filters	Filter
+	Select artwork to apply effects	Wählen Sie Grafik aus, um Effekte anzuwenden
 @msg	the file's variables and data sets weren't read (variables: {variables}, data sets: {data_sets}): the Variables panel doesn't list them	die Variablen und Datensätze der Datei wurden nicht gelesen (Variablen: {variables}, Datensätze: {data_sets}): Das Bedienfeld „Variablen“ listet sie nicht auf
 # Select by Color (select.color)
 	Select by Color	Nach Farbe auswählen
@@ -4831,3 +4988,35 @@ effect	Soft	Weich
 	Play	Abspielen
 	Move the keyframe's art toward the next keyframe	Bildmaterial des Schlüsselbilds zum nächsten Schlüsselbild bewegen
 	Show the keyframes before and after faintly	Vorherige und nächste Schlüsselbilder blass anzeigen
+	Move Anchor Point	Ankerpunkt verschieben
+@msg	{label} keeps 1 of the document's {n} artboards: the file reopens with one. Turn on Preserve Editing Capabilities to keep them all.	{label} behält 1 der {n} Zeichenflächen des Dokuments: Die Datei wird mit einer wieder geöffnet. Aktivieren Sie „Bearbeitungsfunktionen beibehalten“, um alle zu behalten.
+	Chalk & Charcoal…	Kreide & Kohle…
+	Chalk & Charcoal	Kreide & Kohle
+	Graphic Pen…	Grafikstift…
+	Graphic Pen	Grafikstift
+	Reticulation…	Retikulation…
+	Reticulation	Retikulation
+	Plastic Wrap…	Kunststofffolie…
+	Plastic Wrap	Kunststofffolie
+	Chrome…	Chrom…
+	Chrome	Chrom
+	Drop here to take it out of its group	Hier ablegen, um es aus seiner Gruppe zu nehmen
+	Move Library Group	Bibliotheksgruppe verschieben
+	Plaster…	Gipsabdruck…
+	Plaster	Gipsabdruck
+	Note Paper…	Prägepapier…
+	Note Paper	Prägepapier
+	Water Paper…	Feuchtes Papier…
+	Water Paper	Feuchtes Papier
+	Ruby…	Ruby…
+	Ruby	Ruby
+	Ease In	Langsam starten
+	Ease Out	Langsam enden
+	Ease In Out	Langsam starten und enden
+	Ease Out In	Langsam enden und starten
+	Ramp:	Stärke:
+	Shift:	Verschiebung:
+	Fresco…	Fresko…
+	Fresco	Fresko
+	Effect Gallery…	Effekt-Galerie…
+	Effect Gallery Dialog	Dialogfeld „Effekt-Galerie“

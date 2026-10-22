@@ -55,6 +55,9 @@ fn edit_range_replaces_and_undoes() {
     assert_eq!(obj(&s, id).plain_text(), "Hello!");
     s.execute("edit.undo", &json!({})).unwrap();
     assert_eq!(obj(&s, id).plain_text(), "Hello there");
+    // An offset of 2^32 is past the end too. A 32-bit build read it as 0 and inserted at the start.
+    s.execute("text.editRange", &json!({"id": id.0, "start": 1u64 << 32, "end": 1u64 << 32, "insert": "!"})).unwrap();
+    assert_eq!(obj(&s, id).plain_text(), "Hello there!");
     assert!(s.execute("text.editRange", &json!({"start": 0})).is_err(), "id required");
     let rect = s.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 10, "height": 10})).unwrap();
     assert!(s.execute("text.editRange", &json!({"id": rect["id"], "insert": "x"})).is_err(), "not text");
@@ -84,6 +87,17 @@ fn set_range_style_splits_runs() {
     assert!(s.execute("text.setRangeStyle", &json!({"id": id.0, "size": -1})).is_err());
 }
 
+/// A character style applied from byte 2^32 to 2^32 + 5 styles no character, as a range past the
+/// end does. A 32-bit build read the range as bytes 0 to 5 and styled "Hello".
+#[test]
+fn char_style_range_past_u32_styles_nothing() {
+    let mut s = session();
+    let id = text(&mut s, "Hello world");
+    s.execute("charStyle.new", &json!({"name": "Big", "attrs": {"size": 40.0}})).unwrap();
+    s.execute("charStyle.apply", &json!({"name": "Big", "id": id.0, "start": 1u64 << 32, "end": (1u64 << 32) + 5})).unwrap();
+    assert!(obj(&s, id).runs.iter().all(|r| r.style.size == 20.0 && r.style.style_name.is_none()), "{:?}", obj(&s, id).runs);
+}
+
 #[test]
 fn set_range_style_defaults_to_all_text_and_get_range() {
     let mut s = session();
@@ -96,6 +110,79 @@ fn set_range_style_defaults_to_all_text_and_get_range() {
     assert_eq!(r["text"], json!("ab"));
     assert_eq!(r["runs"].as_array().unwrap().len(), 2);
     assert_eq!(r["length"], json!(3));
+}
+
+/// The type commands refuse a number or an on/off option given as text or as another value of the
+/// wrong kind, naming the key, and leave the document and its undo history as they were; true,
+/// false, numbers and null still work.
+#[test]
+fn type_commands_refuse_a_number_or_boolean_given_as_text() {
+    use super::tests::{not_a_number, not_a_switch, not_refused};
+    let mut s = session();
+    let id = text(&mut s, "abc");
+    let frame = s.execute("shape.rectangle", &json!({"x": 300, "y": 300, "width": 100, "height": 50})).unwrap()["id"].clone();
+    let boxed = s.execute("text.create", &json!({"x": 0, "y": 300, "text": "a", "area": {"width": 100, "height": 50}})).unwrap()["id"].clone();
+    s.execute("select.set", &json!({"ids": [id.0]})).unwrap();
+    let area = json!({"x": 0, "y": 0, "text": "a", "area": {"width": "200", "height": 100}});
+    let mut calls = vec![("text.create".to_string(), area, "`width` must be a number, not \"200\"".to_string())];
+    let area = json!({"x": 0, "y": 0, "text": "a", "area": {"width": 200, "height": 100, "fit": "shrinkText", "fitMinPercent": "40"}});
+    calls.push(("text.create".to_string(), area, "`fitMinPercent` must be a number, not \"40\"".to_string()));
+    calls.extend(
+        [
+            ("text.create", json!({"x": 0, "y": 0, "text": "a", "size": "12"}), "size"),
+            ("text.createInPath", json!({"path": frame, "text": "a", "size": [12]}), "size"),
+            ("text.createInPath", json!({"path": frame, "mode": "area", "fitMinPercent": "40"}), "fitMinPercent"),
+            ("text.setRangeStyle", json!({"id": id.0, "size": "30"}), "size"),
+            ("text.setRangeStyle", json!({"id": id.0, "tracking": "50"}), "tracking"),
+            ("text.setRangeStyle", json!({"id": id.0, "hScale": true}), "hScale"),
+            ("text.setRangeStyle", json!({"id": id.0, "strokeWidth": "1"}), "strokeWidth"),
+            ("text.setRangeStyle", json!({"id": id.0, "start": "1", "size": 30}), "start"),
+            ("text.setRangeStyle", json!({"id": id.0, "end": [1], "size": 30}), "end"),
+            ("text.editRange", json!({"id": id.0, "start": 0, "end": "1", "insert": "x"}), "end"),
+            ("text.getRange", json!({"id": id.0, "start": "1"}), "start"),
+            ("text.touchType", json!({"id": id.0, "start": 0, "rotation": "10"}), "rotation"),
+            ("text.touchType", json!({"id": id.0, "start": "0", "rotation": 10}), "start"),
+            ("type.step", json!({"attribute": "size", "by": "2"}), "by"),
+            ("type.step", json!({"attribute": "size", "id": id.0, "start": "1"}), "start"),
+            ("type.size.increase", json!({"by": "2"}), "by"),
+            ("type.size.decrease", json!({"by": [2]}), "by"),
+            ("type.ruby", json!({"text": "a", "size": "60"}), "size"),
+            ("text.areaOptions", json!({"ids": [boxed], "width": "200"}), "width"),
+            ("text.areaOptions", json!({"ids": [boxed], "height": [80]}), "height"),
+            ("text.areaOptions", json!({"ids": [boxed], "fit": "shrinkText", "fitMinPercent": "40"}), "fitMinPercent"),
+        ]
+        .map(|(cmd, p, key)| not_a_number(cmd, p, key)),
+    );
+    calls.extend(
+        [
+            ("text.create", json!({"x": 0, "y": 0, "text": "a", "vertical": "true"}), "vertical"),
+            ("text.create", json!({"x": 0, "y": 0, "placeholder": 1}), "placeholder"),
+            ("text.createInPath", json!({"path": frame, "vertical": "true"}), "vertical"),
+            ("text.createInPath", json!({"path": frame, "placeholder": "true"}), "placeholder"),
+            ("text.setRangeStyle", json!({"id": id.0, "underline": "true"}), "underline"),
+            ("text.setRangeStyle", json!({"id": id.0, "allCaps": 1}), "allCaps"),
+            ("text.setRangeStyle", json!({"id": id.0, "noBreak": "true"}), "noBreak"),
+            ("text.setRangeStyle", json!({"id": id.0, "size": 30, "tateChuYoko": 1}), "tateChuYoko"),
+            ("text.getRange", json!({"id": id.0, "effective": "true"}), "effective"),
+            ("type.opticalMarginAlignment", json!({"on": "true"}), "on"),
+            ("type.systemLayout", json!({"on": "true"}), "on"),
+            ("type.fractionalWidths", json!({"on": "false"}), "on"),
+            ("type.ruby", json!({"remove": "true"}), "remove"),
+            ("type.ruby", json!({"text": "a", "overhang": "false"}), "overhang"),
+        ]
+        .map(|(cmd, p, key)| not_a_switch(cmd, p, key)),
+    );
+    let wrong = not_refused(&mut s, &calls);
+    assert!(wrong.is_empty(), "not refused: {wrong:#?}");
+    let style = json!({"id": id.0, "size": 30, "underline": true, "tracking": null, "start": null, "noBreak": true});
+    s.execute("text.setRangeStyle", &style).unwrap();
+    s.execute("type.size.increase", &json!({"by": null})).unwrap();
+    s.execute("type.opticalMarginAlignment", &json!({"on": true})).unwrap();
+    s.execute("type.ruby", &json!({"text": "a", "size": null, "overhang": false})).unwrap();
+    let t = obj(&s, id);
+    let st = &t.runs[0].style;
+    assert!(st.underline && st.no_break && t.optical_margin && st.size > 30.0, "{st:?}");
+    assert!(!t.ruby.is_empty() && t.ruby.iter().all(|r| !r.overhang && r.size_percent == 50.0), "{:?}", t.ruby);
 }
 
 /// Where each glyph of type object `id` is drawn from (its origin in font units), document space.
@@ -147,6 +234,8 @@ fn touch_type_moves_one_character_and_leaves_the_others_where_they_are() {
     assert!(near(moved_by(&before, &glyph_pens(&s, id), 0), (0.0, 2.0)));
     assert!(s.execute("text.touchType", &json!({"id": id.0, "start": 1})).is_err(), "nothing to change");
     assert!(s.execute("text.touchType", &json!({"id": id.0, "start": 9, "dy": 1})).is_err(), "no character there");
+    // A 32-bit build read 2^32 + 1 as character 1.
+    assert!(s.execute("text.touchType", &json!({"id": id.0, "start": (1u64 << 32) + 1, "dy": 1})).is_err(), "no character there");
 }
 
 /// Raising, scaling or rotating a character leaves it and the characters after it where they
@@ -359,6 +448,26 @@ fn the_touch_type_tool_drags_a_character() {
     let after = glyph_pens(&s, id);
     assert!(near(moved_by(&before, &after, 1), (0.0, -4.0)), "{:?}", moved_by(&before, &after, 1));
     assert!(near(moved_by(&before, &after, 2), (0.0, 0.0)), "{:?}", moved_by(&before, &after, 2));
+}
+
+/// Arrow keys with the Touch Type tool nudge the selected character by the keyboard increment.
+#[test]
+fn touch_type_arrow_keys_nudge_the_selected_character() {
+    let mut s = session();
+    let id = NodeId(s.execute("text.create", &json!({"x": 100, "y": 100, "text": "Type", "size": 40})).unwrap()["id"].as_u64().unwrap());
+    s.execute("select.set", &json!({"ids": []})).unwrap();
+    let v = ViewInfo::default();
+    s.select_tool("touchType", v).unwrap();
+    let t = obj(&s, id);
+    let lay = vectorcraft_text::layout(vectorcraft_text::FontDb::global(), &t);
+    let y = lay.glyphs.iter().find(|g| g.byte == 1).unwrap();
+    let at = t.xf * (y.origin + vectorcraft_geom::Vec2::new(y.advance / 2.0, -10.0));
+    click(&mut s, at.x, at.y);
+    let before = glyph_pens(&s, id);
+    s.tool_key(vectorcraft_tools::ToolKey::Right, Mods::default(), v).unwrap();
+    let after = glyph_pens(&s, id);
+    assert!(near(moved_by(&before, &after, 1), (1.0, 0.0)), "{:?}", moved_by(&before, &after, 1));
+    assert_eq!(undo_labels(&s).iter().filter(|l| *l == "Touch Type").count(), 1);
 }
 
 #[test]

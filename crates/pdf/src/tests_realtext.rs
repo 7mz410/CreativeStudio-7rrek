@@ -315,6 +315,50 @@ fn subset_thresholds_below_100_percent_are_accepted_with_a_warning() {
     assert_eq!(texts(&import_as(&r.bytes, TextAs::Text)), ["Subset"]);
 }
 
+/// Characters with neither fill nor stroke (a scanned page's recognized text, as a PDF opens) are
+/// written as invisible text, in rendering mode 3: searchable, drawing nothing, and type without
+/// paint again when the file opens. Compressed or not, in PDF/X-1a and PDF/A too (#2675).
+#[test]
+fn type_without_paint_is_written_as_invisible_text() {
+    let unpainted = CharStyle { fill: Paint::None, ..style(24.0) };
+    let d = doc(vec![
+        TextObject::point(Point::new(20.0, 60.0), "Recognized", unpainted),
+        TextObject::point(Point::new(20.0, 160.0), "Visible", style(24.0)),
+    ]);
+    let r = pdf(&d, false);
+    assert!(r.warnings.is_empty(), "{:?}", r.warnings);
+    let ops = String::from_utf8_lossy(&r.bytes).split_whitespace().collect::<Vec<_>>().join(" ");
+    assert!(ops.contains("3 Tr") && ops.contains("0 Tr"), "the invisible text in mode 3, the visible in mode 0");
+    let written = |v: serde_json::Value| {
+        let settings: PdfSettings = serde_json::from_value(v).unwrap();
+        export(&d, &PdfOptions { settings, created: Some(0), ..Default::default() }).unwrap()
+    };
+    let files = [
+        ("uncompressed", r.bytes.clone()),
+        ("compressed", written(json!({"advanced": {"outlineText": false}}))),
+        ("PDF/X-1a", written(json!({"standard": "pdfX1a", "compatibility": "1.3", "advanced": {"outlineText": false}}))),
+        ("PDF/A-2b", written(json!({"standard": "pdfA2b", "advanced": {"outlineText": false}}))),
+    ];
+    for (what, bytes) in files {
+        let back = import_as(&bytes, TextAs::Text);
+        assert_eq!(texts(&back), ["Recognized", "Visible"], "{what}");
+        let mut paints = vec![];
+        back.walk(|n| {
+            if let NodeKind::Text(t) = &n.kind {
+                paints.push(t.runs.iter().all(|r| r.style.fill.is_none() && !r.style.has_stroke()));
+            }
+        });
+        assert_eq!(paints, [true, false], "{what}: only the recognized text has no paint");
+        // It draws nothing: as outlines, only the visible text is there (its baseline on 160).
+        let drawn = ink(&import_as(&bytes, TextAs::Outlines));
+        assert!(drawn.y0 > 100.0, "{what}: {drawn:?}");
+    }
+    // Text exported as outlines has no invisible text: there is nothing to draw.
+    let outlined = import_as(&pdf(&d, true).bytes, TextAs::Text);
+    assert!(texts(&outlined).is_empty());
+    assert!(ink(&outlined).y0 > 100.0);
+}
+
 #[test]
 fn pdf_a_takes_real_text() {
     let d = doc(vec![TextObject::point(Point::new(20.0, 60.0), "Archive", style(24.0))]);
@@ -477,6 +521,33 @@ fn glyphs_spaced_each_their_own_way_keep_their_place() {
     // Evenly tracked: one run.
     let even = doc(vec![TextObject::point(Point::new(20.0, 100.0), "Tightly", CharStyle { tracking: -50.0, ..style(40.0) })]);
     let back = import_as(&pdf(&even, false).bytes, TextAs::default());
+    back.walk(|n| {
+        if let NodeKind::Text(t) = &n.kind {
+            assert_eq!(t.runs.len(), 1, "{:?}", t.runs.iter().map(|r| r.style.tracking).collect::<Vec<_>>());
+        }
+    });
+}
+
+/// Words set apart by spaces tracked past an em (#2384) come back with each glyph in its place:
+/// the file draws each space and leaves the gap after it. Evenly tracked words keep one run.
+#[test]
+fn words_set_apart_by_spaces_tracked_past_an_em_keep_their_place() {
+    let runs = [("Hooks", 0.0), (" ", 1800.0), ("and", 0.0), (" ", 2400.0), ("leads", 0.0)];
+    let mut t = TextObject::point(Point::new(20.0, 100.0), "", style(12.0));
+    t.runs = runs.iter().map(|(s, tr)| TextRun { text: s.to_string(), style: CharStyle { tracking: *tr, ..style(12.0) }, inline: None }).collect();
+    let d = doc(vec![t]);
+    let want = origins(&d);
+    let back = import_as(&pdf(&d, false).bytes, TextAs::default());
+    assert_eq!(texts(&back), ["Hooks and leads"]);
+    let got = origins(&back);
+    assert_eq!(got.len(), want.len());
+    for (g, w) in got.iter().zip(&want) {
+        assert!((g.x - w.x).abs() < 0.1 && (g.y - w.y).abs() < 0.1, "{got:?}\nvs {want:?}");
+    }
+    // Evenly tracked, the spaces too: one run.
+    let even = doc(vec![TextObject::point(Point::new(20.0, 100.0), "Hooks and leads", CharStyle { tracking: 150.0, ..style(12.0) })]);
+    let back = import_as(&pdf(&even, false).bytes, TextAs::default());
+    assert_eq!(texts(&back), ["Hooks and leads"]);
     back.walk(|n| {
         if let NodeKind::Text(t) = &n.kind {
             assert_eq!(t.runs.len(), 1, "{:?}", t.runs.iter().map(|r| r.style.tracking).collect::<Vec<_>>());

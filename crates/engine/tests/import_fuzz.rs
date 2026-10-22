@@ -988,7 +988,8 @@ fn styles(what: &str, data: &str) -> Result<(), TestCaseError> {
 }
 
 /// Libraries panel library file `data` imported, then each kind's first item used on the rich
-/// document and moved into its first group, the group deleted and the library exported (#926).
+/// document, moved into its first group and next to its kind's last item, the group moved and
+/// deleted and the library exported (#926).
 fn libraries(what: &str, data: &str) -> Result<(), TestCaseError> {
     survive_library(what, "library.import", data, |s, r| {
         let lib = r["id"].clone();
@@ -1001,9 +1002,17 @@ fn libraries(what: &str, data: &str) -> Result<(), TestCaseError> {
                 let _ = no_panic(s.execute("library.use", &json!({"library": lib, "kind": kind, "item": item[key]})));
                 let to = json!({"library": lib, "kind": kind, "item": item[key], "group": got["groups"][0]["name"]});
                 let _ = no_panic(s.execute("library.moveItem", &to));
+                // Next to the last item of its kind, whatever group that is in.
+                let last = got[list].as_array().and_then(|a| a.last()).map(|v| v[key].clone()).unwrap_or_default();
+                for side in ["before", "after"] {
+                    let _ = no_panic(s.execute("library.moveItem", &json!({"library": lib, "kind": kind, "item": item[key], side: last})));
+                }
             }
         }
         if let Some(g) = got["groups"].get(0) {
+            for to in [0, 1, 1_000_000] {
+                let _ = no_panic(s.execute("library.moveGroup", &json!({"library": lib, "group": g["name"], "to": to})));
+            }
             let _ = no_panic(s.execute("library.deleteGroup", &json!({"library": lib, "group": g["name"]})));
         }
         let _ = no_panic(s.execute("library.export", &json!({"library": lib})));
@@ -1240,6 +1249,68 @@ proptest! {
         let text = saved_datasets();
         let text = if tabs { text.replace(',', "\t") } else { text };
         datasets("mutated data set CSV", json!({"csv": mutate_text(&text, cut, &edits)}))?;
+    }
+}
+
+// ---------- variable library XML files ----------
+
+/// A variable library written from its public grammar: two text variables (`Title` is a
+/// variable of [`merge_session`]'s document), a variable of another kind and two data sets.
+const VARIABLE_LIBRARY: &str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n\
+<!DOCTYPE svg [\n<!ENTITY ns_vars \"http://ns.adobe.com/Variables/1.0/\">\n<!ENTITY ns_custom \"http://ns.adobe.com/GenericCustomNamespace/1.0/\">\n]>\n\
+<svg>\n<variableSets xmlns=\"&ns_vars;\">\n<variableSet varSetName=\"binding1\" locked=\"none\">\n<variables>\n\
+<variable varName=\"Title\" trait=\"textcontent\"></variable>\n<variable varName=\"Note\" trait=\"textcontent\"></variable>\n\
+<variable varName=\"Show\" trait=\"other\"></variable>\n</variables>\n\
+<v:sampleDataSets xmlns:v=\"&ns_vars;\" xmlns=\"&ns_custom;\">\n\
+<v:sampleDataSet dataSetName=\"A\">\n<Title><p>One</p><p>Two &amp; three</p></Title>\n<Note><p>x</p></Note>\n<Show><p>true</p></Show>\n</v:sampleDataSet>\n\
+<v:sampleDataSet dataSetName=\"C\">\n<Title><p>Four</p></Title>\n<Note></Note>\n</v:sampleDataSet>\n\
+</v:sampleDataSets>\n</variableSet>\n</variableSets>\n</svg>\n";
+
+/// `variable.loadLibrary` with `params` on [`merge_session`]'s document, the first three data sets
+/// it read selected in turn and every data set exported; the document then renders and exports.
+fn variable_library(what: &str, params: Value) -> Result<(), TestCaseError> {
+    survive(what, || {
+        let mut s = merge_session();
+        if let Ok(r) = no_panic(s.execute("variable.loadLibrary", &params)) {
+            for name in r["names"].as_array().into_iter().flatten().take(3) {
+                let _ = no_panic(s.execute("dataset.select", &json!({"name": name})));
+            }
+        }
+        let _ = no_panic(s.execute("dataset.export", &json!({})));
+        Some((*s.doc().ok()?.doc).clone())
+    })
+}
+
+proptest! {
+    #![proptest_config(config())]
+
+    #[test]
+    fn variable_library_garbage_never_panics(s in ".{0,300}", head in prop::sample::select(vec![
+        "",
+        "<variableSets>",
+        "<variableSets><variableSet><variables><variable varName=\"Title\" trait=\"textcontent\"/></variables><sampleDataSets><sampleDataSet dataSetName=\"A\">",
+        "<variableSets><variableSet><variables><variable varName=\"Title\" trait=\"textcontent\"/></variables><sampleDataSets><sampleDataSet dataSetName=\"A\"><Title><p>",
+        "<!DOCTYPE svg [<!ENTITY a \"",
+    ])) {
+        variable_library("variable library garbage", json!({"xml": format!("{head}{s}")}))?;
+    }
+
+    #[test]
+    fn variable_library_bytes_never_panic(bytes in prop::collection::vec(any::<u8>(), 0..300)) {
+        variable_library("variable library bytes", json!({"dataBase64": vectorcraft_format::base64_encode(&bytes)}))?;
+    }
+
+    /// The library cut short and with characters replaced, then with `nest` elements nested in one
+    /// another inside its `svg` element.
+    #[test]
+    fn mutated_variable_libraries_never_panic(
+        cut in 0usize..1_200,
+        edits in prop::collection::vec((0usize..1_200, prop::sample::select(vec!['<', '>', '"', '/', '=', '&', ';', '!', '[', ']', 'p', 'x', ' '])), 0..10),
+        nest in prop::sample::select(vec![0usize, 0, 0, 240, 100_000]),
+    ) {
+        let xml = mutate_text(VARIABLE_LIBRARY, cut, &edits);
+        let xml = xml.replacen("<svg>", &format!("<svg>{}", "<a>".repeat(nest)), 1).replacen("</svg>", &format!("{}</svg>", "</a>".repeat(nest)), 1);
+        variable_library("mutated variable library", json!({"xml": xml}))?;
     }
 }
 

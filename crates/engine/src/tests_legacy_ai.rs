@@ -3,7 +3,7 @@
 
 use serde_json::{Value, json};
 
-use super::tests_menucmds::place_undecodable_png;
+use super::tests_menucmds::{place_undecodable_png, place_undecodable_png_sized};
 use super::*;
 use crate::tests_links::Folder;
 
@@ -204,8 +204,8 @@ const RADIAL_AND_LINEAR: &str = r##"<svg xmlns="http://www.w3.org/2000/svg" widt
 </svg>"##;
 
 /// A radial gradient is written with its highlight, `0 0 0 0 Bh` at the center (§3.5.5, §3.5.6).
-/// #2687's file had none, and the reference app drew the circle in its outer color. The linear one
-/// has none. Both open again with their type, stops and place.
+/// #2687's file had none. The linear one has none. Both open again with their type, stops and
+/// place.
 #[test]
 fn a_radial_gradient_is_written_with_its_highlight() {
     let mut s = Session::new();
@@ -242,6 +242,34 @@ fn a_radial_gradient_is_written_with_its_highlight() {
         let got = colour_at(d, x, y);
         assert!(got.iter().zip(want).all(|(a, b)| a.abs_diff(b) <= 8), "{got:?} at {x}, {y}");
     }
+}
+
+/// #2687's radial gradient lists its stops from white at ramp point 0 to #1b2a6b at 100, as
+/// §3.5.2's radial definition lists them (10, then 100); the linear one lists them from 100 to 0
+/// (§1.4.3). The reference app read the radial gradient's two stops listed from 100 both at ramp
+/// point 100 and drew the circle in #1b2a6b (reported on #2807).
+#[test]
+fn a_radial_gradient_lists_its_stops_from_the_first() {
+    let mut s = Session::new();
+    let svg = vectorcraft_format::base64_encode(RADIAL_AND_LINEAR.as_bytes());
+    s.execute("document.open", &json!({"name": "t_radial.svg", "dataBase64": svg})).unwrap();
+    let r = s.execute("file.saveCopy", &json!({"format": "ai", "aiVersion": "7"})).unwrap();
+    let text = String::from_utf8(vectorcraft_format::base64_decode(r["dataBase64"].as_str().unwrap()).unwrap()).unwrap();
+    // Each `%_Bs` line of a definition as its RGB color (0-255) and ramp point.
+    let listed = |head: &str| -> Vec<([u8; 3], String)> {
+        let def = text.split(head).nth(1).and_then(|t| t.split("BD\n").next()).unwrap_or_else(|| panic!("no {head:?} in\n{text}"));
+        def.lines()
+            .map(|l| {
+                let n: Vec<&str> = l.split_whitespace().collect();
+                let [_, _, _, _, r, g, b, "2", "50", ramp, "%_Bs"] = n.as_slice() else { panic!("{l}") };
+                let c = [r, g, b].map(|v| (v.parse::<f64>().unwrap() * 255.0).round() as u8);
+                (c, (*ramp).to_string())
+            })
+            .collect()
+    };
+    let (white, navy) = ([255, 255, 255], [27, 42, 107]);
+    assert_eq!(listed("(Gradient) 1 2 Bd\n[\n"), [(white, "0".to_string()), (navy, "100".to_string())], "{text}");
+    assert_eq!(listed("(Gradient 2) 0 2 Bd\n[\n"), [(navy, "100".to_string()), (white, "0".to_string())], "{text}");
 }
 
 /// A `w`×`h` PNG of one colour (`rgba`), 72 ppi.
@@ -332,6 +360,29 @@ fn a_flattened_image_that_cant_be_decoded_is_noted_once() {
     assert_eq!(r["files"].as_array().map(Vec::len), Some(2), "{r}");
     assert!(warnings(&r).iter().any(|w| w.contains("flattened with the art under them")), "{r}");
     assert_eq!(undecoded_notes(&r), 1, "{r}");
+}
+
+/// Images that can't be decoded and are written as they are get the same note as one that is
+/// flattened. All of them give one note, and the note names no image's key.
+#[test]
+fn images_written_or_flattened_that_cant_be_decoded_are_noted_once() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    place_undecodable_png(&mut s);
+    place_undecodable_png_sized(&mut s, 48, 24);
+    let keys: Vec<String> = s.doc().unwrap().doc.images.keys().cloned().collect();
+    assert_eq!(keys.len(), 2);
+    let decode_notes = |r: &Value| warnings(r).iter().filter(|w| w.contains("decoded")).count();
+    let named = |r: &Value| warnings(r).iter().any(|w| keys.iter().any(|k| w.contains(k.as_str())));
+    let r = s.execute("file.saveCopy", &json!({"format": "ai", "aiVersion": "7"})).unwrap();
+    assert_eq!((undecoded_notes(&r), decode_notes(&r), named(&r)), (1, 1, false), "{r}");
+    // A third image, at 50% opacity, is flattened. The engine's note and the writer's note come out
+    // as one warning.
+    let cut = place_undecodable_png_sized(&mut s, 32, 16);
+    s.execute("transparency.set", &json!({"ids": [cut.0], "opacity": 50})).unwrap();
+    let r = s.execute("file.saveCopy", &json!({"format": "ai", "aiVersion": "7"})).unwrap();
+    assert!(warnings(&r).iter().any(|w| w.contains("flattened with the art under them")), "{r}");
+    assert_eq!((undecoded_notes(&r), decode_notes(&r), named(&r)), (1, 1, false), "{r}");
 }
 
 #[test]

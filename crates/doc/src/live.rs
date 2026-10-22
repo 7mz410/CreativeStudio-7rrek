@@ -60,12 +60,75 @@ pub enum BlendOrientation {
     AlignToPath,
 }
 
+/// Distribution of blend steps, as offered by the Blend panel's Type menu.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum BlendEaseType {
+    #[default]
+    In,
+    Out,
+    InOut,
+    OutIn,
+}
+
+impl BlendEaseType {
+    pub fn id(self) -> &'static str {
+        match self {
+            Self::In => "easeIn",
+            Self::Out => "easeOut",
+            Self::InOut => "easeInOut",
+            Self::OutIn => "easeOutIn",
+        }
+    }
+}
+
+/// Blend panel Type and Ramp. Ramp is a fraction from 0 (even) to 1.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
+pub struct BlendEase {
+    #[serde(default)]
+    pub kind: BlendEaseType,
+    #[serde(default, deserialize_with = "blend_ramp")]
+    pub ramp: f64,
+}
+
+impl BlendEase {
+    pub fn is_linear(&self) -> bool {
+        self.ramp <= 0.0
+    }
+
+    /// Only the default Type and Ramp can be omitted without losing a chosen Type at Ramp 0.
+    pub fn is_default(&self) -> bool {
+        self.kind == BlendEaseType::In && self.ramp == 0.0
+    }
+
+    /// A monotone polynomial distribution, blended with even spacing by Ramp. Public help
+    /// describes the four distributions, not their numeric curves; these curves are original.
+    pub fn apply(&self, u: f64) -> f64 {
+        let u = if u.is_finite() { u.clamp(0.0, 1.0) } else { 0.0 };
+        let r = if self.ramp.is_finite() { self.ramp.clamp(0.0, 1.0) } else { 0.0 };
+        let eased = match self.kind {
+            BlendEaseType::In => u * u,
+            BlendEaseType::Out => u * (2.0 - u),
+            BlendEaseType::InOut => u * u * (3.0 - 2.0 * u),
+            BlendEaseType::OutIn if u < 0.5 => 2.0 * u * (1.0 - u),
+            BlendEaseType::OutIn => 0.5 + 2.0 * (u - 0.5) * (u - 0.5),
+        };
+        u + r * (eased - u)
+    }
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct BlendSpec {
     #[serde(default)]
     pub spacing: BlendSpacing,
     #[serde(default)]
     pub orientation: BlendOrientation,
+    /// Acceleration of the steps' shapes and positions along the spine between two keys.
+    #[serde(default, skip_serializing_if = "BlendEase::is_default")]
+    pub ease: BlendEase,
+    /// Independent color acceleration. -100..100, with 0 preserving the even color ramp.
+    #[serde(default, rename = "colorShift", skip_serializing_if = "is_zero", deserialize_with = "blend_color_shift")]
+    pub color_shift: f64,
     /// Replaced spine. `None` = the straight lines between the key objects' centres.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub spine: Option<PathData>,
@@ -587,12 +650,18 @@ fn even_steps(n: u32) -> Vec<f64> {
     (0..=n).map(|i| i as f64 / n as f64).collect()
 }
 
+/// The number of points of a `(rows+1)×(cols+1)` grid, `None` past `usize`: counts come from
+/// files, and u32::MAX rows and columns (65,535 on 32-bit targets) would wrap to an empty grid.
+fn grid_len(rows: u32, cols: u32) -> Option<usize> {
+    (rows as usize).checked_add(1)?.checked_mul((cols as usize).checked_add(1)?)
+}
+
 impl GradientMesh {
     pub fn idx(&self, r: usize, c: usize) -> usize {
         r * (self.cols as usize + 1) + c
     }
     pub fn is_valid(&self) -> bool {
-        self.rows >= 1 && self.cols >= 1 && self.points.len() == (self.rows as usize + 1) * (self.cols as usize + 1)
+        self.rows >= 1 && self.cols >= 1 && grid_len(self.rows, self.cols) == Some(self.points.len())
     }
 
     /// A 1×1 mesh from its four corners (bottom-left, top-left, top-right, bottom-right in u/v
@@ -1026,7 +1095,8 @@ impl GradientMesh {
 
     /// Mesh tool Alt-click: delete the mesh lines through point `index` (interior lines only).
     pub fn remove_point_lines(&mut self, index: usize) -> bool {
-        if index >= self.points.len() {
+        // A mesh from a file may not have the points its rows and columns need: it is indexed below.
+        if !self.is_valid() || index >= self.points.len() {
             return false;
         }
         let w = self.cols as usize + 1;
@@ -1158,7 +1228,7 @@ fn surface_of<'a>(kind: &'a EnvelopeKind, src: Rect, frame: Affine) -> Box<dyn F
             {
                 return Box::new(move |u: f64, v: f64| mesh_at(&m, u, v));
             }
-            if *rows == 0 || *cols == 0 || points.len() as u64 != (u64::from(*rows) + 1) * (u64::from(*cols) + 1) {
+            if *rows == 0 || *cols == 0 || grid_len(*rows, *cols) != Some(points.len()) {
                 return Box::new(flat);
             }
             let (rows, cols) = (*rows as usize, *cols as usize);
@@ -1210,8 +1280,7 @@ pub fn smooth_handles(rows: u32, cols: u32, points: &[Point]) -> Vec<[Vec2; 4]> 
 /// the smooth ones, see [`smooth_handles`]) as a gradient mesh with black points: what the
 /// canvas draws and the Mesh tool and Direct Selection edit. `None` for a malformed grid.
 pub fn envelope_grid(rows: u32, cols: u32, points: &[Point], handles: &[[Vec2; 4]]) -> Option<GradientMesh> {
-    // (Counts come from files: no overflow on 32-bit targets.)
-    if rows == 0 || cols == 0 || points.len() as u64 != (u64::from(rows) + 1) * (u64::from(cols) + 1) {
+    if rows == 0 || cols == 0 || grid_len(rows, cols) != Some(points.len()) {
         return None;
     }
     let smooth;
@@ -1751,9 +1820,57 @@ pub(crate) fn max_outset(nodes: &[Arc<Node>], symbols: Option<&crate::SymbolBoxe
     o
 }
 
+/// Reading a native file never fails over one bad blend number: out-of-range values clamp,
+/// and anything that is not a finite number (NaN, null, text) becomes the default. The
+/// commands still refuse such input (`ease_param`).
+fn blend_number<'de, D: serde::Deserializer<'de>>(d: D, min: f64, max: f64) -> Result<f64, D::Error> {
+    let v = serde_json::Value::deserialize(d)?;
+    Ok(v.as_f64().filter(|n| n.is_finite()).map_or(0.0, |n| n.clamp(min, max)))
+}
+
+fn blend_ramp<'de, D: serde::Deserializer<'de>>(d: D) -> Result<f64, D::Error> {
+    blend_number(d, 0.0, 1.0)
+}
+
+fn blend_color_shift<'de, D: serde::Deserializer<'de>>(d: D) -> Result<f64, D::Error> {
+    blend_number(d, -100.0, 100.0)
+}
+
+/// Whether an optional stored color shift has its unchanged default.
+fn is_zero(v: &f64) -> bool {
+    *v == 0.0
+}
+
+impl BlendSpec {
+    /// Shift the color transition independently of shape placement. The exponential curve is
+    /// original; the documented behavior specifies the direction, not numeric sample values.
+    pub fn color_position(&self, u: f64) -> f64 {
+        let u = if u.is_finite() { u.clamp(0.0, 1.0) } else { 0.0 };
+        let shift = if self.color_shift.is_finite() { self.color_shift.clamp(-100.0, 100.0) } else { 0.0 };
+        if shift == 0.0 { u } else { u.powf(2.0f64.powf(shift / 50.0)) }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A bad Ramp or Shift in a file clamps (non-finite values take the default) instead of
+    /// failing the whole document.
+    #[test]
+    fn blend_easing_numbers_clamp_when_read() {
+        use serde::de::value::{Error, F64Deserializer};
+        let spec: BlendSpec = serde_json::from_str(r#"{"ease":{"kind":"out","ramp":7.5},"colorShift":-900}"#).unwrap();
+        assert_eq!((spec.ease.ramp, spec.color_shift), (1.0, -100.0));
+        let spec: BlendSpec = serde_json::from_str(r#"{"ease":{"ramp":-3},"colorShift":250}"#).unwrap();
+        assert_eq!((spec.ease.ramp, spec.color_shift), (0.0, 100.0));
+        let spec: BlendSpec = serde_json::from_str(r#"{"ease":{"ramp":null},"colorShift":"NaN"}"#).unwrap();
+        assert_eq!((spec.ease.ramp, spec.color_shift), (0.0, 0.0));
+        for bad in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+            assert_eq!(blend_ramp(F64Deserializer::<Error>::new(bad)).unwrap(), 0.0);
+            assert_eq!(blend_color_shift(F64Deserializer::<Error>::new(bad)).unwrap(), 0.0);
+        }
+    }
 
     /// #1578: Arc bends in the box's real proportions. In half-width units (y scaled by the
     /// aspect), the top and bottom edges are concentric circles about the bend's centre, at their
@@ -1829,6 +1946,20 @@ mod tests {
         assert!((p.x - 37.0).abs() < 1e-6 && (p.y - 81.0).abs() < 1e-6, "{p:?}");
     }
 
+    /// A file's rows and columns can be anything: a point count too large to compute is no match
+    /// for the points (u32::MAX × u32::MAX wrapped to 0 and passed for a grid without points).
+    #[test]
+    fn a_grid_too_large_to_count_is_malformed() {
+        let m = GradientMesh { rows: u32::MAX, cols: u32::MAX, points: vec![] };
+        assert!(!m.is_valid());
+        assert_eq!((m.lines(), m.outline(), m.quads(8).len()), (PathData::default(), PathData::default(), 0));
+        assert!(envelope_grid(u32::MAX, u32::MAX, &[], &[]).is_none());
+        // A mesh envelope without handles maps through its points: malformed, it leaves art as it is.
+        let kind = EnvelopeKind::Mesh { rows: u32::MAX, cols: u32::MAX, points: vec![], handles: vec![] };
+        let p = Point::new(25.0, 50.0);
+        assert_eq!(envelope_mapper(&kind, Rect::new(0.0, 0.0, 100.0, 100.0))(p), p);
+    }
+
     #[test]
     fn mesh_insert_and_remove_lines() {
         let mut m =
@@ -1853,5 +1984,19 @@ mod tests {
         // A corner in another space mixes them all in RGB.
         m.points[1].color = Color::rgb(1.0, 0.0, 0.0);
         assert!(matches!(m.color_at(0, 0, 0.5, 0.5).0, Color::Rgb { .. }));
+    }
+
+    /// Alt-clicking a point of a mesh from a file with fewer points than its rows and columns need
+    /// deletes nothing (it indexed past the points, a panic).
+    #[test]
+    fn mesh_lines_of_a_malformed_mesh_stay() {
+        let point = |i: u32| MeshPoint { p: Point::new(f64::from(i), 0.0), color: Color::BLACK, opacity: 1.0, handles: [Vec2::ZERO; 4] };
+        // An interior row's point and an interior column's point, each with 3 of the 6 points.
+        for (rows, cols, index) in [(2, 1, 2), (1, 2, 1)] {
+            let mut m = GradientMesh { rows, cols, points: (0..3).map(point).collect() };
+            let before = m.clone();
+            assert!(!m.remove_point_lines(index), "{rows}×{cols}, point {index}");
+            assert_eq!(m, before);
+        }
     }
 }

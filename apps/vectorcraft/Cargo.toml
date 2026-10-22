@@ -17,13 +17,17 @@ accessibility = ["eframe/accesskit"]
 windows7 = ["eframe/glow"]
 
 [dependencies]
-vectorcraft-engine = { workspace = true }
+vectorcraft-engine = { workspace = true, features = ["bundled-fonts"] }
 vectorcraft-ui-egui = { workspace = true }
 vectorcraft-text = { workspace = true }
+# Shared across the Craft suite: decides who draws the window frame per desktop (compositor vs app)
+# so VectorCraft matches the rest on Linux. `egui` adds `craft_window::decorate`. See #217.
+craft-window = { workspace = true }
 eframe = { workspace = true, features = ["default_fonts", "wayland", "x11"] }
 egui = { workspace = true }
 serde_json = { workspace = true }
 log = { workspace = true }
+chrono = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 rfd = { workspace = true }
@@ -72,6 +76,9 @@ objc2-core-text = { version = "0.3", default-features = false, features = ["std"
 pollster = "1"
 
 [target.'cfg(target_os = "linux")'.dependencies]
+# GNOME/Wayland needs client-side window controls without a bundled title font.
+winit = { version = "0.30", default-features = false, features = ["wayland-csd-adwaita-notitle"] }
+
 # Asks the Wayland compositor which GPU it draws with (linux-dmabuf feedback, src/compositor_gpu.rs),
 # so Automatic draws on that one. Both are already in the build through winit.
 wayland-client = "0.31"
