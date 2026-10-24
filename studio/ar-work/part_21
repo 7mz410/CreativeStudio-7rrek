@@ -1,0 +1,335 @@
+	 on the canvas to create one (
+	 selects several, or draws one inside an artboard)
+	3D Lighting Preset
+	Add filters from the list above
+	Add to Stack
+	Add to Symbols
+	All Artboards
+	Alt key toggles to Smooth Tool
+	Applied Filters
+	Apply Bullets
+	Arc Segment Tool Options
+	Art Brush
+	Artwork
+	Attach
+	Attach Objects on Path
+	Auto-Simplify
+	Background Level
+	Bas Relief
+	Bas Relief…
+	Base Along:
+	Basic Shapes
+	Black and white stay as they are. Dark colors become shades of the stroke color and light colors become tints of it.
+	Black becomes the stroke color and white stays white. Other colors become tints of the stroke color by their lightness.
+	Bottom-Justified Tab
+	Bristle Brush
+	Brush Art
+	Brush Detail
+	Brush Size
+	Bullets
+	Bullets and Numbering
+	Business Card 91 × 55 mm
+	Calligraphic Brush
+	Cancel Plug-in Run
+	Categories
+	Chalk & Charcoal
+	Chalk & Charcoal…
+	Character Direction
+	Charcoal
+	Charcoal…
+	Choose a filter
+	Chrome
+	Chrome…
+	Clockwise
+	Closed
+	Collapse Panel Group
+	Colored Pencil
+	Colored Pencil…
+	Colorization Tips
+	Consider Open Filled Paths as Closed
+	Conté Crayon
+	Conté Crayon…
+	Convex
+	Create New Set
+	Cursor Swatch Preview
+	Dark Rough
+	Dash
+	Definition
+	Detail
+	Diffuse
+	Dither
+	Drag an item here, or right-click one, to put it in this group.
+	Drop Artwork
+	Drop here to take it out of its group
+	Dry Brush
+	Dry Brush…
+	Each run may take up to {minutes} minutes and do {times} times the work other plug-ins may. It runs in the background, and you can cancel it.
+	Ease In
+	Ease In Out
+	Ease Out
+	Ease Out In
+	Effect Gallery
+	Effect Gallery Dialog
+	Effect Gallery…
+	Expand Objects on Path
+	Eyedropper: click the art to sample the key color
+	File {n} of {total}
+	Fill Arc
+	Fill Line
+	Filled Dot
+	Filled Square
+	Filters
+	Fine noise hides banding in the gradient fill
+	Font Technology
+	Foreground Level
+	Fresco
+	Fresco…
+	Gap Length:
+	Geometric Guides
+	Global Edit Options
+	Graphic Pen
+	Graphic Pen…
+	Hard Mix
+	Height/Width
+	Hide Live Paint Gaps
+	Hide Video Rulers
+	Highlight:
+	Hollow Circle
+	In Merge Mode, Clicking Stroke Splits the Path
+	Include Objects On Canvas
+	Insert Kashidas
+	Inspect Plug-in
+	Install “{name}”, which asks for a heavy budget?
+	Invoke Distance Guides
+	It may take minutes, so it runs in the background, where you can cancel it.
+	Length X-Axis:
+	Length Y-Axis:
+	Light Rough
+	Light/Dark Balance
+	Load Variable Library…
+	Locate Library…
+	Locate Selected Objects
+	Long
+	Match
+	Move Anchor Point
+	Move Brush
+	Move Library Group
+	New Brush
+	New Set
+	New Set…
+	New Without Dialog
+	Note Paper
+	Note Paper…
+	Objects on Path
+	Objects on Path Options
+	Objects on Path Tool
+	On Artboards
+	Open Symbol Library
+	Open this dialog with these settings next time
+	Open this setting's help page
+	Overlap
+	Packaged {n} file(s)
+	Packaged {n} file(s) in {folder}
+	Packaged {n} file(s) in {folder} {note}
+	Packaged {n} file(s) {note}
+	Paint Daubs
+	Paint Daubs…
+	Palette Knife
+	Palette Knife…
+	Pattern Brush
+	Photocopy
+	Photocopy…
+	Pick Color From:
+	Plaster
+	Plaster…
+	Plastic Wrap
+	Plastic Wrap…
+	Plug-ins & Scratch Disks
+	Polar Grid Tool Options
+	Precision
+	Ramp:
+	Rectangular Grid Tool Options
+	Remove Redundant Points
+	Repeat Objects
+	Result(s): {count}
+	Reticulation
+	Reticulation…
+	Reverse Traps
+	Rough Pastels
+	Rough Pastels…
+	Ruby
+	Ruby…
+	Save Symbol Library
+	Save Symbol Library…
+	Save Symbols…
+	Scale Text Attributes
+	Scatter Brush
+	Select Fills
+	Select Strokes
+	Select art to make a scatter, art or pattern brush.
+	Select artwork to apply effects
+	Selected Symbols Only
+	Selection:
+	Set Options
+	Set Options…
+	Shadow Intensity
+	Shift:
+	Show Center Mark
+	Show Cross Hairs
+	Show Live Paint Gaps
+	Show Video Safe Areas
+	Simple
+	Slope:
+	Smudge Stick
+	Smudge Stick…
+	Snap to Perpendicular
+	Snap to Tangent
+	Snap to Unit
+	Snapping
+	Soft Mix
+	Sparkle
+	Sponge
+	Sponge…
+	Stamp
+	Stamp…
+	Standard
+	Stop Global Edit
+	Straight Line
+	Stroke When Editable
+	Stylistic
+	Symbol Libraries Menu
+	Symbol Library
+	Texture Coverage
+	The art keeps its own colors.
+	The key color becomes the stroke color. The other colors shift their hue by the same amount and keep their saturation and brightness.
+	The plug-in is computing…
+	The plug-in writes the whole document.
+	The samples show this brush on a blue stroke.
+	Thickness
+	Tint Reduction
+	Tips
+	Top-Justified Tab
+	Torn Edges
+	Torn Edges…
+	Touch
+	Trap
+	Traps with Process Color
+	Underpainting
+	Underpainting…
+	User Symbol Library 1
+	User Symbol Library 10
+	User Symbol Library 2
+	User Symbol Library 3
+	User Symbol Library 4
+	User Symbol Library 5
+	User Symbol Library 6
+	User Symbol Library 7
+	User Symbol Library 8
+	User Symbol Library 9
+	Video Ruler Pixel Aspect Ratio:
+	Water Paper
+	Water Paper…
+	Watercolor
+	Watercolor…
+	Wide Blurry
+	Wide Sharp
+	{count} file(s) in {folder} {note}. Show the package folder?
+	{count} file(s) in {folder}. Show the package folder?
+	{w} × {h} pt
+@msg	Couldn't place {name}: the document it was placed in was closed
+@msg	Global Edit works on paths, compound paths and symbol instances
+@msg	New Window isn't available yet: a document opens in one window
+@msg	PDF security settings are not an object
+@msg	Packaged {n} file(s)
+@msg	Packaged {n} file(s) in {folder}
+@msg	Packaged {n} file(s) in {folder} {note}
+@msg	Packaged {n} file(s) {note}
+@msg	Packaging {_1}
+@msg	Placing {_1}
+@msg	Running “{name}”…
+@msg	Scale Text Attributes: selected type has no scale to bake
+@msg	Trap: no edges of different colours meet among the selected objects
+@msg	Trap: select two or more objects filled with solid colours
+@msg	`artboards`: all or a range such as 1, 3-5, not {v}
+@msg	`dither` applies to gradient fills (paint.setFill)
+@msg	`dither` applies to gradient fills (stroke: false)
+@msg	`dither` must be true or false
+@msg	`documentData` is {size} bytes (limit {MAX_DOCUMENT_DATA})
+@msg	`method` must be classic or perceptual
+@msg	`{_1}` has no symbols to place
+@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file
+@msg	a PostScript error ({name} in `{op}`: {at}; {meaning})
+@msg	a PostScript error ({name} in `{op}`: {at}; {meaning}), in {procs}
+@msg	a PostScript error ({name} in `{op}`; {meaning})
+@msg	a PostScript error ({name} in `{op}`; {meaning}), in {procs}
+@msg	a PostScript error ({name}; {meaning})
+@msg	a bristle brush name can have at most {max} characters: `{name}` has {count}
+@msg	a calculation has no result, as in a division by zero
+@msg	a clipping path can't be attached to a path
+@msg	a clipping path can't take objects
+@msg	a live effect runs while the document is drawn, so it can't be `heavy`
+@msg	a path inside a compound path, blend, envelope, repeat or Intertwine group can't take objects
+@msg	a value has the wrong type for the operator
+@msg	a value is outside the range the operator takes
+@msg	an exporter always gets an export's budget: leave `budget` out
+@msg	an image has no pixels and was left out
+@msg	automation path rejected: outside the read roots {roots}: {path}
+@msg	automation path rejected: outside the write roots {roots}: {path}
+@msg	brushes move only within their type
+@msg	column docks a set as a dock column, with no anchor or icon
+@msg	data the program reads is damaged or cut short, or the program asks for a position in a file that has none
+@msg	heightWidth must be from 1 to 1000 %
+@msg	icon must be true or false
+@msg	icon only docks a panel in the icon column, with no anchor
+@msg	ids must contain 1–10000 object ids
+@msg	invalid object id {value}: expected a non-negative integer
+@msg	library panel `{given}` isn't missing its library
+@msg	missing `library` (see symbol.libraries)
+@msg	missing integer `{key}`
+@msg	no similar objects found (rotated or reflected copies are not matched); change the Global Edit Options and try again
+@msg	no such object id {value}
+@msg	no symbol `{n}`
+@msg	no symbol `{n}` in `{_1}`
+@msg	no symbol library `{key}` (see symbol.libraries)
+@msg	nothing in data set {name} was applied: no object is bound to a variable it has a value for
+@msg	objects inside a blend, envelope, repeat or Intertwine group can't be attached to a path
+@msg	only a dock group above or below others collapses, not one beside another
+@msg	panel floats; collapse its group with window.panel.float {panel, collapsed}
+@msg	panel is not in a dock group
+@msg	part of the program isn't valid PostScript text
+@msg	replace: the object to replace was changed or deleted
+@msg	select an Objects on Path group
+@msg	select one object
+@msg	the Simplify slider is not open
+@msg	the artboard is locked
+@msg	the document has no symbols to save
+@msg	the file's variables and data sets weren't read (variables: {variables}, data sets: {data_sets}): the Variables panel doesn't list them
+@msg	the operator looks for a mark on the stack and finds none
+@msg	the operator needs more values than the stack holds
+@msg	the path has no point to continue from
+@msg	the program asks for a resource that isn't defined
+@msg	the program ends a dictionary it didn't begin
+@msg	the program goes past one of the reader's limits
+@msg	the program opens a file, which the reader can't do
+@msg	the program restores a saved state that was already restored
+@msg	the program runs, deletes or renames a file, which the reader can't do
+@msg	thickness must be from 0.01 to 5000 pt
+@msg	thumbnail: no page {n} (the file has 1)
+@msg	tintReduction must be from 0 to 100 %
+@msg	unknown snap option `{key}` (use {options})
+@msg	variables that aren't text were left out: {kinds}
+@msg	videoRulerPixelAspectRatio must be a number from 0.1 to 10
+@msg	{_1} finished, but the document or the plug-in changed meanwhile: run it again
+@msg	{_1} is an exporter (File › Export › Export As…)
+@msg	{key} must be Unix seconds (an integer) or null
+@msg	{key} must be [x, y] with finite coordinates
+@msg	{key} must be an array of non-negative integer object ids
+@msg	{label} keeps 1 of the document's {n} artboards: the file reopens with one. Turn on Preserve Editing Capabilities to keep them all.
+@msg	“{_1}” asks for a heavy budget (each run up to {minutes} minutes and {times} times the usual instructions): install it with `allowHeavy: true` once the user agrees
+axis	X Axis
+axis	Y Axis
+font-technology	Variable
+	Each entry of the file is matched to a VectorCraft tool, command or panel. Check the matches and answer what is left.
+	In VectorCraft
+	The name in the save panel was “{typed}”; VectorCraft added the file type's extension. Replacing the file overwrites its contents.
+	VectorCraft read this script without running it.

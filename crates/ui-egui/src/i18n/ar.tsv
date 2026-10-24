@@ -46,7 +46,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	القيمة الأقل تتبع الخط بدقة؛ والأعلى تعطي نقاطاً أقل ومنحنيات أنعم.
 	A new preset starting from the selected one	إعداد جديد يبدأ من الإعداد المحدد
 	A saved copy of the selected preset	نسخة محفوظة من الإعداد المحدد
-	About 7rrek	حول 7rrek
+	About 7rrek	حول حرّك
 	above	أعلى
 	Absolute Position	موضع مطلق
 	Accurate	دقيق
@@ -149,7 +149,7 @@
 	Appearance Panel	لوحة المظهر
 	Appearance panel	لوحة المظهر
 	Applies when the linked file is relinked or updated.	يُطبَّق عند إعادة ربط الملف المرتبط أو تحديثه.
-	Applies the next time 7rrek starts.	يُطبَّق عند تشغيل 7rrek في المرة القادمة.
+	Applies the next time 7rrek starts.	يُطبَّق عند تشغيل حرّك في المرة القادمة.
 	Apply Brush	تطبيق الفرشاة
 	Apply Character Style	تطبيق نمط الحروف
 	Apply Effect	تطبيق التأثير
@@ -1942,7 +1942,7 @@
 	Quarter Space	ربع مسافة
 	Quick Actions	إجراءات سريعة
 	Quickly start a new file	ابدأ ملفاً جديداً بسرعة
-	Quit 7rrek	إنهاء 7rrek
+	Quit 7rrek	إنهاء حرّك
 	Radar Graph Tool	أداة الرسم البياني الراداري
 	Radial	شعاعي
 	Radial Glows	توهجات شعاعية
@@ -2140,7 +2140,7 @@
 	Revert	الرجوع
 	Revert to the saved version of “{name}”?	الرجوع إلى النسخة المحفوظة من «{name}»؟
 	Replace “{name}”, the file this document was opened from?	استبدال «{name}»، الملف الذي فُتح منه هذا المستند؟
-	Opening it left out what 7rrek can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	فتحه أهمل ما لا يستطيع 7rrek قراءته بعد ({what})، لذا استبداله يفقد ذلك نهائياً. احفظه باسم آخر للاحتفاظ به.
+	Opening it left out what 7rrek can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	فتحه أهمل ما لا يستطيع حرّك قراءته بعد ({what})، لذا استبداله يفقد ذلك نهائياً. احفظه باسم آخر للاحتفاظ به.
 	Revolve…	دوران حول محور…
 	RGB Color	لون RGB
 	Right	يمين
@@ -2876,10 +2876,10 @@
 	Vector Halftone	نقطية نصفية متجهية
 	Vector Halftone…	نقطية نصفية متجهية…
 	Vector illustration — fast, open, scriptable.	رسم متجهي — سريع، مفتوح، قابل للبرمجة.
-	7rrek didn't quit normally last time. These documents had unsaved changes:	لم يُغلق 7rrek بشكل طبيعي في المرة السابقة. هذه المستندات فيها تغييرات غير محفوظة:
-	7rrek Help…	مساعدة 7rrek…
+	7rrek didn't quit normally last time. These documents had unsaved changes:	لم يُغلق حرّك بشكل طبيعي في المرة السابقة. هذه المستندات فيها تغييرات غير محفوظة:
+	7rrek Help…	مساعدة حرّك…
 	Creative Studio Website	موقع Creative Studio
-	7rrek on GitHub	7rrek على GitHub
+	7rrek on GitHub	حرّك على GitHub
 	Vectors	المتجهات
 	Version {version} — open-source vector illustration in pure Rust.	الإصدار {version} — رسم متجهي مفتوح المصدر بلغة Rust.
 	Version:	الإصدار:
@@ -3263,7 +3263,7 @@ axis	Both	كلاهما
 @msg	can't encode the document: {0}	تعذّر ترميز المستند: {0}
 @msg	can't parse shortcut `{c}`	تعذّر تحليل الاختصار `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	تعذّر تحليل الاختصار `{s}` لـ `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	تعذّر الحفظ بالإصدار {0}: 7rrek يكتب الإصدارات من {MIN_VERSION} إلى {VERSION}
+@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	تعذّر الحفظ بالإصدار {0}: رسم يكتب الإصدارات من {MIN_VERSION} إلى {VERSION}
 @msg	can't write .{ext} images	تعذّرت كتابة صور .{ext}
 @msg	cannot distort a zero-size bounding box	تعذّر تشويه إطار محيط بحجم صفر
 @msg	cannot read PDF: {0}	تعذّرت قراءة PDF: {0}
@@ -3286,7 +3286,7 @@ axis	Both	كلاهما
 @msg	empty brush stroke	ضربة فرشاة فارغة
 @msg	empty cutter	أداة قطع فارغة
 @msg	empty path	مسار فارغ
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	إصدار الملف {0} أحدث مما يدعمه 7rrek هذا ({VERSION})
+@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	إصدار الملف {0} أحدث مما يدعمه رسم هذا ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	النقطة الحرة {i} تحتاج `at` [x, y] و`color` صالحاً
 @msg	give both `start` and `end` [x, y] (or neither)	أعطِ `start` و`end` معاً [x, y] (أو لا شيء منهما)
 @msg	give corners of the path: anchors between two straight sides	أعطِ زوايا المسار: نقاط ربط بين جانبين مستقيمين
@@ -3303,9 +3303,9 @@ axis	Both	كلاهما
 @msg	invalid PDF setting: {0}	إعداد PDF غير صالح: {0}
 @msg	invalid image data for `{0}`	بيانات صورة غير صالحة لـ `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	معاملات غير صالحة لـ `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	ليست صورة يقرأها 7rrek
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	يستخدم `{at}`، وهو غير معروف لقارئ PostScript في 7rrek
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	يستخدم `{at}`، وهو غير معروف لقارئ PostScript في 7rrek، في {procs}
+@msg	is not an image VectorCraft reads	ليست صورة يقرأها رسم
+@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	يستخدم `{at}`، وهو غير معروف لقارئ PostScript في رسم
+@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	يستخدم `{at}`، وهو غير معروف لقارئ PostScript في رسم، في {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	فُتحت معاينة Windows metafile بدلاً منه، وقد يبسّط ذلك العمل
 @msg	its preview was placed instead, at screen resolution	وُضعت معاينته بدلاً منه، بدقة الشاشة
 @msg	join needs open paths	الوصل يحتاج مسارات مفتوحة
@@ -3406,8 +3406,8 @@ axis	Both	كلاهما
 @msg	no user workspace `{from}`	لا توجد مساحة عمل مستخدم `{from}`
 @msg	node {_1} is not text	العقدة {_1} ليست نصاً
 @msg	not a DXF drawing	ليس رسماً بصيغة DXF
-@msg	not a VectorCraft file: {0}	ليس ملف 7rrek: {0}
-@msg	not a 7rrek shortcut set (missing `overrides`)	ليست مجموعة اختصارات 7rrek (`overrides` مفقود)
+@msg	not a VectorCraft file: {0}	ليس ملف رسم: {0}
+@msg	not a 7rrek shortcut set (missing `overrides`)	ليست مجموعة اختصارات حرّك (`overrides` مفقود)
 @msg	not a graphic style library (format `{_1}`)	ليست مكتبة أنماط رسومية (الصيغة `{_1}`)
 @msg	not a stored central record	ليس سجلاً مركزياً مخزّناً
 @msg	not a valid plug-in module: {0}	ليست وحدة إضافة صالحة: {0}
@@ -3626,9 +3626,9 @@ axis	Both	كلاهما
 @msg	Sent to {_1}	أُرسل إلى {_1}
 @msg	{_1} files	ملفات {_1}
 @msg	The graphics were lost and have been restarted	فُقدت الرسوميات وأُعيد تشغيلها
-@msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	معالج الرسوميات الأول لم يستطع عرض النافذة، فأُعيد تشغيل 7rrek على {summary}
-@msg	Loading VectorCraft…	جارٍ تحميل 7rrek…
-@msg	VectorCraft failed to start: {e}	فشل تشغيل 7rrek: {e}
+@msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	معالج الرسوميات الأول لم يستطع عرض النافذة، فأُعيد تشغيل رسم على {summary}
+@msg	Loading VectorCraft…	جارٍ تحميل رسم…
+@msg	VectorCraft failed to start: {e}	فشل تشغيل رسم: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	يلزم متصفح يدعم WebGPU أو WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	فُقدت الرسوميات وتعذّرت إعادة تشغيلها.
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	تغييراتك غير المحفوظة محفوظة في هذا المتصفح: أعد تحميل الصفحة لاستعادتها.
@@ -3640,7 +3640,7 @@ axis	Both	كلاهما
 @msg	"{0}" is not a colour: write it as #rrggbb	"{0}" ليس لوناً: اكتبه بصيغة #rrggbb
 @msg	this isn't a flat-colour logo ({_1}% of its solid areas match a few flat colours), so Flat Logo mode would turn its gradients into patches: use Color mode instead	هذا ليس شعاراً بألوان مسطّحة ({_1}% من مساحاته المصمتة تطابق ألواناً مسطّحة قليلة)، لذا وضع الشعار المسطّح سيحوّل تدرّجاته إلى رقع: استخدم وضع الألوان بدلاً منه
 	Services	الخدمات
-	Hide 7rrek	إخفاء 7rrek
+	Hide 7rrek	إخفاء حرّك
 	Zoom	تكبير
 	Bring All to Front	إحضار الكل إلى الأمام
 	Settings	الإعدادات
@@ -3648,7 +3648,7 @@ axis	Both	كلاهما
 	On: one locked object showing the document, updated when it changes.	تشغيل: كائن مقفل واحد يعرض المستند، ويتحدث عند تغيّره.
 	Off: an editable copy of its art, embedded in this document.	إيقاف: نسخة قابلة للتعديل من العمل، مضمّنة في هذا المستند.
 	Images: link to the file instead of only embedding it.	الصور: ربط بالملف بدلاً من تضمينه فقط.
-	7rrek documents: one locked object, updated when the file changes.	مستندات 7rrek: كائن مقفل واحد، يتحدث عند تغيّر الملف.
+	7rrek documents: one locked object, updated when the file changes.	مستندات حرّك: كائن مقفل واحد، يتحدث عند تغيّر الملف.
 	A file dialog is open: choose there first	مربع حوار ملف مفتوح: اختر منه أولاً
 	Shaper	المُشكِّل
 	Expand Shaper Group	توسيع مجموعة المُشكِّل
@@ -4193,7 +4193,7 @@ lighting	Light	الضوء
 	Check Script	التحقق من البرنامج النصي
 	Check Script…	التحقق من البرنامج النصي…
 	Copy Report	نسخ التقرير
-	7rrek read this script without running it.	يقرأ 7rrek هذا البرنامج النصي دون تشغيله.
+	7rrek read this script without running it.	يقرأ حرّك هذا البرنامج النصي دون تشغيله.
 	Needs nothing beyond plain JavaScript	لا يحتاج إلى أي شيء يتجاوز جافا سكريبت العادي
 	Needs the script language's own objects or directives	يحتاج إلى كائنات أو توجيهات خاصة باللغة النصية
 	Needs the document model	يحتاج إلى نموذج الوثيقة
@@ -4392,7 +4392,7 @@ lighting	Light	الضوء
 	Arrange Intertwine Area	ترتيب منطقة متشابكة
 	Import Shortcut Set	مجموعة اختصارات الاستيراد
 	Import Shortcut Set…	استيراد مجموعة الاختصارات…
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	تتم مطابقة كل إدخال للملف بأداة أو أمر أو لوحة 7rrek. تحقق من التطابقات وأجب عما تبقى.
+	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	تتم مطابقة كل إدخال للملف بأداة أو أمر أو لوحة حرّك. تحقق من التطابقات وأجب عما تبقى.
 	Keys	مفاتيح
 	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.	يكتب الملف المفاتيح والمعدلات كرموز. تحقق من المعاني المقترحة وأجب عن الرموز التي لم تعرف بعد.
 	Click, then press the key this code stands for (Esc cancels)	انقر ثم اضغط على المفتاح الذي يمثله هذا الرمز (إلغاء Esc)
@@ -4402,7 +4402,7 @@ lighting	Light	الضوء
 	not known yet	غير معروف بعد
 	Shortcuts	اختصارات
 	In the File	في الملف
-	In 7rrek	في 7rrek
+	In 7rrek	في حرّك
 	Needs Attention Only	يحتاج إلى الاهتمام فقط
 	Ready	جاهز
 	Needs a choice	يحتاج إلى خيار
@@ -4432,7 +4432,7 @@ lighting	Light	الضوء
 	Redefine {name}	إعادة تعريف {name}
 	Rotate View to Selection	تدوير العرض إلى التحديد
 	“{name}” already exists. Replace it?	"{name}" موجود بالفعل. استبداله؟
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	كان الاسم الموجود في لوحة الحفظ هو "{typed}"؛ أضاف 7rrek امتداد نوع الملف. يؤدي استبدال الملف إلى الكتابة فوق محتوياته.
+	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	كان الاسم الموجود في لوحة الحفظ هو "{typed}"؛ أضاف حرّك امتداد نوع الملف. يؤدي استبدال الملف إلى الكتابة فوق محتوياته.
 	Trackpad Gesture to Rotate View	إيماءة لوحة التتبع لتدوير العرض
 	Update Selection	تحديث التحديد
 	Show Original Path	إظهار المسار الأصلي
@@ -4980,7 +4980,7 @@ file-filter	Print presets	إعدادات الطباعة
 file-filter	SVG Compressed	SVG مضغوط
 file-filter	Swatch libraries	مكتبات سواتش
 file-filter	Templates	القوالب
-file-filter	7rrek Template	قالب 7rrek
+file-filter	7rrek Template	قالب حرّك
 gradient-kind	Radial	شعاعي
 mark-style	Japanese	ياباني
 theme	Appearance	المظهر
@@ -5265,6 +5265,340 @@ swatch	Bright Violet	بنفسجي ساطع
 @msg	the file's variables and data sets weren't read (variables: {variables}, data sets: {data_sets}): the Variables panel doesn't list them	لم تُقرأ متغيرات الملف ومجموعات البيانات (المتغيرات: {variables}، مجموعات البيانات: {data_sets}): لوحة المتغيرات لا تعرضها
 	7rrek	حرّك
 	Select by Color	تحديد حسب اللون
+	 on the canvas to create one (	 على مساحة العمل لإنشاء واحدة (
+	 selects several, or draws one inside an artboard)	 يحدد عدة لوحات، أو يرسم واحدة داخل لوحة رسم)
+	3D Lighting Preset	إعداد إضاءة ثلاثية الأبعاد مسبق
+	Add filters from the list above	إضافة مرشحات من القائمة أعلاه
+	Add to Stack	إضافة إلى المكدس
+	Add to Symbols	إضافة إلى الرموز
+	All Artboards	كل لوحات الرسم
+	Alt key toggles to Smooth Tool	مفتاح Alt يبدّل إلى أداة التنعيم
+	Applied Filters	المرشحات المطبقة
+	Apply Bullets	تطبيق التعداد النقطي
+	Arc Segment Tool Options	خيارات أداة قطعة القوس
+	Art Brush	فرشاة فنية
+	Artwork	العمل الفني
+	Attach	إرفاق
+	Attach Objects on Path	إرفاق كائنات بالمسار
+	Auto-Simplify	تبسيط تلقائي
+	Background Level	مستوى الخلفية
+	Bas Relief	نقش بارز
+	Bas Relief…	نقش بارز…
+	Base Along:	الأساس على طول:
+	Basic Shapes	الأشكال الأساسية
+	Black and white stay as they are. Dark colors become shades of the stroke color and light colors become tints of it.	يبقى الأسود والأبيض كما هما. وتصبح الألوان الداكنة ظلالاً للون الحدود وتصبح الألوان الفاتحة تدرجات منه.
+	Black becomes the stroke color and white stays white. Other colors become tints of the stroke color by their lightness.	يصبح الأسود لون الحدود ويبقى الأبيض أبيض. وتصبح الألوان الأخرى تدرجات للون الحدود حسب درجة سطوعها.
+	Bottom-Justified Tab	علامة تبويب محاذاة لأسفل
+	Bristle Brush	فرشاة شعر خشن
+	Brush Art	فن الفرشاة
+	Brush Detail	تفاصيل الفرشاة
+	Brush Size	حجم الفرشاة
+	Bullets	الرصاص
+	Bullets and Numbering	تعداد نقطي وتعداد رقمي
+	Business Card 91 × 55 mm	بطاقة عمل 91 × 55 مم
+	Calligraphic Brush	فرشاة خطية
+	Cancel Plug-in Run	إلغاء تشغيل المكون الإضافي
+	Categories	الفئات
+	Chalk & Charcoal	طباشير وفحم
+	Chalk & Charcoal…	طباشير وفحم…
+	Character Direction	اتجاه الأحرف
+	Charcoal	فحم
+	Charcoal…	فحم…
+	Choose a filter	اختيار مرشح
+	Chrome	كروم
+	Chrome…	كروم…
+	Clockwise	مع عقارب الساعة
+	Closed	مغلق
+	Collapse Panel Group	طيّ مجموعة اللوحات
+	Colored Pencil	قلم ملون
+	Colored Pencil…	قلم ملون…
+	Colorization Tips	تلميحات التلوين
+	Consider Open Filled Paths as Closed	اعتبار المسارات المفتوحة المعبأة مغلقة
+	Conté Crayon	قلم Conté
+	Conté Crayon…	قلم Conté…
+	Convex	محدّب
+	Create New Set	إنشاء مجموعة جديدة
+	Cursor Swatch Preview	معاينة العينة عند المؤشر
+	Dark Rough	داكن خشن
+	Dash	الشرطة
+	Definition	الوضوح
+	Detail	التفاصيل
+	Diffuse	انتشار
+	Dither	التنقيط
+	Drag an item here, or right-click one, to put it in this group.	اسحب عنصراً إلى هنا، أو انقر بزر الفأرة الأيمن على عنصر، لوضعه في هذه المجموعة.
+	Drop Artwork	إفلات العمل الفني
+	Drop here to take it out of its group	أفلت هنا لإخراجه من مجموعته
+	Dry Brush	فرشاة جافة
+	Dry Brush…	فرشاة جافة…
+	Each run may take up to {minutes} minutes and do {times} times the work other plug-ins may. It runs in the background, and you can cancel it.	قد تستغرق كل عملية تشغيل ما يصل إلى {minutes} دقائق وتنجز {times} أضعاف عمل المكونات الإضافية الأخرى. تعمل في الخلفية، ويمكنك إلغاؤها.
+	Ease In	تسهيل الدخول
+	Ease In Out	تسهيل الدخول والخروج
+	Ease Out	تسهيل الخروج
+	Ease Out In	تسهيل الخروج والدخول
+	Effect Gallery	معرض التأثيرات
+	Effect Gallery Dialog	مربع حوار معرض التأثيرات
+	Effect Gallery…	معرض التأثيرات…
+	Expand Objects on Path	توسيع كائنات على المسار
+	Eyedropper: click the art to sample the key color	القطارة: انقر فوق العمل الفني لأخذ عينة من اللون الأساسي
+	File {n} of {total}	الملف {n} من {total}
+	Fill Arc	تعبئة القوس
+	Fill Line	تعبئة الخط
+	Filled Dot	نقطة ممتلئة
+	Filled Square	مربع ممتلئ
+	Filters	مرشّحات
+	Fine noise hides banding in the gradient fill	الضوضاء الدقيقة تخفي التدرج اللوني في تعبئة التدرج
+	Font Technology	تقنية الخطوط
+	Foreground Level	مستوى المقدمة
+	Fresco	فريسكو
+	Fresco…	فريسكو…
+	Gap Length:	طول الفجوة:
+	Geometric Guides	الأدلة الهندسية
+	Global Edit Options	خيارات التحرير الشامل
+	Graphic Pen	قلم الجرافيك
+	Graphic Pen…	قلم الجرافيك…
+	Hard Mix	مزج قاسٍ
+	Height/Width	الارتفاع/العرض
+	Hide Live Paint Gaps	إخفاء فجوات الطلاء الحي
+	Hide Video Rulers	إخفاء مساطر الفيديو
+	Highlight:	تمييز:
+	Hollow Circle	دائرة مفرغة
+	In Merge Mode, Clicking Stroke Splits the Path	في وضع الدمج، يؤدي النقر فوق الحدود إلى تقسيم المسار
+	Include Objects On Canvas	تضمين الكائنات الموجودة على مساحة العمل
+	Insert Kashidas	إدراج كشيدات
+	Inspect Plug-in	فحص المكون الإضافي
+	Install “{name}”, which asks for a heavy budget?	تثبيت “{name}”، الذي يطلب ميزانية تشغيلية عالية؟
+	Invoke Distance Guides	استدعاء أدلة المسافة
+	It may take minutes, so it runs in the background, where you can cancel it.	قد يستغرق الأمر دقائق، لذا يعمل في الخلفية، حيث يمكنك إلغاؤه.
+	Length X-Axis:	طول المحور X:
+	Length Y-Axis:	طول المحور Y:
+	Light Rough	فاتح خشن
+	Light/Dark Balance	توازن الفاتح/الداكن
+	Load Variable Library…	تحميل مكتبة المتغيرات…
+	Locate Library…	تحديد موقع المكتبة…
+	Locate Selected Objects	تحديد موقع الكائنات المحددة
+	Long	طويل
+	Match	مطابقة
+	Move Anchor Point	نقل نقطة الربط
+	Move Brush	نقل الفرشاة
+	Move Library Group	نقل مجموعة المكتبات
+	New Brush	فرشاة جديدة
+	New Set	مجموعة جديدة
+	New Set…	مجموعة جديدة…
+	New Without Dialog	جديد بدون مربع حوار
+	Note Paper	ورق الملاحظات
+	Note Paper…	ورق الملاحظات…
+	Objects on Path	كائنات على المسار
+	Objects on Path Options	خيارات كائنات على المسار
+	Objects on Path Tool	أداة كائنات على المسار
+	On Artboards	على لوحات الرسم
+	Open Symbol Library	فتح مكتبة الرموز
+	Open this dialog with these settings next time	فتح مربع الحوار هذا بهذه الإعدادات في المرة القادمة
+	Open this setting's help page	فتح صفحة المساعدة الخاصة بهذا الإعداد
+	Overlap	تراكب
+	Packaged {n} file(s)	تم تجميع {n} ملف
+	Packaged {n} file(s) in {folder}	تم تجميع {n} ملف في {folder}
+	Packaged {n} file(s) in {folder} {note}	تم تجميع {n} ملف في {folder} {note}
+	Packaged {n} file(s) {note}	تم تجميع {n} ملف {note}
+	Paint Daubs	لطخات طلاء
+	Paint Daubs…	لطخات طلاء…
+	Palette Knife	سكين الرسم
+	Palette Knife…	سكين الرسم…
+	Pattern Brush	فرشاة نقش
+	Photocopy	نسخة مصوّرة
+	Photocopy…	نسخة مصوّرة…
+	Pick Color From:	اختيار اللون من:
+	Plaster	جص
+	Plaster…	جص…
+	Plastic Wrap	تغليف بلاستيكي
+	Plastic Wrap…	تغليف بلاستيكي…
+	Plug-ins & Scratch Disks	المكونات الإضافية وأقراص العمل المؤقتة
+	Polar Grid Tool Options	خيارات أداة الشبكة القطبية
+	Precision	الدقة
+	Ramp:	التدرج:
+	Rectangular Grid Tool Options	خيارات أداة الشبكة المستطيلة
+	Remove Redundant Points	إزالة النقاط الزائدة
+	Repeat Objects	تكرار الكائنات
+	Result(s): {count}	النتائج: {count}
+	Reticulation	تشبّك
+	Reticulation…	تشبّك…
+	Reverse Traps	عكس محاصرة الألوان
+	Rough Pastels	ألوان باستيل خشنة
+	Rough Pastels…	ألوان باستيل خشنة…
+	Ruby	روبي
+	Ruby…	روبي…
+	Save Symbol Library	حفظ مكتبة الرموز
+	Save Symbol Library…	حفظ مكتبة الرموز…
+	Save Symbols…	حفظ الرموز…
+	Scale Text Attributes	تحجيم سمات النص
+	Scatter Brush	فرشاة تبعثر
+	Select Fills	تحديد التعبئات
+	Select Strokes	تحديد الحدود
+	Select art to make a scatter, art or pattern brush.	حدد عملاً فنياً لإنشاء فرشاة تبعثر أو فنية أو نقش.
+	Select artwork to apply effects	حدد عملاً فنياً لتطبيق التأثيرات
+	Selected Symbols Only	الرموز المحددة فقط
+	Selection:	التحديد:
+	Set Options	خيارات المجموعة
+	Set Options…	خيارات المجموعة…
+	Shadow Intensity	شدة الظل
+	Shift:	إزاحة:
+	Show Center Mark	إظهار علامة المركز
+	Show Cross Hairs	إظهار علامات التقاطع
+	Show Live Paint Gaps	إظهار فجوات الطلاء الحي
+	Show Video Safe Areas	إظهار المناطق الآمنة للفيديو
+	Simple	بسيط
+	Slope:	الميل:
+	Smudge Stick	قلم التلطيخ
+	Smudge Stick…	قلم التلطيخ…
+	Snap to Perpendicular	محاذاة إلى العمودي
+	Snap to Tangent	محاذاة إلى المماس
+	Snap to Unit	محاذاة إلى الوحدة
+	Snapping	الانجذاب
+	Soft Mix	مزج ناعم
+	Sparkle	بريق
+	Sponge	الإسفنجة
+	Sponge…	الإسفنجة…
+	Stamp	ختم
+	Stamp…	ختم…
+	Standard	قياسي
+	Stop Global Edit	إيقاف التحرير الشامل
+	Straight Line	خط مستقيم
+	Stroke When Editable	الحدود عند إمكانية التحرير
+	Stylistic	أسلوبي
+	Symbol Libraries Menu	قائمة مكتبات الرموز
+	Symbol Library	مكتبة الرموز
+	Texture Coverage	تغطية النقش
+	The art keeps its own colors.	يحتفظ العمل الفني بألوانه الخاصة.
+	The key color becomes the stroke color. The other colors shift their hue by the same amount and keep their saturation and brightness.	يصبح اللون الأساسي هو لون الحدود. وتتحول تدرجات الألوان الأخرى بنفس المقدار مع الاحتفاظ بتشبعها وسطوعها.
+	The plug-in is computing…	المكون الإضافي قيد المعالجة…
+	The plug-in writes the whole document.	يكتب المكون الإضافي المستند بأكمله.
+	The samples show this brush on a blue stroke.	تُظهر العينات هذه الفرشاة على حد أزرق.
+	Thickness	السماكة
+	Tint Reduction	تقليل التدرج اللوني
+	Tips	تلميحات
+	Top-Justified Tab	علامة تبويب محاذاة لأعلى
+	Torn Edges	حواف ممزقة
+	Torn Edges…	حواف ممزقة…
+	Touch	لمس
+	Trap	محاصرة الألوان
+	Traps with Process Color	محاصرة ألوان الطباعة الفرز
+	Underpainting	رسم أولي تحتي
+	Underpainting…	رسم أولي تحتي…
+	User Symbol Library 1	مكتبة رموز المستخدم 1
+	User Symbol Library 10	مكتبة رموز المستخدم 10
+	User Symbol Library 2	مكتبة رموز المستخدم 2
+	User Symbol Library 3	مكتبة رموز المستخدم 3
+	User Symbol Library 4	مكتبة رموز المستخدم 4
+	User Symbol Library 5	مكتبة رموز المستخدم 5
+	User Symbol Library 6	مكتبة رموز المستخدم 6
+	User Symbol Library 7	مكتبة رموز المستخدم 7
+	User Symbol Library 8	مكتبة رموز المستخدم 8
+	User Symbol Library 9	مكتبة رموز المستخدم 9
+	Video Ruler Pixel Aspect Ratio:	نسبة أبعاد بكسل مسطرة الفيديو:
+	Water Paper	ورق مائي
+	Water Paper…	ورق مائي…
+	Watercolor	ألوان مائية
+	Watercolor…	ألوان مائية…
+	Wide Blurry	عريض ضبابي
+	Wide Sharp	عريض حاد
+	{count} file(s) in {folder} {note}. Show the package folder?	{count} ملف في {folder} {note}. هل تريد إظهار مجلد الحزمة؟
+	{count} file(s) in {folder}. Show the package folder?	{count} ملف في {folder}. هل تريد إظهار مجلد الحزمة؟
+	{w} × {h} pt	{w} × {h} نقطة
+@msg	Couldn't place {name}: the document it was placed in was closed	تعذر وضع {name}: تم إغلاق المستند الذي تم وضعه فيه
+@msg	Global Edit works on paths, compound paths and symbol instances	يعمل التحرير الشامل على المسارات والمسارات المركبة ونماذج الرموز
+@msg	New Window isn't available yet: a document opens in one window	نافذة جديدة غير متوفرة بعد: يفتح المستند في نافذة واحدة
+@msg	PDF security settings are not an object	إعدادات أمان PDF ليست كائناً
+@msg	Packaged {n} file(s)	تم تجميع {n} ملف
+@msg	Packaged {n} file(s) in {folder}	تم تجميع {n} ملف في {folder}
+@msg	Packaged {n} file(s) in {folder} {note}	تم تجميع {n} ملف في {folder} {note}
+@msg	Packaged {n} file(s) {note}	تم تجميع {n} ملف {note}
+@msg	Packaging {_1}	تجميع {_1}
+@msg	Placing {_1}	وضع {_1}
+@msg	Running “{name}”…	تشغيل “{name}”…
+@msg	Scale Text Attributes: selected type has no scale to bake	تحجيم سمات النص: لا يحتوي النص المحدد على مقياس لتثبيته
+@msg	Trap: no edges of different colours meet among the selected objects	محاصرة الألوان: لا تلتقي حواف ذات ألوان مختلفة بين الكائنات المحددة
+@msg	Trap: select two or more objects filled with solid colours	محاصرة الألوان: حدد كائنين أو أكثر معبأين بألوان خالصة
+@msg	`artboards`: all or a range such as 1, 3-5, not {v}	`artboards`: الكل أو نطاق مثل 1، 3-5، وليس {v}
+@msg	`dither` applies to gradient fills (paint.setFill)	`dither` ينطبق على تعبئات التدرج (paint.setFill)
+@msg	`dither` applies to gradient fills (stroke: false)	`dither` ينطبق على تعبئات التدرج (stroke: false)
+@msg	`dither` must be true or false	`dither` يجب أن يكون true أو false
+@msg	`documentData` is {size} bytes (limit {MAX_DOCUMENT_DATA})	`documentData` بحجم {size} بايت (الحد {MAX_DOCUMENT_DATA})
+@msg	`method` must be classic or perceptual	`method` يجب أن تكون classic أو perceptual
+@msg	`{_1}` has no symbols to place	`{_1}` لا يحتوي على رموز لوضعها
+@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` ليس مستند VectorCraft أو ملف PDF أو ملف .ai متوافقاً مع PDF
+@msg	a PostScript error ({name} in `{op}`: {at}; {meaning})	خطأ PostScript ({name} في `{op}`: {at}؛ {meaning})
+@msg	a PostScript error ({name} in `{op}`: {at}; {meaning}), in {procs}	خطأ PostScript ({name} في `{op}`: {at}؛ {meaning})، في {procs}
+@msg	a PostScript error ({name} in `{op}`; {meaning})	خطأ PostScript ({name} في `{op}`؛ {meaning})
+@msg	a PostScript error ({name} in `{op}`; {meaning}), in {procs}	خطأ PostScript ({name} في `{op}`؛ {meaning})، في {procs}
+@msg	a PostScript error ({name}; {meaning})	خطأ PostScript ({name}؛ {meaning})
+@msg	a bristle brush name can have at most {max} characters: `{name}` has {count}	يمكن أن يحتوي اسم فرشاة الشعر الخشن على {max} حرفاً كحد أقصى: يحتوي `{name}` على {count}
+@msg	a calculation has no result, as in a division by zero	عملية حسابية بدون نتيجة، كما في القسمة على صفر
+@msg	a clipping path can't be attached to a path	لا يمكن إرفاق مسار قص بمسار
+@msg	a clipping path can't take objects	لا يمكن لمسار القص أخذ كائنات
+@msg	a live effect runs while the document is drawn, so it can't be `heavy`	يعمل التأثير الحي أثناء رسم المستند، لذا لا يمكن أن يكون `heavy`
+@msg	a path inside a compound path, blend, envelope, repeat or Intertwine group can't take objects	لا يمكن لمسار داخل مسار مركب أو مزج أو غلاف أو تكرار أو مجموعة تشابك أخذ كائنات
+@msg	a value has the wrong type for the operator	قيمة ذات نوع غير صحيح للعامل
+@msg	a value is outside the range the operator takes	قيمة خارج النطاق الذي يقبله العامل
+@msg	an exporter always gets an export's budget: leave `budget` out	يحصل المُصدِّر دائماً على ميزانية التصدير: اترك `budget` خارجاً
+@msg	an image has no pixels and was left out	صورة لا تحتوي على بكسلات وتم استبعادها
+@msg	automation path rejected: outside the read roots {roots}: {path}	تم رفض مسار الأتمتة: خارج جذور القراءة {roots}: {path}
+@msg	automation path rejected: outside the write roots {roots}: {path}	تم رفض مسار الأتمتة: خارج جذور الكتابة {roots}: {path}
+@msg	brushes move only within their type	تتحرك الفُرش فقط ضمن نوعها
+@msg	column docks a set as a dock column, with no anchor or icon	يرسي العمود مجموعة كعمود إرساء، بدون نقطة تثبيت أو أيقونة
+@msg	data the program reads is damaged or cut short, or the program asks for a position in a file that has none	البيانات التي يقرؤها البرنامج تالفة أو مقتطعة، أو يطلب البرنامج موضعاً في ملف غير موجود
+@msg	heightWidth must be from 1 to 1000 %	يجب أن يكون heightWidth من 1 إلى 1000 %
+@msg	icon must be true or false	يجب أن يكون icon إما true أو false
+@msg	icon only docks a panel in the icon column, with no anchor	icon يُرسي لوحة فقط في عمود الأيقونات، بدون نقطة تثبيت
+@msg	ids must contain 1–10000 object ids	يجب أن تحتوي المعرفات ids على 1–10000 معرف كائن
+@msg	invalid object id {value}: expected a non-negative integer	معرف كائن غير صالح {value}: يُتوقع عدد صحيح غير سالب
+@msg	library panel `{given}` isn't missing its library	لوحة المكتبة `{given}` لا تفقد مكتبتها
+@msg	missing `library` (see symbol.libraries)	`library` مفقودة (انظر symbol.libraries)
+@msg	missing integer `{key}`	عدد صحيح مفقود `{key}`
+@msg	no similar objects found (rotated or reflected copies are not matched); change the Global Edit Options and try again	لم يتم العثور على كائنات مماثلة (النسخ المدورة أو المعكوسة غير مطابقة)؛ غيّر خيارات التحرير الشامل وحاول مرة أخرى
+@msg	no such object id {value}	لا يوجد مثل هذا المعرف للكائن {value}
+@msg	no symbol `{n}`	لا يوجد رمز `{n}`
+@msg	no symbol `{n}` in `{_1}`	لا يوجد رمز `{n}` في `{_1}`
+@msg	no symbol library `{key}` (see symbol.libraries)	لا توجد مكتبة رموز `{key}` (انظر symbol.libraries)
+@msg	nothing in data set {name} was applied: no object is bound to a variable it has a value for	لم يُطبَّق أي شيء في مجموعة البيانات {name}: لا يوجد كائن مرتبط بمتغير له قيمة له
+@msg	objects inside a blend, envelope, repeat or Intertwine group can't be attached to a path	لا يمكن إرفاق الكائنات داخل مجموعة مزج أو غلاف أو تكرار أو تشابك بمسار
+@msg	only a dock group above or below others collapses, not one beside another	تُطوى فقط مجموعة الإرساء التي فوق أو تحت المجموعات الأخرى، وليس المجاورة لها
+@msg	panel floats; collapse its group with window.panel.float {panel, collapsed}	اللوحة عائمة؛ اطوِ مجموعتها باستخدام window.panel.float {panel, collapsed}
+@msg	panel is not in a dock group	اللوحة ليست في مجموعة إرساء
+@msg	part of the program isn't valid PostScript text	جزء من البرنامج ليس نص PostScript صالحاً
+@msg	replace: the object to replace was changed or deleted	استبدال: الكائن المراد استبداله تم تغييره أو حذفه
+@msg	select an Objects on Path group	حدد مجموعة كائنات على المسار
+@msg	select one object	حدد كائناً واحداً
+@msg	the Simplify slider is not open	شريط تمرير التبسيط ليس مفتوحاً
+@msg	the artboard is locked	لوحة الرسم مقفلة
+@msg	the document has no symbols to save	المستند لا يحتوي على رموز لحفظها
+@msg	the operator looks for a mark on the stack and finds none	يبحث العامل عن علامة في المكدس ولا يجد أي علامة
+@msg	the operator needs more values than the stack holds	يحتاج العامل إلى قيم أكثر مما يحتويه المكدس
+@msg	the path has no point to continue from	المسار ليس له نقطة للمتابعة منها
+@msg	the program asks for a resource that isn't defined	يطلب البرنامج مورداً غير معرّف
+@msg	the program ends a dictionary it didn't begin	ينهي البرنامج قاموساً لم يبدأه
+@msg	the program goes past one of the reader's limits	يتجاوز البرنامج أحد حدود القارئ
+@msg	the program opens a file, which the reader can't do	يفتح البرنامج ملفاً، وهو ما لا يستطيع القارئ فعله
+@msg	the program restores a saved state that was already restored	يستعيد البرنامج حالة محفوظة تمت استعادتها بالفعل
+@msg	the program runs, deletes or renames a file, which the reader can't do	يشغّل البرنامج ملفاً أو يحذفه أو يعيد تسميته، وهو ما لا يستطيع القارئ فعله
+@msg	thickness must be from 0.01 to 5000 pt	يجب أن تكون thickness من 0.01 إلى 5000 pt
+@msg	thumbnail: no page {n} (the file has 1)	الصورة المصغرة: لا توجد صفحة {n} (الملف يحتوي على 1)
+@msg	tintReduction must be from 0 to 100 %	يجب أن يكون tintReduction من 0 إلى 100 %
+@msg	unknown snap option `{key}` (use {options})	خيار محاذاة غير معروف `{key}` (استخدم {options})
+@msg	variables that aren't text were left out: {kinds}	تم استبعاد المتغيرات غير النصية: {kinds}
+@msg	videoRulerPixelAspectRatio must be a number from 0.1 to 10	يجب أن يكون videoRulerPixelAspectRatio رقماً من 0.1 إلى 10
+@msg	{_1} finished, but the document or the plug-in changed meanwhile: run it again	انتهى {_1}، ولكن المستند أو المكون الإضافي تغير في هذه الأثناء: شغّله مرة أخرى
+@msg	{_1} is an exporter (File › Export › Export As…)	{_1} هو مُصدِّر (ملف › تصدير › تصدير باسم…)
+@msg	{key} must be Unix seconds (an integer) or null	يجب أن يكون {key} ثواني Unix (عدداً صحيحاً) أو null
+@msg	{key} must be [x, y] with finite coordinates	يجب أن يكون {key} عبارة عن [x, y] بإحداثيات محددة
+@msg	{key} must be an array of non-negative integer object ids	يجب أن يكون {key} مصفوفة من معرفات كائنات صحيحة غير سالبة
+@msg	{label} keeps 1 of the document's {n} artboards: the file reopens with one. Turn on Preserve Editing Capabilities to keep them all.	يحتفظ {label} بـ 1 من لوحات الرسم البالغ عددها {n} في المستند: يُعاد فتح الملف بلوحة واحدة. شغّل الحفاظ على إمكانيات التحرير للاحتفاظ بها جميعاً.
+@msg	“{_1}” asks for a heavy budget (each run up to {minutes} minutes and {times} times the usual instructions): install it with `allowHeavy: true` once the user agrees	يطلب “{_1}” ميزانية تشغيلية عالية (تصل كل عملية تشغيل إلى {minutes} دقائق و{times} أضعاف التعليمات المعتادة): ثبّته مع `allowHeavy: true` بمجرد موافقة المستخدم
+axis	X Axis	المحور X
+axis	Y Axis	المحور Y
+font-technology	Variable	متغير
+	Each entry of the file is matched to a VectorCraft tool, command or panel. Check the matches and answer what is left.	تمت مطابقة كل إدخال في الملف مع أداة أو أمر أو لوحة في VectorCraft. تحقق من التطابقات وأجب عما تبقى.
+	In VectorCraft	في VectorCraft
+	The name in the save panel was “{typed}”; VectorCraft added the file type's extension. Replacing the file overwrites its contents.	كان الاسم في لوحة الحفظ “{typed}”؛ أضاف VectorCraft امتداد نوع الملف. استبدال الملف يكتب فوق محتوياته.
+	VectorCraft read this script without running it.	قرأ VectorCraft هذا السكربت دون تشغيله.
 	Clear Keyframe	مسح الإطار المفتاحي
 	Export Animated GIF…	تصدير GIF متحرك…
 	Frame Rate	معدل الإطارات
