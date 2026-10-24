@@ -481,6 +481,80 @@ fn default_align_on() -> char {
 /// Distance between default tab stops when no explicit stop applies (½ inch).
 pub const DEFAULT_TAB_INTERVAL: f64 = 36.0;
 
+/// The bullet of a bulleted list ([`ParaList::bullet`]): the Paragraph panel's Bullets presets.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum Bullet {
+    /// A filled dot (•).
+    #[default]
+    Dot,
+    /// A dash (–).
+    Dash,
+    /// A hollow circle (◦).
+    Circle,
+    /// A filled square (▪).
+    Square,
+}
+
+impl Bullet {
+    /// The character the layout draws for the bullet.
+    pub fn character(self) -> char {
+        match self {
+            Bullet::Dot => '\u{2022}',
+            Bullet::Dash => '\u{2013}',
+            Bullet::Circle => '\u{25E6}',
+            Bullet::Square => '\u{25AA}',
+        }
+    }
+}
+
+/// The list a paragraph is in (Paragraph panel › Bullets). The layout draws the list's marker
+/// before the paragraph's first line, in the font, size and color of the paragraph's first
+/// character without its baseline shift, rotation, superscript or subscript, tracking, manual
+/// kerning, tate-chu-yoko, underline and strikethrough ([`Self::marker_style`]), and the text after
+/// it starts at the next tab stop, the left indent counting as a stop. The marker is not a
+/// character of the text, and an empty paragraph has none. A saved list reads the fields it leaves
+/// out as their defaults, and a build ignores the fields it doesn't know.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ParaList {
+    /// The bullet each paragraph of the list starts with.
+    pub bullet: Bullet,
+}
+
+impl ParaList {
+    /// A bulleted list with `bullet`.
+    pub fn bulleted(bullet: Bullet) -> Self {
+        Self { bullet }
+    }
+
+    /// The characters of the marker the layout draws before the paragraph.
+    pub fn marker(&self) -> String {
+        self.bullet.character().to_string()
+    }
+
+    /// The style the marker is set in: `first` (the style of the paragraph's first character)
+    /// without its baseline shift, rotation, superscript or subscript, tracking, manual kerning,
+    /// tate-chu-yoko, underline and strikethrough.
+    pub fn marker_style(first: &CharStyle) -> CharStyle {
+        CharStyle {
+            baseline_shift: 0.0,
+            rotation: 0.0,
+            position: CharPosition::Normal,
+            tracking: 0.0,
+            kerning: None,
+            tate_chu_yoko: false,
+            underline: false,
+            strikethrough: false,
+            ..first.clone()
+        }
+    }
+}
+
+/// The left and first-line indents (pt) a list gives a paragraph whose indents are both 0: the
+/// marker hangs in the first line's 18 pt before the text.
+pub const LIST_HANGING_INDENT: f64 = 18.0;
+
 /// Paragraph composer (Paragraph panel menu): how lines are broken.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -674,6 +748,9 @@ pub struct ParaStyle {
     pub composer: Composer,
     /// Tab stops (Tabs panel), sorted by position.
     pub tabs: Vec<TabStop>,
+    /// Bullets (Paragraph panel): the list the paragraph is in; None for a paragraph that is not
+    /// in a list.
+    pub list: Option<ParaList>,
     /// Paragraph style (Paragraph Styles panel) these attributes come from; None = Normal.
     pub style_name: Option<String>,
     /// Japanese composition: the spacing of punctuation (Paragraph panel › Mojikumi). Type made
@@ -717,6 +794,19 @@ impl ParaStyle {
             t.position = within(t.position, 0.0, 100_000.0);
         }
     }
+
+    /// The leading of characters styled `st` in this paragraph, as the layout sets it: their own
+    /// leading, or for Auto leading the paragraph's Justification › Auto Leading share of their
+    /// size (exactly [`CharStyle::effective_leading`] at the default 120%, or when the share is
+    /// not a finite number).
+    pub fn effective_leading(&self, st: &CharStyle) -> f64 {
+        let auto = self.justification.auto_leading;
+        if st.leading.is_some() || auto == JustificationOptions::default().auto_leading {
+            return st.effective_leading();
+        }
+        let l = self.justification.auto_leading_for(st.size);
+        if l.is_finite() { l } else { st.effective_leading() }
+    }
 }
 
 /// [`ParaStyle`] as saved. [`Justify::Auto`] is written as the alignment it has in the paragraph
@@ -748,6 +838,8 @@ struct ParaStyleFile {
     composer: Composer,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     tabs: Vec<TabStop>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    list: Option<ParaList>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     style_name: Option<String>,
     #[serde(default, skip_serializing_if = "Mojikumi::is_none")]
@@ -785,6 +877,7 @@ impl From<ParaStyle> for ParaStyleFile {
             justification,
             composer,
             tabs,
+            list,
             style_name,
             mojikumi,
             direction,
@@ -808,6 +901,7 @@ impl From<ParaStyle> for ParaStyleFile {
             justification,
             composer,
             tabs,
+            list,
             style_name,
             mojikumi,
             direction,
@@ -835,6 +929,7 @@ impl From<ParaStyleFile> for ParaStyle {
             hyphenation,
             composer,
             tabs,
+            list,
             style_name,
             mojikumi,
             direction,
@@ -857,6 +952,7 @@ impl From<ParaStyleFile> for ParaStyle {
             justification,
             composer,
             tabs,
+            list,
             style_name,
             mojikumi,
             direction,
@@ -1713,18 +1809,17 @@ impl TextObject {
     /// How far the characters' strokes paint past their glyphs, in document space: they scale
     /// with the type.
     pub fn char_stroke_outset(&self) -> f64 {
-        self.char_strokes(CharStyle::stroke_outset)
+        let k = crate::node::Scaling::factor(self.xf).unwrap_or(1.0);
+        self.runs.iter().map(|r| r.style.stroke_outset()).fold(0.0, f64::max) * k
     }
     /// How far the characters' strokes can paint past their glyphs, their miter spikes and square
     /// caps included ([`StrokeLayer::reach`]), in document space: what a change of the type must
-    /// redraw. The visual bounds take [`Self::char_stroke_outset`].
+    /// redraw. They stretch with the type, so this is as far as its transform takes them on either
+    /// axis. The visual bounds take [`Self::char_stroke_outset`].
     pub fn char_stroke_reach(&self) -> f64 {
-        self.char_strokes(|style| if style.has_stroke() { style.stroke_layer().reach() } else { 0.0 })
-    }
-    /// The farthest `outset` of the characters' styles, scaled with the type.
-    fn char_strokes(&self, outset: impl Fn(&CharStyle) -> f64) -> f64 {
-        let k = crate::node::Scaling::factor(self.xf).unwrap_or(1.0);
-        self.runs.iter().map(|r| outset(&r.style)).fold(0.0, f64::max) * k
+        let reach = self.runs.iter().filter(|r| r.style.has_stroke()).map(|r| r.style.stroke_layer().reach()).fold(0.0, f64::max);
+        let [a, b, c, d, ..] = self.xf.as_coeffs();
+        reach * (a.abs() + c.abs()).max(b.abs() + d.abs())
     }
     pub fn transform(&mut self, a: Affine) {
         self.xf = a * self.xf;
@@ -1988,6 +2083,22 @@ mod tests {
         let old = serde_json::to_value(&st).unwrap();
         assert_eq!(serde_json::from_value::<CharStyle>(old).unwrap().digits, Digits::Default);
         assert_eq!(serde_json::from_value::<CharStyle>(serde_json::to_value(&farsi).unwrap()).unwrap(), farsi);
+    }
+
+    /// Auto leading follows the paragraph's Auto Leading; a set leading doesn't.
+    #[test]
+    fn paragraph_effective_leading_follows_auto_leading() {
+        let st = CharStyle { size: 10.0, leading: None, ..CharStyle::default() };
+        let mut para = ParaStyle::default();
+        assert_eq!(para.effective_leading(&st), st.effective_leading(), "default 120%");
+        para.justification.auto_leading = 200.0;
+        assert_eq!(para.effective_leading(&st), 20.0);
+        para.justification.auto_leading = 0.0;
+        assert_eq!(para.effective_leading(&st), 0.0);
+        let set = CharStyle { leading: Some(14.0), ..st.clone() };
+        assert_eq!(para.effective_leading(&set), 14.0);
+        para.justification.auto_leading = f64::NAN;
+        assert_eq!(para.effective_leading(&st), st.effective_leading(), "not a number");
     }
 
     /// A file can't feed layout justification values `text.setFormat` would refuse: each is

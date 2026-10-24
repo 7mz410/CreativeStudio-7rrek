@@ -9,7 +9,7 @@
 # sentences address the user as "tú". Shortcut keys keep their key-cap names (Shift, Alt, Ctrl, Esc).
 #
 # Coverage: the whole interface — every menu string and every `tl!` literal (`complete_menus`,
-# tested). Left in English on purpose (`MENU_KEEP_AS_IS` in the tests): the product name, language
+# `untranslated_report` lists gaps). Left in English on purpose (`MENU_KEEP_AS_IS` in the tests): the product name, language
 # names, OpenType, the built-in workspace names and the bracketed perspective grid preset names.
 # Photoshop-style raster effects (Effect menu, their dialogs).
 	Glowing Edges…	Bordes resplandecientes…
@@ -194,6 +194,8 @@
 	Anti-aliased Artwork	Ilustración suavizada
 	Anti-aliasing:	Suavizado:
 	Any Kind	Cualquier tipo
+	Font Technology	Tecnología de fuente
+font-technology	Variable	Variables
 	Appearance	Apariencia
 	Appearance Attribute	Atributo de apariencia
 	Appearance Item	Elemento de apariencia
@@ -276,6 +278,11 @@
 	Average…	Promediar…
 	Axis:	Eje:
 	Background Color:	Color de fondo:
+	Show Center Mark	Mostrar marca central
+	Show Cross Hairs	Mostrar líneas en cruz
+	Show Video Safe Areas	Mostrar áreas seguras de video
+	Video Ruler Pixel Aspect Ratio:	Proporción de píxel de las reglas de video:
+	Hide Video Rulers	Ocultar reglas de video
 	Background Contents	Contenido de fondo
 	Background Contents:	Contenido de fondo:
 	Background:	Fondo:
@@ -344,6 +351,13 @@
 	Built-in presets don't change: New… starts an editable copy.	Los preajustes integrados no cambian: Nuevo… crea una copia editable.
 	Bulge…	Abultamiento…
 	Bullet	Viñeta
+	Bullets	Viñetas
+	Bullets and Numbering	Viñetas y numeración
+	Apply Bullets	Aplicar viñetas
+	Filled Dot	Punto relleno
+	Dash	Guion
+	Hollow Circle	Círculo vacío
+	Filled Square	Cuadrado relleno
 	Butt Cap	Extremo a tope
 	Byte Order:	Orden de bytes:
 	Calligraphic	Caligráfico
@@ -1095,12 +1109,14 @@
 	Keep selected	Mantener seleccionado
 	Merge only with selection	Combinar solo con la selección
 	Consider Open Filled Paths as Closed	Tratar los trazados abiertos con relleno como cerrados
+	In Merge Mode, Clicking Stroke Splits the Path	En modo de combinación, hacer clic en el trazo divide el trazado
 	Pick Color From:	Tomar el color de:
 	Artwork	Ilustración
 	Cursor Swatch Preview	Vista previa de muestras junto al cursor
 	Selection:	Selección:
 	Straight Line	Línea recta
 	Highlight:	Resaltado:
+	Stroke When Editable	Trazo si es editable
 	Fill Color	Color de relleno
 	Fill New Type Objects With Placeholder Text	Rellenar nuevos objetos de texto con texto de muestra
 	Fill Rule	Regla de relleno
@@ -1378,7 +1394,7 @@
 	Clear History	Borrar historial
 	Set History Limit…	Definir límite de historial…
 	History States	Estados de historial
-# History panel: the names of undo steps (`every_undo_label_is_translated`).
+# History panel: the names of undo steps (`untranslated_report` lists any that are missing).
 	Apply Data Set	Aplicar conjunto de datos
 	Cancel Pattern Editing	Cancelar edición de motivo
 	Copy Appearance	Copiar apariencia
@@ -2217,7 +2233,7 @@
 	Package	Empaquetar
 	Package collects a saved document with its linked files and fonts.	Empaquetar reúne un documento guardado con sus archivos vinculados y fuentes.
 	Package created	Paquete creado
-	Packaged {n} file(s) in {folder}{note}	Se empaquetaron {n} archivo(s) en {folder}{note}
+	Packaged {n} file(s) in {folder} {note}	Se empaquetaron {n} archivo(s) en {folder}{note}
 	Packaged {n} file(s){note}	Se empaquetaron {n} archivo(s){note}
 	Package…	Empaquetar…
 	Page	Página
@@ -2278,7 +2294,7 @@
 	Percent:	Porcentaje:
 	Perceptual Scales	Escalas perceptuales
 	Performance	Rendimiento
-	Performance & Storage	Rendimiento y almacenamiento
+	Plug-ins & Scratch Disks	Plugins & Discos de memoria virtual
 	Permissions	Permisos
 	Permissions password:	Contraseña de permisos:
 	Perspective	Perspectiva
@@ -3086,6 +3102,7 @@
 	Space Before Paragraph	Espacio antes del párrafo
 	Spaces	Espacios
 	Spacing Guides	Guías de espaciado
+	Invoke Distance Guides	Invocar guías de distancia
 	Spacing:	Espaciado:
 	Spanish	Español
 	Specified Distance	Distancia especificada
@@ -3223,7 +3240,6 @@
 	Show all open documents	Mostrar todos los documentos abiertos
 	Symbol Instance	Instancia de símbolo
 	Symbol Libraries	Bibliotecas de símbolos
-	Symbol Libraries (on the roadmap)	Bibliotecas de símbolos (en la hoja de ruta)
 	Symbol Screener Tool	Herramienta Transparencia de símbolos
 	Symbol Scruncher Tool	Herramienta Concentración de símbolos
 	Symbol Shifter Tool	Herramienta Desplazamiento de símbolos
@@ -3351,6 +3367,13 @@
 	Transparent Background	Fondo transparente
 	Transverse (the page a quarter turn on the paper)	Transversal (la página gira un cuarto de vuelta sobre el papel)
 	Trap…	Reventar…
+	Trap	Reventar
+	Height/Width	Altura/anchura
+	Tint Reduction	Reducción de tinta
+	Traps with Process Color	Reventados con colores de cuatricromía
+	Reverse Traps	Invertir reventados
+	Precision	Precisión
+	Remove Redundant Points	Quitar puntos redundantes
 	Trim	Cortar
 	Trim mark weight:	Grosor de marcas de recorte:
 	Trim marks	Marcas de recorte
@@ -3582,7 +3605,7 @@
 	Zoom Tool	Herramienta Zoom
 	Zoom with Mouse Wheel	Zoom con la rueda del mouse
 	Scrub Numeric Fields by Dragging	Ajustar campos numéricos arrastrando
-	{count} file(s) in {folder}{note}. Show the package folder?	{count} archivo(s) en {folder}{note}. ¿Mostrar la carpeta del paquete?
+	{count} file(s) in {folder} {note}. Show the package folder?	{count} archivo(s) en {folder}{note}. ¿Mostrar la carpeta del paquete?
 	{count} linked file(s) not found	No se encontraron {count} archivo(s) vinculado(s)
 	fonts not copied: {fonts}	fuentes no copiadas: {fonts}
 	{count} linked image(s) changed since this document was saved. Show the new versions?	{count} imagen(es) vinculada(s) cambiaron desde que se guardó este documento. ¿Mostrar las versiones nuevas?
@@ -3747,7 +3770,7 @@ axis	Both	Ambos
 
 # Status and error messages (`@msg`), translated where the status bar shows them; the message itself
 # stays English for agents and tests. `{_1}`, `{_2}` … stand for the `{}` of the format string, in order
-# (`complete_languages_translate_every_message` lists any that are missing). Command ids, parameter
+# (`untranslated_report` lists any that are missing). Command ids, parameter
 # names and values in backticks or code (`colorModel rgb`, `document.export`) stay as they are.
 @msg	no library `{id}`	no hay ninguna biblioteca `{id}`
 @msg	select some type first	selecciona primero algún texto
@@ -3785,6 +3808,7 @@ axis	Both	Ambos
 @msg	Couldn't copy to the system clipboard: {e}	No se pudo copiar al portapapeles del sistema: {e}
 @msg	Couldn't open {name}: {e}	No se pudo abrir {name}: {e}
 @msg	Couldn't place {name}: the document it was dropped on was closed	No se pudo colocar {name}: se cerró el documento en el que se soltó
+@msg	Couldn't place {name}: the document it was placed in was closed	No se pudo colocar {name}: se cerró el documento en el que se estaba colocando
 @msg	Couldn't read {name}: {e}	No se pudo leer {name}: {e}
 @msg	Couldn't save recovery data: {e}	No se pudieron guardar los datos de recuperación: {e}
 @msg	Create Outlines: select text objects	Crear contornos: selecciona objetos de texto
@@ -3821,8 +3845,9 @@ axis	Both	Ambos
 @msg	Opened {url}	Se abrió {url}
 @msg	Outline Stroke: no stroked paths selected	Contornear trazo: no hay trazados con trazo seleccionados
 @msg	PDF settings are not an object	los ajustes de PDF no son un objeto
+@msg	PDF security settings are not an object	los ajustes de seguridad de PDF no son un objeto
 @msg	PDF writer error: {0}	error del escritor de PDF: {0}
-@msg	Packaged {n} file(s) in {folder}{note}	Se empaquetaron {n} archivo(s) en {folder}{note}
+@msg	Packaged {n} file(s) in {folder} {note}	Se empaquetaron {n} archivo(s) en {folder}{note}
 @msg	Packaged {n} file(s){note}	Se empaquetaron {n} archivo(s){note}
 @msg	Preview in Browser needs the desktop app (the web downloads files instead)	Previsualizar en el navegador requiere la aplicación de escritorio (la versión web descarga los archivos)
 @msg	Release Guides: no guides	Soltar guías: no hay guías
@@ -3943,6 +3968,7 @@ axis	Both	Ambos
 @msg	axis must be "vertical", "horizontal" or an angle in degrees, not `{v}`	axis debe ser "vertical", "horizontal" o un ángulo en grados, no `{v}`
 @msg	background {other}: transparent, white, black or a colour such as "#ff8800"	fondo {other}: transparent, white, black o un color como "#ff8800"
 @msg	bad color {v}	color no válido {v}
+@msg	videoRulerPixelAspectRatio must be a number from 0.1 to 10	videoRulerPixelAspectRatio debe ser un número de 0,1 a 10
 @msg	the Color Picker is not open	el Selector de color no está abierto
 @msg	the Simplify slider is not open	el regulador de Simplificar no está abierto
 @msg	the screen color sampler is already open	el muestreador de color de la pantalla ya está abierto
@@ -4020,7 +4046,7 @@ axis	Both	Ambos
 @msg	missing index	falta index
 @msg	missing number `{key}`	falta el número `{key}`
 @msg	missing integer `{key}`	falta el número entero `{key}`
-@msg	multiple windows land with M11.5	las ventanas múltiples llegan con M11.5
+@msg	New Window isn't available yet: a document opens in one window	Nueva ventana aún no está disponible: un documento se abre en una sola ventana
 @msg	name the file	ponle nombre al archivo
 @msg	no CSS to copy: select objects with CSS of their own	no hay CSS que copiar: selecciona objetos con CSS propio
 @msg	no Live Paint edge near that point	no hay ningún borde de pintura interactiva cerca de ese punto
@@ -4059,6 +4085,7 @@ axis	Both	Ambos
 @msg	no file system here	aquí no hay sistema de archivos
 @msg	no file writer	no hay escritor de archivos
 @msg	no files to place	no hay archivos para colocar
+@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` no es un documento de VectorCraft, un PDF ni un archivo .ai compatible con PDF
 @msg	no format to export to	no hay formato al que exportar
 @msg	no free recovery area	no hay ningún área de recuperación libre
 @msg	no gradient stop or freeform point is selected	no hay ninguna parada de degradado ni punto de forma libre seleccionado
@@ -4151,6 +4178,7 @@ axis	Both	Ambos
 @msg	path is already closed	el trazado ya está cerrado
 @msg	paths contain invalid coordinates	los trazados contienen coordenadas no válidas
 @msg	paths: give at least one file	paths: indica al menos un archivo
+@msg	replace: the object to replace was changed or deleted	replace: se modificó o eliminó el objeto que se iba a reemplazar
 @msg	pattern missing	falta el motivo
 @msg	patterns nested too deeply are filled with mid-grey	los motivos anidados a demasiada profundidad se rellenan de gris medio
 @msg	percent must be above 0 and at most 6400, not {p}	el porcentaje debe ser mayor que 0 y como máximo 6400, no {p}
@@ -4321,6 +4349,7 @@ axis	Both	Ambos
 @msg	{_1} font families available	{_1} familias de fuentes disponibles
 @msg	{_1} is a live effect (Effect › Plug-ins)	{_1} es un efecto interactivo (Efecto › Plugins)
 @msg	{_1} is an exporter (File › Export › Export As…)	{_1} es un plugin de exportación (Archivo › Exportar › Exportar como…)
+@msg	`documentData` is {size} bytes (limit {MAX_DOCUMENT_DATA})	`documentData` ocupa {size} bytes (límite {MAX_DOCUMENT_DATA})
 @msg	{_1} is already used by {_2}	{_1} ya lo usa {_2}
 @msg	{_1} linked file(s) can't be read here: their previews show	aquí no se pueden leer {_1} archivo(s) vinculado(s): se muestran sus previsualizaciones
 @msg	{_1} linked image(s) changed on disk: Update Links shows the new versions	{_1} imagen(es) vinculada(s) cambiaron en el disco: Actualizar vínculos muestra las versiones nuevas
@@ -4350,6 +4379,8 @@ axis	Both	Ambos
 @msg	Saving	Guardando
 @msg	Saving {_1}	Guardando {_1}
 @msg	Exporting {_1}	Exportando {_1}
+@msg	Packaging {_1}	Empaquetando {_1}
+@msg	Placing {_1}	Colocando {_1}
 @msg	Saving recovery data for {_1}	Guardando datos de recuperación de {_1}
 @msg	Discarded {_1} recovered document(s)	Se descartaron {_1} documento(s) recuperado(s)
 @msg	Restored {_1} recovered document(s): save them to keep them	Se restauraron {_1} documento(s) recuperado(s): guárdalos para conservarlos
@@ -4456,7 +4487,9 @@ axis	Both	Ambos
 @msg	automation filesystem access is not granted: read authority is absent: {path}	la automatización no tiene acceso al sistema de archivos: falta el permiso de lectura: {path}
 @msg	automation filesystem access is not granted: write authority is absent: {path}	la automatización no tiene acceso al sistema de archivos: falta el permiso de escritura: {path}
 @msg	automation path rejected: outside the read root {root}: {path}	ruta de automatización rechazada: fuera de la carpeta raíz de lectura {root}: {path}
+@msg	automation path rejected: outside the read roots {roots}: {path}	ruta de automatización rechazada: fuera de las carpetas raíz de lectura {roots}: {path}
 @msg	automation path rejected: outside the write root {root}: {path}	ruta de automatización rechazada: fuera de la carpeta raíz de escritura {root}: {path}
+@msg	automation path rejected: outside the write roots {roots}: {path}	ruta de automatización rechazada: fuera de las carpetas raíz de escritura {roots}: {path}
 @msg	automation path rejected: path is empty	ruta de automatización rechazada: la ruta está vacía
 @msg	automation path rejected: a link that leads nowhere: {path}	ruta de automatización rechazada: un vínculo que no lleva a ninguna parte: {path}
 @msg	automation path rejected: cannot resolve {path}: {e}	ruta de automatización rechazada: no se puede resolver {path}: {e}
@@ -4751,6 +4784,7 @@ effect	Regular	Regular
 	Logo 1000×1000	Logotipo 1000×1000
 	Business Card 3.5 × 2 in	Tarjeta de presentación de 3.5 × 2 pulgadas
 	Business Card 85 × 55 mm	Tarjeta de presentación de 85 × 55 mm
+	Business Card 91 × 55 mm	Tarjeta de presentación de 91 × 55 mm
 	Letterhead Letter	Membrete Carta
 	Letterhead A4	Membrete A4
 	Envelope DL	Sobre DL
@@ -5228,6 +5262,10 @@ mark-style	Japanese	Japonesas
 	Halftone Pattern	Trama de semitonos
 	Torn Edges…	Bordes desgarrados…
 	Torn Edges	Bordes desgarrados
+	Conté Crayon…	Lápiz Conté…
+	Conté Crayon	Lápiz Conté
+	Foreground Level	Nivel de primer plano
+	Background Level	Nivel de fondo
 	Pattern Type	Tipo de trama
 	Dot	Punto
 # User Interface › Color Scheme
@@ -5283,8 +5321,13 @@ mark-style	Japanese	Japonesas
 @msg	too many library panels were opened in this session	se abrieron demasiados paneles de biblioteca en esta sesión
 @msg	The image is {_1} × {_2} pixels, more than {LARGE_TRACE_SIDE} on a side: it is traced, but more slowly. A lower-fidelity preset or a smaller copy of the image traces faster.	La imagen tiene {_1} × {_2} píxeles, más de {LARGE_TRACE_SIDE} en un lado: se calcará, pero más despacio. Un ajuste preestablecido de menor fidelidad o una copia más pequeña de la imagen se calcan más rápido.
 @msg	The image was traced at {_1} × {_2} pixels, scaled down from {_3} × {_4} ({_5} megapixels at most).	La imagen se calcó a {_1} × {_2} píxeles, reducida desde {_3} × {_4} ({_5} megapíxeles como máximo).
+	Snapping	Ajuste
+	Snap to Tangent	Ajustar a tangente
+	Snap to Perpendicular	Ajustar a perpendicular
+@msg	unknown snap option `{key}` (use {options})	opción de ajuste desconocida `{key}` (use {options})
 	Gap Length:	Longitud del hueco:
 	Artboard {n} of {total}	Mesa de trabajo {n} de {total}
+	File {n} of {total}	Archivo {n} de {total}
 	Encoding and writing the file…	Codificando y escribiendo el archivo…
 @plural	{n} more export waiting|{n} more exports waiting	{n} exportación más en espera|{n} exportaciones más en espera
 	Continue in Background	Continuar en segundo plano
@@ -5371,6 +5414,7 @@ mark-style	Japanese	Japonesas
 	Water Paper	Papel mojado
 	Ruby…	Ruby…
 	Ruby	Ruby
+	Geometric Guides	Guías geométricas
 	Ease In	Entrada suave
 	Ease Out	Salida suave
 	Ease In Out	Entrada y salida suaves
@@ -5381,3 +5425,90 @@ mark-style	Japanese	Japonesas
 	Fresco	Fresco
 	Effect Gallery…	Galería de efectos…
 	Effect Gallery Dialog	Cuadro de diálogo Galería de efectos
+	Arc Segment Tool Options	Opciones de la herramienta Segmento de arco
+	Base Along:	Base a lo largo de:
+	Closed	Cerrado
+	Convex	Convexo
+	Fill Arc	Rellenar arco
+	Length X-Axis:	Longitud eje X:
+	Length Y-Axis:	Longitud eje Y:
+	Slope:	Pendiente:
+axis	X Axis	Eje X
+axis	Y Axis	Eje Y
+@msg	Packaged {n} file(s) in {folder}	Se empaquetaron {n} archivo(s) en {folder}
+@msg	Packaged {n} file(s) {note}	Se empaquetaron {n} archivo(s) {note}
+@msg	Packaged {n} file(s)	Se empaquetaron {n} archivo(s)
+	Packaged {n} file(s)	Se empaquetaron {n} archivo(s)
+	Packaged {n} file(s) in {folder}	Se empaquetaron {n} archivo(s) en {folder}
+	Packaged {n} file(s) {note}	Se empaquetaron {n} archivo(s) {note}
+	{count} file(s) in {folder}. Show the package folder?	{count} archivo(s) en {folder}. ¿Mostrar la carpeta del paquete?
+	Clockwise	En sentido horario
+	Dither	Tramado
+	Fine noise hides banding in the gradient fill	Un ruido fino oculta las bandas del relleno de degradado
+@msg	`dither` applies to gradient fills (stroke: false)	`dither` se aplica a rellenos de degradado (stroke: false)
+@msg	`dither` applies to gradient fills (paint.setFill)	`dither` se aplica a rellenos de degradado (paint.setFill)
+@msg	`dither` must be true or false	`dither` debe ser true o false
+@msg	`method` must be classic or perceptual	`method` debe ser classic o perceptual
+# Heavy plug-in filters (plugin.inspect, plug-in runs)
+	Install “{name}”, which asks for a heavy budget?	¿Instalar “{name}”, que pide un presupuesto de cálculo grande?
+	Each run may take up to {minutes} minutes and do {times} times the work other plug-ins may. It runs in the background, and you can cancel it.	Cada ejecución puede tardar hasta {minutes} minutos y hacer {times} veces el trabajo que se permite a otros plugins. Se ejecuta en segundo plano y se puede cancelar.
+	It may take minutes, so it runs in the background, where you can cancel it.	Puede tardar minutos, así que se ejecuta en segundo plano, donde se puede cancelar.
+	The plug-in is computing…	El plugin está calculando…
+	Inspect Plug-in	Inspeccionar plugin
+	Cancel Plug-in Run	Cancelar ejecución del plugin
+@msg	{_1} finished, but the document or the plug-in changed meanwhile: run it again	{_1} terminó, pero el documento o el plugin cambió entretanto: vuelva a ejecutarlo
+@msg	Running “{name}”…	Ejecutando “{name}”…
+@msg	a live effect runs while the document is drawn, so it can't be `heavy`	un efecto interactivo se ejecuta mientras se dibuja el documento, así que no puede ser `heavy`
+@msg	an exporter always gets an export's budget: leave `budget` out	un plugin de exportación siempre recibe el presupuesto de una exportación: omite `budget`
+@msg	“{_1}” asks for a heavy budget (each run up to {minutes} minutes and {times} times the usual instructions): install it with `allowHeavy: true` once the user agrees	“{_1}” pide un presupuesto de cálculo grande (cada ejecución hasta {minutes} minutos y {times} veces las instrucciones habituales): instálalo con `allowHeavy: true` cuando el usuario lo acepte
+# Actions panel: action sets (#3712).
+	New Set…	Nuevo conjunto…
+	New Set	Nuevo conjunto
+	Set Options…	Opciones de conjunto…
+	Set Options	Opciones de conjunto
+	Create New Set	Crear nuevo conjunto
+	Stop Global Edit	Detener edición global
+	Global Edit Options	Opciones de edición global
+	Match	Coincidir
+	On Artboards	En mesas de trabajo
+	All Artboards	Todas las mesas de trabajo
+	Include Objects On Canvas	Incluir objetos en el lienzo
+	Result(s): {count}	Resultado(s): {count}
+@msg	select one object	seleccione un objeto
+@msg	Global Edit works on paths, compound paths and symbol instances	La edición global funciona con trazados, trazados compuestos e instancias de símbolos
+@msg	no similar objects found (rotated or reflected copies are not matched); change the Global Edit Options and try again	no se encontraron objetos similares (las copias giradas o reflejadas no coinciden); cambie las opciones de edición global e inténtelo de nuevo
+@msg	`artboards`: all or a range such as 1, 3-5, not {v}	`artboards`: all o un intervalo como 1, 3-5, no {v}
+	Add to Symbols	Agregar a símbolos
+	Basic Shapes	Formas básicas
+	Open Symbol Library	Abrir biblioteca de símbolos
+	Save Symbol Library	Guardar biblioteca de símbolos
+	Save Symbol Library…	Guardar biblioteca de símbolos…
+	Save Symbols…	Guardar símbolos…
+	Selected Symbols Only	Solo símbolos seleccionados
+	Symbol Libraries Menu	Menú Bibliotecas de símbolos
+	Symbol Library	Biblioteca de símbolos
+	User Symbol Library 1	Biblioteca de símbolos del usuario 1
+	User Symbol Library 2	Biblioteca de símbolos del usuario 2
+	User Symbol Library 3	Biblioteca de símbolos del usuario 3
+	User Symbol Library 4	Biblioteca de símbolos del usuario 4
+	User Symbol Library 5	Biblioteca de símbolos del usuario 5
+	User Symbol Library 6	Biblioteca de símbolos del usuario 6
+	User Symbol Library 7	Biblioteca de símbolos del usuario 7
+	User Symbol Library 8	Biblioteca de símbolos del usuario 8
+	User Symbol Library 9	Biblioteca de símbolos del usuario 9
+	User Symbol Library 10	Biblioteca de símbolos del usuario 10
+	{w} × {h} pt	{w} × {h} pt
+@msg	`{_1}` has no symbols to place	`{_1}` no tiene símbolos para colocar
+@msg	missing `library` (see symbol.libraries)	falta `library` (consulte symbol.libraries)
+@msg	no symbol `{n}`	no hay ningún símbolo `{n}`
+@msg	no symbol `{n}` in `{_1}`	no hay ningún símbolo `{n}` en `{_1}`
+@msg	no symbol library `{key}` (see symbol.libraries)	no hay ninguna biblioteca de símbolos `{key}` (consulte symbol.libraries)
+@msg	the document has no symbols to save	el documento no tiene símbolos para guardar
+@msg	Trap: select two or more objects filled with solid colours	Reventar: seleccione dos o más objetos rellenos con colores sólidos
+@msg	Trap: no edges of different colours meet among the selected objects	Reventar: entre los objetos seleccionados no se tocan bordes de colores distintos
+@msg	thickness must be from 0.01 to 5000 pt	thickness debe estar entre 0,01 y 5000 pt
+@msg	heightWidth must be from 1 to 1000 %	heightWidth debe estar entre 1 y 1000 %
+@msg	tintReduction must be from 0 to 100 %	tintReduction debe estar entre 0 y 100 %
+	Rectangular Grid Tool Options	Opciones de la herramienta Cuadrícula rectangular
+	Polar Grid Tool Options	Opciones de la herramienta Cuadrícula polar
+	Fill Line	Rellenar línea

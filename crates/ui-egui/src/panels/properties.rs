@@ -145,6 +145,80 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
         });
     }
+    global_edit_row(app, ui);
+}
+
+/// Start Global Edit (Stop Global Edit while it is on) with the Global Edit Options beside it, in
+/// Quick Actions as the help page places them
+/// (<https://helpx.adobe.com/illustrator/desktop/manage-objects/edit-objects/edit-similar-objects.html>).
+fn global_edit_row(app: &mut VectorcraftApp, ui: &mut Ui) {
+    let on = app.session.active().is_some_and(|d| d.global_edit.is_some());
+    if !crate::menus::enabled(app, "select.globalEdit") {
+        return;
+    }
+    ui.horizontal(|ui| {
+        let label = if on { tl!("Stop Global Edit") } else { tl!("Start Global Edit") };
+        if widgets::flat_button(ui, label, ui.available_width() - 26.0).clicked() {
+            crate::menus::invoke(app, "select.globalEdit", json!({}));
+        }
+        let options = widgets::icon_button_enabled(ui, "chevron-down", tl!("Global Edit Options"), false, !on, 20.0);
+        egui::Popup::menu(&options).close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside).show(|ui| global_edit_options(app, ui));
+    });
+}
+
+/// The Global Edit Options: what else similar objects must share (Match), where they may lie (On
+/// Artboards) and how many objects that takes now.
+fn global_edit_options(app: &mut VectorcraftApp, ui: &mut Ui) {
+    ui.set_min_width(220.0);
+    let o = app.session.global_edit_options.clone();
+    let set = |app: &mut VectorcraftApp, p: serde_json::Value| crate::menus::invoke(app, "select.globalEditOptions", p);
+    widgets::subheader(ui, tl!("Match"));
+    if widgets::check(ui, tl!("Appearance"), o.appearance, true) {
+        set(app, json!({ "appearance": !o.appearance }));
+    }
+    if widgets::check(ui, tl!("Size"), o.size, true) {
+        set(app, json!({ "size": !o.size }));
+    }
+    widgets::subheader(ui, tl!("On Artboards"));
+    if widgets::check(ui, tl!("All Artboards"), o.artboards.is_none(), true) {
+        set(app, json!({ "artboards": if o.artboards.is_some() { "all" } else { "1" } }));
+    }
+    if let Some(range) = &o.artboards {
+        ui.horizontal(|ui| {
+            ui.label(tl!("Range:"));
+            if let Some(r) = widgets::text_field(ui, "global-edit-range", Some(range), 120.0, 1) {
+                set(app, json!({ "artboards": r }));
+            }
+        });
+    }
+    if widgets::check(ui, tl!("Include Objects On Canvas"), o.include_canvas, true) {
+        set(app, json!({ "includeCanvas": !o.include_canvas }));
+    }
+    let count = global_edit_count(app, ui.ctx()).to_string();
+    dim_label(ui, &crate::i18n::fmt(tl!("Result(s): {count}"), &[("count", &count)]));
+}
+
+/// The cached Result(s) count: the (document, revision, options, one selected object) it was
+/// found for, and the count.
+type GlobalEditCount = Option<((u64, u64, vectorcraft_engine::cmd::globaledit::Options, Option<u64>), usize)>;
+
+/// How many objects Start Global Edit would take now (the options' Result(s) line), cached per
+/// document revision, options and selected object, as finding them walks the whole document.
+fn global_edit_count(app: &VectorcraftApp, ctx: &egui::Context) -> usize {
+    let Some(st) = app.session.active() else { return 0 };
+    let selected = match st.selection.objects.as_slice() {
+        [id] => Some(id.0),
+        _ => None,
+    };
+    let key = (st.uid, st.revision, app.session.global_edit_options.clone(), selected);
+    match pstate::<GlobalEditCount>(ctx, "props-global-edit-count") {
+        Some((k, count)) if k == key => count,
+        _ => {
+            let count = vectorcraft_engine::cmd::globaledit::match_count(&app.session);
+            set_pstate::<GlobalEditCount>(ctx, "props-global-edit-count", Some((key, count)));
+            count
+        }
+    }
 }
 
 /// The one selected clip group's Edit Clipping Path and Edit Contents, at the top of the panel as in
@@ -323,6 +397,58 @@ fn turned(landscape: bool, pw: f64, ph: f64) -> (f64, f64) {
 /// width and height of each selected artboard that is not square and not already in it. Each
 /// top-left corner stays put.
 pub(crate) fn artboard_size_row(app: &mut VectorcraftApp, ui: &mut Ui, i: usize, w: f64, h: f64) {
+    let Some(choice) = artboard_size_controls(app, ui, w, h) else { return };
+    let scale_art = super::artboards::scale_art(app);
+    let indices = super::artboards::resized_with(app, i);
+    super::artboards::set_props(app, &indices, json!({"scaleArt": scale_art}), |j, r| {
+        let (width, height) = choice.size_for(r.width(), r.height())?;
+        Some(json!({"index": j, "width": width, "height": height}))
+    })
+    .ok();
+}
+
+/// A shared picker choice, applied separately to each artboard's orientation.
+#[derive(Clone, Copy)]
+pub(crate) enum ArtboardSizeChoice {
+    Preset(f64, f64),
+    Orientation(bool),
+}
+
+impl ArtboardSizeChoice {
+    pub(crate) fn size_for(self, w: f64, h: f64) -> Option<(f64, f64)> {
+        match self {
+            Self::Preset(pw, ph) => Some(turned(w > h, pw, ph)),
+            Self::Orientation(landscape) if (w > h) != landscape && w != h => Some((h, w)),
+            Self::Orientation(_) => None,
+        }
+    }
+}
+
+/// Shared existing presets/orientation UI. Dialogs keep the chosen size in their draft until OK.
+pub(crate) fn artboard_size_controls(app: &VectorcraftApp, ui: &mut Ui, w: f64, h: f64) -> Option<ArtboardSizeChoice> {
+    artboard_size_controls_inner(app, ui, w, h, None).0
+}
+
+/// The dialog's shared preset/orientation picker with optional artwork and selection fits.
+/// The second return value is a chosen Fit: false for all artwork, true for selected artwork.
+pub(crate) fn artboard_size_controls_with_fit(
+    app: &VectorcraftApp,
+    ui: &mut Ui,
+    w: f64,
+    h: f64,
+    enabled: [bool; 2],
+) -> (Option<ArtboardSizeChoice>, Option<bool>) {
+    artboard_size_controls_inner(app, ui, w, h, Some(enabled))
+}
+
+/// Properties and Control keep their ordinary picker; Artboard Options adds two Fit entries.
+fn artboard_size_controls_inner(
+    app: &VectorcraftApp,
+    ui: &mut Ui,
+    w: f64,
+    h: f64,
+    fits: Option<[bool; 2]>,
+) -> (Option<ArtboardSizeChoice>, Option<bool>) {
     let landscape = w > h;
     let same = |s: &newdoc::DocSettings| {
         let (pw, ph) = turned(landscape, s.width, s.height);
@@ -338,10 +464,19 @@ pub(crate) fn artboard_size_row(app: &mut VectorcraftApp, ui: &mut Ui, i: usize,
     // The preset's width and height as listed, or the orientation clicked.
     let mut preset = None;
     let mut orientation = None;
+    let mut fit = None;
     ui.horizontal(|ui| {
         dim_label(ui, tl!("Preset:"));
         preset = widgets::combo(ui, "ab-preset", &current, 140.0, false, |ui| {
             let mut chosen = None;
+            if let Some(enabled) = fits {
+                for (selection, label) in [(false, tl!("Fit to Artwork Bounds")), (true, tl!("Fit to Selected Art"))] {
+                    if widgets::menu_item_name(ui, label, enabled[usize::from(selection)], false) {
+                        fit = Some(selection);
+                    }
+                }
+                ui.separator();
+            }
             for (cat, list) in &cats {
                 ui.menu_button(tl!(cat), |ui| {
                     widgets::menu_scroll(ui, |ui| {
@@ -362,21 +497,7 @@ pub(crate) fn artboard_size_row(app: &mut VectorcraftApp, ui: &mut Ui, i: usize,
             }
         }
     });
-    if preset.is_none() && orientation.is_none() {
-        return;
-    }
-    let scale_art = super::artboards::scale_art(app);
-    let indices = super::artboards::resized_with(app, i);
-    super::artboards::set_props(app, &indices, json!({"scaleArt": scale_art}), |j, r| {
-        let (w, h) = (r.width(), r.height());
-        let (width, height) = match (preset, orientation) {
-            (Some((pw, ph)), _) => turned(w > h, pw, ph),
-            (None, Some(l)) if (w > h) != l && w != h => (h, w),
-            _ => return None,
-        };
-        Some(json!({"index": j, "width": width, "height": height}))
-    })
-    .ok();
+    (preset.map(|(w, h)| ArtboardSizeChoice::Preset(w, h)).or_else(|| orientation.map(ArtboardSizeChoice::Orientation)), fit)
 }
 
 /// Artboard `i`'s Fill, its background `color`: the chip shows it (the None paint when the artboard
@@ -596,8 +717,8 @@ fn appearance_section(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.horizontal(|ui| {
         widgets::field_label(ui, egui::RichText::new(tl!("Opacity")).size(12.0));
         ui.add_space(8.0);
-        if let Some(o) = widgets::plain_field(ui, "ap-op", n.opacity as f64 * 100.0, "%", 0, fw) {
-            app.run("object.setProps", json!({"opacity": o.clamp(0.0, 100.0)})).ok();
+        if let Some(o) = widgets::range_field(ui, "ap-op", n.opacity as f64 * 100.0, 0.0..=100.0, "%", 0, fw) {
+            app.run("object.setProps", json!({"opacity": o})).ok();
         }
         if widgets::icon_button(ui, "ellipsis", tl!("Transparency"), false, 22.0).clicked() {
             app.ui.open_panel = Some("transparency".into());
@@ -753,6 +874,99 @@ mod tests {
         assert!(!shown.iter().any(|t| t == "Edit Contents"), "nothing to edit: {shown:?}");
         click(&mut app, &ctx, &texts, "Edit Clipping Path");
         assert_eq!(selected(&app), std::slice::from_ref(&mask), "Edit Clipping Path selects the clipping path");
+    }
+
+    /// Start Global Edit in Quick Actions starts it on the one selected path, the button and the
+    /// Select menu item then read Stop Global Edit, and Escape (the app's key handling) stops it.
+    /// Selected type has no Start Global Edit button.
+    #[test]
+    fn start_global_edit_quick_action_and_escape() {
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.run("file.new", json!({"width": 400, "height": 300})).unwrap();
+        let a = app.run("shape.rectangle", json!({"x": 20, "y": 20, "width": 40, "height": 40})).unwrap()["id"].clone();
+        app.run("shape.rectangle", json!({"x": 200, "y": 20, "width": 80, "height": 80})).unwrap();
+        app.run("select.set", json!({"ids": [a]})).unwrap();
+        let ctx = egui::Context::default();
+        // Tall enough for Quick Actions at the foot of the panel.
+        let tall = |app: &mut VectorcraftApp, events: Vec<Event>| {
+            let raw = egui::RawInput { screen_rect: Some(Rect::from_min_size(Pos2::ZERO, vec2(300.0, 1600.0))), events, ..Default::default() };
+            let mut out = ctx.run_ui(raw, |ui| show(app, ui));
+            out.textures_delta.clear();
+            out.shapes
+                .iter()
+                .filter_map(|s| match &s.shape {
+                    egui::Shape::Text(t) => Some((t.galley.text().to_string(), Rect::from_min_size(t.pos, t.galley.size()))),
+                    _ => None,
+                })
+                .collect::<Vec<_>>()
+        };
+        let on = |app: &VectorcraftApp| app.session.active().unwrap().global_edit.is_some();
+        let label = |app: &VectorcraftApp| crate::menus::dynamic_label(app, "select.globalEdit", "Start Global Edit");
+        assert_eq!(label(&app), "Start Global Edit");
+        let texts = tall(&mut app, vec![]);
+        let at = texts.iter().find(|(t, _)| t == "Start Global Edit").map(|(_, r)| r.center()).unwrap_or_else(|| panic!("{texts:?}"));
+        let b = |pressed| Event::PointerButton { pos: at, button: PointerButton::Primary, pressed, modifiers: Default::default() };
+        tall(&mut app, vec![Event::PointerMoved(at), b(true)]);
+        tall(&mut app, vec![b(false)]);
+        assert!(on(&app), "the Quick Action starts Global Edit");
+        assert_eq!(app.session.active().unwrap().global_edit.as_ref().unwrap().members.len(), 2);
+        assert!(tall(&mut app, vec![]).iter().any(|(t, _)| t == "Stop Global Edit"));
+        assert_eq!(label(&app), "Stop Global Edit");
+        let escape = Event::Key { key: egui::Key::Escape, physical_key: None, pressed: true, repeat: false, modifiers: Default::default() };
+        let raw =
+            egui::RawInput { screen_rect: Some(Rect::from_min_size(Pos2::ZERO, vec2(300.0, 1600.0))), events: vec![escape], ..Default::default() };
+        let mut out = ctx.run_ui(raw, |ui| crate::shortcuts::handle(&mut app, ui.ctx()));
+        out.textures_delta.clear();
+        assert!(!on(&app), "Escape stops Global Edit");
+        assert_eq!(label(&app), "Start Global Edit");
+        assert_eq!(app.session.active().unwrap().selection.objects.iter().map(|n| json!(n.0)).collect::<Vec<_>>(), [a]);
+        let t = app.run("text.create", json!({"x": 50, "y": 200, "text": "Hi"})).unwrap()["id"].clone();
+        app.run("select.set", json!({"ids": [t]})).unwrap();
+        assert!(!crate::menus::enabled(&app, "select.globalEdit"));
+        assert!(!tall(&mut app, vec![]).iter().any(|(t, _)| t == "Start Global Edit"), "type has no Global Edit");
+    }
+
+    /// The options' Result(s) count is found once per document revision, options and selected
+    /// object, not every frame; another selected object or other options find it again.
+    #[test]
+    fn the_global_edit_result_count_is_cached() {
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.run("file.new", json!({"width": 400, "height": 300})).unwrap();
+        let a = app.run("shape.rectangle", json!({"x": 20, "y": 20, "width": 40, "height": 40})).unwrap()["id"].clone();
+        app.run("shape.rectangle", json!({"x": 200, "y": 20, "width": 80, "height": 80})).unwrap();
+        let e = app.run("shape.ellipse", json!({"x": 20, "y": 150, "width": 40, "height": 40})).unwrap()["id"].clone();
+        app.run("select.set", json!({"ids": [a]})).unwrap();
+        let ctx = egui::Context::default();
+        assert_eq!(global_edit_count(&app, &ctx), 2);
+        // The next frame reads the cache: a count planted under the same key is what it shows.
+        let (key, _) = pstate::<GlobalEditCount>(&ctx, "props-global-edit-count").unwrap();
+        set_pstate::<GlobalEditCount>(&ctx, "props-global-edit-count", Some((key, 7)));
+        assert_eq!(global_edit_count(&app, &ctx), 7);
+        app.run("select.set", json!({"ids": [e]})).unwrap();
+        assert_eq!(global_edit_count(&app, &ctx), 1, "another selected object");
+        app.run("select.set", json!({"ids": [a]})).unwrap();
+        assert_eq!(global_edit_count(&app, &ctx), 2);
+        app.run("select.globalEditOptions", json!({"size": true})).unwrap();
+        assert_eq!(global_edit_count(&app, &ctx), 1, "other options");
+    }
+
+    // Regression test for #1910: the Properties panel's flip buttons are named as the reference
+    // app's Properties panel names them, not Flip Horizontal and Flip Vertical (the Transform
+    // panel menu's names).
+    #[test]
+    fn the_flip_buttons_keep_the_reference_properties_names() {
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.run("file.new", json!({"width": 300, "height": 300})).unwrap();
+        let id = app.run("shape.rectangle", json!({"x": 50, "y": 50, "width": 120, "height": 80})).unwrap()["id"].clone();
+        app.run("select.set", json!({"ids": [id]})).unwrap();
+        let tree = crate::widgets::accessibility_tests::tree(|ui| transform_section(&mut app, ui));
+        let names: Vec<&str> = tree.iter().filter_map(|n| n.label()).collect();
+        for want in ["Flip Along Horizontal Axis", "Flip Along Vertical Axis"] {
+            assert!(names.contains(&want), "{want} in {names:?}");
+        }
+        for old in ["Flip Horizontal", "Flip Vertical"] {
+            assert!(!names.contains(&old), "{old} in {names:?}");
+        }
     }
 
     /// #3451: the Properties panel Transform section shows ellipse pie angles and Invert Pie.

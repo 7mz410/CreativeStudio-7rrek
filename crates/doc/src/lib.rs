@@ -44,6 +44,7 @@ pub mod perspective;
 mod pixels;
 pub use pixels::MAX_RASTER_ALLOC;
 pub mod placed_document;
+pub mod plugin_data;
 pub mod profiles;
 pub mod puppet;
 pub mod range;
@@ -105,11 +106,11 @@ pub use metadata::{CopyrightStatus, DocMetadata};
 pub use node::Knockout;
 pub use node::Scaling;
 pub use node::{Extras, ExtrasMut, ImageObject, LAYER_COLORS, LayerColor, LiveShape, Node, NodeExtras, NodeId, NodeKind, OpacityMask};
-pub use node::{ImageMap, MAX_SVG_SCRIPTS, ObjectAttributes, SVG_EVENTS};
+pub use node::{ForeignAttribute, ImageMap, MAX_SVG_SCRIPTS, ObjectAttributes, SVG_EVENTS};
 pub use orient::OrientedBox;
 pub use pattern::{Overlap, PatternDef, PatternEdit, RepeatKind, RepeatSpec, TileType};
 pub use perspective::PerspectiveAttachment;
-pub use placed_document::PlacedDocument;
+pub use placed_document::{PageBox, PlacedDocument};
 pub use profiles::ColorProfiles;
 pub use puppet::{PuppetPin, PuppetPins};
 pub use rastersettings::{RasterColorModel, RasterEffectsSettings};
@@ -378,7 +379,9 @@ fn parse_measure(s: &str, default: Unit) -> Option<f64> {
 /// A number with an optional unit suffix (`12`, `3 mm`, `2in`) → (the number, its unit).
 fn number_unit(s: &str) -> Option<(f64, Option<Unit>)> {
     let s = s.trim();
-    let num_end = s.find(|c: char| !(c.is_ascii_digit() || c == '.' || c == '-')).unwrap_or(s.len());
+    // A leading `+` is a sign (`+5`), like `-`.
+    let sign = usize::from(s.starts_with('+'));
+    let num_end = s.get(sign..)?.find(|c: char| !(c.is_ascii_digit() || c == '.' || c == '-')).map_or(s.len(), |i| i + sign);
     let v: f64 = s.get(..num_end)?.trim().parse().ok()?;
     let unit = match s.get(num_end..)?.trim() {
         "" => None,
@@ -444,16 +447,69 @@ pub struct Artboard {
     /// selected ([`Document::new_art`]).
     #[serde(default, skip_serializing_if = "skip::is_default")]
     pub locked: bool,
+    /// Show Center Mark (Artboard Options): the canvas draws a mark at the artboard's center.
+    /// Exports and print leave it out. Always written, as before it could be set.
     #[serde(default)]
     pub show_center_mark: bool,
+    /// Show Cross Hairs (Artboard Options): the canvas draws a line from the middle of each side
+    /// through the center. Exports and print leave them out. Always written, as before it could
+    /// be set.
     #[serde(default)]
     pub show_cross_hairs: bool,
+    /// Show Video Safe Areas (Artboard Options): the canvas draws the artboard's action-safe and
+    /// title-safe areas ([`Artboard::video_safe_areas`]). Exports and print leave them out. Written
+    /// only when on, so a document that never shows them saves as before.
+    #[serde(default, skip_serializing_if = "skip::is_default")]
+    pub show_video_safe_areas: bool,
+    /// Video Ruler Pixel Aspect Ratio (Artboard Options): the width of one video pixel over its
+    /// height, which View › Rulers › Show Video Rulers counts the artboard in: a pixel is this many
+    /// points wide and one point tall. 1 (square pixels) unless set, and written only when it isn't
+    /// 1; always within [`VIDEO_PIXEL_ASPECT_RANGE`]: the commands refuse others, and a file's is
+    /// brought into it as it opens.
+    #[serde(default = "square_pixels", deserialize_with = "pixel_aspect_within_range", skip_serializing_if = "is_square_pixels")]
+    pub video_ruler_pixel_aspect_ratio: f64,
     /// Background color (Properties › Artboards › Fill, Artboard Options). The canvas draws the
     /// artboard's paper in it, multiplied with the Simulate Colored Paper color while that is on;
     /// without one the paper is white, or the Simulate Colored Paper color. Exports and print leave
     /// it out.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<vectorcraft_color::Color>,
+}
+
+/// The Video Ruler Pixel Aspect Ratios an artboard takes (Artboard Options): from a pixel ten times
+/// as tall as it is wide to one ten times as wide as it is tall, which holds the anamorphic and
+/// standard-definition ratios video uses (0.9, 1.2, 1.33, 2) with room to spare.
+pub const VIDEO_PIXEL_ASPECT_RANGE: std::ops::RangeInclusive<f64> = 0.1..=10.0;
+
+/// How far in from each edge of an artboard the video safe areas lie, as a share of its width
+/// (left and right) and of its height (top and bottom): the action-safe area 3.5% and the
+/// title-safe (graphics-safe) area 5%, as EBU R 95 sets them for 16:9 television
+/// (https://tech.ebu.ch/docs/r/r095.pdf, note 5).
+pub const VIDEO_SAFE_INSETS: [f64; 2] = [0.035, 0.05];
+
+fn square_pixels() -> f64 {
+    1.0
+}
+
+fn is_square_pixels(v: &f64) -> bool {
+    *v == 1.0
+}
+
+/// A file's Video Ruler Pixel Aspect Ratio, brought into [`VIDEO_PIXEL_ASPECT_RANGE`]: one that
+/// isn't a number (NaN, infinite) reads as square pixels.
+fn pixel_aspect_within_range<'de, D: serde::Deserializer<'de>>(d: D) -> Result<f64, D::Error> {
+    let v = f64::deserialize(d)?;
+    let (lo, hi) = (*VIDEO_PIXEL_ASPECT_RANGE.start(), *VIDEO_PIXEL_ASPECT_RANGE.end());
+    Ok(if v.is_finite() { v.clamp(lo, hi) } else { 1.0 })
+}
+
+impl Artboard {
+    /// The action-safe and the title-safe area of the artboard, in that order, each inset from its
+    /// edges by the share of [`VIDEO_SAFE_INSETS`] (Show Video Safe Areas).
+    pub fn video_safe_areas(&self) -> [Rect; 2] {
+        let r = self.rect;
+        VIDEO_SAFE_INSETS.map(|k| r.inflate(-k * r.width(), -k * r.height()))
+    }
 }
 
 /// A document's locked artboards ([`Document::locked_artboards`]).
@@ -1123,6 +1179,8 @@ impl Document {
                 locked: false,
                 show_center_mark: false,
                 show_cross_hairs: false,
+                show_video_safe_areas: false,
+                video_ruler_pixel_aspect_ratio: 1.0,
                 color: None,
             }],
             layers: vec![],
@@ -1891,10 +1949,14 @@ impl Document {
     pub fn pattern_mut(&mut self, name: &str) -> Option<&mut PatternDef> {
         self.patterns.iter_mut().find(|p| p.name == name)
     }
-    /// Deep-clone `node` with fresh ids for it and all descendants.
+    /// Deep-clone `node` with fresh ids for it and all descendants, its images' own pixels taken
+    /// in ([`Self::adopt_pixels`]).
     pub fn reid(&mut self, node: &Node) -> Node {
         let mut n = node.clone();
         n.id = self.alloc_id();
+        if let NodeKind::Image(im) = &mut n.kind {
+            self.adopt_image_pixels(im);
+        }
         // A copied annotation must never bind its source ids to unrelated art in a different
         // document. Keep the measured geometry; new measurements can be linked after pasting.
         if let Some(e) = n.extras_if_any()
@@ -1919,6 +1981,48 @@ impl Document {
 }
 
 impl Document {
+    /// The pixels image `im` shows: its own ([`ImageObject::pixels`]) or this document's.
+    pub fn image_blob<'a>(&'a self, im: &'a ImageObject) -> Option<&'a ImageBlob> {
+        im.pixels.as_deref().or_else(|| self.images.get(&im.key))
+    }
+
+    /// Take the pixels the images in `n` (its opacity masks' art included) hold themselves (art
+    /// made outside a document) into [`Self::images`]: under the image's key, or a free one when
+    /// the key shows other pixels.
+    pub fn adopt_pixels(&mut self, n: &mut Node) {
+        // Only what holds such pixels is copied out of the art it shares.
+        fn holds(n: &Node) -> bool {
+            matches!(&n.kind, NodeKind::Image(im) if im.pixels.is_some())
+                || n.extras().mask.as_ref().is_some_and(|m| holds(&m.art))
+                || n.children().into_iter().flatten().any(|c| holds(c))
+        }
+        if let NodeKind::Image(im) = &mut n.kind {
+            self.adopt_image_pixels(im);
+        }
+        if let Some(m) = n.extras_if_any().and_then(|e| e.mask.as_deref_mut())
+            && holds(&m.art)
+        {
+            self.adopt_pixels(Arc::make_mut(&mut m.art));
+        }
+        for c in n.children_mut().into_iter().flatten() {
+            if holds(c) {
+                self.adopt_pixels(Arc::make_mut(c));
+            }
+        }
+    }
+
+    fn adopt_image_pixels(&mut self, im: &mut ImageObject) {
+        let Some(blob) = im.pixels.take() else { return };
+        let mut key = im.key.clone();
+        let mut i = 1;
+        while self.images.get(&key).is_some_and(|b| b.bytes != blob.bytes) {
+            i += 1;
+            key = format!("{}-{i}", im.key);
+        }
+        self.images.entry(key.clone()).or_insert_with(|| (*blob).clone());
+        im.key = key;
+    }
+
     /// Saved selections as a file gives them, made safe to list and recall: at most
     /// [`SavedSelection::MAX`], each with a clean, unique name and naming objects this document
     /// has, each once. (An id it doesn't have would select whatever object takes that id later.)
@@ -2268,6 +2372,8 @@ mod tests {
             locked: false,
             show_center_mark: false,
             show_cross_hairs: false,
+            show_video_safe_areas: false,
+            video_ruler_pixel_aspect_ratio: 1.0,
             color: None,
         });
         let rect = |d: &mut Document, r: Rect, appearance: Appearance| {

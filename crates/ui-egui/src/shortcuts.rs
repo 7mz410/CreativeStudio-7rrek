@@ -130,6 +130,27 @@ pub(crate) fn paste_command(held: Modifiers) -> &'static str {
         .map_or("edit.paste", |(_, id, _)| id)
 }
 
+/// Does every press of `key` this frame hold a chord with modifiers that a command shortcut is bound
+/// to, matched as [`consume`] matches it? `cmd_only`: only chords with Cmd count. False when `key`
+/// isn't pressed.
+fn runs_a_command(i: &egui::InputState, key: Key, cmd_only: bool) -> bool {
+    let presses: Vec<Modifiers> = i
+        .events
+        .iter()
+        .filter_map(|e| match e {
+            egui::Event::Key { key: k, pressed: true, modifiers, .. } if *k == key => Some(*modifiers),
+            _ => None,
+        })
+        .collect();
+    let shortcuts = all_shortcuts();
+    let bound = |m: &Modifiers| {
+        shortcuts
+            .iter()
+            .any(|(sc, ..)| sc.logical_key == key && (sc.modifiers.command || (!cmd_only && sc.modifiers.any())) && m.matches_logically(sc.modifiers))
+    };
+    !presses.is_empty() && presses.iter().all(bound)
+}
+
 /// Give a copy or cut chord held with more modifiers its key back when it has a shortcut of its own:
 /// egui reports every Cmd+C and Cmd+X chord as Copy or Cut, Shift and Alt held too, so Cmd+Shift+C
 /// (Align center) copied instead (#1940).
@@ -346,6 +367,13 @@ pub fn handle(app: &mut VectorcraftApp, ctx: &egui::Context) {
     let busy = app.session.tool_busy();
     for (k, tk) in [(Key::Enter, ToolKey::Enter), (Key::Escape, ToolKey::Escape)] {
         if !typing && !composing && ctx.input(|i| i.key_pressed(k)) {
+            // A chord a command is bound to (Cmd+Enter) runs only that command, in the shortcuts
+            // below, also when the tool claims the key. While the Type tool edits text only Cmd
+            // chords run one, and while another tool is busy none does.
+            let text = app.session.tool_wants_text();
+            if (text || !busy) && ctx.input(|i| runs_a_command(i, k, text)) {
+                continue;
+            }
             // A key the tool claims (Esc with a loaded place cursor) is only the tool's.
             let claimed = app.session.tool_claims_key(tk, view);
             let r = app.session.tool_key(tk, Mods::default(), view);
@@ -362,6 +390,8 @@ pub fn handle(app: &mut VectorcraftApp, ctx: &egui::Context) {
                     let _ = app.run("object.pattern.done", json!({}));
                 } else if app.session.active().is_some_and(|d| d.isolation.is_some()) {
                     let _ = app.run("object.exitIsolation", json!({}));
+                } else if app.session.active().is_some_and(|d| d.global_edit.is_some()) {
+                    let _ = app.run("select.globalEdit", json!({}));
                 } else if app.ui.flyout.is_some() {
                     app.ui.flyout = None;
                 } else if escape_pair.is_some_and(|second| escape_resets_rotation(app, ctx, second)) {
@@ -599,6 +629,27 @@ pub fn handle(app: &mut VectorcraftApp, ctx: &egui::Context) {
             crate::menus::invoke(app, id, p);
         }
         return;
+    }
+    // Alt+arrows on selected type objects step their spacing as the Type tool does (Cmd/Ctrl:
+    // five steps); Alt+arrow copies and nudges every other selection.
+    let m = ctx.input(|i| i.modifiers);
+    if m.alt
+        && app.session.active().is_some_and(|st| {
+            st.selection.guides.is_empty()
+                && !st.selection.objects.is_empty()
+                && st.selection.objects.iter().all(|id| matches!(st.doc.node(*id).map(|n| &n.kind), Some(vectorcraft_doc::NodeKind::Text(_))))
+        })
+    {
+        let keys = [(Key::ArrowLeft, ToolKey::Left), (Key::ArrowRight, ToolKey::Right), (Key::ArrowUp, ToolKey::Up), (Key::ArrowDown, ToolKey::Down)];
+        for (key, tool_key) in keys {
+            if ctx.input_mut(|i| i.consume_key(m, key)) {
+                if let Some((attribute, by)) = vectorcraft_tools::text::step_key(tool_key, m.shift, false) {
+                    let by = if m.command { by * 5.0 } else { by };
+                    let _ = app.run("type.step", json!({"attribute": attribute, "by": by}));
+                }
+                return;
+            }
+        }
     }
     // Arrow nudges (Shift = ×10, Alt = copy).
     let arrows = [(Key::ArrowLeft, -1.0, 0.0), (Key::ArrowRight, 1.0, 0.0), (Key::ArrowUp, 0.0, -1.0), (Key::ArrowDown, 0.0, 1.0)];
@@ -1278,6 +1329,111 @@ mod tests {
         assert_eq!(grid(&mut app, &[Key::ArrowLeft, Key::ArrowDown]), (rows, columns + 1));
     }
 
+    /// A press of `key` with `m` held.
+    fn press(key: Key, m: Modifiers) -> Vec<egui::Event> {
+        vec![egui::Event::ModifiersChanged(m), egui::Event::Key { key, physical_key: Some(key), pressed: true, repeat: false, modifiers: m }]
+    }
+
+    /// Binds Show Grid to `chord`, or with `None` leaves every command its default shortcut.
+    fn bind_grid(app: &mut VectorcraftApp, chord: Option<&str>) {
+        app.ui.shortcut_overrides.clear();
+        app.ui.shortcut_overrides.extend(chord.map(|c| ("view.grid".to_string(), c.to_string())));
+        crate::shortcut_editor::sync(&app.ui);
+    }
+
+    /// Clicks the active tool at (`x`, 200) and returns how many objects the first layer holds.
+    fn click_at(app: &mut VectorcraftApp, x: f64) -> usize {
+        use vectorcraft_tools::{PointerEvent, PointerKind};
+        let view = app.view_info();
+        for kind in [PointerKind::Down, PointerKind::Up] {
+            app.session.pointer(&PointerEvent::new(kind, x, 200.0), view).unwrap();
+        }
+        app.session.doc().unwrap().doc.layers[0].children().unwrap().len()
+    }
+
+    /// A command bound to Cmd+Enter runs without the active tool's Enter: the Selection tool opens
+    /// no Move dialog, the Type tool types no line break, and the Pen tool's path stays open. With
+    /// nothing bound to it, Cmd+Enter goes to the tool as Enter does.
+    #[test]
+    fn a_command_on_cmd_enter_runs_without_the_tools_enter() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.execute("file.new", &json!({"width": 400, "height": 300})).unwrap();
+        let id = app.session.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 50, "height": 30})).unwrap()["id"].clone();
+        let kind = |app: &VectorcraftApp| app.ui.dialog.as_ref().map(|d| d.kind.clone());
+        let grid = app.ui.view.grid;
+        app.select_tool("selection");
+        app.session.execute("select.set", &json!({"ids": [id]})).unwrap();
+        frame(&mut app, press(Key::Enter, Modifiers::COMMAND));
+        assert_eq!((kind(&app).as_deref(), app.ui.view.grid), (Some("move"), grid), "nothing bound: Cmd+Enter opens Move as Enter does");
+        app.ui.dialog = None;
+        bind_grid(&mut app, Some("Cmd+Enter"));
+        frame(&mut app, press(Key::Enter, Modifiers::COMMAND));
+        assert_eq!((kind(&app), app.ui.view.grid), (None, !grid), "Cmd+Enter runs Show Grid only");
+        frame(&mut app, press(Key::Enter, Modifiers::NONE));
+        assert_eq!((kind(&app).as_deref(), app.ui.view.grid), (Some("move"), !grid), "Enter still opens Move");
+        app.ui.dialog = None;
+        let text = app.session.execute("text.create", &json!({"x": 20, "y": 250, "text": "Hi"})).unwrap()["id"].as_u64().unwrap();
+        app.select_tool("type");
+        app.session.apply_actions(vec![vectorcraft_tools::Action::Notify("text.editNew".into())]).unwrap();
+        assert!(app.session.tool_wants_text());
+        frame(&mut app, press(Key::Enter, Modifiers::COMMAND));
+        let typed = text_and_layers(&mut app, text).0;
+        assert_eq!((typed.as_str(), app.ui.view.grid), ("Hi", grid), "Cmd+Enter runs Show Grid and types no line break");
+        app.session.execute("select.none", &json!({})).unwrap();
+        app.select_tool("pen");
+        click_at(&mut app, 100.0);
+        let objects = click_at(&mut app, 150.0);
+        frame(&mut app, press(Key::Enter, Modifiers::COMMAND));
+        assert_eq!((click_at(&mut app, 200.0), app.ui.view.grid), (objects, !grid), "Cmd+Enter runs Show Grid and the path stays open");
+        bind_grid(&mut app, None);
+        frame(&mut app, press(Key::Enter, Modifiers::COMMAND));
+        assert_eq!(click_at(&mut app, 250.0), objects + 1, "nothing bound: Cmd+Enter ends the path as Enter does");
+    }
+
+    /// A command bound to Cmd+Escape runs without the active tool's Escape: the Pen tool's path
+    /// stays open, isolation mode stays on, and the Type tool goes on editing its text. With nothing
+    /// bound to it, Cmd+Escape goes to the tool as Escape does.
+    #[test]
+    fn a_command_on_cmd_escape_runs_without_the_tools_escape() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.execute("file.new", &json!({"width": 400, "height": 300})).unwrap();
+        let id = app.session.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 50, "height": 30})).unwrap()["id"].clone();
+        let grid = app.ui.view.grid;
+        let cmd_escape = || press(Key::Escape, Modifiers::COMMAND);
+        bind_grid(&mut app, Some("Cmd+Escape"));
+        app.select_tool("pen");
+        click_at(&mut app, 100.0);
+        let objects = click_at(&mut app, 150.0);
+        frame(&mut app, cmd_escape());
+        assert_eq!((click_at(&mut app, 200.0), app.ui.view.grid), (objects, !grid), "Cmd+Escape runs Show Grid and the path stays open");
+        let text = app.session.execute("text.create", &json!({"x": 20, "y": 250, "text": "Hi"})).unwrap()["id"].clone();
+        let edit = |app: &mut VectorcraftApp| {
+            app.session.execute("select.set", &json!({"ids": [text]})).unwrap();
+            app.select_tool("type");
+            app.session.apply_actions(vec![vectorcraft_tools::Action::Notify("text.editNew".into())]).unwrap();
+            assert!(app.session.tool_wants_text());
+        };
+        edit(&mut app);
+        frame(&mut app, cmd_escape());
+        assert_eq!((app.session.tool_wants_text(), app.ui.view.grid), (true, grid), "Cmd+Escape runs Show Grid and the Type tool goes on editing");
+        app.select_tool("selection");
+        app.session.execute("object.isolate", &json!({"id": id})).unwrap();
+        let isolated = |app: &VectorcraftApp| app.session.active().unwrap().isolation.is_some();
+        frame(&mut app, cmd_escape());
+        assert_eq!((isolated(&app), app.ui.view.grid), (true, !grid), "Cmd+Escape runs Show Grid and isolation mode stays on");
+        bind_grid(&mut app, None);
+        frame(&mut app, cmd_escape());
+        assert!(!isolated(&app), "nothing bound: Cmd+Escape leaves isolation mode as Escape does");
+        edit(&mut app);
+        frame(&mut app, cmd_escape());
+        assert!(!app.session.tool_wants_text(), "nothing bound: Cmd+Escape ends the editing as Escape does");
+        app.session.execute("select.none", &json!({})).unwrap();
+        app.select_tool("pen");
+        let objects = click_at(&mut app, 300.0);
+        frame(&mut app, cmd_escape());
+        assert_eq!(click_at(&mut app, 350.0), objects + 1, "nothing bound: Cmd+Escape ends the path as Escape does");
+    }
+
     /// Enter opens the tool's dialog: the Move dialog for the selection tools, the tool's own for
     /// Rotate, Scale, Reflect and Shear. The Enter that opens it isn't also its OK.
     #[test]
@@ -1489,6 +1645,46 @@ mod tests {
         assert!(app.session.tool_wants_text());
         frame(&mut app, vec![press(Key::Period, five)]);
         assert_eq!(sizes(&mut app), [(json!("One "), json!(14.0)), (json!("Two"), json!(24.0))]);
+    }
+
+    /// #3786: Alt+arrows step a selected text object's spacing instead of copying and nudging it.
+    #[test]
+    fn alt_arrows_step_selected_type_object() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.execute("file.new", &json!({"width": 200, "height": 200})).unwrap();
+        let id = app.session.execute("text.create", &json!({"x": 20, "y": 50, "text": "One Two", "size": 20})).unwrap()["id"].as_u64().unwrap();
+        app.select_tool("selection");
+        app.session.execute("select.set", &json!({"ids": [id]})).unwrap();
+
+        let press = |key, modifiers| egui::Event::Key { key, physical_key: None, pressed: true, repeat: false, modifiers };
+        frame(&mut app, vec![egui::Event::ModifiersChanged(Modifiers::ALT), press(Key::ArrowRight, Modifiers::ALT)]);
+        let r = app.session.execute("text.getRange", &json!({"id": id})).unwrap();
+        assert_eq!(r["runs"][0]["style"]["tracking"], json!(20.0));
+        assert_eq!(app.session.active().unwrap().selection.objects, [vectorcraft_doc::NodeId(id)]);
+
+        frame(&mut app, vec![egui::Event::ModifiersChanged(Modifiers::ALT), press(Key::ArrowDown, Modifiers::ALT)]);
+        let r = app.session.execute("text.getRange", &json!({"id": id})).unwrap();
+        assert_eq!(r["runs"][0]["style"]["leading"], json!(26.0));
+
+        let alt_shift = Modifiers::ALT | Modifiers::SHIFT;
+        frame(&mut app, vec![egui::Event::ModifiersChanged(alt_shift), press(Key::ArrowUp, alt_shift)]);
+        let r = app.session.execute("text.getRange", &json!({"id": id})).unwrap();
+        assert_eq!(r["runs"][0]["style"]["baseline_shift"], json!(2.0));
+
+        // Shift+Alt+Left/Right have no text-spacing action; they must still be consumed instead of
+        // falling through to Alt+arrow's copy-and-nudge behaviour.
+        for key in [Key::ArrowLeft, Key::ArrowRight] {
+            frame(&mut app, vec![egui::Event::ModifiersChanged(alt_shift), press(key, alt_shift)]);
+            assert_eq!(app.session.active().unwrap().selection.objects, [vectorcraft_doc::NodeId(id)]);
+        }
+
+        // Other objects keep Alt+arrow's copy-and-nudge shortcut.
+        let rect = app.session.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 10, "height": 10})).unwrap()["id"].as_u64().unwrap();
+        app.session.execute("select.set", &json!({"ids": [rect]})).unwrap();
+        frame(&mut app, vec![egui::Event::ModifiersChanged(Modifiers::ALT), press(Key::ArrowRight, Modifiers::ALT)]);
+        let selected = &app.session.active().unwrap().selection.objects;
+        assert_eq!(selected.len(), 1);
+        assert_ne!(selected[0], vectorcraft_doc::NodeId(rect), "a non-type object is still copied by Alt+arrow");
     }
 
     /// #793: with a layout without Latin letters the one-key shortcuts go by the key's position:

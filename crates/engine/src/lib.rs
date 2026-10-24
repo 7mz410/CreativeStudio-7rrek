@@ -28,8 +28,10 @@ use vectorcraft_tools::{PaintDefaults, Tool};
 
 pub use cmd::EyedropperOptions;
 pub use cmd::clipboard::Clipboard;
+pub use cmd::create::constrain_click;
 pub use cmd::distortcmds::perspective_click;
 pub use cmd::params::{check_keys, check_params};
+pub use cmd::pathops::auto_simplify_level;
 pub use cmd::rasterfx::{export_pdf, flatten_raster_effects};
 pub use cmd::{CommandInfo, CommandSpec, command_specs, find_command};
 pub use journal::Journal;
@@ -346,6 +348,9 @@ pub struct DocState {
     pub variables_highlight: Option<String>,
     /// Isolation mode container.
     pub isolation: Option<NodeId>,
+    /// Select › Start Global Edit: the objects edited together until Stop Global Edit or Escape
+    /// ([`cmd::globaledit`]). Editing state: not saved, not undoable.
+    pub global_edit: Option<cmd::globaledit::GlobalEdit>,
     pub interaction: Option<Interaction>,
     /// Edits made while this is open are one undo step (a scrubbed numeric field).
     pub undo_group: Option<UndoGroup>,
@@ -549,6 +554,7 @@ impl DocState {
             layer_rows: vec![],
             variables_highlight: None,
             isolation: None,
+            global_edit: None,
             interaction: None,
             undo_group: None,
             last_transform: None,
@@ -642,6 +648,7 @@ impl DocState {
             self.doc = it.doc;
             self.selection = Arc::unwrap_or_clone(it.selection);
             self.sync_new_art();
+            cmd::globaledit::follow_history(self);
             self.active_layer = it.active_layer;
             self.layer_rows = it.layer_rows;
             self.variables_highlight = it.variables_highlight;
@@ -859,16 +866,22 @@ const _: () = assert!(vectorcraft_doc::MAX_DEPTH == 32, "TOO_DEEP (and its catal
 /// Cheap sanity check after an edit: artboards and the objects just touched (the selection) must
 /// have finite, in-range geometry, so saved files always reload and renderers never see NaN/∞.
 fn doc_sane(d: &Document, sel: &Selection) -> bool {
-    let ok = |r: vectorcraft_geom::Rect| [r.x0, r.y0, r.x1, r.y1].iter().all(|v| v.is_finite() && v.abs() <= MAX_COORD);
     d.ruler_origin.is_finite()
         && d.ruler_origin.x.abs() <= MAX_COORD
         && d.ruler_origin.y.abs() <= MAX_COORD
-        && d.artboards.iter().all(|a| ok(a.rect))
+        && d.artboards.iter().all(|a| rect_in_range(a.rect))
         && d.guides.iter().all(|g| g.pos.is_finite() && g.pos.abs() <= MAX_COORD)
-        && {
-            let paths = d.index_paths(sel.objects.iter().copied());
-            sel.objects.iter().all(|id| paths.get(id).and_then(|p| d.node_at(p)).and_then(|n| n.geometric_bounds()).is_none_or(ok))
-        }
+        && objects_in_range(d, &sel.objects)
+}
+
+fn rect_in_range(r: vectorcraft_geom::Rect) -> bool {
+    [r.x0, r.y0, r.x1, r.y1].iter().all(|v| v.is_finite() && v.abs() <= MAX_COORD)
+}
+
+/// Do the objects `ids` have finite geometry within [`MAX_COORD`] (the ones not there pass)?
+fn objects_in_range(d: &Document, ids: &[NodeId]) -> bool {
+    let paths = d.index_paths(ids.iter().copied());
+    ids.iter().all(|id| paths.get(id).and_then(|p| d.node_at(p)).and_then(|n| n.geometric_bounds()).is_none_or(rect_in_range))
 }
 
 /// Where new art goes (Illustrator's drawing modes, Shift+D cycles).
@@ -968,7 +981,10 @@ pub struct Prefs {
     pub anchor_path_labels: bool,
     pub measurement_labels: bool,
     pub spacing_guides: bool,
+    pub distance_guides: bool,
     pub snapping_tolerance: f64,
+    pub snap_tangent: bool,
+    pub snap_perpendicular: bool,
     // Slices
     pub show_slice_numbers: bool,
     pub slice_line_color: String,
@@ -978,7 +994,7 @@ pub struct Prefs {
     /// Type › Options › Additional Fonts Folder: a folder (read with its subfolders) whose fonts
     /// are listed and used as if installed (#683); empty for none.
     pub fonts_folder: String,
-    // Performance & Storage (Plug-ins & Scratch Disks)
+    // Plug-ins & Scratch Disks
     pub plugins_folder: String,
     pub scratch_primary: String,
     pub scratch_secondary: String,
@@ -1217,7 +1233,10 @@ impl Default for Prefs {
             anchor_path_labels: true,
             measurement_labels: true,
             spacing_guides: true,
+            distance_guides: true,
             snapping_tolerance: 4.0,
+            snap_tangent: true,
+            snap_perpendicular: true,
             show_slice_numbers: true,
             slice_line_color: s("#ff3f3f"),
             hyphenation_language: s("English: USA"),
@@ -1322,6 +1341,12 @@ pub struct Session {
     depth: u32,
     /// Set when the active tool panicked (see [`guard`]); reported by the next tool event.
     tool_panic: Option<EngineError>,
+    /// How many times switching or closing documents, or replacing the active one, has started the
+    /// tool afresh ([`Session::tool_resets`]).
+    tool_resets: u64,
+    /// Whether the tool's options were set after it last started afresh
+    /// ([`Session::tool_set_since_reset`]).
+    tool_set_since_reset: bool,
     /// Draw Normal / Behind / Inside (toolbar drawing modes).
     pub draw_mode: DrawMode,
     /// The path new art is drawn inside (Draw Inside).
@@ -1352,6 +1377,8 @@ pub struct Session {
     pub(crate) freeform_point: Option<(usize, cmd::gradient::StopOwner)>,
     /// User Defined and loaded graphic style libraries (Window → Graphic Style Libraries); not saved.
     pub style_libraries: cmd::stylelib::Libraries,
+    /// User Defined and loaded symbol libraries (Window → Symbol Libraries); not saved.
+    pub symbol_libraries: cmd::symbollib::Libraries,
     /// The Libraries panel's libraries of graphics, colours and text styles (`library.*`).
     pub libraries: cmd::library::Libraries,
     /// Where the saved PDF presets are kept, one file each; `None`: only for the session
@@ -1363,6 +1390,9 @@ pub struct Session {
     /// Where the plug-ins `plugin.install` installs are kept; `None`: only for the process
     /// ([`Session::attach_plugin_store`]).
     plugin_dir: Option<std::path::PathBuf>,
+    /// A filter's output that a run made in the background handed in for `plugin.run` to apply
+    /// ([`cmd::plugin::FilterRun::hand_in`]); the next `plugin.run` takes it.
+    plugin_output: Option<cmd::plugin::HandedIn>,
     /// URLs recently given in the Attributes panel (`attributes.set {url}`), newest first; not saved.
     pub recent_urls: Vec<String>,
     /// The language the UI is drawn in (a language code, never `auto`), set by the UI each frame;
@@ -1378,6 +1408,23 @@ pub struct Session {
     /// While `command.batch` runs: the documents its steps closed or replaced (Revert), which an
     /// error brings back; `None` otherwise.
     pub(crate) batch_stash: Option<Vec<DocState>>,
+    /// While [`Session::place_read`] runs `file.place`: the file read for it, which the command
+    /// places instead of reading the file; `None` otherwise.
+    pub(crate) place_hand_off: Option<cmd::place::PlaceRead>,
+    /// While [`Session::place_queue_read`] runs `file.place.queue`: the files read for it, which
+    /// the command loads the place cursor with instead of reading them; `None` otherwise.
+    pub(crate) queue_hand_off: Option<cmd::place::QueueRead>,
+    /// Whether a click or drag of the place cursor asks the frontend to place its file
+    /// ([`UiRequest::Place`]) instead of running `file.place`: the desktop app sets it to read the
+    /// file off the UI thread. False: the file is placed at once.
+    pub place_cursor_requests: bool,
+    /// While [`Session::prepare_package`] runs `file.package`: the package the command prepared,
+    /// which it leaves here instead of writing it; `None` otherwise.
+    pub(crate) package_hand_off: Option<Option<cmd::package::Package>>,
+    /// While [`Session::prepare_screen_export`] runs `document.exportForScreens` or
+    /// `assets.export`: the export the command prepared, which it leaves here instead of writing
+    /// it; `None` otherwise.
+    pub(crate) screens_hand_off: Option<Option<cmd::fileio::ScreenExport>>,
     /// Where Data Recovery keeps its copies ([`cmd::recovery`]).
     pub recovery: cmd::recovery::Recovery,
     /// While the active tool's actions run: their commands aren't "a command from outside the
@@ -1393,10 +1440,13 @@ pub struct Session {
     pub(crate) liquify_stroke: Option<Box<cmd::distortcmds::LiquifyStroke>>,
     /// A press on the Plane Switching Widget is under way: its drag and release are the widget's.
     pub(crate) plane_widget_press: bool,
+    /// The pointer button is held: the last pointer event was a press or a drag, not a release or
+    /// a move ([`Session::pointer_held`]).
+    pub(crate) pointer_held: bool,
     /// A guide being dragged out of a ruler ([`Session::ruler_guide`]).
     pub(crate) ruler_guide: Option<vectorcraft_tools::rulerguide::NewGuide>,
-    /// Which selected type overflows its frame, for the markers every tool but the Type tools shows.
-    pub(crate) overflow_marks: vectorcraft_tools::text::OverflowMarks,
+    /// Which selected type overflows its frame, for the ports every tool but the Type tools shows.
+    pub(crate) port_marks: vectorcraft_tools::text::PortMarks,
     /// The last search for the files of missing fonts (`text.findFontFiles`), until another
     /// starts; dropping it stops it.
     pub(crate) font_search: Option<cmd::fontfiles::FontSearch>,
@@ -1406,6 +1456,9 @@ pub struct Session {
     /// Where folder searches may go; `None`: this computer's rules ([`cmd::findfiles::Rules`]).
     /// Tests set it.
     pub search_rules: Option<cmd::findfiles::Rules>,
+    /// Canvas feedback cached for the pending deferred preview ([`Session::overlays`]); cleared
+    /// when the preview params change or the interaction ends.
+    pub(crate) deferred_overlay_cache: Option<(String, Value, Vec<vectorcraft_tools::Overlay>)>,
     /// The walker threads a folder search starts; `None`: [`cmd::findfiles::threads`]. Tests set
     /// it.
     pub search_threads: Option<usize>,
@@ -1414,6 +1467,9 @@ pub struct Session {
     pub link_stamps: std::collections::HashMap<(u64, String), link_watch::Stamp>,
     /// The stamps being taken on a worker thread ([`Session::start_link_scan`]).
     pub link_scan: Option<link_watch::LinkScan>,
+    /// The Global Edit Options Start Global Edit matches with (`select.globalEditOptions`); not
+    /// saved.
+    pub global_edit_options: cmd::globaledit::Options,
 }
 
 impl Default for Session {
@@ -1423,12 +1479,23 @@ impl Default for Session {
 }
 
 impl Session {
+    /// A session with no document open, the default preferences and the Selection tool. It also
+    /// installs the hooks the document crate calls back into: the loader and file reader of placed
+    /// documents, and where an image's effects draw its fills and strokes, for clicks.
     pub fn new() -> Self {
         // Placed documents are read by the native format's loader.
         vectorcraft_doc::placed_document::set_loader(cmd::place::document::read_document);
         vectorcraft_doc::placed_document::set_file_reader(cmd::place::document::read_file_again);
+        vectorcraft_doc::placed_document::set_read_check(|path| file_access::check_read(path).is_ok());
+        // The background workers of placed documents read files in the scope that asked.
+        vectorcraft_render::placed_document::set_scope_capture(|| {
+            let scope = file_access::ScopeHandle::capture();
+            Box::new(move |f: &mut dyn FnMut()| scope.run(f))
+        });
         // Clicks find an image's own fills and strokes where their effects draw them.
         vectorcraft_doc::hit::set_image_paint(vectorcraft_render::effects::image_paint);
+        // OpenType SVG glyphs are drawn as the SVG importer reads their documents.
+        vectorcraft_text::set_svg_glyph_reader(vectorcraft_svg::glyph_art);
         Self {
             docs: vec![],
             active: None,
@@ -1444,6 +1511,8 @@ impl Session {
             preview_memo: Default::default(),
             depth: 0,
             tool_panic: None,
+            tool_resets: 0,
+            tool_set_since_reset: false,
             draw_mode: DrawMode::Normal,
             draw_inside: None,
             untitled_counter: 0,
@@ -1457,29 +1526,39 @@ impl Session {
             swatch_libraries: Default::default(),
             freeform_point: None,
             style_libraries: Default::default(),
+            symbol_libraries: Default::default(),
             libraries: Default::default(),
             pdf_preset_dir: None,
             profile_dir: None,
             plugin_dir: None,
+            plugin_output: None,
             recent_urls: vec![],
             ui_language: None,
             journal_note: Default::default(),
             note_depth: 1,
             batch_stash: None,
+            place_hand_off: None,
+            queue_hand_off: None,
+            place_cursor_requests: false,
+            package_hand_off: None,
+            screens_hand_off: None,
             recovery: Default::default(),
             in_tool_actions: false,
             previewing: false,
             envelope_defaults: None,
             liquify_stroke: None,
             plane_widget_press: false,
+            pointer_held: false,
             ruler_guide: None,
-            overflow_marks: Default::default(),
+            port_marks: Default::default(),
             font_search: None,
             link_search: None,
             search_rules: None,
+            deferred_overlay_cache: None,
             search_threads: None,
             link_stamps: Default::default(),
             link_scan: None,
+            global_edit_options: Default::default(),
         }
     }
 
@@ -1523,6 +1602,8 @@ impl Session {
         }
         self.keep_tool_settings();
         self.tool = self.make_tool(self.tool.id());
+        self.tool_resets = self.tool_resets.wrapping_add(1);
+        self.tool_set_since_reset = false;
     }
     pub fn set_active(&mut self, index: usize) -> bool {
         if index < self.docs.len() {
@@ -1565,6 +1646,7 @@ impl Session {
         Self::refresh_text_bounds(&mut doc);
         // Guides from files saved before guides had layers go on a layer.
         doc.adopt_guides();
+        cmd::dimension::conform(&mut doc);
         self.reset_tool_for_doc_switch();
         let mut st = DocState::new(doc, path);
         st.history.limit = self.prefs.history_states as usize;
@@ -1582,6 +1664,7 @@ impl Session {
         doc.limit_depth();
         Self::refresh_text_bounds(&mut doc);
         doc.adopt_guides();
+        cmd::dimension::conform(&mut doc);
         if self.active == Some(index) {
             // Pending tool work (typing, a drag) belongs to the content being thrown away.
             self.reset_tool_for_doc_switch();
@@ -1660,13 +1743,25 @@ impl Session {
             self.note_depth = 1;
             self.batch_stash = None;
         }
-        // A selection-only command given `ids` selects them first, in the same undo step (#2130).
+        // A selection-only command given `ids` selects them first, in the same undo step (#2130);
+        // when the command then fails, the selection (and the current layer selecting them made
+        // current) goes back to how it was, as when the ids are refused.
         let select_first = SELECTS_GIVEN_IDS.contains(&id).then(|| params.get("ids")).flatten();
+        let selected_before = select_first.and(self.active()).map(|d| (d.uid, d.selection.clone(), d.active_layer));
         let run = |s: &mut Session| {
             if let Some(ids) = select_first {
                 s.execute("select.set", &serde_json::json!({ "ids": ids }))?;
             }
-            (spec.run)(s, params)
+            let r = (spec.run)(s, params);
+            if r.is_err()
+                && let Some((uid, selection, layer)) = selected_before
+                && let Some(st) = s.docs.iter_mut().find(|d| d.uid == uid)
+            {
+                st.selection = selection;
+                st.active_layer = layer;
+                st.revision += 1;
+            }
+            r
         };
         // The entries the command journals belong to the undo groups of the documents it edits, and to
         // the group of the document it starts in when it ends there too.
@@ -1765,6 +1860,7 @@ impl Session {
                     st.doc = doc;
                     st.selection = selection;
                     st.interaction = interaction;
+                    cmd::globaledit::follow_history(st);
                     st.revision += 1;
                 }
                 if active.is_some_and(|i| i < self.docs.len()) {
@@ -1794,8 +1890,14 @@ impl Session {
         let before = st.doc.clone();
         let before_sel = st.selection.clone();
         let doc = Arc::make_mut(&mut st.doc);
+        // The Global Edit members the edit reached besides the selection.
+        let mut spread = vec![];
         // Objects attached to a path follow it, and dimensions follow the art they measure.
         let result = match f(doc, &mut st.selection).and_then(|v| {
+            // Global Edit: the other members take what the edit changed about the one it edited.
+            if let Some(ge) = &st.global_edit {
+                spread = cmd::globaledit::propagate(&before, doc, ge, [&before_sel.objects, &st.selection.objects]);
+            }
             cmd::objects_on_path::refresh(&before, doc);
             cmd::dimension::refresh(&before, doc)?;
             Ok(v)
@@ -1828,7 +1930,7 @@ impl Session {
                     if st.doc.too_deep(Some(&before)) {
                         // Deeper trees overflow the stack of what walks them.
                         Err(EngineError::Other(TOO_DEEP.into()))
-                    } else if doc_sane(&st.doc, &st.selection) {
+                    } else if doc_sane(&st.doc, &st.selection) && objects_in_range(&st.doc, &spread) {
                         Ok(v)
                     } else {
                         Err(EngineError::Other("result would exceed the canvas (coordinates out of range)".into()))
@@ -1860,6 +1962,7 @@ impl Session {
             Err(e) => {
                 st.doc = before;
                 st.selection = before_sel;
+                cmd::globaledit::follow_history(st);
                 Err(e)
             }
         }
@@ -1927,12 +2030,23 @@ impl Session {
 
     // ---------- interactions (live drags) ----------
 
+    pub(crate) fn clear_deferred_overlay_cache(&mut self) {
+        self.deferred_overlay_cache = None;
+    }
+
+    /// The interaction's latest preview command when the document is still its snapshot (deferred
+    /// Real-time Drawing), regardless of the preference at commit or overlay time.
+    pub(crate) fn unapplied_interaction_preview(&self) -> Option<(String, Value)> {
+        self.active().and_then(|d| d.interaction.as_ref().filter(|it| std::sync::Arc::ptr_eq(&it.doc, &d.doc)).and_then(|it| it.preview.clone()))
+    }
+
     pub fn begin_interaction(&mut self, label: &str) -> Result<()> {
         // Typing in progress is kept first: a drag or a dialog's preview would otherwise start
         // from the snapshot taken before the typing, and drop it (#1881).
         if label != "Typing" && cmd::typing_in_progress(self) {
             cmd::settle_interaction(self)?;
         }
+        self.clear_deferred_overlay_cache();
         let st = self.doc_mut()?;
         if st.interaction.is_some() {
             return Ok(());
@@ -1967,6 +2081,7 @@ impl Session {
             if selection_changed {
                 st.selection.clone_from(&it.selection);
             }
+            cmd::globaledit::follow_history(st);
         }
         // The previous preview's paint is undone with it.
         self.pending_paint = None;
@@ -1986,6 +2101,7 @@ impl Session {
     }
 
     pub fn commit_interaction(&mut self) -> Result<()> {
+        self.clear_deferred_overlay_cache();
         self.remember_pending_paint();
         let st = self.doc_mut()?;
         let Some(mut it) = st.interaction.take() else { return Ok(()) };
@@ -2038,6 +2154,7 @@ impl Session {
     }
 
     pub fn cancel_interaction(&mut self) -> Result<()> {
+        self.clear_deferred_overlay_cache();
         self.pending_paint = None;
         let guides_locked = self.menu.guides_locked;
         let st = self.doc_mut()?;
@@ -2121,6 +2238,7 @@ impl Session {
                     deselect_guides(&st.doc, &mut st.selection);
                 }
                 st.sync_new_art();
+                cmd::globaledit::follow_history(st);
                 st.revision += 1;
                 // The journal drops only the canceled groups' own entries and keeps the ones made in other documents meanwhile.
                 journal.extend(g.journal);
@@ -2198,6 +2316,7 @@ impl Session {
         }
         st.doc = doc;
         st.selection = selection;
+        cmd::globaledit::follow_history(st);
         if guides_locked {
             deselect_guides(&st.doc, &mut st.selection);
         }
@@ -2235,6 +2354,15 @@ fn refresh_tree_text_bounds(n: &mut Arc<vectorcraft_doc::Node>) {
     for c in n.children_mut().into_iter().flatten() {
         refresh_tree_text_bounds(c);
     }
+}
+
+/// Held by the tests that add fonts to the shared [`vectorcraft_text::FontDb::global`] for as long
+/// as they run: adding a font clears the database's caches, which would change how another such
+/// test's type resolves between its layout and its export.
+#[cfg(test)]
+pub(crate) fn adding_fonts() -> std::sync::MutexGuard<'static, ()> {
+    static FONTS: std::sync::Mutex<()> = std::sync::Mutex::new(());
+    FONTS.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
 }
 
 #[cfg(test)]
@@ -2286,6 +2414,14 @@ mod tests_colormgmt;
 #[cfg(test)]
 mod tests_colorthemes;
 #[cfg(test)]
+mod tests_colourfonts;
+#[cfg(test)]
+mod tests_compoundpaint;
+#[cfg(test)]
+mod tests_constrain_new;
+#[cfg(test)]
+mod tests_constrain_tools;
+#[cfg(test)]
 mod tests_containers;
 #[cfg(test)]
 mod tests_css;
@@ -2333,6 +2469,8 @@ mod tests_fontfiles;
 mod tests_fontlist;
 #[cfg(test)]
 mod tests_freeform;
+#[cfg(test)]
+mod tests_globaledit;
 #[cfg(test)]
 mod tests_gradient;
 #[cfg(test)]
@@ -2494,6 +2632,8 @@ mod tests_shaper;
 #[cfg(test)]
 mod tests_shortcutset;
 #[cfg(test)]
+mod tests_simplify_part;
+#[cfg(test)]
 mod tests_slices;
 #[cfg(test)]
 mod tests_smartguides;
@@ -2522,6 +2662,8 @@ mod tests_swatchlib;
 #[cfg(test)]
 mod tests_symbolbounds;
 #[cfg(test)]
+mod tests_symbollib;
+#[cfg(test)]
 mod tests_targeting;
 #[cfg(test)]
 mod tests_textcombos;
@@ -2536,7 +2678,11 @@ mod tests_tints;
 #[cfg(test)]
 mod tests_toolsettings;
 #[cfg(test)]
+mod tests_transformfx;
+#[cfg(test)]
 mod tests_transparencygrid;
+#[cfg(test)]
+mod tests_trap;
 #[cfg(test)]
 mod tests_typearea;
 #[cfg(test)]
@@ -2582,6 +2728,7 @@ pub(crate) const SELECTS_GIVEN_IDS: &[&str] = &[
     "object.pathfinder.minusBack",
     "object.pathfinder.minusFront",
     "object.pathfinder.outline",
+    "object.pathfinder.trap",
     "object.pathfinder.trim",
     "object.pathfinder.unite",
     "object.reflect",

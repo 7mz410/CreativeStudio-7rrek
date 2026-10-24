@@ -87,7 +87,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Nudge",
             [],
             None,
-            "{dx: -1|0|1, dy: -1|0|1, big?: bool (×10), copy?: bool, patterns?: bool (Transform Patterns: pattern fills and strokes transform with the objects that move whole; default: prefs transformPatternTiles), typeAreas?: bool (area type: the frame is reshaped and the text reflows at its size), objects?: bool (Transform Objects, as object.move)} arrow-key nudge by the keyboard increment (the selected anchors, else objects, else ruler guides)",
+            "{dx: -1|0|1, dy: -1|0|1, big?: bool (×10), copy?: bool, patterns?: bool (Transform Patterns: pattern fills and strokes transform with the objects that move whole; default: prefs transformPatternTiles), typeAreas?: bool (area type: the frame is reshaped and the text reflows at its size), objects?: bool (Transform Objects, as object.move)} arrow-key nudge by the keyboard increment (the selected anchors, else objects, along the x and y axes turned by the constrainAngle preference; else ruler guides, along the page axes)",
             has_selection_or_guides,
             nudge
         ),
@@ -380,6 +380,21 @@ pub(crate) fn transform_node(n: &mut Node, xf: Affine, sc: Scaling, objects: boo
 /// `anchors` (`ids` being the selection): with anchors selected with Direct Selection and no
 /// copy, only those anchors transform, their handles with them, and the objects selected whole.
 pub(crate) fn apply_transform(s: &mut Session, label: &str, ids: Vec<NodeId>, xf: Affine, p: &Value, anchors: bool) -> Result<Value> {
+    apply_transform_moving_guides(s, label, ids, xf, p, anchors, None)
+}
+
+/// [`apply_transform`], with the selected ruler guides moved by `guides` instead of by the
+/// translation `xf` when given (a nudge along a turned Constrain Angle moves the art along it and
+/// the guides along the page's axes).
+fn apply_transform_moving_guides(
+    s: &mut Session,
+    label: &str,
+    ids: Vec<NodeId>,
+    xf: Affine,
+    p: &Value,
+    anchors: bool,
+    guides: Option<Vec2>,
+) -> Result<Value> {
     let copy = bool_or(p, "copy", false);
     let areas = bool_or(p, "typeAreas", false);
     let objects = transforms_objects(p);
@@ -387,7 +402,7 @@ pub(crate) fn apply_transform(s: &mut Session, label: &str, ids: Vec<NodeId>, xf
     sc.patterns = transform_patterns(s, p, &ids)?;
     let c = xf.as_coeffs();
     let is_translation = (c[0] - 1.0).abs() < 1e-9 && c[1].abs() < 1e-9 && c[2].abs() < 1e-9 && (c[3] - 1.0).abs() < 1e-9;
-    let delta = Vec2::new(c[4], c[5]);
+    let delta = guides.unwrap_or(Vec2::new(c[4], c[5]));
     let with_guides = objects && ids_param(p, "ids").is_none() && is_translation;
     let has_guides = with_guides && !s.doc()?.selection.guides.is_empty();
     // A transform of ids that name no object, or an identity transform without a copy, moves
@@ -527,13 +542,27 @@ fn move_cmd(s: &mut Session, p: &Value) -> Result<Value> {
     apply_transform(s, "Move", ids, Affine::translate((f64_or(p, "dx", 0.0), f64_or(p, "dy", 0.0))), p, true)
 }
 
+/// The arrow keys' step `(dx, dy)` (page axes, y down) along the x and y axes turned by General ›
+/// Constrain Angle (`deg`, counter-clockwise on the page): with 30°, → moves 30° up from the
+/// horizontal, as the reference app's arrow keys follow the constrain angle (users set it to −90°
+/// to nudge along a view rotated by 90°:
+/// <https://community.adobe.com/t5/illustrator-discussions/arrow-keys-and-ruler-guides-not-adjusted-when-using-rotate-view/m-p/12489564>).
+pub(crate) fn along_constrain_angle(dx: f64, dy: f64, deg: f64) -> (f64, f64) {
+    // Whole turns are the page's axes, exactly; quarter turns are exact too.
+    let Some(axes) = vectorcraft_geom::constrain_axes(deg) else { return (dx, dy) };
+    let v = axes * Point::new(dx, dy);
+    (v.x, v.y)
+}
+
 fn nudge(s: &mut Session, p: &Value) -> Result<Value> {
     check_numbers(p, &["dx", "dy"], "object.nudge")?;
     check_switches(p, &TRANSFORM_SWITCHES, "object.nudge")?;
     check_switches(p, &["big"], "object.nudge")?;
     let k = s.prefs.keyboard_increment * if bool_or(p, "big", false) { 10.0 } else { 1.0 };
-    let dx = f64_or(p, "dx", 0.0) * k;
-    let dy = f64_or(p, "dy", 0.0) * k;
+    let (dx, dy) = (f64_or(p, "dx", 0.0) * k, f64_or(p, "dy", 0.0) * k);
+    // Guides keep to the page's axes; art and anchors move along the constrain angle's.
+    let (gx, gy) = (dx, dy);
+    let (dx, dy) = along_constrain_angle(dx, dy, s.prefs.constrain_angle);
     if !s.doc()?.selection.anchors.is_empty() {
         // When the anchors move by 0, the document and its undo history stay as they are.
         if dx == 0.0 && dy == 0.0 {
@@ -544,13 +573,13 @@ fn nudge(s: &mut Session, p: &Value) -> Result<Value> {
     if s.doc()?.selection.is_empty() {
         let copy = bool_or(p, "copy", false);
         // When guides move by 0 without a copy, the document and its undo history stay as they are.
-        if dx == 0.0 && dy == 0.0 && !copy {
+        if gx == 0.0 && gy == 0.0 && !copy {
             return ok();
         }
-        return super::docmenu::guide_move(s, &json!({ "dx": dx, "dy": dy, "copy": copy }));
+        return super::docmenu::guide_move(s, &json!({ "dx": gx, "dy": gy, "copy": copy }));
     }
     let ids = selected_roots_to_transform(s)?;
-    apply_transform(s, "Move", ids, Affine::translate((dx, dy)), p, true)
+    apply_transform_moving_guides(s, "Move", ids, Affine::translate((dx, dy)), p, true, Some(Vec2::new(gx, gy)))
 }
 
 fn about(o: Point, a: Affine) -> Affine {
@@ -1276,9 +1305,9 @@ fn preview_bounds(s: &Session, p: &Value, cmd: &str) -> Result<bool> {
     }
 }
 
-/// Param `key` of the Align commands and Shear: one of `values`, or `None` when it is missing or
-/// null. Any other value is an error that lists `values`.
-fn choice<'a>(p: &'a Value, cmd: &str, key: &str, values: &[&str]) -> Result<Option<&'a str>> {
+/// Param `key` of the Align commands, Shear and `text.setFormat`'s lists: one of `values`, or
+/// `None` when it is missing or null. Any other value is an error that lists `values`.
+pub(crate) fn choice<'a>(p: &'a Value, cmd: &str, key: &str, values: &[&str]) -> Result<Option<&'a str>> {
     let Some(v) = p.get(key).filter(|v| !v.is_null()) else { return Ok(None) };
     match v.as_str() {
         Some(s) if values.contains(&s) => Ok(Some(s)),

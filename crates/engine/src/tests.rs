@@ -825,6 +825,26 @@ fn selection_tool_drag_is_one_undo_step() {
     assert_eq!(s.doc().unwrap().doc.node(a).unwrap().geometric_bounds().unwrap().x0, 100.0);
 }
 
+/// The pointer button is held from a press or a drag until a release or a move. The Dimension
+/// tool stays busy after its first click with the button released, waiting for the second one.
+#[test]
+fn the_pointer_is_held_from_a_press_until_a_release_or_a_move() {
+    let mut s = session();
+    let v = ViewInfo::default();
+    s.select_tool("dimension", v).unwrap();
+    let mut held = vec![];
+    for (kind, x) in [(PointerKind::Down, 100.0), (PointerKind::Drag, 100.0), (PointerKind::Up, 100.0)] {
+        s.pointer(&PointerEvent::new(kind, x, 100.0), v).unwrap();
+        held.push(s.pointer_held());
+    }
+    assert!(s.tool_busy(), "the first point waits for the second");
+    for (kind, x) in [(PointerKind::Move, 200.0), (PointerKind::Down, 300.0), (PointerKind::Drag, 310.0), (PointerKind::Move, 320.0)] {
+        s.pointer(&PointerEvent::new(kind, x, 100.0), v).unwrap();
+        held.push(s.pointer_held());
+    }
+    assert_eq!(held, [true, true, false, false, true, true, false]);
+}
+
 /// How many steps there are to undo and to redo, and whether the document has unsaved changes.
 pub(crate) fn history(s: &Session) -> (usize, usize, bool) {
     let st = s.doc().unwrap();
@@ -3145,7 +3165,7 @@ fn file_list_lists_a_folder_within_the_read_root() {
         json!([{"name": "a.pdf", "kind": "file", "size": 4}, {"name": "b.svg", "kind": "file", "size": 6}, {"name": "sub", "kind": "folder"}])
     );
     assert_eq!(r["truncated"], false);
-    let roots = crate::file_access::AutomationRoots::new(Some(&base.join("in")), None).unwrap().unwrap();
+    let roots = crate::file_access::AutomationRoots::new(&[&base.join("in")], &[]).unwrap().unwrap();
     crate::file_access::confine(Some(&roots), || {
         assert!(s.execute("file.list", &json!({"path": path("in/sub")})).is_ok());
         assert!(s.execute("file.list", &json!({"path": path("outside")})).is_err(), "outside the read root");
