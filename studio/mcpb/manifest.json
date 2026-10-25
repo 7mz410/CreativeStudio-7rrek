@@ -1,0 +1,30 @@
+{
+  "manifest_version": "0.2",
+  "name": "7rrek",
+  "display_name": "7rrek (حرّك)",
+  "version": "__VERSION__",
+  "description": "Draw and animate vector graphics with Claude: shapes, paths, text, effects and animation, saved as .7rrek or exported (SVG, PDF, PNG…).",
+  "long_description": "7rrek is the animation app of Creative Studio, built on rsm (VectorCraft). This extension runs its engine headless so Claude can make and edit documents in the folder you choose. It reads and writes only inside that folder.",
+  "author": { "name": "Hamza Abu Ayyash", "url": "https://studio.creative.ps" },
+  "homepage": "https://7rrek.studio.creative.ps",
+  "repository": { "type": "git", "url": "https://github.com/7mz410/CreativeStudio-7rrek" },
+  "license": "MIT OR Apache-2.0",
+  "server": {
+    "type": "binary",
+    "entry_point": "server/__CLI__",
+    "mcp_config": {
+      "command": "${__dirname}/server/__CLI__",
+      "args": ["mcp", "--headless", "--automation-read-root", "${user_config.folder}", "--automation-write-root", "${user_config.folder}"]
+    }
+  },
+  "user_config": {
+    "folder": {
+      "type": "directory",
+      "title": "Work folder",
+      "description": "Claude reads files from this folder and saves documents and exports into it.",
+      "required": true,
+      "default": "${HOME}/Desktop"
+    }
+  },
+  "compatibility": { "platforms": ["__PLATFORM__"] }
+}

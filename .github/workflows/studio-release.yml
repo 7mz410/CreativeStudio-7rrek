@@ -21,4 +21,5 @@ jobs:
       package: vectorcraft
       version_var: VECTORCRAFT_VERSION
       bundle: 7rrek.app
+      mcpb_cli: vectorcraft-cli
       tag: ${{ github.ref_name }}
