@@ -107,10 +107,18 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     match app.ui.toolbar_pos {
         None => {
             // The card sits a 6 px gap in from the window edge, on the edge the bar is docked to.
-            let margin = if egui::is_rtl() { egui::Margin { left: 0, right: 6, top: 6, bottom: 6 } } else { egui::Margin { left: 6, right: 0, top: 6, bottom: 6 } };
-            (if egui::is_rtl() { egui::Panel::right("toolbar") } else { egui::Panel::left("toolbar") }).resizable(false).exact_size(w + 6.0).frame(egui::Frame::NONE).show(ui, |ui| {
-                crate::theme::card(ui, &t, margin, |ui| body(app, ui, cols, None));
-            });
+            let margin = if egui::is_rtl() {
+                egui::Margin { left: 0, right: 6, top: 6, bottom: 6 }
+            } else {
+                egui::Margin { left: 6, right: 0, top: 6, bottom: 6 }
+            };
+            (if egui::is_rtl() { egui::Panel::right("toolbar") } else { egui::Panel::left("toolbar") })
+                .resizable(false)
+                .exact_size(w + 6.0)
+                .frame(egui::Frame::NONE)
+                .show(ui, |ui| {
+                    crate::theme::card(ui, &t, margin, |ui| body(app, ui, cols, None));
+                });
         }
         Some(pos) => {
             // Floating, kept inside the window, its tools scrolling when they don't fit under it.

@@ -399,7 +399,27 @@ fn export_extensions_name_every_writable_format() {
     let exts = export_extensions();
     assert_eq!(
         exts,
-        ["7rrek", "svg", "svgz", "pdf", "ai", "png", "jpg", "gif", "webp", "tif", "bmp", "vctemplate", "txt", "dxf", "eps", "emf", "wmf", "tga", "psd"]
+        [
+            "7rrek",
+            "svg",
+            "svgz",
+            "pdf",
+            "ai",
+            "png",
+            "jpg",
+            "gif",
+            "webp",
+            "tif",
+            "bmp",
+            "vctemplate",
+            "txt",
+            "dxf",
+            "eps",
+            "emf",
+            "wmf",
+            "tga",
+            "psd"
+        ]
     );
     for e in exts {
         assert!(format_for_name(&format!("x.{e}")).is_some_and(|f| f.write), "{e}");

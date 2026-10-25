@@ -698,10 +698,7 @@ mod tests {
         let pick = &picks.borrow()[1];
         assert_eq!(pick.name, "Untitled-1 template.vctemplate");
         assert_eq!(pick.folder.as_deref().map(std::path::Path::new), Some(folder.as_path()));
-        assert_eq!(
-            pick.filters,
-            crate::FilePick::filters([("7rrek Template", &["vctemplate"][..]), ("PDF-compatible .ait template", &["ait"][..])])
-        );
+        assert_eq!(pick.filters, crate::FilePick::filters([("7rrek Template", &["vctemplate"][..]), ("PDF-compatible .ait template", &["ait"][..])]));
         assert_eq!(written.borrow()[1].0, "copy.vctemplate", "the picked name, its extension replaced with the template's");
     }
 

@@ -189,43 +189,45 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         .frame(egui::Frame::NONE)
         .show(ui, |ui| {
             crate::theme::card(ui, &t, egui::Margin { left: 3, right: 3, top: 6, bottom: 6 }, |ui| {
-            let bounds = ui.max_rect();
-            if collapsed && collapse_header(ui, true) {
-                toggle(app, false);
-            }
-            egui::Frame::NONE.inner_margin(egui::Margin::symmetric(1, 4)).show(ui, |ui| {
-                ui.spacing_mut().item_spacing.y = 2.0;
-                // The icons scroll in a window too short for them.
-                widgets::strip_scroll(ui, "icon_column", |ui| {
-                    if collapsed {
-                        for tab in DockTab::ALL {
-                            let (id, label, icon) = tab.info();
-                            if floating::group_of(&app.ui, id).is_none() {
+                let bounds = ui.max_rect();
+                if collapsed && collapse_header(ui, true) {
+                    toggle(app, false);
+                }
+                egui::Frame::NONE.inner_margin(egui::Margin::symmetric(1, 4)).show(ui, |ui| {
+                    ui.spacing_mut().item_spacing.y = 2.0;
+                    // The icons scroll in a window too short for them.
+                    widgets::strip_scroll(ui, "icon_column", |ui| {
+                        if collapsed {
+                            for tab in DockTab::ALL {
+                                let (id, label, icon) = tab.info();
+                                if floating::group_of(&app.ui, id).is_none() {
+                                    panel_icon(app, ui, id, label, icon, bounds);
+                                }
+                            }
+                        }
+                        // A divider above each group with icons left, but the first.
+                        let mut divider = collapsed;
+                        for group in ICON_PANEL_GROUPS {
+                            let mut first = true;
+                            for id in group.iter() {
+                                let Some((_, label, icon)) = ICON_PANELS.iter().find(|p| p.0 == *id) else { continue };
+                                if floating::group_of(&app.ui, id).is_some() {
+                                    continue;
+                                }
+                                if std::mem::take(&mut first) && std::mem::replace(&mut divider, true) {
+                                    let (r, _) = ui.allocate_exact_size(vec2(ui.available_width(), 7.0), Sense::hover());
+                                    ui.painter().line_segment(
+                                        [r.left_center() + vec2(4.0, 0.0), r.right_center() - vec2(4.0, 0.0)],
+                                        Stroke::new(1.0, t.divider),
+                                    );
+                                }
                                 panel_icon(app, ui, id, label, icon, bounds);
                             }
                         }
-                    }
-                    // A divider above each group with icons left, but the first.
-                    let mut divider = collapsed;
-                    for group in ICON_PANEL_GROUPS {
-                        let mut first = true;
-                        for id in group.iter() {
-                            let Some((_, label, icon)) = ICON_PANELS.iter().find(|p| p.0 == *id) else { continue };
-                            if floating::group_of(&app.ui, id).is_some() {
-                                continue;
-                            }
-                            if std::mem::take(&mut first) && std::mem::replace(&mut divider, true) {
-                                let (r, _) = ui.allocate_exact_size(vec2(ui.available_width(), 7.0), Sense::hover());
-                                ui.painter()
-                                    .line_segment([r.left_center() + vec2(4.0, 0.0), r.right_center() - vec2(4.0, 0.0)], Stroke::new(1.0, t.divider));
-                            }
-                            panel_icon(app, ui, id, label, icon, bounds);
-                        }
-                    }
+                    });
                 });
-            });
-        })
-    });
+            })
+        });
     let column = column.response.rect;
     let dock = group.map_or(column, |g| g.union(column));
     // Floating sets docked as columns, left of the icon column.
