@@ -1,6 +1,6 @@
 [package]
 name = "vectorcraft-video"
-description = "VectorCraft video: encodes RGBA frames to a WebM (VP9, no audio, no alpha) or MP4 (H.264, no audio) byte buffer"
+description = "VectorCraft video: encodes RGBA frames to a WebM (VP9 + optional Opus) or MP4 (H.264 + optional AAC) byte buffer"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -11,3 +11,4 @@ workspace = true
 [dependencies]
 filmcraft-h264enc = { workspace = true }
 filmcraft-isobmff = { workspace = true }
+filmcraft-aac = { workspace = true }
