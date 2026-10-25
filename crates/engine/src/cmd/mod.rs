@@ -52,6 +52,7 @@ pub mod links;
 mod live;
 pub(crate) mod maskedit;
 pub(crate) mod menucmds;
+pub mod mesh;
 pub(crate) mod newart;
 pub mod newdoc;
 mod object;

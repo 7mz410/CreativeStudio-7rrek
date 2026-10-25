@@ -336,12 +336,15 @@ fn tween(d: &mut Document, a: NodeId, b: NodeId, t: f64) -> Option<NodeId> {
 /// bent and moved (a tween's in-between is bent in place, being a copy already) → the hidden ids.
 fn pose(d: &mut Document, frame: u32, ghosts: &mut Vec<u64>) -> Vec<u64> {
     let (rig, pegs) = (super::rig::Rig::of(d), super::peg::Pegs::of(d));
+    let warps: BTreeMap<u64, super::mesh::Warp> =
+        super::mesh::Meshes::of(d).meshes.iter().filter_map(|m| Some((m.node, super::mesh::Warp::of(m, frame)?))).collect();
     let mut hidden = Vec::new();
     let rows: Vec<NodeId> = d.layers.iter().map(|l| l.id).collect();
     for row in rows {
         let bones = super::rig::pose_matrices(&rig, row.0, frame);
         let peg = pegs.row_matrix(row.0, frame);
-        if bones.is_none() && peg.is_none() {
+        let meshed = !warps.is_empty() && d.node(row).is_some_and(|r| super::mesh::warped(r, &warps));
+        if bones.is_none() && peg.is_none() && !meshed {
             continue;
         }
         let shown: Vec<NodeId> = d.node(row).and_then(|r| r.children()).into_iter().flatten().filter(|c| c.visible).map(|c| c.id).collect();
@@ -349,7 +352,10 @@ fn pose(d: &mut Document, frame: u32, ghosts: &mut Vec<u64>) -> Vec<u64> {
             let target = if ghosts.contains(&id.0) {
                 id
             } else {
-                let Some(n) = d.node(id).cloned() else { continue };
+                let Some(mut n) = d.node(id).cloned() else { continue };
+                // The mesh bends the art first (while it still has the ids its mesh names), then
+                // bones and pegs move it.
+                super::mesh::deform(&mut n, &warps, None);
                 let mut copy = d.reid(&n);
                 copy.locked = true;
                 let Some(at) = d.index_path(id).and_then(|p| p.last().copied()) else { continue };

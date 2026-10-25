@@ -138,7 +138,7 @@ impl Skeleton {
 const PIECE: f64 = 12.0;
 
 /// `sp` with its long segments split into pieces of at most about [`PIECE`] (same shape).
-fn densify(sp: &mut SubPath) {
+pub(crate) fn densify(sp: &mut SubPath) {
     let n = sp.anchors.len();
     if n < 2 {
         return;
