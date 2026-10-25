@@ -75,6 +75,7 @@ pub mod rasterfx;
 mod recolor;
 pub mod recovery;
 pub mod rig;
+pub mod rig_cmd;
 pub mod scripts;
 mod select;
 pub(crate) mod shaper;
@@ -307,6 +308,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(anim::specs());
         v.extend(anim_camera::specs());
         v.extend(anim_sound::specs());
+        v.extend(rig_cmd::specs());
         v.extend(halftone::specs());
         v.extend(perspgrid::specs());
         v.extend(shortcutset::specs());
