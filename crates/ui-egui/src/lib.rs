@@ -65,6 +65,7 @@ pub mod thumb_worker;
 pub mod timeline;
 pub mod timeline_audio;
 pub mod timeline_av;
+pub mod timeline_peg;
 pub mod timeline_rig;
 pub mod titlebar;
 pub mod toolbar;

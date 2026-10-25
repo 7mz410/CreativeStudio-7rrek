@@ -37,6 +37,7 @@ pub(crate) mod gradient;
 pub(crate) mod graph;
 mod halftone;
 pub mod help;
+pub mod ik;
 pub mod importmatches;
 pub(crate) mod inline;
 mod interactivity;
