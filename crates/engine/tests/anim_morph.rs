@@ -35,13 +35,7 @@ fn tweened(s: &Session) -> Node {
 
 /// Every anchor, in-handle and out-handle of a path, as plain coordinates.
 fn points(n: &Node) -> Vec<(f64, f64)> {
-    n.path_data()
-        .unwrap()
-        .subpaths
-        .iter()
-        .flat_map(|s| s.anchors.iter().flat_map(|k| [k.p, k.h_in, k.h_out]))
-        .map(|p| (p.x, p.y))
-        .collect()
+    n.path_data().unwrap().subpaths.iter().flat_map(|s| s.anchors.iter().flat_map(|k| [k.p, k.h_in, k.h_out])).map(|p| (p.x, p.y)).collect()
 }
 
 fn bounds(n: &Node) -> Rect {
@@ -84,12 +78,7 @@ fn a_square_morphs_into_a_circle_halfway_between_their_bounds() {
     let mid = tweened(&s);
     assert_finite_path(&mid);
     let mb = bounds(&mid);
-    let half = Rect::new(
-        (sq_b.x0 + ci_b.x0) / 2.0,
-        (sq_b.y0 + ci_b.y0) / 2.0,
-        (sq_b.x1 + ci_b.x1) / 2.0,
-        (sq_b.y1 + ci_b.y1) / 2.0,
-    );
+    let half = Rect::new((sq_b.x0 + ci_b.x0) / 2.0, (sq_b.y0 + ci_b.y0) / 2.0, (sq_b.x1 + ci_b.x1) / 2.0, (sq_b.y1 + ci_b.y1) / 2.0);
     for (got, want, edge) in [(mb.x0, half.x0, "x0"), (mb.y0, half.y0, "y0"), (mb.x1, half.x1, "x1"), (mb.y1, half.y1, "y1")] {
         assert!((got - want).abs() <= 1.0, "{edge}: halfway {want}, got {got} (bounds {mb:?})");
     }
@@ -163,9 +152,7 @@ fn a_morph_exports_as_a_video_and_grabs_a_middle_frame() {
     let dir = std::env::temp_dir().join(format!("7rrek-morph-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
     let video = dir.join("morph.webm");
-    let r = s
-        .execute("anim.exportVideo", &json!({"path": video.to_string_lossy(), "scale": 0.5}))
-        .unwrap();
+    let r = s.execute("anim.exportVideo", &json!({"path": video.to_string_lossy(), "scale": 0.5})).unwrap();
     assert_eq!(r["frames"], 9);
     let bytes = std::fs::read(&video).unwrap();
     assert_eq!(&bytes[..4], &[0x1A, 0x45, 0xDF, 0xA3], "WebM EBML header");

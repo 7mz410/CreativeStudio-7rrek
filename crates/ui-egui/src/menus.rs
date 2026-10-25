@@ -53,6 +53,7 @@ use Item::Sep;
 /// UI-level commands: (id, label, shortcut, params doc).
 pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
     ("anim.exportGifAs", "Export Animated GIF…", "", "{path?, scale?, from?, to?} anim.exportGif, picking the file (the web downloads it)"),
+    ("anim.soundImportAs", "Import Sound…", "", "{path?, start?, gain?} anim.soundImport, picking the file"),
     (
         "anim.exportVideoAs",
         "Export Video…",
@@ -1365,6 +1366,7 @@ pub fn run_ui_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<R
         }),
         "file.export.png" => io::export(app, Some("png"), s("path"), p),
         "anim.exportGifAs" => crate::timeline::export_gif(app, s("path"), p),
+        "anim.soundImportAs" => crate::timeline::import_sound(app, s("path"), p),
         "anim.exportVideoAs" => crate::timeline::export_video(app, s("path"), p),
         "file.documentSetup" => crate::dialogs::open_document_setup(app),
         "edit.preferences" => {
@@ -3215,6 +3217,9 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 Sep,
                 c("Previous Frame", "anim.prev"),
                 c("Next Frame", "anim.next"),
+                Sep,
+                c("Camera Keyframe", "anim.cameraKey"),
+                c("Import Sound…", "anim.soundImportAs"),
                 Sep,
                 c("Export Animated GIF…", "anim.exportGifAs"),
                 c("Export Video…", "anim.exportVideoAs"),

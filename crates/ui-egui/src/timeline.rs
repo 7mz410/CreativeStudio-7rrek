@@ -172,6 +172,12 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         })
         .response
         .on_hover_text(tl!("How the tween speeds up and slows down"));
+        if ui.button(tl!("Camera Key")).on_hover_text(tl!("Keep what the camera sees at this frame")).clicked() {
+            run_reporting(app, "anim.cameraKey");
+        }
+        if ui.button(tl!("Import Sound…")).on_hover_text(tl!("Add a WAV, MP3 or Ogg sound at this frame")).clicked() {
+            run_reporting(app, "anim.soundImportAs");
+        }
         ui.add_space(8.0);
         // Onion skin: one keyframe on each side, faint.
         if ui.selectable_label(onion, tl!("Onion Skin")).on_hover_text(tl!("Show the keyframes before and after faintly")).clicked() {
@@ -212,6 +218,20 @@ pub fn export_video(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -
     crate::io::write_to(&mut app.services, &path, &bytes)?;
     info["path"] = json!(path);
     Ok(info)
+}
+
+/// `anim.soundImportAs`: `anim.soundImport` for `path`, else a picked sound file.
+pub fn import_sound(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> Result<Value, String> {
+    let path = match path {
+        Some(p) => p,
+        None => {
+            let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Sounds", &["wav", "mp3", "ogg"])], ..Default::default() };
+            crate::picks::open(app, &pick).ok_or("cancelled")?
+        }
+    };
+    let mut p = p.clone();
+    p["path"] = json!(path);
+    app.run("anim.soundImport", p)
 }
 
 fn run_reporting(app: &mut VectorcraftApp, id: &str) {
