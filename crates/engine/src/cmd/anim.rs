@@ -91,6 +91,10 @@ pub struct Anim {
     pub sounds: Vec<Sound>,
     /// The locked in-between layers the frame shown added (removed on the next frame change).
     pub ghosts: Vec<u64>,
+    /// The art the frame shown hid behind its bent or pegged copies (shown again on the next frame
+    /// change).
+    #[serde(default)]
+    pub posed: Vec<u64>,
 }
 
 impl Default for Anim {
@@ -107,6 +111,7 @@ impl Default for Anim {
             camera: BTreeMap::new(),
             sounds: Vec::new(),
             ghosts: Vec::new(),
+            posed: Vec::new(),
         }
     }
 }
@@ -157,6 +162,11 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
         // Already gone (deleted by hand) is fine.
         let _ = d.remove(NodeId(*g));
     }
+    for id in &anim.posed {
+        if let Some(n) = d.node_mut(NodeId(*id)) {
+            n.visible = true;
+        }
+    }
     let mut ghosts = Vec::new();
     for row in &doc.layers {
         let keys = anim.row_keys(row);
@@ -183,12 +193,10 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
             ghosts.push(g.0);
         }
     }
-    // Rigged rows bend their art to the pose at this frame.
-    super::rig::apply(&mut d, frame);
-    // Pegs then carry their rows.
-    super::peg::apply(&mut d, frame);
+    let posed = pose(&mut d, frame, &mut ghosts);
     let mut a = anim;
     a.ghosts = ghosts;
+    a.posed = posed;
     a.current = frame.clamp(1, a.frames);
     a.store(&mut d);
     d
@@ -287,6 +295,47 @@ fn tween(d: &mut Document, a: NodeId, b: NodeId, t: f64) -> Option<NodeId> {
     let parent = d.parent_of(a);
     let at = d.index_path(a)?.last()? + 1;
     d.insert(parent, at, g).ok()
+}
+
+/// Rigged rows bend their art to the pose at `frame`, and pegs then carry their rows. The art
+/// shown is never changed: each visible child of such a row hides behind a locked copy that is
+/// bent and moved (a tween's in-between is bent in place, being a copy already) → the hidden ids.
+fn pose(d: &mut Document, frame: u32, ghosts: &mut Vec<u64>) -> Vec<u64> {
+    let (rig, pegs) = (super::rig::Rig::of(d), super::peg::Pegs::of(d));
+    let mut hidden = Vec::new();
+    let rows: Vec<NodeId> = d.layers.iter().map(|l| l.id).collect();
+    for row in rows {
+        let bones = super::rig::pose_matrices(&rig, row.0, frame);
+        let peg = pegs.row_matrix(row.0, frame);
+        if bones.is_none() && peg.is_none() {
+            continue;
+        }
+        let shown: Vec<NodeId> = d.node(row).and_then(|r| r.children()).into_iter().flatten().filter(|c| c.visible).map(|c| c.id).collect();
+        for id in shown {
+            let target = if ghosts.contains(&id.0) {
+                id
+            } else {
+                let Some(n) = d.node(id).cloned() else { continue };
+                let mut copy = d.reid(&n);
+                copy.locked = true;
+                let Some(at) = d.index_path(id).and_then(|p| p.last().copied()) else { continue };
+                let Ok(copy) = d.insert(Some(row), at + 1, copy) else { continue };
+                if let Some(n) = d.node_mut(id) {
+                    n.visible = false;
+                }
+                hidden.push(id.0);
+                ghosts.push(copy.0);
+                copy
+            };
+            if let Some((sk, m)) = &bones {
+                super::rig::bend(d, target, sk, m);
+            }
+            if let (Some(m), Some(n)) = (peg, d.node_mut(target)) {
+                n.transform(m, true);
+            }
+        }
+    }
+    hidden
 }
 
 /// The affine taking path `a`'s points (anchors and handles) onto path `b`'s, when both have the

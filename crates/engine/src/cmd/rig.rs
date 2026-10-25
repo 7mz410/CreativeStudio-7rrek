@@ -185,34 +185,33 @@ fn dist_to_segment(q: Point, a: Point, b: Point) -> f64 {
     (q - (a + ab * t)).hypot()
 }
 
-/// Bend every path under each rigged row of `doc` to its skeleton's pose at `frame`.
-pub fn apply(doc: &mut Document, frame: u32) {
-    let rig = Rig::of(doc);
-    for (row, sk) in &rig.skeletons {
-        let Some(angles) = sk.pose_at(frame) else { continue };
-        if angles.iter().all(|a| *a == 0.0) {
-            continue;
+/// The bone transforms of `row`'s skeleton at `frame`; None when it has no pose there or rests.
+pub fn pose_matrices(rig: &Rig, row: u64, frame: u32) -> Option<(&Skeleton, Vec<Affine>)> {
+    let sk = rig.skeletons.get(&row)?;
+    let angles = sk.pose_at(frame)?;
+    (!angles.iter().all(|a| *a == 0.0)).then(|| (sk, sk.matrices(&angles)))
+}
+
+/// Bend every path under `target` (a posed copy of a rigged row's art) by `sk` posed as `m`.
+pub fn bend(doc: &mut Document, target: NodeId, sk: &Skeleton, m: &[Affine]) {
+    let Some(node) = doc.node(target) else { return };
+    let mut paths = Vec::new();
+    node.walk(&mut |n| {
+        if matches!(n.kind, NodeKind::Path { .. }) {
+            paths.push(n.id);
         }
-        let m = sk.matrices(&angles);
-        let Some(node) = doc.node(NodeId(*row)) else { continue };
-        let mut paths = Vec::new();
-        node.walk(&mut |n| {
-            if matches!(n.kind, NodeKind::Path { .. }) {
-                paths.push(n.id);
-            }
-        });
-        for id in paths {
-            let Some(n) = doc.node_mut(id) else { continue };
-            // The path no longer matches its live shape's parameters once bent.
-            if let NodeKind::Path { live, .. } = &mut n.kind {
-                *live = None;
-            }
-            let Some(path) = n.path_data_mut() else { continue };
-            for sp in &mut path.subpaths {
-                densify(sp);
-                for k in &mut sp.anchors {
-                    (k.p, k.h_in, k.h_out) = (sk.skin(&m, k.p), sk.skin(&m, k.h_in), sk.skin(&m, k.h_out));
-                }
+    });
+    for id in paths {
+        let Some(n) = doc.node_mut(id) else { continue };
+        // The path no longer matches its live shape's parameters once bent.
+        if let NodeKind::Path { live, .. } = &mut n.kind {
+            *live = None;
+        }
+        let Some(path) = n.path_data_mut() else { continue };
+        for sp in &mut path.subpaths {
+            densify(sp);
+            for k in &mut sp.anchors {
+                (k.p, k.h_in, k.h_out) = (sk.skin(m, k.p), sk.skin(m, k.h_in), sk.skin(m, k.h_out));
             }
         }
     }
@@ -293,12 +292,24 @@ mod tests {
         let bent = crate::cmd::anim::at_frame(&s.doc().unwrap().doc, 9);
         let back = vectorcraft_format::load(&vectorcraft_format::save(&bent, false)).unwrap();
         assert_eq!(Rig::of(&back).skeletons.len(), 1, "the rig survives save and load");
-        let mut tips = Vec::new();
-        bent.layers[0].walk(&mut |n| {
-            if let Some(p) = n.path_data() {
-                tips.extend(p.subpaths.iter().flat_map(|sp| sp.anchors.iter().map(|k| k.p)));
+        // The anchors of the art shown (the original hides behind its bent copy).
+        let tips_of = |d: &Document| {
+            let mut tips = Vec::new();
+            for c in d.layers[0].children().into_iter().flatten().filter(|c| c.visible) {
+                c.walk(&mut |n| {
+                    if let Some(p) = n.path_data() {
+                        tips.extend(p.subpaths.iter().flat_map(|sp| sp.anchors.iter().map(|k| k.p)));
+                    }
+                });
             }
-        });
+            tips
+        };
+        let tips = tips_of(&bent);
+        // Showing frames again from the shown document never bends the art twice.
+        let again = crate::cmd::anim::at_frame(&crate::cmd::anim::at_frame(&bent, 5), 9);
+        assert_eq!(tips_of(&again), tips, "bent once only");
+        let rest = crate::cmd::anim::at_frame(&bent, 1);
+        assert!(tips_of(&rest).iter().all(|p| p.y.abs() <= 10.0), "frame 1 rests");
         // The far end of the bar swung down by the elbow: nothing is left past x = 120.
         assert!(!tips.is_empty() && tips.iter().all(|p| p.x < 120.0), "{tips:?}");
         assert!(tips.iter().any(|p| p.y > 80.0), "the forearm hangs down: {tips:?}");

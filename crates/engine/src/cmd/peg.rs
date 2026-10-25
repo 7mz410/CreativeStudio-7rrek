@@ -7,7 +7,7 @@
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
-use vectorcraft_doc::{Document, NodeId};
+use vectorcraft_doc::Document;
 use vectorcraft_geom::{Affine, Vec2};
 
 use super::anim::{eased, valid_ease};
@@ -110,21 +110,11 @@ impl Pegs {
         m
     }
 
-    /// Move every held row of `doc` by its peg at `frame`. A row held by two pegs goes with the first.
-    pub fn apply(&self, doc: &mut Document, frame: u32) {
-        let m = self.matrices(frame);
-        let mut done = Vec::new();
-        for (p, a) in self.pegs.iter().zip(&m) {
-            for row in &p.rows {
-                if done.contains(row) || *a == Affine::IDENTITY {
-                    continue;
-                }
-                done.push(*row);
-                if let Some(n) = doc.node_mut(NodeId(*row)) {
-                    n.transform(*a, true);
-                }
-            }
-        }
+    /// How `row` moves at `frame`: the transform of the first peg holding it, None when still.
+    pub fn row_matrix(&self, row: u64, frame: u32) -> Option<Affine> {
+        let i = self.pegs.iter().position(|p| p.rows.contains(&row))?;
+        let m = *self.matrices(frame).get(i)?;
+        (m != Affine::IDENTITY).then_some(m)
     }
 }
 
@@ -155,11 +145,6 @@ impl Peg {
             * Affine::scale_non_uniform(k.sx, k.sy)
             * Affine::translate(-at)
     }
-}
-
-/// Move the held rows of `doc` by their pegs at `frame`.
-pub fn apply(doc: &mut Document, frame: u32) {
-    Pegs::of(doc).apply(doc, frame);
 }
 
 #[cfg(test)]
