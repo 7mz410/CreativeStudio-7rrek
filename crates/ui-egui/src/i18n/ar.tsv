@@ -5617,6 +5617,8 @@ font-technology	Variable	متغير
 	FPS	إطار/ث
 	Frames	الإطارات
 	Export GIF…	تصدير GIF…
+	Export Video…	تصدير فيديو…
+	Export the frames as a WebM video	تصدير الإطارات كفيديو WebM
 	First Frame	الإطار الأول
 	Last Frame	الإطار الأخير
 	Play	تشغيل

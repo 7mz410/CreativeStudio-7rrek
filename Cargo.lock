@@ -4751,6 +4751,7 @@ dependencies = [
  "vectorcraft-text",
  "vectorcraft-tools",
  "vectorcraft-trace",
+ "vectorcraft-video",
  "wat",
 ]
 

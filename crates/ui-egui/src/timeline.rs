@@ -160,6 +160,9 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         if ui.button(tl!("Export GIF…")).on_hover_text(tl!("Export Animated GIF")).clicked() {
             run_reporting(app, "anim.exportGifAs");
         }
+        if ui.button(tl!("Export Video…")).on_hover_text(tl!("Export the frames as a WebM video")).clicked() {
+            run_reporting(app, "anim.exportVideoAs");
+        }
     }
 }
 
@@ -168,6 +171,16 @@ pub fn export_gif(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> 
     let doc = app.session.active().ok_or("no document")?.doc.clone();
     let path = crate::io::target_path(app, path, "gif")?;
     let (bytes, mut info) = vectorcraft_engine::cmd::anim::encode_gif(&doc, p).map_err(|e| e.to_string())?;
+    crate::io::write_to(&mut app.services, &path, &bytes)?;
+    info["path"] = json!(path);
+    Ok(info)
+}
+
+/// `anim.exportVideoAs`: the frames as a WebM at `path`, else a picked file (the web downloads it).
+pub fn export_video(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> Result<Value, String> {
+    let doc = app.session.active().ok_or("no document")?.doc.clone();
+    let path = crate::io::target_path(app, path, "webm")?;
+    let (bytes, mut info) = vectorcraft_engine::cmd::anim::encode_video(&doc, p).map_err(|e| e.to_string())?;
     crate::io::write_to(&mut app.services, &path, &bytes)?;
     info["path"] = json!(path);
     Ok(info)
@@ -281,6 +294,11 @@ mod tests {
         let r = app.run("anim.exportGifAs", json!({"path": path.to_string_lossy(), "scale": 0.25})).unwrap();
         assert_eq!(r["frames"], 24);
         assert!(std::fs::read(&path).unwrap().starts_with(b"GIF89a"));
+        let _ = std::fs::remove_file(&path);
+        let path = path.with_extension("webm");
+        let r = app.run("anim.exportVideoAs", json!({"path": path.to_string_lossy(), "scale": 0.25})).unwrap();
+        assert_eq!(r["frames"], 24);
+        assert!(std::fs::read(&path).unwrap().starts_with(&[0x1A, 0x45, 0xDF, 0xA3]));
         let _ = std::fs::remove_file(&path);
     }
 

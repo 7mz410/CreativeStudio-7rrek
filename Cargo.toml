@@ -32,6 +32,7 @@ vectorcraft-text = { path = "crates/text", default-features = false }
 vectorcraft-effects = { path = "crates/effects" }
 vectorcraft-three-d = { path = "crates/three-d" }
 vectorcraft-render = { path = "crates/render" }
+vectorcraft-video = { path = "crates/video" }
 vectorcraft-svg = { path = "crates/svg" }
 vectorcraft-pdf = { path = "crates/pdf" }
 vectorcraft-format = { path = "crates/format" }

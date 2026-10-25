@@ -264,6 +264,15 @@ pub fn specs() -> Vec<CommandSpec> {
             has_doc,
             export_gif
         ),
+        cmd!(
+            query "anim.exportVideo",
+            "Export Video…",
+            [],
+            None,
+            "{path, format?: \"webm\" (default), fps?: 1–60 (default: the timeline's), scale?: (default 1), artboard?: index (default 0), from?, to?} the artboard's frames as a VP9 WebM movie, transparency on white → {path, frames, width, height, fps}",
+            has_doc,
+            export_video
+        ),
     ]
 }
 
@@ -459,6 +468,73 @@ fn export_gif(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(info)
 }
 
+/// What a movie export renders: the artboard, scale, pixel size and frame range from `p`.
+struct Range {
+    rect: Rect,
+    scale: f64,
+    w: u32,
+    h: u32,
+    from: u32,
+    to: u32,
+}
+
+fn range(doc: &Document, anim: &Anim, p: &Value, c: &str) -> Result<Range> {
+    let scale = f64_or(p, "scale", 1.0);
+    if !scale.is_finite() || !(0.05..=8.0).contains(&scale) {
+        return Err(bad(c, "scale must be from 0.05 to 8"));
+    }
+    let board = p.get("artboard").and_then(Value::as_u64).unwrap_or(0) as usize;
+    let rect = doc.artboards.get(board).map(|a| a.rect).ok_or_else(|| bad(c, "no such artboard"))?;
+    let (w, h) = vectorcraft_render::region_pixels(rect, scale);
+    if w == 0 || h == 0 || (w as u64) * (h as u64) > MAX_EXPORT_PIXELS {
+        return Err(bad(c, format!("{w} × {h} pixels is outside what an animation export takes")));
+    }
+    let from = p.get("from").and_then(Value::as_u64).map(|f| f as u32).unwrap_or(1).clamp(1, anim.frames);
+    let to = p.get("to").and_then(Value::as_u64).map(|f| f as u32).unwrap_or(anim.frames).clamp(from, anim.frames);
+    Ok(Range { rect, scale, w, h, from, to })
+}
+
+fn export_video(s: &mut Session, p: &Value) -> Result<Value> {
+    let path = str_param(p, "path").ok_or_else(|| bad("anim.exportVideo", "path is required"))?.to_string();
+    let doc = s.doc()?.doc.clone();
+    let (out, mut info) = encode_video(&doc, p)?;
+    super::fileio::write_file(&path, &out)?;
+    info["path"] = json!(path);
+    Ok(info)
+}
+
+/// `doc`'s frames as a WebM (VP9) movie (`anim.exportVideo`'s options in `p`, `path` aside) → the
+/// bytes and `{frames, width, height, fps}`. Transparent areas come out white.
+pub fn encode_video(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
+    const C: &str = "anim.exportVideo";
+    let anim = Anim::of(doc);
+    let fps = match p.get("fps") {
+        None | Some(Value::Null) => anim.fps,
+        Some(v) => v.as_u64().filter(|f| (1..=60).contains(f)).ok_or_else(|| bad(C, "fps must be a whole number from 1 to 60"))? as u32,
+    };
+    match str_param(p, "format").unwrap_or("webm") {
+        "webm" => {}
+        f => return Err(bad(C, format!("format {f:?} isn't supported (webm)"))),
+    }
+    let Range { rect, scale, w, h, from, to } = range(doc, &anim, p, C)?;
+    let mut enc = vectorcraft_video::WebmWriter::new(w, h, fps).map_err(|e| bad(C, e))?;
+    let mut r = vectorcraft_render::Renderer::new();
+    for f in from..=to {
+        let img = r.render_region(&at_frame(doc, f), rect, scale, true);
+        let mut rgba = img.to_straight();
+        // Video has no alpha: put the frame on white.
+        for [r, g, b, a] in rgba.as_chunks_mut::<4>().0 {
+            let k = *a as u32;
+            for c in [r, g, b] {
+                *c = ((*c as u32 * k + 255 * (255 - k)) / 255) as u8;
+            }
+            *a = 255;
+        }
+        enc.push(&rgba).map_err(|e| bad(C, e))?;
+    }
+    Ok((enc.finish(), json!({"frames": to - from + 1, "width": w, "height": h, "fps": fps})))
+}
+
 /// `doc`'s frames as an animated GIF (`anim.exportGif`'s options in `p`, `path` aside) → the bytes
 /// and `{frames, width, height}`. The UI writes them itself so the web can download them.
 pub fn encode_gif(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
@@ -466,18 +542,7 @@ pub fn encode_gif(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
     use image::{Delay, Frame, RgbaImage};
     const C: &str = "anim.exportGif";
     let anim = Anim::of(doc);
-    let scale = f64_or(p, "scale", 1.0);
-    if !scale.is_finite() || !(0.05..=8.0).contains(&scale) {
-        return Err(bad(C, "scale must be from 0.05 to 8"));
-    }
-    let board = p.get("artboard").and_then(Value::as_u64).unwrap_or(0) as usize;
-    let rect = doc.artboards.get(board).map(|a| a.rect).ok_or_else(|| bad(C, "no such artboard"))?;
-    let (w, h) = vectorcraft_render::region_pixels(rect, scale);
-    if w == 0 || h == 0 || (w as u64) * (h as u64) > MAX_EXPORT_PIXELS {
-        return Err(bad(C, format!("{w} × {h} pixels is outside what an animated GIF export takes")));
-    }
-    let from = p.get("from").and_then(Value::as_u64).map(|f| f as u32).unwrap_or(1).clamp(1, anim.frames);
-    let to = p.get("to").and_then(Value::as_u64).map(|f| f as u32).unwrap_or(anim.frames).clamp(from, anim.frames);
+    let Range { rect, scale, w, h, from, to } = range(doc, &anim, p, C)?;
     let delay = Delay::from_numer_denom_ms(1000, anim.fps.max(1));
     let mut out = Vec::new();
     {
@@ -575,6 +640,9 @@ mod tests {
         s.execute("anim.keyframe", &json!({"frame": 2})).unwrap();
         assert!(s.execute("anim.keyframe", &json!({"frame": 2})).is_err(), "one keyframe per frame");
         assert!(s.execute("anim.removeKeyframe", &json!({"frame": 7})).is_err());
+        assert!(s.execute("anim.exportVideo", &json!({"path": "x.webm", "fps": 0})).is_err());
+        assert!(s.execute("anim.exportVideo", &json!({"path": "x.webm", "format": "avi"})).is_err());
+        assert!(s.execute("anim.exportVideo", &json!({"path": "x.webm", "scale": 99})).is_err());
     }
 
     #[test]
@@ -631,6 +699,18 @@ mod tests {
         assert_eq!(r["frames"], 3);
         let bytes = std::fs::read(&path).unwrap();
         assert_eq!(&bytes[..6], b"GIF89a");
+        let path = dir.join("walk.webm");
+        let r = s.execute("anim.exportVideo", &json!({"path": path.to_string_lossy(), "scale": 0.25, "fps": 6})).unwrap();
+        assert_eq!((r["frames"].as_u64(), r["fps"].as_u64()), (Some(3), Some(6)));
+        let bytes = std::fs::read(&path).unwrap();
+        assert_eq!(&bytes[..4], &[0x1A, 0x45, 0xDF, 0xA3], "EBML header");
+        if let Ok(o) = std::process::Command::new("ffprobe")
+            .args(["-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries", "stream=nb_read_frames,codec_name", "-of", "csv=p=0"])
+            .arg(&path)
+            .output()
+        {
+            assert_eq!(String::from_utf8_lossy(&o.stdout).trim(), "vp9,3");
+        }
         std::fs::remove_dir_all(&dir).ok();
     }
 }
