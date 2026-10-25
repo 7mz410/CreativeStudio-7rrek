@@ -4906,6 +4906,7 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.21",
  "vectorcraft-affinity",
+ "vectorcraft-audio",
  "vectorcraft-brush",
  "vectorcraft-cad",
  "vectorcraft-color",
