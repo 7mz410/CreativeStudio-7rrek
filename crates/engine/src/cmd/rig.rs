@@ -64,6 +64,16 @@ impl Rig {
     }
 }
 
+/// The skeleton of layer `row` posed at the current frame, for the Bone tool.
+pub fn bones(doc: &Document, row: Option<NodeId>) -> Option<vectorcraft_tools::Bones> {
+    let row = row?.0;
+    let sk = Rig::of(doc).skeletons.remove(&row)?;
+    let frame = super::anim::Anim::of(doc).current;
+    let angles = sk.pose_at(frame).unwrap_or_else(|| vec![0.0; sk.joints.len()]);
+    let at = sk.matrices(&angles).iter().zip(&sk.joints).map(|(m, j)| *m * Point::new(j.x, j.y)).collect();
+    Some(vectorcraft_tools::Bones { row, frame, at, parents: sk.joints.iter().map(|j| j.parent).collect(), angles })
+}
+
 impl Skeleton {
     /// Parents come before their children, every coordinate and angle is finite, and every pose
     /// has an angle per joint.

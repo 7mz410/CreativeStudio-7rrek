@@ -8,6 +8,7 @@
 #![forbid(unsafe_code)]
 
 pub mod bbox;
+pub mod bone;
 pub mod builder;
 pub mod catalog;
 pub mod corners;
@@ -138,6 +139,19 @@ pub enum ToolKey {
     /// A letter key a–z, lowercase (E while dragging a Selection or Group Selection marquee makes it
     /// select only the objects entirely inside it, and E again switches it back).
     Letter(char),
+}
+
+/// A skeleton as the Bone tool sees it: joints posed at the current frame (document points).
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct Bones {
+    /// The layer (timeline row) the skeleton bends.
+    pub row: u64,
+    pub frame: u32,
+    /// Each joint where the pose puts it.
+    pub at: Vec<Point>,
+    pub parents: Vec<Option<usize>>,
+    /// Each joint's turn from rest at this frame (degrees).
+    pub angles: Vec<f64>,
 }
 
 /// What a tool asks the engine to do.
@@ -367,6 +381,8 @@ pub struct ToolContext<'a> {
     pub screen: Option<ScreenFrame>,
     /// Where the Plane Switching Widget sits (Perspective Grid Options); None while it's hidden.
     pub plane_widget: Option<distort::perspective::widget::WidgetCorner>,
+    /// The current layer's skeleton posed at the current frame, for the Bone tool.
+    pub bones: Option<Bones>,
 }
 
 impl ToolContext<'_> {
@@ -852,6 +868,7 @@ pub fn create(id: &str) -> Box<dyn Tool> {
         "directSelection" => Box::new(direct::DirectSelectionTool::new(false)),
         "groupSelection" => Box::new(direct::DirectSelectionTool::new(true)),
         "pen" => Box::new(pen::PenTool::default()),
+        "bone" => Box::new(bone::BoneTool::default()),
         "dimension" => Box::new(dimension::DimensionTool::default()),
         "type" | "areaType" | "typeOnPath" | "verticalType" | "verticalAreaType" | "verticalTypeOnPath" => Box::new(text::TypeTool::new(id)),
         "rectangle" | "roundedRectangle" | "ellipse" | "polygon" | "star" | "lineSegment" => Box::new(shape::ShapeTool::new(id)),
@@ -1070,6 +1087,7 @@ pub(crate) mod testutil {
             construction_angles: guides::construction_angles(guides::DEFAULT_CONSTRUCTION_ANGLES),
             screen: None,
             plane_widget: Some(Default::default()),
+            bones: None,
         }
     }
 }
