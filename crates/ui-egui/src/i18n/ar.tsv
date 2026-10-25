@@ -5643,6 +5643,14 @@ font-technology	Variable	متغير
 	Set Mouth	تعيين الفم
 	Set Mouth Shape Drawing	تعيين رسمة شكل الفم
 	Lip Sync from Sound	مزامنة الشفاه من الصوت
+	Add Mesh	إضافة شبكة
+	Pin Mesh Vertex	تثبيت رأس الشبكة
+	Unpin Mesh Vertex	فك تثبيت رأس الشبكة
+	Mesh Key	مفتاح الشبكة
+	Remove Mesh Key	حذف مفتاح الشبكة
+	Remove Mesh	حذف الشبكة
+	Pin Mesh	تثبيت الشبكة
+	Unpin Mesh	فك تثبيت الشبكة
 	Hang the current layer from a new peg	علّق الطبقة الحالية على وتد جديد
 	Key the current layer's peg at this frame	ضع مفتاحًا لوتد الطبقة الحالية عند هذا الإطار
 	Bone Tool	أداة العظام

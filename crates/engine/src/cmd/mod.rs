@@ -53,6 +53,7 @@ mod live;
 pub(crate) mod maskedit;
 pub(crate) mod menucmds;
 pub mod mesh;
+pub mod mesh_cmd;
 pub(crate) mod newart;
 pub mod newdoc;
 mod object;
@@ -315,6 +316,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(anim_camera::specs());
         v.extend(anim_draw::specs());
         v.extend(anim_mouth::specs());
+        v.extend(mesh_cmd::specs());
         v.extend(anim_sound::specs());
         v.extend(rig_cmd::specs());
         v.extend(peg_cmd::specs());
