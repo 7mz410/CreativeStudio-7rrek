@@ -222,7 +222,8 @@ fn run_reporting(app: &mut VectorcraftApp, id: &str) {
 
 fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], current: u32, frames: u32) {
     let width = NAME_W + frames as f32 * CELL_W + 8.0;
-    let height = RULER_H + rows.len().max(1) as f32 * ROW_H;
+    let extra = crate::timeline_av::rows(app);
+    let height = RULER_H + (rows.len().max(1) + extra) as f32 * ROW_H;
     let (area, resp) = ui.allocate_exact_size(vec2(width, height), Sense::click_and_drag());
     let p = ui.painter_at(area);
     // Laid out left to right, then mirrored in a right-to-left language: names on the right,
@@ -268,6 +269,10 @@ fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], curre
             p.circle_filled(pos2(mx(col(*f) + CELL_W / 2.0), y + ROW_H / 2.0), 3.5, t.accent);
         }
     }
+
+    // The camera and sound rows, under the layers.
+    let top = area.min.y + RULER_H + rows.len().max(1) as f32 * ROW_H;
+    crate::timeline_av::paint(app, &p, t, crate::timeline_av::Geom { area, top, row_h: ROW_H, name_w: NAME_W, x0, cell_w: CELL_W, frames, rtl });
 
     // The playhead.
     let x = mx(col(current) + CELL_W / 2.0);

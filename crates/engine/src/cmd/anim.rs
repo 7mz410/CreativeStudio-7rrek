@@ -124,7 +124,7 @@ impl Anim {
         self
     }
 
-    fn store(&self, doc: &mut Document) {
+    pub(crate) fn store(&self, doc: &mut Document) {
         if let Ok(v) = serde_json::to_value(self) {
             doc.unknown.insert(KEY.into(), v);
         }
@@ -189,12 +189,12 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
 /// Named easings → CSS cubic-bezier control points (the CSS Easing Functions spec's values).
 const EASES: [(&str, [f64; 4]); 3] = [("easeIn", [0.42, 0.0, 1.0, 1.0]), ("easeOut", [0.0, 0.0, 0.58, 1.0]), ("easeInOut", [0.42, 0.0, 0.58, 1.0])];
 
-fn valid_ease(e: &[f64; 4]) -> bool {
+pub(crate) fn valid_ease(e: &[f64; 4]) -> bool {
     e.iter().all(|v| v.is_finite()) && (0.0..=1.0).contains(&e[0]) && (0.0..=1.0).contains(&e[2]) && e[1].abs() <= 10.0 && e[3].abs() <= 10.0
 }
 
 /// Progress `x` (0–1) through a tween with easing `e` → how far the art has gone (may overshoot).
-fn eased(e: Option<&[f64; 4]>, x: f64) -> f64 {
+pub(crate) fn eased(e: Option<&[f64; 4]>, x: f64) -> f64 {
     let Some(&[x1, y1, x2, y2]) = e else { return x };
     let bez = |a: f64, b: f64, u: f64| 3.0 * a * u * (1.0 - u) * (1.0 - u) + 3.0 * b * u * u * (1.0 - u) + u * u * u;
     // x(u) rises monotonically for x1, x2 in 0–1: bisect for the u where it reaches x.
@@ -344,13 +344,13 @@ fn row_of(doc: &Document, id: NodeId) -> Option<NodeId> {
     doc.layers.iter().any(|l| l.id == cur).then_some(cur)
 }
 
-fn row_param(s: &Session, p: &Value, cmd: &str) -> Result<NodeId> {
+pub(crate) fn row_param(s: &Session, p: &Value, cmd: &str) -> Result<NodeId> {
     let st = s.doc()?;
     let start = id_param(p, "row").or(st.current_layer()).ok_or_else(|| bad(cmd, "no layer"))?;
     row_of(&st.doc, start).ok_or_else(|| bad(cmd, "not a layer in this document"))
 }
 
-fn frame_param(p: &Value, anim: &Anim, cmd: &str) -> Result<u32> {
+pub(crate) fn frame_param(p: &Value, anim: &Anim, cmd: &str) -> Result<u32> {
     match p.get("frame") {
         None | Some(Value::Null) => Ok(anim.current),
         Some(v) => v
@@ -362,7 +362,7 @@ fn frame_param(p: &Value, anim: &Anim, cmd: &str) -> Result<u32> {
 }
 
 /// Show `frame` without an undo step, and draw into the current row's keyframe there.
-fn show(s: &mut Session, frame: u32) -> Result<Value> {
+pub(crate) fn show(s: &mut Session, frame: u32) -> Result<Value> {
     let st = s.doc_mut()?;
     let row = st.current_layer().and_then(|l| row_of(&st.doc, l));
     let d = at_frame_with(&st.doc, frame, true);
@@ -583,14 +583,9 @@ fn onion(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(json!({"before": a.onion_before, "after": a.onion_after}))
 }
 
-fn set_tween(s: &mut Session, p: &Value) -> Result<Value> {
-    const C: &str = "anim.tween";
-    let row = row_param(s, p, C)?;
-    let d = &s.doc()?.doc;
-    let anim = Anim::of(d);
-    let frame = frame_param(p, &anim, C)?;
-    let key = d.node(row).and_then(|r| anim.key_at(r, frame)).ok_or_else(|| bad(C, format!("no keyframe at frame {frame} on this layer")))?;
-    let ease = match p.get("ease") {
+/// `p.ease`: absent → None, "linear" → Some(None), a name or [x1, y1, x2, y2] → Some(Some(curve)).
+pub(crate) fn ease_param(p: &Value, c: &str) -> Result<Option<Option<[f64; 4]>>> {
+    Ok(match p.get("ease") {
         None | Some(Value::Null) => None,
         Some(Value::String(n)) if n == "linear" => Some(None),
         Some(Value::String(n)) => Some(Some(
@@ -598,16 +593,26 @@ fn set_tween(s: &mut Session, p: &Value) -> Result<Value> {
                 .iter()
                 .find(|(k, _)| k == n)
                 .map(|(_, e)| *e)
-                .ok_or_else(|| bad(C, format!("ease {n:?} isn't one of linear, easeIn, easeOut, easeInOut")))?,
+                .ok_or_else(|| bad(c, format!("ease {n:?} isn't one of linear, easeIn, easeOut, easeInOut")))?,
         )),
         Some(v) => {
             let e: [f64; 4] = serde_json::from_value(v.clone())
                 .ok()
                 .filter(valid_ease)
-                .ok_or_else(|| bad(C, "ease must be a name or [x1, y1, x2, y2] with x1 and x2 from 0 to 1"))?;
+                .ok_or_else(|| bad(c, "ease must be a name or [x1, y1, x2, y2] with x1 and x2 from 0 to 1"))?;
             Some(Some(e))
         }
-    };
+    })
+}
+
+fn set_tween(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "anim.tween";
+    let row = row_param(s, p, C)?;
+    let d = &s.doc()?.doc;
+    let anim = Anim::of(d);
+    let frame = frame_param(p, &anim, C)?;
+    let key = d.node(row).and_then(|r| anim.key_at(r, frame)).ok_or_else(|| bad(C, format!("no keyframe at frame {frame} on this layer")))?;
+    let ease = ease_param(p, C)?;
     // Setting an ease turns the tween on; otherwise `on` toggles it.
     let on = p.get("on").and_then(Value::as_bool).unwrap_or(ease.is_some() || !anim.tweens.contains(&key.0));
     s.edit("Motion Tween", |d, _| {

@@ -62,6 +62,7 @@ pub mod sysclip;
 pub mod theme;
 pub mod thumb_worker;
 pub mod timeline;
+pub mod timeline_av;
 pub mod titlebar;
 pub mod toolbar;
 pub mod touch;
