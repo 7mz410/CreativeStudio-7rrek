@@ -14,8 +14,8 @@
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
-use vectorcraft_doc::{Document, Node, NodeKind};
-use vectorcraft_geom::{Point, Rect, Vec2};
+use vectorcraft_doc::{Document, ImageBlob, ImageObject, Node, NodeKind};
+use vectorcraft_geom::{Affine, Point, Rect, Vec2};
 
 const KEY: &str = "meshes";
 /// Most meshes a document takes.
@@ -185,11 +185,15 @@ impl Warp {
     }
 }
 
-/// Bends the paths in `n` (and under it) that sit under a node with a warp in `warps`, keyed by
-/// node id. Paths are split first so long segments curve with the mesh, and leave their live
-/// shape. Images are left as they are.
-pub(crate) fn deform(n: &mut Node, warps: &BTreeMap<u64, Warp>, active: Option<&Warp>) {
+/// Bends the paths and images in `n` (and under it) that sit under a node with a warp in `warps`,
+/// keyed by node id. Paths are split first so long segments curve with the mesh, and leave their
+/// live shape; images are redrawn over the bent mesh (see [`warp_image`]) into `images`.
+pub(crate) fn deform(n: &mut Node, warps: &BTreeMap<u64, Warp>, active: Option<&Warp>, images: &mut BTreeMap<String, ImageBlob>) {
     let active = warps.get(&n.id.0).or(active);
+    let id = n.id.0;
+    if let (Some(w), NodeKind::Image(im)) = (active, &mut n.kind) {
+        warp_image(im, w, id, images);
+    }
     if let Some(w) = active {
         if let NodeKind::Path { live, .. } = &mut n.kind {
             *live = None;
@@ -205,9 +209,47 @@ pub(crate) fn deform(n: &mut Node, warps: &BTreeMap<u64, Warp>, active: Option<&
     }
     if let Some(children) = n.children_mut() {
         for c in children {
-            deform(std::sync::Arc::make_mut(c), warps, active);
+            deform(std::sync::Arc::make_mut(c), warps, active, images);
         }
     }
+}
+
+/// Most pixels a side of a bent image gets.
+const MAX_WARP_SIDE: f64 = 4096.0;
+
+/// Redraws image `im` (node `id`) over the bent mesh at about its own resolution, as a PNG kept in
+/// `images` under one key per node (the next frame shown replaces it; saving drops it with the
+/// other unused images). Left as it is when its pixels don't decode or its placement is degenerate.
+fn warp_image(im: &mut ImageObject, w: &Warp, id: u64, images: &mut BTreeMap<String, ImageBlob>) -> Option<()> {
+    let det = im.xf.determinant();
+    if !det.is_finite() || det.abs() <= EPS {
+        return None;
+    }
+    let src_img = image::load_from_memory(&images.get(&im.key)?.bytes).ok()?.to_rgba8();
+    let src_img = vectorcraft_render::mesh_warp::Rgba { width: src_img.width(), height: src_img.height(), pixels: src_img.into_raw() };
+    let inv = im.xf.inverse();
+    let src: Vec<Point> = w.rest.iter().map(|p| inv * *p).collect();
+    let (min, max) =
+        w.now.iter().fold((Point::new(f64::INFINITY, f64::INFINITY), Point::new(f64::NEG_INFINITY, f64::NEG_INFINITY)), |(lo, hi), p| {
+            (Point::new(lo.x.min(p.x), lo.y.min(p.y)), Point::new(hi.x.max(p.x), hi.y.max(p.y)))
+        });
+    let (bw, bh) = (max.x - min.x, max.y - min.y);
+    // Document points per pixel: the image's own, coarser if that would pass MAX_WARP_SIDE.
+    let s = det.abs().sqrt().max(bw.max(bh) / MAX_WARP_SIDE);
+    if !(bw.is_finite() && bh.is_finite() && s > EPS) {
+        return None;
+    }
+    let (out_w, out_h) = ((bw / s).ceil().max(1.0) as u32, (bh / s).ceil().max(1.0) as u32);
+    let dst: Vec<Point> = w.now.iter().map(|p| Point::new((p.x - min.x) / s, (p.y - min.y) / s)).collect();
+    let out = vectorcraft_render::mesh_warp::warp_rgba(&src_img, &src, &dst, &w.tris, out_w, out_h)?;
+    let mut png = Vec::new();
+    image::RgbaImage::from_raw(out.width, out.height, out.pixels)?.write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).ok()?;
+    let key = format!("mesh-warp-{id}");
+    images.insert(key.clone(), ImageBlob::png(png));
+    (im.key, im.width, im.height) = (key, out.width, out.height);
+    im.xf = Affine::translate(min.to_vec2()) * Affine::scale(s);
+    (im.link, im.pixels) = (None, None);
+    Some(())
 }
 
 /// Whether `n` or anything under it has a warp in `warps`.
@@ -624,6 +666,60 @@ mod tests {
             v
         };
         assert_eq!(again_shown, shown, "bent once only");
+    }
+
+    #[test]
+    fn the_frame_shown_redraws_a_meshed_image_bent() {
+        use serde_json::json;
+        let mut s = crate::Session::new();
+        s.execute("file.new", &json!({})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        // 20×10 pixels at 5 pt each: red on the left half, blue on the right.
+        let img = image::RgbaImage::from_fn(20, 10, |x, _| if x < 10 { image::Rgba([255, 0, 0, 255]) } else { image::Rgba([0, 0, 255, 255]) });
+        let mut png = vec![];
+        img.write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).unwrap();
+        let id = s
+            .edit("Place", |d, _| {
+                d.images.insert("pic".into(), ImageBlob::png(png));
+                let id = d.alloc_id();
+                let im = ImageObject {
+                    key: "pic".into(),
+                    width: 20,
+                    height: 10,
+                    xf: Affine::scale(5.0),
+                    link: None,
+                    placement: Default::default(),
+                    pixels: None,
+                };
+                d.insert(d.default_layer(), 0, Node::new(id, NodeKind::Image(Box::new(im))))?;
+                Ok(id)
+            })
+            .unwrap();
+        let mut m = Mesh::grid(id.0, Rect::new(0.0, 0.0, 100.0, 50.0), 8, 4).unwrap();
+        m.pins = vec![0, 36, 26];
+        m.keys.insert(9, vec![m.rest[0], m.rest[36], [100.0, -5.0]]);
+        s.edit("Mesh", |d, _| {
+            Meshes { meshes: vec![m] }.store(d);
+            Ok(())
+        })
+        .unwrap();
+        let bent = crate::cmd::anim::at_frame(&s.doc().unwrap().doc, 9);
+        let mut shown = Vec::new();
+        bent.layers[0].walk(&mut |n| {
+            if let NodeKind::Image(im) = &n.kind {
+                shown.push((n.id, (**im).clone()));
+            }
+        });
+        let original = shown.iter().find(|(n, _)| *n == id).map(|(_, im)| im.clone()).unwrap();
+        assert_eq!((original.key.as_str(), original.xf), ("pic", Affine::scale(5.0)), "the original stays");
+        let (_, im) = shown.iter().find(|(n, _)| *n != id).unwrap();
+        assert_eq!(im.key, format!("mesh-warp-{}", id.0));
+        let r = im.xf.transform_rect_bbox(Rect::new(0.0, 0.0, im.width as f64, im.height as f64));
+        assert!(r.y0 < -10.0 && (r.x0).abs() < 1.0, "the bent image reaches up: {r:?}");
+        let px = image::load_from_memory(&bent.images[&im.key].bytes).unwrap().to_rgba8();
+        let has = |c: [u8; 4]| px.pixels().any(|p| p.0 == c);
+        assert!(has([255, 0, 0, 255]) && has([0, 0, 255, 255]), "both halves drawn");
+        assert!(has([0, 0, 0, 0]), "the bent shape leaves corners of its box clear");
     }
 }
 #[cfg(test)]

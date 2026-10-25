@@ -355,7 +355,7 @@ fn pose(d: &mut Document, frame: u32, ghosts: &mut Vec<u64>) -> Vec<u64> {
                 let Some(mut n) = d.node(id).cloned() else { continue };
                 // The mesh bends the art first (while it still has the ids its mesh names), then
                 // bones and pegs move it.
-                super::mesh::deform(&mut n, &warps, None);
+                super::mesh::deform(&mut n, &warps, None, &mut d.images);
                 let mut copy = d.reid(&n);
                 copy.locked = true;
                 let Some(at) = d.index_path(id).and_then(|p| p.last().copied()) else { continue };

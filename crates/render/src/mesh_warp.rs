@@ -18,7 +18,8 @@ const EPS: f64 = 1e-9;
 /// Each triangle `tris[i]` maps the source triangle at `src[..]` (source pixel coordinates,
 /// 0..width, 0..height) onto the destination triangle at `dst[..]` (output pixel coordinates).
 /// Returns an image of `out_w` × `out_h`, transparent where no triangle covers a pixel.
-/// Pixel centres are at (x + 0.5, y + 0.5). Sampling is bilinear, clamped to the source edge.
+/// Pixel centres are at (x + 0.5, y + 0.5). Sampling is bilinear, clamped to the source edge;
+/// a pixel whose source point falls outside the image stays transparent.
 /// Where triangles overlap, the later one wins. None when sizes don't match, an index is out of
 /// range, a size is 0 or past 16384, or a point is not finite.
 pub fn warp_rgba(img: &Rgba, src: &[Point], dst: &[Point], tris: &[[u32; 3]], out_w: u32, out_h: u32) -> Option<Rgba> {
@@ -66,6 +67,10 @@ pub fn warp_rgba(img: &Rgba, src: &[Point], dst: &[Point], tris: &[[u32; 3]], ou
                 }
                 let qx = l0 * s0.x + l1 * s1.x + l2 * s2.x;
                 let qy = l0 * s0.y + l1 * s1.y + l2 * s2.y;
+                // Outside the source (a mesh bigger than the image): nothing to draw.
+                if qx < 0.0 || qy < 0.0 || qx > img.width as f64 || qy > img.height as f64 {
+                    continue;
+                }
                 let c = sample(img, qx, qy);
                 let idx = ((y as usize) * (out_w as usize) + x as usize) * 4;
                 if let Some(px) = out.get_mut(idx..idx + 4) {
@@ -154,6 +159,17 @@ mod tests {
         let flipped = [[0, 2, 1], [0, 3, 2]];
         let out = warp_rgba(&img, &s, &s, &flipped, 4, 4).unwrap();
         assert_eq!(out.pixels, img.pixels);
+    }
+
+    #[test]
+    fn a_mesh_bigger_than_the_image_leaves_the_rest_clear() {
+        // The source square spans twice the 4×4 image: only its top-left quarter has pixels.
+        let img = grid(4, 4);
+        let s = square(0.0, 0.0, 8.0, 8.0);
+        let out = warp_rgba(&img, &s, &s, &QUAD, 8, 8).unwrap();
+        assert_eq!(at(&out, 1, 1), at(&img, 1, 1));
+        assert_eq!(at(&out, 6, 6), [0, 0, 0, 0]);
+        assert_eq!(at(&out, 1, 6), [0, 0, 0, 0]);
     }
 
     #[test]
