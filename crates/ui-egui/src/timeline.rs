@@ -192,6 +192,12 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         if ui.button(tl!("Camera Key")).on_hover_text(tl!("Keep what the camera sees at this frame")).clicked() {
             run_reporting(app, "anim.cameraKey");
         }
+        if ui.button(tl!("Add Peg")).on_hover_text(tl!("Hang the current layer from a new peg")).clicked() {
+            run_reporting(app, "peg.add");
+        }
+        if ui.button(tl!("Peg Key")).on_hover_text(tl!("Key the current layer's peg at this frame")).clicked() {
+            run_reporting(app, "peg.key");
+        }
         if ui.button(tl!("Import Sound…")).on_hover_text(tl!("Add a WAV, MP3 or Ogg sound at this frame")).clicked() {
             run_reporting(app, "anim.soundImportAs");
         }

@@ -41,7 +41,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Peg Key",
             [],
             None,
-            "{peg: peg index, frame?: (default: the current frame), x?, y?: move (document points), angle?: turn (degrees, about the pivot), sx?, sy?: scale (factors, 1 is unchanged), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the key at the frame; fields not given keep the value the peg has there → the key",
+            "{peg?: peg index (default: the peg holding the current layer), frame?: (default: the current frame), x?, y?: move (document points), dx?, dy?: added to the move, angle?: turn (degrees, about the pivot), sx?, sy?: scale (factors, 1 is unchanged), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the key at the frame; fields not given keep the value the peg has there → the key",
             has_doc,
             key
         ),
@@ -50,7 +50,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Remove Peg Key",
             [],
             None,
-            "{peg: peg index, frame?: (default: the current frame)} removes the key at the frame; error if there is none → {frame}",
+            "{peg?: peg index (default: the peg holding the current layer), frame?: (default: the current frame)} removes the key at the frame; error if there is none → {frame}",
             has_doc,
             remove_key
         ),
@@ -135,6 +135,15 @@ fn peg_param(p: &Value, key: &str, n: usize, cmd: &str) -> Result<usize> {
         .ok_or_else(|| bad(cmd, format!("`{key}` must be a peg index from 0 to {}", n.saturating_sub(1))))
 }
 
+/// The peg `p` names under `peg`, or else the one holding the current row.
+fn peg_or_current(s: &Session, p: &Value, pegs: &Pegs, cmd: &str) -> Result<usize> {
+    if p.get("peg").is_some_and(|v| !v.is_null()) {
+        return peg_param(p, "peg", pegs.pegs.len(), cmd);
+    }
+    let row = current_row(s)?.ok_or_else(|| bad(cmd, "no current layer; give `peg`"))?;
+    pegs.pegs.iter().position(|q| q.rows.contains(&row.0)).ok_or_else(|| bad(cmd, "the current layer is on no peg; give `peg`"))
+}
+
 /// The rows `p` names under `key`: layer ids, or any object inside a row (which names its row).
 fn rows_param(s: &Session, p: &Value, key: &str, cmd: &str) -> Result<Vec<NodeId>> {
     let d: &Document = &s.doc()?.doc;
@@ -216,14 +225,14 @@ fn detach(s: &mut Session, p: &Value) -> Result<Value> {
 fn key(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "peg.key";
     let mut pegs = pegs_of(s)?;
-    let i = peg_param(p, "peg", pegs.pegs.len(), C)?;
+    let i = peg_or_current(s, p, &pegs, C)?;
     let frame = frame_param(p, &Anim::of(&s.doc()?.doc), C)?;
     let Some(peg) = pegs.pegs.get(i) else { return Err(bad(C, "no such peg")) };
     let now = peg.key_at(frame);
     let own_ease = peg.keys.get(&frame).and_then(|k| k.ease);
     let k = PegKey {
-        x: num_or(p, "x", now.x, C)?,
-        y: num_or(p, "y", now.y, C)?,
+        x: num_or(p, "x", now.x, C)? + num_or(p, "dx", 0.0, C)?,
+        y: num_or(p, "y", now.y, C)? + num_or(p, "dy", 0.0, C)?,
         angle: num_or(p, "angle", now.angle, C)?,
         sx: num_or(p, "sx", now.sx, C)?,
         sy: num_or(p, "sy", now.sy, C)?,
@@ -239,7 +248,7 @@ fn key(s: &mut Session, p: &Value) -> Result<Value> {
 fn remove_key(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "peg.removeKey";
     let mut pegs = pegs_of(s)?;
-    let i = peg_param(p, "peg", pegs.pegs.len(), C)?;
+    let i = peg_or_current(s, p, &pegs, C)?;
     let frame = frame_param(p, &Anim::of(&s.doc()?.doc), C)?;
     let Some(peg) = pegs.pegs.get_mut(i) else { return Err(bad(C, "no such peg")) };
     if peg.keys.remove(&frame).is_none() {
@@ -332,6 +341,21 @@ mod tests {
         }
         let (a, b) = (drawn(&s, free, 1), drawn(&s, free, 2));
         assert_eq!(a.x0, b.x0, "a row off the peg stays put");
+    }
+
+    #[test]
+    fn a_key_without_peg_keys_the_current_layers_peg() {
+        let mut s = session();
+        row(&mut s, 0.0);
+        s.execute("peg.add", &json!({})).unwrap();
+        s.execute("peg.key", &json!({"frame": 1, "x": 5})).unwrap();
+        let k = s.execute("peg.key", &json!({"frame": 1, "dx": 2, "dy": -1})).unwrap();
+        assert_eq!((k["x"].as_f64(), k["y"].as_f64()), (Some(7.0), Some(-1.0)));
+        assert_eq!(pegs_of(&s).unwrap().pegs[0].keys.len(), 1);
+        s.execute("peg.removeKey", &json!({"frame": 1})).unwrap();
+        assert!(pegs_of(&s).unwrap().pegs[0].keys.is_empty());
+        s.execute("peg.detach", &json!({})).unwrap();
+        assert!(s.execute("peg.key", &json!({"frame": 1})).is_err());
     }
 
     #[test]

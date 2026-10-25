@@ -1,4 +1,5 @@
-//! The Bone tool: click to add a joint, drag a joint to pose the skeleton at the current frame.
+//! The Bone tool: click to add a joint, drag a joint to pose the skeleton at the current frame,
+//! Shift-drag empty canvas to move the current layer's peg at the current frame.
 
 use serde_json::json;
 use vectorcraft_geom::Point;
@@ -31,6 +32,8 @@ enum Drag {
     Move { index: usize },
     /// Cmd-drag: the joint reaches for the pointer and the chain above it follows (IK).
     Reach { joint: usize, frame: u32 },
+    /// Shift-drag off any joint: keys the current layer's peg, moved by the drag since `from`.
+    Peg { from: Point },
 }
 
 impl Drag {
@@ -43,6 +46,10 @@ impl Drag {
             Drag::Move { index } => Some(Action::Preview("rig.moveJoint".into(), json!({ "index": index, "x": pos.x, "y": pos.y }))),
             Drag::Reach { joint, frame } => {
                 Some(Action::Preview("rig.reach".into(), json!({ "frame": frame, "joint": joint, "x": pos.x, "y": pos.y })))
+            }
+            Drag::Peg { from } => {
+                let d = pos - from;
+                Some(Action::Preview("peg.key".into(), json!({ "dx": d.x, "dy": d.y })))
             }
         }
     }
@@ -98,9 +105,14 @@ impl BoneTool {
         }
         let mut out = Vec::new();
         if self.drag.is_none() {
-            let Some(bones) = cx.bones else { return vec![] };
-            let Some(j) = press.joint else { return vec![] };
-            let Some((drag, label)) = Self::start(bones, j, press.at, ev.mods.cmd) else { return vec![] };
+            let (drag, label) = match (cx.bones, press.joint) {
+                (Some(bones), Some(j)) => match Self::start(bones, j, press.at, ev.mods.cmd) {
+                    Some(started) => started,
+                    None => return vec![],
+                },
+                (_, None) if ev.mods.shift => (Drag::Peg { from: press.at }, "Move Peg"),
+                _ => return vec![],
+            };
             self.drag = Some(drag);
             out.push(Action::Begin(label.into()));
         }
@@ -262,5 +274,19 @@ mod tests {
             acts,
             vec![Action::Begin("Reach".into()), Action::Preview("rig.reach".into(), json!({ "frame": 1, "joint": 1, "x": 60.0, "y": 60.0 }))]
         );
+    }
+
+    #[test]
+    fn shift_dragging_empty_canvas_moves_the_peg() {
+        let (d, _) = doc_with_rect();
+        let (s, p) = (Selection::default(), paint());
+        let cx = cx(&d, &s, &p);
+        let mut t = BoneTool::default();
+        let shift = Mods { shift: true, ..Default::default() };
+        t.pointer(&cx, &PointerEvent::new(PointerKind::Down, 10.0, 10.0).with_mods(shift));
+        let acts = t.pointer(&cx, &PointerEvent::new(PointerKind::Drag, 40.0, 30.0).with_mods(shift));
+        let Action::Preview(cmd, args) = &acts[1] else { panic!("expected a preview: {acts:?}") };
+        assert_eq!((cmd.as_str(), args["dx"].as_f64(), args["dy"].as_f64()), ("peg.key", Some(30.0), Some(20.0)));
+        assert!(matches!(t.pointer(&cx, &PointerEvent::new(PointerKind::Up, 40.0, 30.0))[..], [Action::Commit]));
     }
 }

@@ -5632,6 +5632,9 @@ font-technology	Variable	متغير
 	Remove Peg Key	حذف مفتاح الوتد
 	Remove Peg	حذف الوتد
 	Pegs	الأوتاد
+	Move Peg	تحريك الوتد
+	Hang the current layer from a new peg	علّق الطبقة الحالية على وتد جديد
+	Key the current layer's peg at this frame	ضع مفتاحًا لوتد الطبقة الحالية عند هذا الإطار
 	Bone Tool	أداة العظام
 	Pose Joint	تحريك مفصل
 	Reach	الوصول
