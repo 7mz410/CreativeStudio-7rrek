@@ -1,0 +1,12 @@
+[package]
+name = "vectorcraft-audio"
+description = "VectorCraft audio: decodes WAV, MP3 and Ogg Vorbis from memory to 48 kHz stereo PCM, and mixes clips for the animation timeline"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+symphonia = { workspace = true }

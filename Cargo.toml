@@ -33,6 +33,7 @@ vectorcraft-effects = { path = "crates/effects" }
 vectorcraft-three-d = { path = "crates/three-d" }
 vectorcraft-render = { path = "crates/render" }
 vectorcraft-video = { path = "crates/video" }
+vectorcraft-audio = { path = "crates/audio" }
 vectorcraft-svg = { path = "crates/svg" }
 vectorcraft-pdf = { path = "crates/pdf" }
 vectorcraft-format = { path = "crates/format" }
@@ -65,6 +66,10 @@ crc32fast = "1.5"
 # so the crate still builds for wasm32.
 filmcraft-h264enc = { git = "https://github.com/storytold/filmcraft", rev = "2c5ba7a72619935f0481f99d59409e0d1844b234", default-features = false }
 filmcraft-isobmff = { git = "https://github.com/storytold/filmcraft", rev = "2c5ba7a72619935f0481f99d59409e0d1844b234" }
+# AAC audio in MP4 exports (vectorcraft-video).
+filmcraft-aac = { git = "https://github.com/storytold/filmcraft", rev = "2c5ba7a72619935f0481f99d59409e0d1844b234" }
+# Sound import for the timeline (vectorcraft-audio): WAV, MP3, Ogg Vorbis. Pure Rust, MPL-2.0.
+symphonia = { version = "0.5.5", default-features = false, features = ["wav", "pcm", "mp3", "ogg", "vorbis"] }
 # tests: a TCP port bound without listening (connections to it are refused)
 socket2 = "0.6"
 # Sandboxed WebAssembly plug-ins: a pure-Rust interpreter (MIT OR Apache-2.0) that builds for wasm32
