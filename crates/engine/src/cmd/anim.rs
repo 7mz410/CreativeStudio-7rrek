@@ -269,7 +269,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Export Video…",
             [],
             None,
-            "{path, format?: \"webm\" (default), fps?: 1–60 (default: the timeline's), scale?: (default 1), artboard?: index (default 0), from?, to?} the artboard's frames as a VP9 WebM movie, transparency on white → {path, frames, width, height, fps}",
+            "{path, format?: \"webm\" (default) | \"mp4\", fps?: 1–60 (default: the timeline's), scale?: (default 1), artboard?: index (default 0), from?, to?} the artboard's frames as a VP9 WebM or H.264 MP4 movie, transparency on white → {path, frames, width, height, fps}",
             has_doc,
             export_video
         ),
@@ -503,7 +503,7 @@ fn export_video(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(info)
 }
 
-/// `doc`'s frames as a WebM (VP9) movie (`anim.exportVideo`'s options in `p`, `path` aside) → the
+/// `doc`'s frames as a WebM (VP9) or MP4 (H.264) movie (`anim.exportVideo`'s options in `p`, `path` aside) → the
 /// bytes and `{frames, width, height, fps}`. Transparent areas come out white.
 pub fn encode_video(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
     const C: &str = "anim.exportVideo";
@@ -512,12 +512,21 @@ pub fn encode_video(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
         None | Some(Value::Null) => anim.fps,
         Some(v) => v.as_u64().filter(|f| (1..=60).contains(f)).ok_or_else(|| bad(C, "fps must be a whole number from 1 to 60"))? as u32,
     };
-    match str_param(p, "format").unwrap_or("webm") {
-        "webm" => {}
-        f => return Err(bad(C, format!("format {f:?} isn't supported (webm)"))),
-    }
+    let mp4 = match str_param(p, "format").unwrap_or("webm") {
+        "webm" => false,
+        "mp4" => true,
+        f => return Err(bad(C, format!("format {f:?} isn't supported (webm, mp4)"))),
+    };
     let Range { rect, scale, w, h, from, to } = range(doc, &anim, p, C)?;
-    let mut enc = vectorcraft_video::WebmWriter::new(w, h, fps).map_err(|e| bad(C, e))?;
+    enum Enc {
+        Webm(Box<vectorcraft_video::WebmWriter>),
+        Mp4(Box<vectorcraft_video::Mp4Writer>),
+    }
+    let mut enc = if mp4 {
+        Enc::Mp4(Box::new(vectorcraft_video::Mp4Writer::new(w, h, fps).map_err(|e| bad(C, e))?))
+    } else {
+        Enc::Webm(Box::new(vectorcraft_video::WebmWriter::new(w, h, fps).map_err(|e| bad(C, e))?))
+    };
     let mut r = vectorcraft_render::Renderer::new();
     for f in from..=to {
         let img = r.render_region(&at_frame(doc, f), rect, scale, true);
@@ -530,9 +539,17 @@ pub fn encode_video(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
             }
             *a = 255;
         }
-        enc.push(&rgba).map_err(|e| bad(C, e))?;
+        match &mut enc {
+            Enc::Webm(e) => e.push(&rgba),
+            Enc::Mp4(e) => e.push(&rgba),
+        }
+        .map_err(|e| bad(C, e))?;
     }
-    Ok((enc.finish(), json!({"frames": to - from + 1, "width": w, "height": h, "fps": fps})))
+    let out = match enc {
+        Enc::Webm(e) => e.finish(),
+        Enc::Mp4(e) => e.finish().map_err(|e| bad(C, e))?,
+    };
+    Ok((out, json!({"frames": to - from + 1, "width": w, "height": h, "fps": fps})))
 }
 
 /// `doc`'s frames as an animated GIF (`anim.exportGif`'s options in `p`, `path` aside) → the bytes
@@ -711,6 +728,9 @@ mod tests {
         {
             assert_eq!(String::from_utf8_lossy(&o.stdout).trim(), "vp9,3");
         }
+        let path = dir.join("walk.mp4");
+        s.execute("anim.exportVideo", &json!({"path": path.to_string_lossy(), "scale": 0.25, "format": "mp4"})).unwrap();
+        assert_eq!(std::fs::read(&path).unwrap().get(4..8), Some(&b"ftyp"[..]));
         std::fs::remove_dir_all(&dir).ok();
     }
 }

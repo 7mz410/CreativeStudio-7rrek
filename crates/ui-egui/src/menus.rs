@@ -53,7 +53,12 @@ use Item::Sep;
 /// UI-level commands: (id, label, shortcut, params doc).
 pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
     ("anim.exportGifAs", "Export Animated GIF…", "", "{path?, scale?, from?, to?} anim.exportGif, picking the file (the web downloads it)"),
-    ("anim.exportVideoAs", "Export Video…", "", "{path?, fps?, scale?, from?, to?} anim.exportVideo, picking the file (the web downloads it)"),
+    (
+        "anim.exportVideoAs",
+        "Export Video…",
+        "",
+        "{path?, format?, fps?, scale?, from?, to?} anim.exportVideo (a .mp4 path picks MP4), picking the file (the web downloads it)",
+    ),
     (
         "app.language",
         "Interface Language",

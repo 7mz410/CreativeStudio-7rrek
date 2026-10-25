@@ -179,8 +179,14 @@ pub fn export_gif(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> 
 /// `anim.exportVideoAs`: the frames as a WebM at `path`, else a picked file (the web downloads it).
 pub fn export_video(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> Result<Value, String> {
     let doc = app.session.active().ok_or("no document")?.doc.clone();
-    let path = crate::io::target_path(app, path, "webm")?;
-    let (bytes, mut info) = vectorcraft_engine::cmd::anim::encode_video(&doc, p).map_err(|e| e.to_string())?;
+    let ext = if p.get("format").and_then(Value::as_str) == Some("mp4") { "mp4" } else { "webm" };
+    let path = crate::io::target_path(app, path, ext)?;
+    // A name typed with .mp4 picks MP4.
+    let mut p = p.clone();
+    if p.get("format").is_none() && path.to_ascii_lowercase().ends_with(".mp4") {
+        p["format"] = json!("mp4");
+    }
+    let (bytes, mut info) = vectorcraft_engine::cmd::anim::encode_video(&doc, &p).map_err(|e| e.to_string())?;
     crate::io::write_to(&mut app.services, &path, &bytes)?;
     info["path"] = json!(path);
     Ok(info)

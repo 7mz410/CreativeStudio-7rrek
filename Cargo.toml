@@ -61,6 +61,10 @@ log = "0.4"
 chrono = { version = "0.4.45", default-features = false, features = ["std"] }
 proptest = "1"
 crc32fast = "1.5"
+# MP4 (H.264) encoding for vectorcraft-video. Without the h264enc default `threads` feature (rayon),
+# so the crate still builds for wasm32.
+filmcraft-h264enc = { git = "https://github.com/storytold/filmcraft", rev = "2c5ba7a72619935f0481f99d59409e0d1844b234", default-features = false }
+filmcraft-isobmff = { git = "https://github.com/storytold/filmcraft", rev = "2c5ba7a72619935f0481f99d59409e0d1844b234" }
 # tests: a TCP port bound without listening (connections to it are refused)
 socket2 = "0.6"
 # Sandboxed WebAssembly plug-ins: a pure-Rust interpreter (MIT OR Apache-2.0) that builds for wasm32
