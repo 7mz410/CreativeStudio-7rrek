@@ -52,7 +52,9 @@ impl Cam {
 }
 
 /// A sound clip: the file it came from, the frame it starts on and its gain (1: as recorded).
-// shortcut: the sound stays a file path, not embedded in the document; embed when files travel.
+/// `data` names the file's bytes when they were embedded on import: the id of the base64 copy in
+/// the document's `animationSounds` store, so the sound travels with the document. `path` is the
+/// fallback when it is missing.
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Sound {
     pub name: String,
@@ -60,6 +62,8 @@ pub struct Sound {
     pub start: u32,
     #[serde(default = "unity")]
     pub gain: f32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub data: Option<String>,
 }
 
 fn unity() -> f32 {

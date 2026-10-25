@@ -5,6 +5,7 @@ use std::path::Path;
 use serde_json::{Value, json};
 use vectorcraft_audio::{Clip, Pcm, RATE, decode, mix};
 use vectorcraft_doc::Document;
+use vectorcraft_format::{base64_decode, base64_encode};
 
 use super::anim::{Anim, Sound, frame_param};
 use super::*;
@@ -12,6 +13,9 @@ use crate::EngineError;
 
 /// Loudest gain a sound clip takes (its file's level times this).
 const MAX_GAIN: f32 = 4.0;
+
+/// Largest file kept inside the document; bigger ones stay a path only.
+const EMBED_MAX: usize = 50 * 1024 * 1024;
 
 fn start_param(p: &Value, anim: &Anim, cmd: &str) -> Result<u32> {
     match p.get("start") {
@@ -49,11 +53,75 @@ fn index_param(p: &Value, len: usize, cmd: &str) -> Result<usize> {
         .ok_or_else(|| bad(cmd, format!("index must be a sound from 0 to {}", len.saturating_sub(1))))
 }
 
-/// `path`'s file, decoded. A missing or unreadable file, or one that isn't a sound, is an error.
-fn decode_file(path: &str) -> Result<Pcm> {
-    let bytes = super::fileio::read_file(path)?;
+/// `bytes` of the file at `path`, decoded (the path only names the format). Bytes that aren't a sound are an error.
+fn decode_bytes(bytes: &[u8], path: &str) -> Result<Pcm> {
     let ext = Path::new(path).extension().and_then(|e| e.to_str());
-    decode(&bytes, ext).map_err(|e| EngineError::Other(format!("{path}: not a sound file ({e})")))
+    decode(bytes, ext).map_err(|e| EngineError::Other(format!("{path}: not a sound file ({e})")))
+}
+
+/// The embedded sound files, keyed by the id a `Sound.data` names (base64 text). Kept out of the
+/// timeline JSON so the UI can read the timeline every frame without parsing megabytes.
+const BLOBS_KEY: &str = "animationSounds";
+
+fn blob_of<'a>(doc: &'a Document, id: &str) -> Option<&'a str> {
+    doc.unknown.get(BLOBS_KEY)?.get(id)?.as_str()
+}
+
+fn blobs_of(doc: &Document) -> serde_json::Map<String, Value> {
+    doc.unknown.get(BLOBS_KEY).and_then(Value::as_object).cloned().unwrap_or_default()
+}
+
+fn set_blobs(d: &mut Document, blobs: serde_json::Map<String, Value>) {
+    if blobs.is_empty() {
+        d.unknown.remove(BLOBS_KEY);
+    } else {
+        d.unknown.insert(BLOBS_KEY.into(), Value::Object(blobs));
+    }
+}
+
+/// Stores base64 `data` under a fresh id and returns the id.
+fn put_blob(d: &mut Document, data: String) -> String {
+    let mut blobs = blobs_of(d);
+    let mut n = blobs.len() + 1;
+    let id = loop {
+        let id = format!("s{n}");
+        if !blobs.contains_key(&id) {
+            break id;
+        }
+        n += 1;
+    };
+    blobs.insert(id.clone(), Value::String(data));
+    set_blobs(d, blobs);
+    id
+}
+
+fn drop_blob(d: &mut Document, id: &str) {
+    let mut blobs = blobs_of(d);
+    blobs.remove(id);
+    set_blobs(d, blobs);
+}
+
+/// A sound's file bytes: the copy embedded in the document, else the file at its path. None when neither reads.
+pub fn sound_bytes(doc: &Document, s: &Sound) -> Option<Vec<u8>> {
+    s.data.as_deref().and_then(|id| blob_of(doc, id)).and_then(base64_decode).or_else(|| super::fileio::read_file(&s.path).ok())
+}
+
+/// A sound's decoded audio, from `sound_bytes`.
+fn sound_pcm(doc: &Document, s: &Sound) -> Result<Pcm> {
+    let bytes = sound_bytes(doc, s).ok_or_else(|| EngineError::Other(format!("{}: can't be read", s.path)))?;
+    decode_bytes(&bytes, &s.path)
+}
+
+/// Embedding is capped so one import can't bloat the document past what a save can hold.
+fn embed_size_ok(len: usize) -> Result<()> {
+    if len > EMBED_MAX {
+        return Err(EngineError::Other(format!(
+            "sound file is {} MB, over the {} MB embed limit; import with embed: false to keep only its path",
+            len.div_ceil(1 << 20),
+            EMBED_MAX >> 20
+        )));
+    }
+    Ok(())
 }
 
 /// A decoded sound's length in seconds.
@@ -72,7 +140,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Import Sound…",
             [],
             None,
-            "{path, start?: frame (default: the current frame), gain?: 0–4 (default 1), name?: (default: the file name)} adds a sound clip to the timeline; the file must be a WAV, MP3 or Ogg → {index, name, start, gain, seconds}",
+            "{path, start?: frame (default: the current frame), gain?: 0–4 (default 1), name?: (default: the file name), embed?: bool (default true: the file's bytes go into the document, up to 50 MB, so the sound travels with it; false keeps only the path)} adds a sound clip to the timeline; the file must be a WAV, MP3 or Ogg → {index, name, start, gain, seconds, embedded}",
             has_doc,
             sound_import
         ),
@@ -105,15 +173,26 @@ fn sound_import(s: &mut Session, p: &Value) -> Result<Value> {
     let start = start_param(p, &anim, C)?;
     let gain = gain_param(p, C)?.unwrap_or(1.0);
     let name = name_param(p, C)?.unwrap_or_else(|| file_name(&path));
-    let pcm = decode_file(&path)?;
-    let sound = Sound { name, path, start, gain };
-    let index = s.edit("Import Sound", |d, _| {
+    let embed = match p.get("embed") {
+        None | Some(Value::Null) => true,
+        Some(v) => v.as_bool().ok_or_else(|| bad(C, "embed must be true or false"))?,
+    };
+    let bytes = super::fileio::read_file(&path)?;
+    if embed {
+        embed_size_ok(bytes.len())?;
+    }
+    let pcm = decode_bytes(&bytes, &path)?;
+    let encoded = embed.then(|| base64_encode(&bytes));
+    let sound = Sound { name, path, start, gain, data: None };
+    let (index, sound) = s.edit("Import Sound", |d, _| {
+        let data = encoded.as_ref().map(|e| put_blob(d, e.clone()));
+        let sound = Sound { data, ..sound.clone() };
         let mut a = Anim::of(d);
         a.sounds.push(sound.clone());
         a.store(d);
-        Ok(a.sounds.len() - 1)
+        Ok((a.sounds.len() - 1, sound))
     })?;
-    Ok(json!({"index": index, "name": sound.name, "start": start, "gain": gain, "seconds": secs(&pcm)}))
+    Ok(json!({"index": index, "name": sound.name, "start": start, "gain": gain, "seconds": secs(&pcm), "embedded": embed}))
 }
 
 fn sound_set(s: &mut Session, p: &Value) -> Result<Value> {
@@ -140,7 +219,7 @@ fn sound_set(s: &mut Session, p: &Value) -> Result<Value> {
         Ok(out)
     })?;
     // The length is for the user to see; a file that has moved since import shows as null.
-    let seconds = decode_file(&sound.path).ok().map(|pcm| secs(&pcm));
+    let seconds = sound_pcm(&s.doc()?.doc, &sound).ok().map(|pcm| secs(&pcm));
     Ok(json!({"index": i, "name": sound.name, "start": sound.start, "gain": sound.gain, "seconds": seconds}))
 }
 
@@ -150,8 +229,11 @@ fn sound_remove(s: &mut Session, p: &Value) -> Result<Value> {
     let i = index_param(p, anim.sounds.len(), C)?;
     s.edit("Remove Sound", |d, _| {
         let mut a = Anim::of(d);
-        a.sounds.remove(i);
+        let gone = a.sounds.remove(i);
         a.store(d);
+        if let Some(id) = gone.data.as_ref().filter(|id| !a.sounds.iter().any(|c| c.data.as_ref() == Some(id))) {
+            drop_blob(d, id);
+        }
         Ok(())
     })?;
     Ok(json!({"index": i}))
@@ -178,7 +260,7 @@ pub fn mix_for_export(doc: &Document, from: u32, to: u32, fps: u32) -> Result<Op
     let loaded: Vec<(Pcm, f64, f32)> = anim
         .sounds
         .iter()
-        .filter_map(|c| match decode_file(&c.path) {
+        .filter_map(|c| match sound_pcm(doc, c) {
             Ok(pcm) => Some((pcm, ((c.start.max(1) - 1) as f64) / fps as f64, c.gain)),
             Err(e) => {
                 log::warn!("sound `{}` left out of the export: {e}", c.name);
@@ -275,18 +357,77 @@ mod tests {
         assert!(mixed[..16_000].iter().all(|v| *v == 0.0));
         assert!(mixed[16_000..].iter().any(|v| *v != 0.0));
 
-        // A sound whose file has gone is left out of the export as silence.
+        // Embedded: the sound survives the original file being moved away.
         std::fs::rename(&file, d.join("moved.wav")).unwrap();
-        let gone = mix_for_export(&s.doc().unwrap().doc, 1, 12, 12).unwrap().unwrap();
-        assert_eq!(gone.len(), 48_000 * 2);
-        assert!(gone.iter().all(|v| *v == 0.0));
-        let set = s.execute("anim.soundSet", &json!({"index": 0, "name": "gone"})).unwrap();
-        assert!(set["seconds"].is_null());
+        let moved = mix_for_export(&s.doc().unwrap().doc, 1, 12, 12).unwrap().unwrap();
+        assert_eq!(moved, mixed);
+        let set = s.execute("anim.soundSet", &json!({"index": 0, "name": "moved"})).unwrap();
+        assert_eq!(set["seconds"].as_f64(), Some(0.5));
 
         s.execute("anim.soundRemove", &json!({"index": 0})).unwrap();
         assert!(anim(&s).sounds.is_empty());
         assert!(mix_for_export(&s.doc().unwrap().doc, 1, 12, 12).unwrap().is_none());
         let _ = std::fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn embedded_sound_survives_delete_save_and_load() {
+        let d = std::env::temp_dir().join(format!("vc-anim-sound-embed-{}", std::process::id()));
+        std::fs::create_dir_all(&d).unwrap();
+        let file = d.join("tone.wav");
+        std::fs::write(&file, wav()).unwrap();
+        let mut s = session();
+        s.execute("anim.soundImport", &json!({"path": file.to_str().unwrap(), "start": 3})).unwrap();
+        let before = mix_for_export(&s.doc().unwrap().doc, 1, 12, 12).unwrap().unwrap();
+        std::fs::remove_file(&file).unwrap();
+
+        let saved = vectorcraft_format::save(&s.doc().unwrap().doc, false);
+        let back = vectorcraft_format::load(&saved).unwrap();
+        assert_eq!(mix_for_export(&back, 1, 12, 12).unwrap().unwrap(), before);
+        assert!(sound_bytes(&back, &Anim::of(&back).sounds[0]).is_some());
+        let _ = std::fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn unembedded_sound_with_its_file_gone_is_silence() {
+        let d = std::env::temp_dir().join(format!("vc-anim-sound-path-{}", std::process::id()));
+        std::fs::create_dir_all(&d).unwrap();
+        let file = d.join("tone.wav");
+        std::fs::write(&file, wav()).unwrap();
+        let mut s = session();
+        let got = s.execute("anim.soundImport", &json!({"path": file.to_str().unwrap(), "embed": false})).unwrap();
+        assert_eq!(got["embedded"], false);
+        assert!(anim(&s).sounds[0].data.is_none());
+        std::fs::remove_file(&file).unwrap();
+        let gone = mix_for_export(&s.doc().unwrap().doc, 1, 12, 12).unwrap().unwrap();
+        assert!(gone.iter().all(|v| *v == 0.0));
+        assert!(sound_bytes(&s.doc().unwrap().doc, &anim(&s).sounds[0]).is_none());
+        let _ = std::fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn embedded_bytes_stay_out_of_the_timeline_json() {
+        let d = std::env::temp_dir().join(format!("vc-anim-sound-blob-{}", std::process::id()));
+        std::fs::create_dir_all(&d).unwrap();
+        let file = d.join("tone.wav");
+        std::fs::write(&file, wav()).unwrap();
+        let mut s = session();
+        s.execute("anim.soundImport", &json!({"path": file.to_str().unwrap()})).unwrap();
+        s.execute("anim.soundImport", &json!({"path": file.to_str().unwrap(), "start": 2})).unwrap();
+        let doc = &s.doc().unwrap().doc;
+        let timeline = serde_json::to_string(doc.unknown.get("animation").unwrap()).unwrap();
+        assert!(timeline.len() < 1024, "timeline JSON is {} bytes", timeline.len());
+        assert!(doc.unknown.get(BLOBS_KEY).is_some());
+        s.execute("anim.soundRemove", &json!({"index": 0})).unwrap();
+        s.execute("anim.soundRemove", &json!({"index": 0})).unwrap();
+        assert!(s.doc().unwrap().doc.unknown.get(BLOBS_KEY).is_none(), "the last sound's bytes are dropped");
+        let _ = std::fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn embedding_is_capped_at_50_mb() {
+        assert!(embed_size_ok(EMBED_MAX).is_ok());
+        assert!(embed_size_ok(EMBED_MAX + 1).is_err());
     }
 
     #[cfg(not(target_arch = "wasm32"))]
