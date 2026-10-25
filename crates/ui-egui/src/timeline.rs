@@ -54,8 +54,13 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.painter().rect_filled(full, 0.0, t.panel);
     ui.painter().line_segment([full.left_top(), full.right_top()], Stroke::new(1.0, t.border));
     let bar = Rect::from_min_size(full.min, vec2(full.width(), BAR_H));
-    ui.scope_builder(egui::UiBuilder::new().max_rect(bar).layout(egui::Layout::left_to_right(egui::Align::Center)), |ui| {
-        controls(app, ui, &t, current, frames, fps, onion);
+    // Right to left in Arabic; scrolls sideways when the window is too narrow for every button.
+    let flow = if egui::is_rtl() { egui::Layout::right_to_left(egui::Align::Center) } else { egui::Layout::left_to_right(egui::Align::Center) };
+    ui.scope_builder(egui::UiBuilder::new().max_rect(bar), |ui| {
+        egui::ScrollArea::horizontal().id_salt("timeline-bar").show(ui, |ui| {
+            ui.set_min_height(BAR_H);
+            ui.with_layout(flow, |ui| controls(app, ui, &t, current, frames, fps, onion));
+        });
     });
     let below = Rect::from_min_max(pos2(full.min.x, bar.max.y), full.max);
     ui.scope_builder(egui::UiBuilder::new().max_rect(below), |ui| {
@@ -220,16 +225,22 @@ fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], curre
     let height = RULER_H + rows.len().max(1) as f32 * ROW_H;
     let (area, resp) = ui.allocate_exact_size(vec2(width, height), Sense::click_and_drag());
     let p = ui.painter_at(area);
+    // Laid out left to right, then mirrored in a right-to-left language: names on the right,
+    // frame 1 next to them, time running leftwards.
+    let rtl = egui::is_rtl();
+    let mx = |x: f32| if rtl { area.min.x + area.max.x - x } else { x };
+    let mrect = |r: Rect| Rect::from_two_pos(pos2(mx(r.min.x), r.min.y), pos2(mx(r.max.x), r.max.y));
+    let (start, end_align) = if rtl { (Align2::RIGHT_TOP, Align2::RIGHT_CENTER) } else { (Align2::LEFT_TOP, Align2::LEFT_CENTER) };
     let x0 = area.min.x + NAME_W;
     let col = |f: u32| x0 + (f - 1) as f32 * CELL_W;
 
     // Frame ruler: a tick per frame, numbers every 5.
     for f in 1..=frames {
-        let x = col(f);
+        let x = mx(col(f));
         let major = f == 1 || f % 5 == 0;
         p.line_segment([pos2(x, area.min.y + if major { 2.0 } else { 9.0 }), pos2(x, area.min.y + RULER_H)], Stroke::new(1.0, t.ruler_tick));
         if major {
-            p.text(pos2(x + 2.0, area.min.y + 1.0), Align2::LEFT_TOP, f.to_string(), egui::FontId::proportional(9.5), t.text_dim);
+            p.text(pos2(x + if rtl { -2.0 } else { 2.0 }, area.min.y + 1.0), start, f.to_string(), egui::FontId::proportional(9.5), t.text_dim);
         }
     }
 
@@ -238,7 +249,7 @@ fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], curre
         let band = Rect::from_min_size(pos2(area.min.x, y), vec2(width, ROW_H));
         p.rect_filled(band, 0.0, if i % 2 == 0 { t.panel } else { t.panel_darker });
         let name = row["name"].as_str().unwrap_or("");
-        p.text(pos2(area.min.x + 8.0, y + ROW_H / 2.0), Align2::LEFT_CENTER, name, egui::FontId::proportional(11.5), t.text);
+        p.text(pos2(mx(area.min.x + 8.0), y + ROW_H / 2.0), end_align, name, egui::FontId::proportional(11.5), t.text);
         let keys: Vec<(u32, bool)> = row["keys"]
             .as_array()
             .into_iter()
@@ -249,20 +260,21 @@ fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], curre
             let next = keys.get(k + 1).map(|(n, _)| *n);
             let end = next.unwrap_or(frames + 1);
             let span = Rect::from_min_max(pos2(col(*f), y + 3.0), pos2(col(end), y + ROW_H - 3.0));
-            p.rect_filled(span, 3.0, t.accent.gamma_multiply(if *tween && next.is_some() { 0.45 } else { 0.25 }));
+            p.rect_filled(mrect(span), 3.0, t.accent.gamma_multiply(if *tween && next.is_some() { 0.45 } else { 0.25 }));
             if *tween && next.is_some() {
-                p.arrow(pos2(col(*f) + CELL_W, span.center().y), vec2(col(end) - col(*f) - CELL_W * 1.5, 0.0), Stroke::new(1.0, t.accent));
+                let len = col(end) - col(*f) - CELL_W * 1.5;
+                p.arrow(pos2(mx(col(*f) + CELL_W), span.center().y), vec2(if rtl { -len } else { len }, 0.0), Stroke::new(1.0, t.accent));
             }
-            p.circle_filled(pos2(col(*f) + CELL_W / 2.0, y + ROW_H / 2.0), 3.5, t.accent);
+            p.circle_filled(pos2(mx(col(*f) + CELL_W / 2.0), y + ROW_H / 2.0), 3.5, t.accent);
         }
     }
 
     // The playhead.
-    let x = col(current) + CELL_W / 2.0;
+    let x = mx(col(current) + CELL_W / 2.0);
     p.line_segment([pos2(x, area.min.y), pos2(x, area.max.y)], Stroke::new(1.5, Color32::from_rgb(0xeb, 0x1b, 0x3c)));
 
     // Click or drag on the frames: go there (and to that row's layer).
-    if let Some(pos) = resp.interact_pointer_pos().filter(|_| resp.clicked() || resp.dragged())
+    if let Some(pos) = resp.interact_pointer_pos().filter(|_| resp.clicked() || resp.dragged()).map(|q| pos2(mx(q.x), q.y))
         && pos.x >= x0
     {
         let f = (((pos.x - x0) / CELL_W).floor() as u32 + 1).clamp(1, frames);
@@ -360,6 +372,7 @@ mod snapshot_probe {
         // TIMELINE_LANG=ar for a look right to left.
         if let Some(l) = std::env::var("TIMELINE_LANG").ok().and_then(|c| crate::i18n::Lang::from_code(&c)) {
             crate::i18n::set_current(l);
+            egui::set_rtl(crate::i18n::bidi::RTL_CODES.contains(&l.code()));
         }
         let mut ready = false;
         let mut h = egui_kittest::Harness::builder().with_size(egui::vec2(1000.0, 200.0)).wgpu().build_ui_state(
