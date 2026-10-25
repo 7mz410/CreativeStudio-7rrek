@@ -74,6 +74,7 @@ pub mod printtiling;
 pub mod rasterfx;
 mod recolor;
 pub mod recovery;
+pub mod rig;
 pub mod scripts;
 mod select;
 pub(crate) mod shaper;

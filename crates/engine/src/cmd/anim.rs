@@ -183,6 +183,8 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
             ghosts.push(g.0);
         }
     }
+    // Rigged rows bend their art to the pose at this frame.
+    super::rig::apply(&mut d, frame);
     let mut a = anim;
     a.ghosts = ghosts;
     a.current = frame.clamp(1, a.frames);
