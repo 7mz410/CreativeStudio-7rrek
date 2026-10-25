@@ -32,7 +32,9 @@ fn playback_id() -> egui::Id {
 
 /// The Timeline's height for the active document (its rows, up to [`MAX_ROWS_SHOWN`]).
 pub fn height(app: &VectorcraftApp) -> f32 {
-    let rows = app.session.active().map_or(1, |st| st.doc.layers.len());
+    let layers = app.session.active().map_or(1, |st| st.doc.layers.len().max(1));
+    // The camera, sound and bones rows under the layers count too.
+    let rows = layers + crate::timeline_av::rows(app) + crate::timeline_rig::rows(app);
     BAR_H + RULER_H + rows.clamp(1, MAX_ROWS_SHOWN) as f32 * ROW_H + 6.0
 }
 
