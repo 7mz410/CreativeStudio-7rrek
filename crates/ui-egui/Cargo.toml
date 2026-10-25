@@ -54,6 +54,10 @@ log = { workspace = true }
 # MIT OR Apache-2.0 and already in the build through eframe.
 web-time = "1"
 
+# The timeline's sound playback: the default output device (src/timeline_audio.rs). Native only.
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+cpal = { workspace = true }
+
 # The current user's id (`geteuid`): Preview in Browser uses its temporary folder only when that
 # user owns it (src/dialogs/save_for_web.rs). Already in Cargo.lock (tempfile), so this adds no
 # new crate.

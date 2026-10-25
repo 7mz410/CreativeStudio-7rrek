@@ -70,6 +70,8 @@ filmcraft-isobmff = { git = "https://github.com/storytold/filmcraft", rev = "2c5
 filmcraft-aac = { git = "https://github.com/storytold/filmcraft", rev = "2c5ba7a72619935f0481f99d59409e0d1844b234" }
 # Sound import for the timeline (vectorcraft-audio): WAV, MP3, Ogg Vorbis. Pure Rust, MPL-2.0.
 symphonia = { version = "0.5.5", default-features = false, features = ["wav", "pcm", "mp3", "ogg", "vorbis"] }
+# Timeline sound playback through the default output device (vectorcraft-ui-egui, native only).
+cpal = "0.15"
 # tests: a TCP port bound without listening (connections to it are refused)
 socket2 = "0.6"
 # Sandboxed WebAssembly plug-ins: a pure-Rust interpreter (MIT OR Apache-2.0) that builds for wasm32

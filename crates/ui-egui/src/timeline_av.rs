@@ -5,7 +5,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use egui::{Align2, FontId, Painter, Pos2, Rect, Shape, Stroke, pos2, vec2};
-use vectorcraft_engine::cmd::anim::Anim;
+use vectorcraft_doc::Document;
+use vectorcraft_engine::cmd::anim::{Anim, Sound};
 
 use crate::VectorcraftApp;
 use crate::theme::Tokens;
@@ -41,32 +42,25 @@ thread_local! {
     static CLIPS: RefCell<HashMap<String, Option<Rc<Clip>>>> = RefCell::new(HashMap::new());
 }
 
-/// The clip at `path`, decoded on first use only.
-fn clip(path: &str) -> Option<Rc<Clip>> {
+/// A sound's clip (its embedded bytes, else its file), decoded on first use only.
+fn clip(doc: &Document, s: &Sound) -> Option<Rc<Clip>> {
+    let key = s.data.clone().unwrap_or_else(|| s.path.clone());
     CLIPS.with(|c| {
-        let mut c = c.borrow_mut();
-        if let Some(v) = c.get(path) {
+        if let Some(v) = c.borrow().get(&key) {
             return v.clone();
         }
-        let v = load(path).map(Rc::new);
-        c.insert(path.to_string(), v.clone());
+        let v = load(doc, s).map(Rc::new);
+        c.borrow_mut().insert(key, v.clone());
         v
     })
 }
 
-#[cfg(not(target_arch = "wasm32"))]
-fn load(path: &str) -> Option<Clip> {
-    let bytes = std::fs::read(path).ok()?;
-    let ext = std::path::Path::new(path).extension().and_then(|e| e.to_str());
+fn load(doc: &Document, s: &Sound) -> Option<Clip> {
+    let bytes = vectorcraft_engine::cmd::anim_sound::sound_bytes(doc, s)?;
+    let ext = std::path::Path::new(&s.path).extension().and_then(|e| e.to_str());
     let pcm = vectorcraft_audio::decode(&bytes, ext).ok()?;
     let seconds = (pcm.samples.len() / 2) as f64 / f64::from(vectorcraft_audio::RATE);
     Some(Clip { seconds, peaks: vectorcraft_audio::peaks(&pcm, PEAKS) })
-}
-
-/// The web build has no file access: a sound draws as an empty bar.
-#[cfg(target_arch = "wasm32")]
-fn load(_path: &str) -> Option<Clip> {
-    None
 }
 
 /// How many rows [`paint`] draws for the active document: the camera row (when it has keys) and
@@ -115,7 +109,7 @@ pub fn paint(app: &VectorcraftApp, p: &Painter, t: &Tokens, g: Geom) {
 
     for s in &a.sounds {
         let y = draw_row(k, &s.name);
-        let clip = clip(&s.path);
+        let clip = clip(&st.doc, s);
         // The bar's length in frames: the file's seconds at the document's rate; one frame when the
         // file can't be read, so the bar still shows where the clip starts.
         let len = clip.as_ref().map_or(1.0, |c| (c.seconds * f64::from(a.fps)).round().max(1.0) as f32);
@@ -193,7 +187,19 @@ mod tests {
 
     #[test]
     fn a_missing_sound_file_is_an_empty_bar_not_a_panic() {
-        assert!(super::clip("/nonexistent/7rrek/missing.wav").is_none());
+        assert!(
+            super::load(
+                &vectorcraft_doc::Document::new(10.0, 10.0),
+                &vectorcraft_engine::cmd::anim::Sound {
+                    name: "x".into(),
+                    path: "/nonexistent/7rrek/missing.wav".into(),
+                    start: 1,
+                    gain: 1.0,
+                    data: None
+                }
+            )
+            .is_none()
+        );
     }
 
     #[test]

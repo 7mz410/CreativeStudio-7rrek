@@ -100,13 +100,19 @@ fn tick(app: &mut VectorcraftApp, ui: &Ui, fps: u32) {
     let step = 1.0 / fps as f32;
     if pb.acc >= step {
         pb.acc %= step;
-        let _ = app.run("anim.next", json!({}));
+        // Back at frame 1 after the last: the sound starts over with the picture.
+        if app.run("anim.next", json!({})).ok().and_then(|r| r["frame"].as_u64()) == Some(1) {
+            crate::timeline_audio::start(app, 1);
+        }
     }
     ctx.data_mut(|d| d.insert_temp(playback_id(), pb));
     ctx.request_repaint();
 }
 
 fn set_playing(ui: &Ui, on: bool) {
+    if !on {
+        crate::timeline_audio::stop();
+    }
     ui.ctx().data_mut(|d| d.insert_temp(playback_id(), Playback { playing: on, acc: 0.0 }));
 }
 
@@ -117,19 +123,28 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         ui.label(egui::RichText::new(tl!("Timeline")).font(theme::semibold(12.0)).color(t.text_strong));
         ui.add_space(10.0);
         if ui.small_button("⏮").on_hover_text(tl!("First Frame")).clicked() {
+            set_playing(ui, false);
             let _ = app.run("anim.goto", json!({"frame": 1}));
         }
         if ui.small_button("◀").on_hover_text(tl!("Previous Frame")).clicked() {
+            set_playing(ui, false);
             let _ = app.run("anim.prev", json!({}));
         }
         let play = if playing { "⏸" } else { "▶" };
         if ui.small_button(play).on_hover_text(if playing { tl!("Pause") } else { tl!("Play") }).clicked() {
             set_playing(ui, !playing);
+            if playing {
+                crate::timeline_audio::stop();
+            } else {
+                crate::timeline_audio::start(app, current);
+            }
         }
         if ui.small_button("▶|").on_hover_text(tl!("Next Frame")).clicked() {
+            set_playing(ui, false);
             let _ = app.run("anim.next", json!({}));
         }
         if ui.small_button("⏭").on_hover_text(tl!("Last Frame")).clicked() {
+            set_playing(ui, false);
             let _ = app.run("anim.goto", json!({"frame": frames}));
         }
         ui.add_space(8.0);
