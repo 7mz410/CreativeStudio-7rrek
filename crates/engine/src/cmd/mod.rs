@@ -64,6 +64,7 @@ pub(crate) mod pathops;
 mod patterncmds;
 pub mod pdfcmds;
 pub mod peg;
+pub mod peg_cmd;
 pub mod perspgrid;
 pub mod place;
 pub mod plugin;
@@ -310,6 +311,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(anim_camera::specs());
         v.extend(anim_sound::specs());
         v.extend(rig_cmd::specs());
+        v.extend(peg_cmd::specs());
         v.extend(halftone::specs());
         v.extend(perspgrid::specs());
         v.extend(shortcutset::specs());
