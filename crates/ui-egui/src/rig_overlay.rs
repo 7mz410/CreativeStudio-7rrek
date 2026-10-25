@@ -30,11 +30,7 @@ fn shown(app: &VectorcraftApp) -> Option<(Skeleton, u32)> {
 /// without keys).
 fn screen_joints(sk: &Skeleton, frame: u32, xf: &Xf) -> Vec<Pos2> {
     let angles = sk.pose_at(frame).unwrap_or_else(|| vec![0.0; sk.joints.len()]);
-    sk.matrices(&angles)
-        .iter()
-        .zip(&sk.joints)
-        .map(|(m, j)| xf.to_screen(*m * Point::new(j.x, j.y)))
-        .collect()
+    sk.matrices(&angles).iter().zip(&sk.joints).map(|(m, j)| xf.to_screen(*m * Point::new(j.x, j.y))).collect()
 }
 
 /// The bones as screen segments (parent joint, child joint), dropping any with a non-finite end.
@@ -84,10 +80,7 @@ mod tests {
     fn arm() -> Skeleton {
         let j = |name: &str, parent, x| Joint { name: name.into(), parent, x, y: 0.0 };
         let joints = vec![j("shoulder", None, 0.0), j("elbow", Some(0), 100.0), j("hand", Some(1), 200.0)];
-        let keys = BTreeMap::from([
-            (1, Pose { angles: vec![0.0, 0.0, 0.0], ease: None }),
-            (9, Pose { angles: vec![0.0, 90.0, 0.0], ease: None }),
-        ]);
+        let keys = BTreeMap::from([(1, Pose { angles: vec![0.0, 0.0, 0.0], ease: None }), (9, Pose { angles: vec![0.0, 90.0, 0.0], ease: None })]);
         Skeleton { joints, keys }
     }
 
@@ -104,11 +97,12 @@ mod tests {
         if let Some(sk) = sk {
             let row = app.session.active().unwrap().doc.layers[0].id.0;
             let rig = Rig { skeletons: BTreeMap::from([(row, sk)]) };
-            app.session.edit("Rig", |d, _| {
-                rig.store(d);
-                Ok(())
-            })
-            .unwrap();
+            app.session
+                .edit("Rig", |d, _| {
+                    rig.store(d);
+                    Ok(())
+                })
+                .unwrap();
         }
         app
     }
@@ -168,10 +162,10 @@ mod tests {
         let Some(path) = std::env::var_os("RIG_PNG") else { return };
         let mut app = app_with_rig(Some(arm()));
         app.ui.view.edges = true;
-        let mut h = egui_kittest::Harness::builder().with_size(vec2(800.0, 600.0)).wgpu().build_ui_state(
-            |ui, app: &mut VectorcraftApp| crate::canvas::show(app, ui),
-            app,
-        );
+        let mut h = egui_kittest::Harness::builder()
+            .with_size(vec2(800.0, 600.0))
+            .wgpu()
+            .build_ui_state(|ui, app: &mut VectorcraftApp| crate::canvas::show(app, ui), app);
         h.run_steps(4);
         h.render().unwrap().save(std::path::PathBuf::from(path)).unwrap();
     }
