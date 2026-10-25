@@ -2,6 +2,7 @@
 
 use serde_json::{Value, json};
 use vectorcraft_doc::{Document, NodeId};
+use vectorcraft_geom::Point;
 
 use super::anim::{Anim, ease_param, frame_param, row_param, show};
 use super::rig::{Joint, MAX_JOINTS, Pose, Rig, Skeleton};
@@ -46,6 +47,15 @@ pub fn specs() -> Vec<CommandSpec> {
             pose
         ),
         cmd!(
+            "rig.reach",
+            "Reach",
+            [],
+            None,
+            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), joint: joint index (the end that reaches), x, y: the target (document points), bones?: how many bones up the chain turn (default: all up to the root)} poses the chain so the joint reaches the target, or points straight at it when out of reach: two bones solved exactly, longer chains by FABRIK → {frame, angles, reached: bool}",
+            has_doc,
+            reach
+        ),
+        cmd!(
             "rig.removePose",
             "Remove Pose Key",
             [],
@@ -67,6 +77,61 @@ pub fn specs() -> Vec<CommandSpec> {
 }
 
 /// The skeleton on `row`, or an empty one.
+fn reach(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "rig.reach";
+    let row = row_param(s, p, C)?;
+    let mut sk = skeleton(s, row)?;
+    let n = sk.joints.len();
+    let end = joint_param(p, "joint", n, C)?;
+    let target = Point::new(num_req(p, "x", C)?, num_req(p, "y", C)?);
+    let frame = frame_param(p, &Anim::of(&s.doc()?.doc), C)?;
+    let limit = match p.get("bones") {
+        None | Some(Value::Null) => n,
+        Some(v) => v.as_u64().filter(|b| *b >= 1).map(index).ok_or_else(|| bad(C, "bones must be 1 or more"))?,
+    };
+    // The chain from its first turning joint down to the end.
+    let mut chain = vec![end];
+    while chain.len() <= limit
+        && let Some(up) = chain.last().and_then(|j| sk.joints.get(*j)).and_then(|j| j.parent)
+    {
+        chain.push(up);
+    }
+    chain.reverse();
+    if chain.len() < 2 {
+        return Err(bad(C, "the joint hangs from no other joint"));
+    }
+    let mut angles = sk.pose_at(frame).unwrap_or_else(|| vec![0.0; n]);
+    let m = sk.matrices(&angles);
+    let at: Vec<Point> = chain.iter().filter_map(|j| Some(*m.get(*j)? * Point::new(sk.joints.get(*j)?.x, sk.joints.get(*j)?.y))).collect();
+    if at.len() != chain.len() {
+        return Err(bad(C, "no such joint"));
+    }
+    let turns = match at.as_slice() {
+        [a, b, c] => {
+            let bend = (*b - *a).cross(*c - *b);
+            let (t0, t1) = super::ik::two_bone(*a, *b, *c, target, bend).ok_or_else(|| bad(C, "the chain has a bone of no length"))?;
+            vec![t0, t1]
+        }
+        _ => {
+            let after = super::ik::fabrik(&at, target, 0.01, 64).ok_or_else(|| bad(C, "the chain has a bone of no length"))?;
+            super::ik::turns(&at, &after)
+        }
+    };
+    for (j, t) in chain.iter().zip(turns) {
+        if let Some(a) = angles.get_mut(*j) {
+            *a += t;
+        }
+    }
+    let ease = sk.keys.get(&frame).and_then(|k| k.ease);
+    let shown = angles.clone();
+    sk.keys.insert(frame, Pose { angles: shown.clone(), ease });
+    let m = sk.matrices(&shown);
+    let tip = m.get(end).zip(sk.joints.get(end)).map(|(m, j)| *m * Point::new(j.x, j.y));
+    let reached = tip.is_some_and(|q| (q - target).hypot() <= 0.5);
+    commit(s, "Reach", row, sk, C)?;
+    Ok(json!({"frame": frame, "angles": shown, "reached": reached}))
+}
+
 fn skeleton(s: &Session, row: NodeId) -> Result<Skeleton> {
     Ok(Rig::of(&s.doc()?.doc).skeletons.remove(&row.0).unwrap_or_default())
 }
@@ -411,5 +476,40 @@ mod tests {
         assert_eq!(r["frames"], 2);
         assert_eq!(std::fs::read(&path).unwrap().get(..4), Some(&[0x1A, 0x45, 0xDF, 0xA3][..]), "EBML header");
         std::fs::remove_dir_all(&dir).ok();
+    }
+
+    /// Where the pose at `frame` puts joint `j`.
+    fn joint_at(s: &Session, frame: u32, j: usize) -> Point {
+        let row = s.doc().unwrap().doc.layers[0].id.0;
+        let sk = Rig::of(&s.doc().unwrap().doc).skeletons.remove(&row).unwrap();
+        let m = sk.matrices(&sk.pose_at(frame).unwrap());
+        m[j] * Point::new(sk.joints[j].x, sk.joints[j].y)
+    }
+
+    #[test]
+    fn reach_puts_the_hand_on_a_reachable_target_and_points_at_a_far_one() {
+        let mut s = session();
+        arm(&mut s);
+        let r = s.execute("rig.reach", &json!({"frame": 3, "joint": 2, "x": 120, "y": 90})).unwrap();
+        assert_eq!(r["reached"], true, "{r}");
+        let hand = joint_at(&s, 3, 2);
+        assert!((hand - Point::new(120.0, 90.0)).hypot() < 0.5, "{hand:?}");
+        let r = s.execute("rig.reach", &json!({"frame": 4, "joint": 2, "x": 0, "y": 900})).unwrap();
+        assert_eq!(r["reached"], false);
+        let hand = joint_at(&s, 4, 2);
+        assert!(hand.x.is_finite() && (hand - Point::new(0.0, 200.0)).hypot() < 0.5, "straight down: {hand:?}");
+    }
+
+    #[test]
+    fn reach_solves_longer_chains_and_rejects_bad_input() {
+        let mut s = session();
+        arm(&mut s);
+        s.execute("rig.addJoint", &json!({"x": 300, "y": 0, "parent": 2})).unwrap();
+        let r = s.execute("rig.reach", &json!({"frame": 1, "joint": 3, "x": 150, "y": 150})).unwrap();
+        assert_eq!(r["reached"], true, "{r}");
+        assert!((joint_at(&s, 1, 3) - Point::new(150.0, 150.0)).hypot() < 0.5);
+        assert!(s.execute("rig.reach", &json!({"joint": 0, "x": 1, "y": 1})).is_err(), "a root can't reach");
+        assert!(s.execute("rig.reach", &json!({"joint": 2, "x": "1", "y": 1})).is_err());
+        assert!(s.execute("rig.reach", &json!({"joint": 9, "x": 1, "y": 1})).is_err());
     }
 }

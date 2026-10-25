@@ -29,6 +29,8 @@ enum Drag {
     Pose { joint: usize, base: f64, from: f64, pivot: Point, frame: u32 },
     /// Moves a root joint at rest.
     Move { index: usize },
+    /// Cmd-drag: the joint reaches for the pointer and the chain above it follows (IK).
+    Reach { joint: usize, frame: u32 },
 }
 
 impl Drag {
@@ -39,6 +41,9 @@ impl Drag {
                 angle.is_finite().then(|| Action::Preview("rig.pose".into(), json!({ "frame": frame, "joint": joint, "angle": angle })))
             }
             Drag::Move { index } => Some(Action::Preview("rig.moveJoint".into(), json!({ "index": index, "x": pos.x, "y": pos.y }))),
+            Drag::Reach { joint, frame } => {
+                Some(Action::Preview("rig.reach".into(), json!({ "frame": frame, "joint": joint, "x": pos.x, "y": pos.y })))
+            }
         }
     }
 }
@@ -68,9 +73,10 @@ fn joint_at(bones: &Bones, p: Point, tol: f64) -> Option<usize> {
 
 impl BoneTool {
     /// The drag a press on joint `j` starts, with its undo label.
-    fn start(bones: &Bones, j: usize, press_at: Point) -> Option<(Drag, &'static str)> {
+    fn start(bones: &Bones, j: usize, press_at: Point, reach: bool) -> Option<(Drag, &'static str)> {
         bones.at.get(j)?;
         match bones.parents.get(j).copied().flatten() {
+            Some(_) if reach => Some((Drag::Reach { joint: j, frame: bones.frame }, "Reach")),
             Some(p) => {
                 let pivot = *bones.at.get(p)?;
                 let base = bones.angles.get(p).copied().unwrap_or(0.0);
@@ -94,7 +100,7 @@ impl BoneTool {
         if self.drag.is_none() {
             let Some(bones) = cx.bones else { return vec![] };
             let Some(j) = press.joint else { return vec![] };
-            let Some((drag, label)) = Self::start(bones, j, press.at) else { return vec![] };
+            let Some((drag, label)) = Self::start(bones, j, press.at, ev.mods.cmd) else { return vec![] };
             self.drag = Some(drag);
             out.push(Action::Begin(label.into()));
         }
@@ -239,5 +245,22 @@ mod tests {
             assert!(t.pointer(&cx, &PointerEvent::new(kind, f64::NAN, 0.0)).is_empty());
             assert!(t.pointer(&cx, &PointerEvent::new(kind, 0.0, f64::INFINITY)).is_empty());
         }
+    }
+
+    #[test]
+    fn cmd_dragging_a_joint_reaches_for_the_pointer() {
+        let (d, _) = doc_with_rect();
+        let s = Selection::default();
+        let p = paint();
+        let b = arm();
+        let cx = ToolContext { bones: Some(&b), ..cx(&d, &s, &p) };
+        let mut t = BoneTool::default();
+        let cmd = Mods { cmd: true, ..Default::default() };
+        t.pointer(&cx, &PointerEvent::new(PointerKind::Down, 100.0, 0.0).with_mods(cmd));
+        let acts = t.pointer(&cx, &PointerEvent::new(PointerKind::Drag, 60.0, 60.0).with_mods(cmd));
+        assert_eq!(
+            acts,
+            vec![Action::Begin("Reach".into()), Action::Preview("rig.reach".into(), json!({ "frame": 1, "joint": 1, "x": 60.0, "y": 60.0 }))]
+        );
     }
 }
