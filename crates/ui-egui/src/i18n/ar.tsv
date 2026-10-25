@@ -5625,6 +5625,13 @@ font-technology	Variable	متغير
 	Add a WAV, MP3 or Ogg sound at this frame	أضف صوت WAV أو MP3 أو Ogg عند هذا الإطار
 	Camera Keyframe	إطار رئيسي للكاميرا
 	Bones	العظام
+	Add Peg	إضافة وتد
+	Attach to Peg	ربط بوتد
+	Detach from Peg	فك من الوتد
+	Peg Key	مفتاح وتد
+	Remove Peg Key	حذف مفتاح الوتد
+	Remove Peg	حذف الوتد
+	Pegs	الأوتاد
 	Bone Tool	أداة العظام
 	Pose Joint	تحريك مفصل
 	Move Joint	نقل مفصل
