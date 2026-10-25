@@ -107,7 +107,7 @@ pub fn sound_bytes(doc: &Document, s: &Sound) -> Option<Vec<u8>> {
 }
 
 /// A sound's decoded audio, from `sound_bytes`.
-fn sound_pcm(doc: &Document, s: &Sound) -> Result<Pcm> {
+pub(crate) fn sound_pcm(doc: &Document, s: &Sound) -> Result<Pcm> {
     let bytes = sound_bytes(doc, s).ok_or_else(|| EngineError::Other(format!("{}: can't be read", s.path)))?;
     decode_bytes(&bytes, &s.path)
 }

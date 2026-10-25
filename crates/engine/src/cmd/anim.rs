@@ -99,6 +99,10 @@ pub struct Anim {
     /// shown from that frame on, as a keyframe would be.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub exposures: BTreeMap<u64, BTreeMap<u32, u64>>,
+    /// Lip sync mouth chart: row id → mouth shape (`A`–`H`, `X`) → the row's drawing for it. A
+    /// shape left out falls back to the row's drawing named after it.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub mouths: BTreeMap<u64, BTreeMap<char, u64>>,
 }
 
 impl Default for Anim {
@@ -117,6 +121,7 @@ impl Default for Anim {
             ghosts: Vec::new(),
             posed: Vec::new(),
             exposures: BTreeMap::new(),
+            mouths: BTreeMap::new(),
         }
     }
 }
