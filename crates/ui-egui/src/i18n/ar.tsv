@@ -5633,6 +5633,9 @@ font-technology	Variable	متغير
 	Remove Peg	حذف الوتد
 	Pegs	الأوتاد
 	Move Peg	تحريك الوتد
+	Drawings	الرسومات
+	No drawings: add keyframes to this layer	لا توجد رسومات: أضف مفاتيح إطارات إلى هذه الطبقة
+	frames: {frames}	الإطارات: {frames}
 	Hang the current layer from a new peg	علّق الطبقة الحالية على وتد جديد
 	Key the current layer's peg at this frame	ضع مفتاحًا لوتد الطبقة الحالية عند هذا الإطار
 	Bone Tool	أداة العظام
