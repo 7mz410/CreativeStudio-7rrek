@@ -31,6 +31,41 @@ const MAX_ONION: u32 = 5;
 /// Largest export, in pixels per frame (width × height) and frames.
 const MAX_EXPORT_PIXELS: u64 = 4096 * 4096;
 
+/// What the camera sees at a keyframe: the view's centre (document points), zoom (1: the artboard's
+/// size, 2: twice as close) and rotation (degrees, counter-clockwise), easing toward the next key.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+pub struct Cam {
+    pub x: f64,
+    pub y: f64,
+    pub zoom: f64,
+    pub rotation: f64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ease: Option<[f64; 4]>,
+}
+
+impl Cam {
+    pub fn valid(&self) -> bool {
+        [self.x, self.y, self.zoom, self.rotation].iter().all(|v| v.is_finite())
+            && (0.01..=100.0).contains(&self.zoom)
+            && self.ease.as_ref().is_none_or(valid_ease)
+    }
+}
+
+/// A sound clip: the file it came from, the frame it starts on and its gain (1: as recorded).
+// shortcut: the sound stays a file path, not embedded in the document; embed when files travel.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct Sound {
+    pub name: String,
+    pub path: String,
+    pub start: u32,
+    #[serde(default = "unity")]
+    pub gain: f32,
+}
+
+fn unity() -> f32 {
+    1.0
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
 pub struct Anim {
@@ -46,6 +81,10 @@ pub struct Anim {
     pub tweens: BTreeSet<u64>,
     /// A tween's easing as CSS `cubic-bezier(x1, y1, x2, y2)` control points (none: linear).
     pub eases: BTreeMap<u64, [f64; 4]>,
+    /// Camera keyframes, frame → view. None: exports show the artboard as it is.
+    pub camera: BTreeMap<u32, Cam>,
+    /// Sound clips on the timeline.
+    pub sounds: Vec<Sound>,
     /// The locked in-between layers the frame shown added (removed on the next frame change).
     pub ghosts: Vec<u64>,
 }
@@ -61,6 +100,8 @@ impl Default for Anim {
             onion_after: 0,
             tweens: BTreeSet::new(),
             eases: BTreeMap::new(),
+            camera: BTreeMap::new(),
+            sounds: Vec::new(),
             ghosts: Vec::new(),
         }
     }
@@ -78,6 +119,8 @@ impl Anim {
         self.onion_before = self.onion_before.min(MAX_ONION);
         self.onion_after = self.onion_after.min(MAX_ONION);
         self.eases.retain(|_, e| valid_ease(e));
+        self.camera.retain(|f, c| (1..=MAX_FRAMES).contains(f) && c.valid());
+        self.sounds.retain(|c| c.gain.is_finite() && (0.0..=4.0).contains(&c.gain) && (1..=MAX_FRAMES).contains(&c.start));
         self
     }
 
@@ -161,6 +204,44 @@ fn eased(e: Option<&[f64; 4]>, x: f64) -> f64 {
         if bez(x1, x2, mid) < x { lo = mid } else { hi = mid }
     }
     bez(y1, y2, (lo + hi) / 2.0)
+}
+
+impl Anim {
+    /// The camera at `frame`: held before the first key and after the last, eased in between.
+    pub fn camera_at(&self, frame: u32) -> Option<Cam> {
+        let before = self.camera.range(..=frame).next_back();
+        let after = self.camera.range(frame..).next();
+        match (before, after) {
+            (Some((fa, a)), Some((fb, b))) if fb > fa => {
+                let t = eased(a.ease.as_ref(), (frame - fa) as f64 / (fb - fa) as f64);
+                let mix = |x: f64, y: f64| x + (y - x) * t;
+                let turn = (b.rotation - a.rotation + 180.0).rem_euclid(360.0) - 180.0;
+                Some(Cam {
+                    x: mix(a.x, b.x),
+                    y: mix(a.y, b.y),
+                    zoom: a.zoom * (b.zoom / a.zoom).powf(t),
+                    rotation: a.rotation + turn * t,
+                    ease: None,
+                })
+            }
+            (Some((_, c)), _) | (None, Some((_, c))) => Some(*c),
+            (None, None) => None,
+        }
+    }
+}
+
+/// `doc` as the camera sees it through the artboard `rect`: the camera's centre lands on the
+/// artboard's, zoomed and turned.
+pub fn through_camera(mut doc: Document, cam: Option<Cam>, rect: Rect) -> Document {
+    let Some(c) = cam else { return doc };
+    let m = Affine::translate(rect.center().to_vec2())
+        * Affine::rotate(-c.rotation.to_radians())
+        * Affine::scale(c.zoom)
+        * Affine::translate((-c.x, -c.y));
+    for l in &mut doc.layers {
+        Arc::make_mut(l).transform(m, true);
+    }
+    doc
 }
 
 /// Keyframe `a`'s art `t` (0–1) of the way to keyframe `b`'s, as a locked layer shown in `a`'s
@@ -649,7 +730,7 @@ pub fn encode_video(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
     };
     let mut r = vectorcraft_render::Renderer::new();
     for f in from..=to {
-        let img = r.render_region(&at_frame(doc, f), rect, scale, true);
+        let img = r.render_region(&through_camera(at_frame(doc, f), anim.camera_at(f), rect), rect, scale, true);
         let mut rgba = img.to_straight();
         // Video has no alpha: put the frame on white.
         for [r, g, b, a] in rgba.as_chunks_mut::<4>().0 {
@@ -687,7 +768,7 @@ pub fn encode_gif(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
         enc.set_repeat(Repeat::Infinite).map_err(|e| EngineError::Other(format!("GIF: {e}")))?;
         let mut r = vectorcraft_render::Renderer::new();
         for f in from..=to {
-            let frame_doc = at_frame(doc, f);
+            let frame_doc = through_camera(at_frame(doc, f), anim.camera_at(f), rect);
             let img = r.render_region(&frame_doc, rect, scale, true);
             let rgba = RgbaImage::from_raw(img.width, img.height, img.to_straight()).ok_or_else(|| bad(C, "a frame didn't render"))?;
             enc.encode_frame(Frame::from_parts(rgba, 0, 0, delay)).map_err(|e| EngineError::Other(format!("GIF: {e}")))?;
@@ -887,6 +968,28 @@ mod tests {
         assert_eq!(Anim::of(&back).eases.values().next(), Some(&[0.42, 0.0, 1.0, 1.0]));
         s.execute("anim.tween", &json!({"frame": 1, "ease": "linear"})).unwrap();
         assert!(Anim::of(&s.doc().unwrap().doc).eases.is_empty());
+    }
+
+    #[test]
+    fn the_camera_holds_outside_its_keys_and_eases_between() {
+        let mut a = Anim::default();
+        assert_eq!(a.camera_at(5), None);
+        let k = |x: f64, zoom: f64, rotation: f64| Cam { x, y: 0.0, zoom, rotation, ease: None };
+        a.camera.insert(3, k(0.0, 1.0, 350.0));
+        a.camera.insert(7, k(100.0, 4.0, 10.0));
+        assert_eq!(a.camera_at(1).unwrap().x, 0.0);
+        assert_eq!(a.camera_at(9).unwrap().x, 100.0);
+        let mid = a.camera_at(5).unwrap();
+        assert!((mid.x - 50.0).abs() < 1e-9 && (mid.zoom - 2.0).abs() < 1e-9, "zoom halfway is geometric: {mid:?}");
+        assert!((mid.rotation - 360.0).abs() < 1e-9, "the short way round: {}", mid.rotation);
+        // A view centred on (110, 20), twice as close: that point lands on the artboard's centre.
+        let mut s = session();
+        rect(&mut s, 100.0);
+        let doc = s.doc().unwrap().doc.clone();
+        let board = doc.artboards[0].rect;
+        let seen = through_camera((*doc).clone(), Some(Cam { x: 110.0, y: 20.0, zoom: 2.0, rotation: 0.0, ease: None }), board);
+        let b = seen.layers[0].children().unwrap()[0].geometric_bounds().unwrap();
+        assert!((b.center() - board.center()).hypot() < 1e-6 && (b.width() - 40.0).abs() < 1e-6);
     }
 
     #[test]
