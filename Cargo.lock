@@ -5067,6 +5067,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "vectorcraft-video"
+version = "0.16.0"
+
+[[package]]
 name = "vectorcraft-web"
 version = "0.16.0"
 dependencies = [
