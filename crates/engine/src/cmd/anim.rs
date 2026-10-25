@@ -44,13 +44,25 @@ pub struct Anim {
     pub onion_after: u32,
     /// Keyframes with a motion tween: their art moves and scales toward the row's next keyframe.
     pub tweens: BTreeSet<u64>,
+    /// A tween's easing as CSS `cubic-bezier(x1, y1, x2, y2)` control points (none: linear).
+    pub eases: BTreeMap<u64, [f64; 4]>,
     /// The locked in-between layers the frame shown added (removed on the next frame change).
     pub ghosts: Vec<u64>,
 }
 
 impl Default for Anim {
     fn default() -> Self {
-        Self { fps: 12, frames: 24, current: 1, keys: BTreeMap::new(), onion_before: 0, onion_after: 0, tweens: BTreeSet::new(), ghosts: Vec::new() }
+        Self {
+            fps: 12,
+            frames: 24,
+            current: 1,
+            keys: BTreeMap::new(),
+            onion_before: 0,
+            onion_after: 0,
+            tweens: BTreeSet::new(),
+            eases: BTreeMap::new(),
+            ghosts: Vec::new(),
+        }
     }
 }
 
@@ -65,6 +77,7 @@ impl Anim {
         self.current = self.current.clamp(1, self.frames);
         self.onion_before = self.onion_before.min(MAX_ONION);
         self.onion_after = self.onion_after.min(MAX_ONION);
+        self.eases.retain(|_, e| valid_ease(e));
         self
     }
 
@@ -118,7 +131,7 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
             && anim.tweens.contains(&a.0)
             && let Some(&(fb, b)) = keys.get(shown + 1)
             && frame > fa
-            && let Some(g) = tween(&mut d, a, b, (frame - fa) as f64 / (fb - fa) as f64)
+            && let Some(g) = tween(&mut d, a, b, eased(anim.eases.get(&a.0), (frame - fa) as f64 / (fb - fa) as f64))
         {
             ghosts.push(g.0);
         }
@@ -128,6 +141,26 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     a.current = frame.clamp(1, a.frames);
     a.store(&mut d);
     d
+}
+
+/// Named easings → CSS cubic-bezier control points (the CSS Easing Functions spec's values).
+const EASES: [(&str, [f64; 4]); 3] = [("easeIn", [0.42, 0.0, 1.0, 1.0]), ("easeOut", [0.0, 0.0, 0.58, 1.0]), ("easeInOut", [0.42, 0.0, 0.58, 1.0])];
+
+fn valid_ease(e: &[f64; 4]) -> bool {
+    e.iter().all(|v| v.is_finite()) && (0.0..=1.0).contains(&e[0]) && (0.0..=1.0).contains(&e[2]) && e[1].abs() <= 10.0 && e[3].abs() <= 10.0
+}
+
+/// Progress `x` (0–1) through a tween with easing `e` → how far the art has gone (may overshoot).
+fn eased(e: Option<&[f64; 4]>, x: f64) -> f64 {
+    let Some(&[x1, y1, x2, y2]) = e else { return x };
+    let bez = |a: f64, b: f64, u: f64| 3.0 * a * u * (1.0 - u) * (1.0 - u) + 3.0 * b * u * u * (1.0 - u) + u * u * u;
+    // x(u) rises monotonically for x1, x2 in 0–1: bisect for the u where it reaches x.
+    let (mut lo, mut hi) = (0.0, 1.0);
+    for _ in 0..50 {
+        let mid = (lo + hi) / 2.0;
+        if bez(x1, x2, mid) < x { lo = mid } else { hi = mid }
+    }
+    bez(y1, y2, (lo + hi) / 2.0)
 }
 
 /// Keyframe `a`'s art `t` (0–1) of the way to keyframe `b`'s, as a locked layer shown in `a`'s
@@ -308,7 +341,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Motion Tween",
             [],
             None,
-            "{row?, frame?, on?: bool (default: toggle)} the keyframe in effect at the frame tweens its art toward the row's next keyframe (objects pair by name, else order; same-shape pairs move, turn and scale, others morph; fill, stroke and opacity mix) → {id, tween}",
+            "{row?, frame?, on?: bool (default: toggle; on when ease is given), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (CSS cubic-bezier)} the keyframe in effect at the frame tweens its art toward the row's next keyframe (objects pair by name, else order; same-shape pairs move, turn and scale, others morph; fill, stroke and opacity mix) → {id, tween, ease: [x1, y1, x2, y2] | null}",
             has_doc,
             set_tween
         ),
@@ -343,7 +376,11 @@ fn info(s: &mut Session, _: &Value) -> Result<Value> {
         .iter()
         .rev()
         .map(|r| {
-            let keys: Vec<Value> = anim.row_keys(r).into_iter().map(|(f, id)| json!({"frame": f, "id": id.0})).collect();
+            let keys: Vec<Value> = anim
+                .row_keys(r)
+                .into_iter()
+                .map(|(f, id)| json!({"frame": f, "id": id.0, "tween": anim.tweens.contains(&id.0), "ease": anim.eases.get(&id.0)}))
+                .collect();
             json!({"id": r.id.0, "name": r.name.clone().unwrap_or_default(), "keys": keys})
         })
         .collect();
@@ -472,7 +509,26 @@ fn set_tween(s: &mut Session, p: &Value) -> Result<Value> {
     let anim = Anim::of(d);
     let frame = frame_param(p, &anim, C)?;
     let key = d.node(row).and_then(|r| anim.key_at(r, frame)).ok_or_else(|| bad(C, format!("no keyframe at frame {frame} on this layer")))?;
-    let on = p.get("on").and_then(Value::as_bool).unwrap_or(!anim.tweens.contains(&key.0));
+    let ease = match p.get("ease") {
+        None | Some(Value::Null) => None,
+        Some(Value::String(n)) if n == "linear" => Some(None),
+        Some(Value::String(n)) => Some(Some(
+            EASES
+                .iter()
+                .find(|(k, _)| k == n)
+                .map(|(_, e)| *e)
+                .ok_or_else(|| bad(C, format!("ease {n:?} isn't one of linear, easeIn, easeOut, easeInOut")))?,
+        )),
+        Some(v) => {
+            let e: [f64; 4] = serde_json::from_value(v.clone())
+                .ok()
+                .filter(valid_ease)
+                .ok_or_else(|| bad(C, "ease must be a name or [x1, y1, x2, y2] with x1 and x2 from 0 to 1"))?;
+            Some(Some(e))
+        }
+    };
+    // Setting an ease turns the tween on; otherwise `on` toggles it.
+    let on = p.get("on").and_then(Value::as_bool).unwrap_or(ease.is_some() || !anim.tweens.contains(&key.0));
     s.edit("Motion Tween", |d, _| {
         let mut a = Anim::of(d);
         if on {
@@ -480,11 +536,16 @@ fn set_tween(s: &mut Session, p: &Value) -> Result<Value> {
         } else {
             a.tweens.remove(&key.0);
         }
+        match ease {
+            Some(Some(e)) => _ = a.eases.insert(key.0, e),
+            Some(None) => _ = a.eases.remove(&key.0),
+            None => {}
+        }
         a.store(d);
         Ok(())
     })?;
     show(s, anim.current)?;
-    Ok(json!({"id": key.0, "tween": on}))
+    Ok(json!({"id": key.0, "tween": on, "ease": Anim::of(&s.doc()?.doc).eases.get(&key.0)}))
 }
 
 fn set_fps(s: &mut Session, p: &Value) -> Result<Value> {
@@ -793,6 +854,39 @@ mod tests {
         let vectorcraft_color::Paint::Solid { color, .. } = n.appearance.fill_paint() else { panic!("solid fill") };
         let [r, _, bl] = color.to_rgb();
         assert!((r - 0.5).abs() < 0.05 && (bl - 0.5).abs() < 0.05, "colour halfway: {r} {bl}");
+    }
+
+    #[test]
+    fn easing_curves_bend_the_timing() {
+        assert_eq!(eased(None, 0.5), 0.5);
+        let at = |n: &str, x: f64| eased(EASES.iter().find(|(k, _)| *k == n).map(|(_, e)| e), x);
+        assert!(at("easeIn", 0.5) < 0.4 && at("easeOut", 0.5) > 0.6);
+        assert!((at("easeInOut", 0.5) - 0.5).abs() < 1e-6);
+        // CSS "ease" (0.25, 0.1, 0.25, 1) at 0.5 is about 0.8024.
+        assert!((eased(Some(&[0.25, 0.1, 0.25, 1.0]), 0.5) - 0.8024).abs() < 1e-3);
+        for x in [0.0, 1.0] {
+            assert!((at("easeIn", x) - x).abs() < 1e-9);
+        }
+    }
+
+    #[test]
+    fn a_tween_keeps_its_ease_through_save_and_moves_by_it() {
+        let mut s = session();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        rect(&mut s, 0.0);
+        s.execute("anim.blankKeyframe", &json!({"frame": 11})).unwrap();
+        rect(&mut s, 100.0);
+        let r = s.execute("anim.tween", &json!({"frame": 1, "ease": "easeIn"})).unwrap();
+        assert_eq!(r["tween"], true);
+        assert!(s.execute("anim.tween", &json!({"frame": 1, "ease": "bouncy"})).is_err());
+        assert!(s.execute("anim.tween", &json!({"frame": 1, "ease": [2, 0, 1, 1]})).is_err());
+        s.execute("anim.goto", &json!({"frame": 6})).unwrap();
+        let x = tweened(&s).geometric_bounds().unwrap().x0;
+        assert!(x < 40.0, "eased in, behind halfway: {x}");
+        let back = vectorcraft_format::load(&vectorcraft_format::save(&s.doc().unwrap().doc, false)).unwrap();
+        assert_eq!(Anim::of(&back).eases.values().next(), Some(&[0.42, 0.0, 1.0, 1.0]));
+        s.execute("anim.tween", &json!({"frame": 1, "ease": "linear"})).unwrap();
+        assert!(Anim::of(&s.doc().unwrap().doc).eases.is_empty());
     }
 
     #[test]

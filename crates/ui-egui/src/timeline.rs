@@ -73,8 +73,11 @@ fn info_of(doc: &vectorcraft_doc::Document) -> Value {
         .iter()
         .rev()
         .map(|r| {
-            let keys: Vec<Value> =
-                a.row_keys(r).into_iter().map(|(f, id)| json!({"frame": f, "id": id.0, "tween": a.tweens.contains(&id.0)})).collect();
+            let keys: Vec<Value> = a
+                .row_keys(r)
+                .into_iter()
+                .map(|(f, id)| json!({"frame": f, "id": id.0, "tween": a.tweens.contains(&id.0), "ease": a.eases.get(&id.0)}))
+                .collect();
             json!({"id": r.id.0, "name": r.name.clone().unwrap_or_default(), "keys": keys})
         })
         .collect();
@@ -150,6 +153,20 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         if ui.button(tl!("Motion Tween")).on_hover_text(tl!("Move the keyframe's art toward the next keyframe")).clicked() {
             run_reporting(app, "anim.tween");
         }
+        ui.menu_button(tl!("Easing"), |ui| {
+            for (id, label) in
+                [("linear", tl!("Linear")), ("easeIn", tl!("Ease In")), ("easeOut", tl!("Ease Out")), ("easeInOut", tl!("Ease In Out"))]
+            {
+                if ui.button(label).clicked() {
+                    if let Err(e) = app.run("anim.tween", json!({"ease": id})) {
+                        app.status(e);
+                    }
+                    ui.close();
+                }
+            }
+        })
+        .response
+        .on_hover_text(tl!("How the tween speeds up and slows down"));
         ui.add_space(8.0);
         // Onion skin: one keyframe on each side, faint.
         if ui.selectable_label(onion, tl!("Onion Skin")).on_hover_text(tl!("Show the keyframes before and after faintly")).clicked() {
@@ -339,6 +356,11 @@ mod snapshot_probe {
         app.run("anim.keyframe", json!({"frame": 1})).unwrap();
         app.run("shape.ellipse", json!({"x": 100, "y": 300, "width": 80, "height": 80})).unwrap();
         app.run("anim.blankKeyframe", json!({"frame": 6})).unwrap();
+        app.run("anim.tween", json!({"frame": 1, "ease": "easeOut"})).unwrap();
+        // TIMELINE_LANG=ar for a look right to left.
+        if let Some(l) = std::env::var("TIMELINE_LANG").ok().and_then(|c| crate::i18n::Lang::from_code(&c)) {
+            crate::i18n::set_current(l);
+        }
         let mut ready = false;
         let mut h = egui_kittest::Harness::builder().with_size(egui::vec2(1000.0, 200.0)).wgpu().build_ui_state(
             move |ui, app: &mut VectorcraftApp| {
