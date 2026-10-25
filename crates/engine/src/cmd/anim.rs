@@ -427,6 +427,8 @@ pub(crate) fn show(s: &mut Session, frame: u32) -> Result<Value> {
     if let Some(key) = row.and_then(|r| d.node(r)).and_then(|r| anim.key_at(r, frame)) {
         st.active_layer = Some(key);
     }
+    // Art now hidden behind its posed copy can't stay selected.
+    st.selection.objects.retain(|id| !anim.posed.contains(&id.0));
     st.doc = Arc::new(d);
     st.revision += 1;
     Ok(json!({ "frame": anim.current }))
