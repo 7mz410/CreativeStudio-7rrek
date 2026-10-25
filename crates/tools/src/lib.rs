@@ -382,7 +382,7 @@ pub struct ToolContext<'a> {
     /// Where the Plane Switching Widget sits (Perspective Grid Options); None while it's hidden.
     pub plane_widget: Option<distort::perspective::widget::WidgetCorner>,
     /// The current layer's skeleton posed at the current frame, for the Bone tool.
-    pub bones: Option<Bones>,
+    pub bones: Option<&'a Bones>,
 }
 
 impl ToolContext<'_> {
