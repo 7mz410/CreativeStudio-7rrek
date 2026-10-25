@@ -27,13 +27,20 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         return;
     }
     let current = list["current"].as_u64();
+    let chart = app.session.execute("anim.mouths", &json!({})).map(|c| c["chart"].clone()).unwrap_or(Value::Null);
     let mut clicked = None;
+    let mut mouth = None;
     for d in &drawings {
         let id = d["id"].as_u64().unwrap_or_default();
         let frames: Vec<String> = d["frames"].as_array().into_iter().flatten().filter_map(Value::as_u64).map(|f| f.to_string()).collect();
+        let shown = !frames.is_empty();
         let frames = crate::i18n::fmt(tl!("frames: {frames}"), &[("frames", &frames.join(", "))]);
         let name = d["name"].as_str().unwrap_or_default().to_string();
-        let text = format!("{name} · {frames}");
+        // The mouth shapes this drawing shows in lip sync, if any.
+        let shapes: String = chart.as_object().into_iter().flatten().filter(|(_, v)| v.as_u64() == Some(id)).map(|(k, _)| k.as_str()).collect();
+        let label = if shapes.is_empty() || shapes == name { name.clone() } else { format!("{name} ({shapes})") };
+        // A drawing no frame shows lists no frames.
+        let text = if shown { format!("{label} · {frames}") } else { label };
         let resp = ui
             .horizontal(|ui| {
                 let (th, _) = ui.allocate_exact_size(egui::vec2(THUMB, THUMB), egui::Sense::hover());
@@ -47,6 +54,18 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         if resp.clicked() && current != Some(id) {
             clicked = Some(id);
         }
+        resp.context_menu(|ui| {
+            ui.label(tl!("Mouth Shape"));
+            for m in vectorcraft_audio::MOUTHS {
+                if ui.button(m.to_string()).clicked() {
+                    mouth = Some((m, id));
+                    ui.close();
+                }
+            }
+        });
+    }
+    if let Some(Err(e)) = mouth.map(|(m, id)| app.run("anim.mouthChart", json!({"shape": m.to_string(), "drawing": id}))) {
+        app.status(e);
     }
     if let Some(Err(e)) = clicked.map(|id| app.run("anim.expose", json!({"drawing": id}))) {
         app.status(e);

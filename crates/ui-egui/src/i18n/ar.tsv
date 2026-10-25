@@ -5636,6 +5636,13 @@ font-technology	Variable	متغير
 	Drawings	الرسومات
 	No drawings: add keyframes to this layer	لا توجد رسومات: أضف مفاتيح إطارات إلى هذه الطبقة
 	frames: {frames}	الإطارات: {frames}
+	Lip Sync	مزامنة الشفاه
+	Pick the current layer's mouth drawings from the first sound	اختر رسومات فم الطبقة الحالية من الصوت الأول
+	Mouth Shape	شكل الفم
+	Mouth Chart	جدول الأفواه
+	Set Mouth	تعيين الفم
+	Set Mouth Shape Drawing	تعيين رسمة شكل الفم
+	Lip Sync from Sound	مزامنة الشفاه من الصوت
 	Hang the current layer from a new peg	علّق الطبقة الحالية على وتد جديد
 	Key the current layer's peg at this frame	ضع مفتاحًا لوتد الطبقة الحالية عند هذا الإطار
 	Bone Tool	أداة العظام

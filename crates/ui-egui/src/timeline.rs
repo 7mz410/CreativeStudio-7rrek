@@ -201,6 +201,9 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         if ui.button(tl!("Import Sound…")).on_hover_text(tl!("Add a WAV, MP3 or Ogg sound at this frame")).clicked() {
             run_reporting(app, "anim.soundImportAs");
         }
+        if ui.button(tl!("Lip Sync")).on_hover_text(tl!("Pick the current layer's mouth drawings from the first sound")).clicked() {
+            run_reporting(app, "anim.lipSync");
+        }
         ui.add_space(8.0);
         // Onion skin: one keyframe on each side, faint.
         if ui.selectable_label(onion, tl!("Onion Skin")).on_hover_text(tl!("Show the keyframes before and after faintly")).clicked() {
