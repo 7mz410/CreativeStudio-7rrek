@@ -288,4 +288,27 @@ mod tests {
         assert!(mix_for_export(&s.doc().unwrap().doc, 1, 12, 12).unwrap().is_none());
         let _ = std::fs::remove_dir_all(&d);
     }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    #[test]
+    fn a_video_export_carries_the_sound() {
+        let d = std::env::temp_dir().join(format!("vc-anim-sound-video-{}", std::process::id()));
+        std::fs::create_dir_all(&d).unwrap();
+        let file = d.join("tone.wav");
+        std::fs::write(&file, wav()).unwrap();
+        let mut s = session();
+        s.execute("anim.setFrames", &json!({"frames": 12})).unwrap();
+        s.execute("anim.soundImport", &json!({"path": file.to_str().unwrap(), "start": 3})).unwrap();
+        for (f, audio) in [("webm", "opus"), ("mp4", "aac")] {
+            let out = d.join(format!("walk.{f}"));
+            let r = s.execute("anim.exportVideo", &json!({"path": out.to_str().unwrap(), "format": f, "scale": 0.1})).unwrap();
+            assert_eq!(r["sound"], true);
+            if let Ok(o) =
+                std::process::Command::new("ffprobe").args(["-v", "error", "-show_entries", "stream=codec_name", "-of", "csv=p=0"]).arg(&out).output()
+            {
+                assert!(String::from_utf8_lossy(&o.stdout).contains(audio), "{f} has {audio}");
+            }
+        }
+        let _ = std::fs::remove_dir_all(&d);
+    }
 }

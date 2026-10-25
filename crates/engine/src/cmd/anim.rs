@@ -442,7 +442,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Export Video…",
             [],
             None,
-            "{path, format?: \"webm\" (default) | \"mp4\", fps?: 1–60 (default: the timeline's), scale?: (default 1), artboard?: index (default 0), from?, to?} the artboard's frames as a VP9 WebM or H.264 MP4 movie, transparency on white → {path, frames, width, height, fps}",
+            "{path, format?: \"webm\" (default) | \"mp4\", fps?: 1–60 (default: the timeline's), scale?: (default 1), artboard?: index (default 0), from?, to?} the artboard's frames as a VP9 WebM or H.264 MP4 movie, transparency on white, with the timeline's sounds (Opus in WebM, AAC in MP4) → {path, frames, width, height, fps, sound}",
             has_doc,
             export_video
         ),
@@ -728,10 +728,13 @@ pub fn encode_video(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
         Webm(Box<vectorcraft_video::WebmWriter>),
         Mp4(Box<vectorcraft_video::Mp4Writer>),
     }
-    let mut enc = if mp4 {
-        Enc::Mp4(Box::new(vectorcraft_video::Mp4Writer::new(w, h, fps).map_err(|e| bad(C, e))?))
-    } else {
-        Enc::Webm(Box::new(vectorcraft_video::WebmWriter::new(w, h, fps).map_err(|e| bad(C, e))?))
+    // The timeline's sounds, timed at the export's frame rate so they stay in step with the frames.
+    let sound = super::anim_sound::mix_for_export(doc, from, to, fps)?;
+    let mut enc = match (mp4, &sound) {
+        (true, Some(a)) => Enc::Mp4(Box::new(vectorcraft_video::Mp4Writer::with_audio(w, h, fps, a).map_err(|e| bad(C, e))?)),
+        (true, None) => Enc::Mp4(Box::new(vectorcraft_video::Mp4Writer::new(w, h, fps).map_err(|e| bad(C, e))?)),
+        (false, Some(a)) => Enc::Webm(Box::new(vectorcraft_video::WebmWriter::with_audio(w, h, fps, a).map_err(|e| bad(C, e))?)),
+        (false, None) => Enc::Webm(Box::new(vectorcraft_video::WebmWriter::new(w, h, fps).map_err(|e| bad(C, e))?)),
     };
     let mut r = vectorcraft_render::Renderer::new();
     for f in from..=to {
@@ -755,7 +758,7 @@ pub fn encode_video(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
         Enc::Webm(e) => e.finish(),
         Enc::Mp4(e) => e.finish().map_err(|e| bad(C, e))?,
     };
-    Ok((out, json!({"frames": to - from + 1, "width": w, "height": h, "fps": fps})))
+    Ok((out, json!({"frames": to - from + 1, "width": w, "height": h, "fps": fps, "sound": sound.is_some()})))
 }
 
 /// `doc`'s frames as an animated GIF (`anim.exportGif`'s options in `p`, `path` aside) → the bytes
