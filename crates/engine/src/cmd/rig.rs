@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 use vectorcraft_doc::{Document, NodeId, NodeKind};
-use vectorcraft_geom::{Affine, Point, Vec2};
+use vectorcraft_geom::{Affine, Anchor, Point, SubPath, Vec2};
 
 use super::anim::{eased, valid_ease};
 
@@ -124,6 +124,50 @@ impl Skeleton {
     }
 }
 
+/// Longest piece (points) a segment keeps before it is split, so a straight edge can bend.
+const PIECE: f64 = 12.0;
+
+/// `sp` with its long segments split into pieces of at most about [`PIECE`] (same shape).
+fn densify(sp: &mut SubPath) {
+    let n = sp.anchors.len();
+    if n < 2 {
+        return;
+    }
+    let segs = if sp.closed { n } else { n - 1 };
+    let mut out: Vec<Anchor> = Vec::with_capacity(n * 2);
+    for i in 0..segs {
+        let (Some(a), Some(b)) = (sp.anchors.get(i), sp.anchors.get((i + 1) % n)) else { return };
+        let mut a = if i == 0 { *a } else { out.pop().unwrap_or(*a) };
+        let mut cur = [a.p, a.h_out, b.h_in, b.p];
+        let len = cur[0].distance(cur[1]) + cur[1].distance(cur[2]) + cur[2].distance(cur[3]);
+        let k = ((len / PIECE).ceil() as usize).clamp(1, 64);
+        for j in 0..k - 1 {
+            // Split off 1/(remaining pieces) of what is left (de Casteljau).
+            let t = 1.0 / (k - j) as f64;
+            let [p0, p1, p2, p3] = cur;
+            let (q0, q1, q2) = (p0.lerp(p1, t), p1.lerp(p2, t), p2.lerp(p3, t));
+            let (r0, r1) = (q0.lerp(q1, t), q1.lerp(q2, t));
+            let m = r0.lerp(r1, t);
+            a.h_out = q0;
+            out.push(a);
+            a = Anchor::with_handles(m, r0, r1);
+            cur = [m, r1, q2, p3];
+        }
+        a.h_out = cur[1];
+        out.push(a);
+        let mut end = *b;
+        end.h_in = cur[2];
+        out.push(end);
+    }
+    if sp.closed {
+        // The last piece ends on the first anchor: keep its in handle there.
+        if let (Some(last), Some(first)) = (out.pop(), out.first_mut()) {
+            first.h_in = last.h_in;
+        }
+    }
+    sp.anchors = out;
+}
+
 fn dist_to_segment(q: Point, a: Point, b: Point) -> f64 {
     let ab = b - a;
     let len2 = ab.hypot2();
@@ -155,6 +199,7 @@ pub fn apply(doc: &mut Document, frame: u32) {
             }
             let Some(path) = n.path_data_mut() else { continue };
             for sp in &mut path.subpaths {
+                densify(sp);
                 for k in &mut sp.anchors {
                     (k.p, k.h_in, k.h_out) = (sk.skin(&m, k.p), sk.skin(&m, k.h_in), sk.skin(&m, k.h_out));
                 }
@@ -192,6 +237,21 @@ mod tests {
         sk.keys.insert(5, Pose { angles: vec![0.0, 10.0, 0.0], ease: None });
         assert_eq!(sk.pose_at(9).unwrap()[1], 10.0);
         assert!((sk.pose_at(3).unwrap()[1] - 360.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn densifying_keeps_the_shape_and_splits_long_edges() {
+        let sq = |c| SubPath::new([(0.0, 0.0), (100.0, 0.0), (100.0, 20.0), (0.0, 20.0)].map(|(x, y)| Anchor::corner(Point::new(x, y))).to_vec(), c);
+        for closed in [true, false] {
+            let mut sp = sq(closed);
+            densify(&mut sp);
+            assert!(sp.anchors.len() > 10, "long edges split");
+            assert!(
+                sp.anchors.iter().all(|k| k.p.y.abs() < 1e-9 || (k.p.y - 20.0).abs() < 1e-9 || k.p.x.abs() < 1e-9 || (k.p.x - 100.0).abs() < 1e-9),
+                "points stay on the rectangle"
+            );
+            assert_eq!(sp.anchors.first().map(|k| k.p), Some(Point::ZERO));
+        }
     }
 
     #[test]

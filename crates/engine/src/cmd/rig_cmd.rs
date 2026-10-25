@@ -250,12 +250,8 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
     let row = row_param(s, p, C)?;
     let sk = skeleton(s, row)?;
     let frame = frame_param(p, &Anim::of(&s.doc()?.doc), C)?;
-    let joints: Vec<Value> = sk
-        .joints
-        .iter()
-        .enumerate()
-        .map(|(i, j)| json!({"index": i, "name": j.name, "parent": j.parent, "x": j.x, "y": j.y}))
-        .collect();
+    let joints: Vec<Value> =
+        sk.joints.iter().enumerate().map(|(i, j)| json!({"index": i, "name": j.name, "parent": j.parent, "x": j.x, "y": j.y})).collect();
     let keys: Vec<Value> = sk.keys.iter().map(|(f, k)| json!({"frame": f, "angles": k.angles, "ease": k.ease})).collect();
     let at = sk.pose_at(frame).map(|a| json!(a)).unwrap_or(Value::Null);
     Ok(json!({"joints": joints, "keys": keys, "at": at}))
