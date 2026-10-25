@@ -15,8 +15,9 @@ use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+use vectorcraft_doc::blend;
 use vectorcraft_doc::{Document, Node, NodeId};
-use vectorcraft_geom::{Affine, Rect};
+use vectorcraft_geom::{Affine, Point, Rect};
 
 use super::*;
 use crate::EngineError;
@@ -130,31 +131,89 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
 }
 
 /// Keyframe `a`'s art `t` (0–1) of the way to keyframe `b`'s, as a locked layer shown in `a`'s
-/// place → its id. The nth object moves and scales from its bounds in `a` toward the nth in `b`.
-// ponytail: bounds only (no rotation or shape morph); match by id or add rotation when asked.
+/// place → its id. Objects pair up by name, else by order. A pair whose paths have the same
+/// anchors up to a transform turns, scales and moves along that transform; any other pair morphs
+/// (the Blend tool's interpolation). Fill, stroke and opacity mix either way.
 fn tween(d: &mut Document, a: NodeId, b: NodeId, t: f64) -> Option<NodeId> {
     let from = d.node(a)?.clone();
     let to: Vec<Arc<Node>> = d.node(b)?.children().cloned().unwrap_or_default();
     let mut g = d.reid(&from);
     g.name = Some("Tween".into());
     (g.visible, g.locked, g.opacity) = (true, true, 1.0);
-    let mix = |x: f64, y: f64| x + (y - x) * t;
-    for (c, end) in g.children_mut().into_iter().flatten().zip(&to) {
-        let (Some(r0), Some(r1)) = (c.geometric_bounds(), end.geometric_bounds()) else { continue };
-        let r = Rect::new(mix(r0.x0, r1.x0), mix(r0.y0, r1.y0), mix(r0.x1, r1.x1), mix(r0.y1, r1.y1));
-        let k = |a: f64, b: f64| if a > 1e-9 { b / a } else { 1.0 };
-        let m = Affine::translate((r.x0, r.y0))
-            * Affine::scale_non_uniform(k(r0.width(), r.width()), k(r0.height(), r.height()))
-            * Affine::translate((-r0.x0, -r0.y0));
+    for (i, c) in g.children_mut().into_iter().flatten().enumerate() {
+        let named = c.name.as_ref().and_then(|n| to.iter().find(|e| e.name.as_ref() == Some(n)));
+        let Some(end) = named.or(to.get(i)) else { continue };
         let c = Arc::make_mut(c);
-        c.transform(m, true);
-        c.opacity = mix(c.opacity as f64, end.opacity as f64) as f32;
+        if let Some(m) = fit(c, end)
+            && let Some(r) = c.geometric_bounds()
+        {
+            // Turn and scale about the centre, which moves in a straight line.
+            let (p, [a, b, cc, dd, _, _]) = (r.center(), m.as_coeffs());
+            let q = p + (m * p - p) * t;
+            let turn = blend::lerp_affine(Affine::IDENTITY, Affine::new([a, b, cc, dd, 0.0, 0.0]), t);
+            c.transform(Affine::translate(q.to_vec2()) * turn * Affine::translate(-p.to_vec2()), true);
+            c.appearance = blend::lerp_appearance(&c.appearance, &end.appearance, t).into();
+            c.opacity = c.opacity + (end.opacity - c.opacity) * t as f32;
+        } else {
+            let id = c.id;
+            *c = blend::lerp_node(c, end, t);
+            c.id = id;
+        }
     }
     let n = d.node_mut(a)?;
     (n.visible, n.locked, n.opacity) = (false, false, 1.0);
     let parent = d.parent_of(a);
     let at = d.index_path(a)?.last()? + 1;
     d.insert(parent, at, g).ok()
+}
+
+/// The affine taking path `a`'s points (anchors and handles) onto path `b`'s, when both have the
+/// same anchor counts and the fit is close (least squares, within half a point per point).
+fn fit(a: &Node, b: &Node) -> Option<Affine> {
+    let pts = |n: &Node| -> Option<(Vec<usize>, Vec<Point>)> {
+        let p = n.path_data()?;
+        let counts = p.subpaths.iter().map(|s| s.anchors.len()).collect();
+        Some((counts, p.subpaths.iter().flat_map(|s| s.anchors.iter().flat_map(|k| [k.p, k.h_in, k.h_out])).collect()))
+    };
+    let ((ca, pa), (cb, pb)) = (pts(a)?, pts(b)?);
+    if ca != cb || pa.is_empty() {
+        return None;
+    }
+    // Normal equations: [Σxx Σxy Σx; Σxy Σyy Σy; Σx Σy n] · [m; k; e] = [Σxu; Σyu; Σu], once for u = x' and once for u = y'.
+    let mut s = [[0.0f64; 3]; 3];
+    let (mut rx, mut ry) = ([0.0f64; 3], [0.0f64; 3]);
+    for (p, q) in pa.iter().zip(&pb) {
+        let v = [p.x, p.y, 1.0];
+        for (i, vi) in v.iter().enumerate() {
+            for (j, vj) in v.iter().enumerate() {
+                s[i][j] += vi * vj;
+            }
+            rx[i] += vi * q.x;
+            ry[i] += vi * q.y;
+        }
+    }
+    let det3 = |m: &[[f64; 3]; 3]| {
+        m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+            + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0])
+    };
+    let det = det3(&s);
+    // Too few distinct points (a line or a dot) to pin a transform down.
+    if det.abs() < 1e-9 {
+        return None;
+    }
+    let solve = |r: [f64; 3]| -> [f64; 3] {
+        let col = |k: usize| {
+            let mut m = s;
+            for (row, v) in m.iter_mut().zip(r) {
+                row[k] = v;
+            }
+            det3(&m) / det
+        };
+        [col(0), col(1), col(2)]
+    };
+    let ([xa, xc, xe], [yb, yd, yf]) = (solve(rx), solve(ry));
+    let m = Affine::new([xa, yb, xc, yd, xe, yf]);
+    pa.iter().zip(&pb).all(|(p, q)| (m * *p - *q).hypot() < 0.5).then_some(m)
 }
 
 /// `doc` showing `frame` as it renders: no onion skin (exports, frames of a movie).
@@ -249,7 +308,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Motion Tween",
             [],
             None,
-            "{row?, frame?, on?: bool (default: toggle)} the keyframe in effect at the frame moves and scales its art toward the row's next keyframe → {id, tween}",
+            "{row?, frame?, on?: bool (default: toggle)} the keyframe in effect at the frame tweens its art toward the row's next keyframe (objects pair by name, else order; same-shape pairs move, turn and scale, others morph; fill, stroke and opacity mix) → {id, tween}",
             has_doc,
             set_tween
         ),
@@ -698,6 +757,63 @@ mod tests {
         let a = d.layers[0].children().unwrap().iter().find(|c| c.is_layer()).unwrap();
         assert_eq!(a.children().unwrap()[0].geometric_bounds().unwrap().x0, 0.0);
         assert_eq!(d.layers[0].children().unwrap().len(), 2, "two keyframes, no leftover tween");
+    }
+
+    /// The tween layer's first object at the frame shown.
+    fn tweened(s: &Session) -> Node {
+        let d = &s.doc().unwrap().doc;
+        let g = d.node(NodeId(Anim::of(d).ghosts[0])).unwrap();
+        (*g.children().unwrap()[0]).clone()
+    }
+
+    fn first_child(s: &Session, key: u64) -> u64 {
+        s.doc().unwrap().doc.node(NodeId(key)).unwrap().children().unwrap()[0].id.0
+    }
+
+    #[test]
+    fn a_motion_tween_turns_and_recolours_along_the_way() {
+        let mut s = session();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        rect(&mut s, 0.0);
+        s.execute("paint.setFill", &json!({"color": "#ff0000"})).unwrap();
+        let k5 = s.execute("anim.keyframe", &json!({"frame": 5})).unwrap()["id"].as_u64().unwrap();
+        let c = first_child(&s, k5);
+        s.execute("object.rotate", &json!({"ids": [c], "angle": 90})).unwrap();
+        s.execute("object.move", &json!({"ids": [c], "dx": 100, "dy": 0})).unwrap();
+        s.execute("paint.setFill", &json!({"ids": [c], "color": "#0000ff"})).unwrap();
+        s.execute("anim.tween", &json!({"frame": 1, "on": true})).unwrap();
+        s.execute("anim.goto", &json!({"frame": 3})).unwrap();
+        let n = tweened(&s);
+        let sp = &n.path_data().unwrap().subpaths[0].anchors;
+        let v = sp[1].p - sp[0].p;
+        let turn = v.y.atan2(v.x).to_degrees().rem_euclid(90.0);
+        assert!((turn - 45.0).abs() < 0.5, "halfway turned 45°, got {turn}");
+        let b = n.geometric_bounds().unwrap();
+        assert!((b.center().x - 60.0).abs() < 0.5, "halfway moved: {}", b.center().x);
+        let vectorcraft_color::Paint::Solid { color, .. } = n.appearance.fill_paint() else { panic!("solid fill") };
+        let [r, _, bl] = color.to_rgb();
+        assert!((r - 0.5).abs() < 0.05 && (bl - 0.5).abs() < 0.05, "colour halfway: {r} {bl}");
+    }
+
+    #[test]
+    fn objects_pair_by_name_before_order_and_odd_pairs_morph() {
+        let mut s = session();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        rect(&mut s, 0.0);
+        s.execute("shape.ellipse", &json!({"x": 200, "y": 10, "width": 20, "height": 20})).unwrap();
+        let k1 = Anim::of(&s.doc().unwrap().doc).keys.keys().next().copied().unwrap();
+        let ids: Vec<u64> = s.doc().unwrap().doc.node(NodeId(k1)).unwrap().children().unwrap().iter().map(|c| c.id.0).collect();
+        s.execute("layer.setProps", &json!({"ids": [ids[0]], "name": "box"})).unwrap();
+        let k5 = s.execute("anim.keyframe", &json!({"frame": 5})).unwrap()["id"].as_u64().unwrap();
+        // Swap the order in the second keyframe: the name still pairs the box with the box.
+        let later: Vec<u64> = s.doc().unwrap().doc.node(NodeId(k5)).unwrap().children().unwrap().iter().map(|c| c.id.0).collect();
+        s.execute("object.arrange", &json!({"ids": [later[0]], "to": "front"})).ok();
+        s.execute("object.move", &json!({"ids": [later[0]], "dx": 40, "dy": 0})).unwrap();
+        s.execute("anim.tween", &json!({"frame": 1, "on": true})).unwrap();
+        s.execute("anim.goto", &json!({"frame": 3})).unwrap();
+        let n = tweened(&s);
+        assert_eq!(n.name.as_deref(), Some("box"));
+        assert!((n.geometric_bounds().unwrap().x0 - 20.0).abs() < 0.5);
     }
 
     #[cfg(not(target_arch = "wasm32"))]
