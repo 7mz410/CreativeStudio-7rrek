@@ -95,6 +95,10 @@ pub struct Anim {
     /// change).
     #[serde(default)]
     pub posed: Vec<u64>,
+    /// Drawing substitution: row id → frame → the row's drawing (one of its keyframe sublayers)
+    /// shown from that frame on, as a keyframe would be.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub exposures: BTreeMap<u64, BTreeMap<u32, u64>>,
 }
 
 impl Default for Anim {
@@ -112,6 +116,7 @@ impl Default for Anim {
             sounds: Vec::new(),
             ghosts: Vec::new(),
             posed: Vec::new(),
+            exposures: BTreeMap::new(),
         }
     }
 }
@@ -129,6 +134,9 @@ impl Anim {
         self.onion_after = self.onion_after.min(MAX_ONION);
         self.eases.retain(|_, e| valid_ease(e));
         self.camera.retain(|f, c| (1..=MAX_FRAMES).contains(f) && c.valid());
+        for e in self.exposures.values_mut() {
+            e.retain(|f, _| (1..=MAX_FRAMES).contains(f));
+        }
         self.sounds.retain(|c| c.gain.is_finite() && (0.0..=4.0).contains(&c.gain) && (1..=MAX_FRAMES).contains(&c.start));
         self
     }
@@ -145,6 +153,19 @@ impl Anim {
             row.children().into_iter().flatten().filter(|c| c.is_layer()).filter_map(|c| self.keys.get(&c.id.0).map(|f| (*f, c.id))).collect();
         out.sort();
         out
+    }
+
+    /// What `row` shows from each frame on: its keyframes and its exposures of drawings it still
+    /// holds, earliest first (an exposure wins over a keyframe at the same frame).
+    pub fn row_frames(&self, row: &Node) -> Vec<(u32, NodeId)> {
+        let mut out: BTreeMap<u32, NodeId> = self.row_keys(row).into_iter().collect();
+        let held = |id: u64| row.children().into_iter().flatten().any(|c| c.is_layer() && c.id.0 == id);
+        for (f, id) in self.exposures.get(&row.id.0).into_iter().flatten() {
+            if held(*id) {
+                out.insert(*f, NodeId(*id));
+            }
+        }
+        out.into_iter().collect()
     }
 
     /// The keyframe of `row` in effect at `frame`, if the row has one there.
@@ -169,22 +190,30 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     }
     let mut ghosts = Vec::new();
     for row in &doc.layers {
-        let keys = anim.row_keys(row);
+        let keys = anim.row_frames(row);
         let Some(shown) = keys.iter().rposition(|(f, _)| *f <= frame).or((!keys.is_empty()).then_some(usize::MAX)) else { continue };
-        for (i, (_, id)) in keys.iter().enumerate() {
-            let Some(n) = d.node_mut(*id) else { continue };
+        for (_, id) in &keys {
+            if let Some(n) = d.node_mut(*id) {
+                (n.visible, n.locked, n.opacity) = (false, false, 1.0);
+            }
+        }
+        // A drawing exposed on several frames appears more than once: the one shown wins, then the
+        // nearest faint one.
+        let mut order: Vec<(usize, i64)> =
+            (0..keys.len()).map(|i| (i, if shown == usize::MAX { i64::MAX } else { i as i64 - shown as i64 })).collect();
+        order.sort_by_key(|(_, k)| std::cmp::Reverse(k.unsigned_abs()));
+        for (i, k) in order {
+            let Some(n) = keys.get(i).and_then(|(_, id)| d.node_mut(*id)) else { continue };
             // Distance in keyframes from the one shown (before the first keyframe, nothing is).
-            let dist = if shown == usize::MAX { None } else { Some(i as i64 - shown as i64) };
-            let faint = onion && dist.is_some_and(|k| (k < 0 && -k <= anim.onion_before as i64) || (k > 0 && k <= anim.onion_after as i64));
-            n.visible = dist == Some(0) || faint;
-            n.locked = faint;
-            n.opacity = match dist {
-                Some(0) => 1.0,
-                Some(k) if faint => 0.35 / k.unsigned_abs() as f32,
-                _ => 1.0,
-            };
+            let faint = onion && k != i64::MAX && ((k < 0 && -k <= anim.onion_before as i64) || (k > 0 && k <= anim.onion_after as i64));
+            if k == 0 {
+                (n.visible, n.locked, n.opacity) = (true, false, 1.0);
+            } else if faint {
+                (n.visible, n.locked, n.opacity) = (true, true, 0.35 / k.unsigned_abs() as f32);
+            }
         }
         if let Some(&(fa, a)) = keys.get(shown)
+            && anim.keys.get(&a.0) == Some(&fa)
             && anim.tweens.contains(&a.0)
             && let Some(&(fb, b)) = keys.get(shown + 1)
             && frame > fa

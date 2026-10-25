@@ -4,6 +4,7 @@ pub(crate) mod appearance;
 // 7rrek (Creative Studio): frame-by-frame animation.
 pub mod anim;
 pub mod anim_camera;
+pub mod anim_draw;
 pub mod anim_sound;
 mod assets;
 mod attributes;
@@ -310,6 +311,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(cut::specs());
         v.extend(anim::specs());
         v.extend(anim_camera::specs());
+        v.extend(anim_draw::specs());
         v.extend(anim_sound::specs());
         v.extend(rig_cmd::specs());
         v.extend(peg_cmd::specs());
