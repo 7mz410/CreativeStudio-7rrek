@@ -185,6 +185,8 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     }
     // Rigged rows bend their art to the pose at this frame.
     super::rig::apply(&mut d, frame);
+    // Pegs then carry their rows.
+    super::peg::apply(&mut d, frame);
     let mut a = anim;
     a.ghosts = ghosts;
     a.current = frame.clamp(1, a.frames);
@@ -342,7 +344,7 @@ pub fn at_frame(doc: &Document, frame: u32) -> Document {
 }
 
 /// The top-level layer (timeline row) that holds `id`.
-fn row_of(doc: &Document, id: NodeId) -> Option<NodeId> {
+pub(crate) fn row_of(doc: &Document, id: NodeId) -> Option<NodeId> {
     let mut cur = id;
     while let Some(p) = doc.parent_of(cur) {
         cur = p;

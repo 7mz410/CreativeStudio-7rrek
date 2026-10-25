@@ -5624,6 +5624,10 @@ font-technology	Variable	متغير
 	Import Sound…	استيراد صوت…
 	Add a WAV, MP3 or Ogg sound at this frame	أضف صوت WAV أو MP3 أو Ogg عند هذا الإطار
 	Camera Keyframe	إطار رئيسي للكاميرا
+	Bones	العظام
+	Bone Tool	أداة العظام
+	Pose Joint	تحريك مفصل
+	Move Joint	نقل مفصل
 	Easing	التسهيل
 	How the tween speeds up and slows down	كيف تتسارع الحركة وتتباطأ
 	Export the frames as a WebM video	تصدير الإطارات كفيديو WebM
