@@ -115,7 +115,7 @@ mod tests {
         let mut app = VectorcraftApp::new(Session::new(), Default::default());
         app.session.execute("file.new", &json!({"width": 400, "height": 300})).unwrap();
         let r = app.session.execute("shape.rectangle", &json!({"x": 0, "y": -10, "width": 200, "height": 20})).unwrap();
-        let node = r.get("id").or_else(|| r.get("node")).and_then(|v| v.as_u64()).unwrap();
+        let node = r["id"].as_u64().unwrap();
         app.session.execute("curve.add", &json!({"node": node})).unwrap();
         app
     }
