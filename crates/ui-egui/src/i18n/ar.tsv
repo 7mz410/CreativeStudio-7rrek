@@ -5636,6 +5636,13 @@ font-technology	Variable	متغير
 	Drawings	الرسومات
 	Xsheet	ورقة التعريض
 	Palettes	الباليتات
+	Cutter	القاطع
+	Cut This Layer By	اقطع هذه الطبقة بـ
+	Inverted (Keep Only the Overlap)	معكوس (أبقِ التداخل فقط)
+	Remove Cutter	إزالة القاطع
+	Add Cutter	إضافة قاطع
+	Cutters	القواطع
+	Hide this layer where another layer's shape covers it	أخفِ هذه الطبقة حيث يغطيها شكل طبقة أخرى
 	New Palette	باليتة جديدة
 	Scene	المشهد
 	Show in Scene	أظهرها في المشهد

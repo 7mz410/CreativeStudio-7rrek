@@ -198,6 +198,7 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         if ui.button(tl!("Peg Key")).on_hover_text(tl!("Key the current layer's peg at this frame")).clicked() {
             run_reporting(app, "peg.key");
         }
+        cutter_menu(app, ui);
         if ui.button(tl!("Import Sound…")).on_hover_text(tl!("Add a WAV, MP3 or Ogg sound at this frame")).clicked() {
             run_reporting(app, "anim.soundImportAs");
         }
@@ -286,6 +287,47 @@ pub fn load_character(app: &mut VectorcraftApp, path: Option<String>) -> Result<
         }
     };
     app.run("character.load", json!({"path": path}))
+}
+
+/// The Cutter menu: cut the current layer's row by another row's shape, keep only the overlap
+/// instead, or stop cutting it.
+fn cutter_menu(app: &mut VectorcraftApp, ui: &mut egui::Ui) {
+    let Some(st) = app.session.active() else { return };
+    let row = st.current_layer().and_then(|l| vectorcraft_engine::cmd::anim::row_of(&st.doc, l));
+    let others: Vec<(u64, String)> = st.doc.layers.iter().rev().filter(|l| Some(l.id) != row).map(|l| (l.id.0, l.display_name())).collect();
+    let list = app.session.execute("cutter.list", &json!({})).unwrap_or(Value::Null);
+    let mine = list["cutters"].as_array().into_iter().flatten().find(|c| c["row"].as_u64() == row.map(|r| r.0)).cloned();
+    let mut act: Option<(&str, Value)> = None;
+    ui.menu_button(tl!("Cutter"), |ui| {
+        ui.label(tl!("Cut This Layer By"));
+        for (id, name) in &others {
+            let on = mine.as_ref().is_some_and(|c| c["matte"].as_u64() == Some(*id));
+            if ui.selectable_label(on, name).clicked() {
+                let inverted = mine.as_ref().and_then(|c| c["inverted"].as_bool()).unwrap_or(false);
+                act = Some(("cutter.add", json!({"matte": id, "inverted": inverted})));
+                ui.close();
+            }
+        }
+        if let Some(c) = &mine {
+            ui.separator();
+            let inverted = c["inverted"].as_bool().unwrap_or(false);
+            if ui.selectable_label(inverted, tl!("Inverted (Keep Only the Overlap)")).clicked() {
+                act = Some(("cutter.add", json!({"matte": c["matte"], "inverted": !inverted})));
+                ui.close();
+            }
+            if ui.button(tl!("Remove Cutter")).clicked() {
+                act = Some(("cutter.remove", json!({})));
+                ui.close();
+            }
+        }
+    })
+    .response
+    .on_hover_text(tl!("Hide this layer where another layer's shape covers it"));
+    if let Some((id, p)) = act
+        && let Err(e) = app.run(id, p)
+    {
+        app.status(e);
+    }
 }
 
 fn run_reporting(app: &mut VectorcraftApp, id: &str) {
