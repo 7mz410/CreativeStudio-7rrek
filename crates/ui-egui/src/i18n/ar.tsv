@@ -5637,6 +5637,10 @@ font-technology	Variable	متغير
 	Xsheet	ورقة التعريض
 	Palettes	الباليتات
 	Top View	المنظر العلوي
+	Stage	المسرح
+	Fields	حقول
+	Maintain Size	الحفاظ على الحجم
+	(+{n} fields from pegs)	(+{n} حقل من الأوتاد)
 	Cutter	القاطع
 	Cut This Layer By	اقطع هذه الطبقة بـ
 	Inverted (Keep Only the Overlap)	معكوس (أبقِ التداخل فقط)
