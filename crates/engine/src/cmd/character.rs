@@ -34,7 +34,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Load Character",
             [],
             None,
-            "{path: a .7rrekchar template} adds its character as a new layer on top, with new ids, its animation merged in → {layer}",
+            "{path: a .7rrekchar template} adds its character as a new layer on top named after the file, with new ids, its animation merged in → {layer}",
             has_doc,
             load
         ),
@@ -60,8 +60,15 @@ fn load(s: &mut Session, p: &Value) -> Result<Value> {
     let path = str_param(p, "path").filter(|x| !x.is_empty()).ok_or_else(|| bad(C, "path is required"))?.to_string();
     let bytes = super::fileio::read_file(&path)?;
     let t = vectorcraft_format::load(&bytes).map_err(|e| EngineError::Other(format!("{path}: not a character template ({e})")))?;
+    // The layer takes the template's file name ("hero.7rrekchar" → "hero"), told apart from the
+    // document's own layers.
+    let name = std::path::Path::new(&path).file_stem().and_then(|n| n.to_str()).filter(|n| !n.trim().is_empty()).map(str::to_string);
     let layer = s.edit("Load Character", |d, _| {
-        insert(d, &t).ok_or_else(|| bad(C, "the template holds no layer, or the document has too many pegs for it"))
+        let layer = insert(d, &t).ok_or_else(|| bad(C, "the template holds no layer, or the document has too many pegs for it"))?;
+        if let (Some(name), Some(n)) = (name, d.node_mut(layer)) {
+            n.name = Some(name);
+        }
+        Ok(layer)
     })?;
     let current = Anim::of(&s.doc()?.doc).current;
     show(s, current)?;
@@ -332,6 +339,7 @@ mod tests {
         let _ = std::fs::remove_file(path);
         let d = &other.doc().unwrap().doc;
         assert!(Rig::of(d).skeletons.contains_key(&layer), "its bones");
+        assert_eq!(d.node(NodeId(layer)).unwrap().name, Some(format!("hero-{}", std::process::id())), "named after the file");
         assert_eq!(other.execute("anim.drawings", &json!({"row": layer})).unwrap()["drawings"].as_array().unwrap().len(), 2, "its drawings");
         other.execute("edit.undo", &json!({})).unwrap();
         assert!(other.doc().unwrap().doc.node(NodeId(layer)).is_none(), "one undo step");
