@@ -485,8 +485,13 @@ fn add_layer(s: &mut Session, p: &Value, cmd: &str, label: &str, place: impl FnO
 
 fn new_layer(s: &mut Session, p: &Value) -> Result<Value> {
     let st = s.doc()?;
-    // Above the current layer, at its level; on top of everything with `top`.
-    let cur = st.current_layer().filter(|_| !bool_or(p, "top", false));
+    // Above the current layer, at its level; on top of everything with `top`. A keyframe (7rrek's
+    // drawings live in keyframe sublayers) stands for its timeline row: a new layer is a new row.
+    let keys = super::anim::Anim::of(&st.doc).keys;
+    let cur = st
+        .current_layer()
+        .map(|c| if keys.contains_key(&c.0) { super::anim::row_of(&st.doc, c).unwrap_or(c) } else { c })
+        .filter(|_| !bool_or(p, "top", false));
     add_layer(s, p, "layer.new", "New Layer", |d| match cur.and_then(|c| d.position(c)) {
         Some((parent, i, _)) => Ok((parent, i + 1)),
         None => Ok((None, usize::MAX)),

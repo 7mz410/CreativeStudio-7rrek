@@ -14,7 +14,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Expose Drawing",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), drawing?: id of one of the row's drawings (its keyframe sublayers), name?: as typed in the Xsheet: a drawing's name, else one whose name ends in that number (`Frame 4` for 4), else the drawing at that place in the row (1 is the first); neither clears the exposure at the frame} shows the drawing from the frame on → {frame, drawing}",
+            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), drawing?: id of one of the row's drawings (its keyframe sublayers), name?: text as typed in the Xsheet (a drawing's name; else one whose name ends in that number like `Frame 4` for 4; else the drawing at that place in the row with 1 the first); neither clears the exposure at the frame} shows the drawing from the frame on → {frame, drawing}",
             has_doc,
             expose
         ),

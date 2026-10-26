@@ -104,7 +104,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Palette Colour",
             [],
             None,
-            "{palette: index, swatch: a global swatch's name, color: as paint.setFill's color, or null to show the swatch's own} → {palette, swatch}",
+            "{palette: index, swatch: a global swatch's name, color: as paint.setFill's color (null shows the swatch's own)} → {palette, swatch}",
             has_doc,
             set_color
         ),
@@ -113,7 +113,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Use Palette",
             [],
             None,
-            "{palette: index, or null for none; scene?: true (the whole scene), else row?: layer id (default: the current layer's row)} what the scene or a row shows; a row's palette wins over the scene's → {palette}",
+            "{palette: index (null for none), scene?: true (the whole scene), row?: layer id when not the scene (default: the current layer's row)} what the scene or a row shows; a row's palette wins over the scene's → {palette}",
             has_doc,
             use_palette
         ),

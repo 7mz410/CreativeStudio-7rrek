@@ -26,7 +26,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Change Exposure",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), by: whole number, not 0} makes the drawing held at the frame last `by` frames longer (or shorter, below 0), moving the row's later keys and exposures with it; the timeline grows to fit → {moved: how many keys moved}",
+            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), by: whole number (not 0)} makes the drawing held at the frame last `by` frames longer (or shorter, below 0), moving the row's later keys and exposures with it; the timeline grows to fit → {moved: how many keys moved}",
             has_doc,
             exposure
         ),
