@@ -64,6 +64,7 @@ mod opacitymask;
 mod overprint;
 pub mod package;
 mod paint;
+pub mod palette;
 mod panelcmds;
 pub mod params;
 mod path;
@@ -319,6 +320,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(anim_draw::specs());
         v.extend(anim_mouth::specs());
         v.extend(anim_xsheet::specs());
+        v.extend(palette::specs());
         v.extend(mesh_cmd::specs());
         v.extend(character::specs());
         v.extend(anim_sound::specs());

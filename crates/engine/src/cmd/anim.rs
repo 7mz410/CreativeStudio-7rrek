@@ -201,6 +201,7 @@ pub(crate) fn unposed(doc: &Document) -> Document {
 pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     let anim = Anim::of(doc);
     let mut d = unposed(doc);
+    super::palette::apply(&mut d);
     let mut ghosts = Vec::new();
     for row in &doc.layers {
         let keys = anim.row_frames(row);
