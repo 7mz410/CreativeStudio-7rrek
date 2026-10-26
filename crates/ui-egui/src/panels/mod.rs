@@ -38,6 +38,7 @@ pub mod paragraph;
 pub mod pathfinder;
 pub mod pattern_options;
 pub mod properties;
+pub mod row_effects;
 pub mod separations;
 pub mod stroke;
 pub mod svg_interactivity;
@@ -184,6 +185,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         palettes::ID => palettes::show(app, ui),
         topview::ID => topview::show(app, ui),
         camera_preview::ID => camera_preview::show(app, ui),
+        row_effects::ID => row_effects::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),
         links::ID => links::show(app, ui),
         asset_export::ID => asset_export::show(app, ui),
