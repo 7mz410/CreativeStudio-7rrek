@@ -972,6 +972,36 @@ mod tests {
     }
 
     #[test]
+    fn a_duplicated_row_keeps_its_keyframes_and_shows_them() {
+        let mut s = session();
+        let k1 = s.execute("anim.keyframe", &json!({"frame": 1})).unwrap()["id"].as_u64().unwrap();
+        rect(&mut s, 10.0);
+        s.execute("anim.keyframe", &json!({"frame": 5})).unwrap();
+        rect(&mut s, 200.0);
+        let row = s.doc().unwrap().doc.parent_of(NodeId(k1)).unwrap();
+        let copy = NodeId(s.execute("layer.duplicate", &json!({"ids": [row.0]})).unwrap()["ids"][0].as_u64().unwrap());
+        let d = s.doc().unwrap().doc.clone();
+        let keys = Anim::of(&d).row_keys(d.node(copy).unwrap());
+        assert_eq!(keys.iter().map(|(f, _)| *f).collect::<Vec<_>>(), vec![1, 5], "the copy keeps both keyframes");
+        let (k1c, k5c) = (keys[0].1, keys[1].1);
+        let shown = at_frame(&d, 5);
+        assert!(shown.node(k5c).unwrap().visible && !shown.node(k1c).unwrap().visible, "frame 5 shows the copy's frame-5 art");
+    }
+
+    #[test]
+    fn a_duplicated_keyframe_is_not_a_second_key_on_its_frame() {
+        let mut s = session();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        rect(&mut s, 10.0);
+        let k5 = s.execute("anim.keyframe", &json!({"frame": 5})).unwrap()["id"].as_u64().unwrap();
+        s.execute("layer.duplicate", &json!({"ids": [k5]})).unwrap();
+        let d = s.doc().unwrap().doc.clone();
+        let row = d.parent_of(NodeId(k5)).unwrap();
+        let frames: Vec<u32> = Anim::of(&d).row_keys(d.node(row).unwrap()).iter().map(|(f, _)| *f).collect();
+        assert_eq!(frames, vec![1, 5]);
+    }
+
+    #[test]
     fn changing_frames_is_not_an_undo_step_but_keyframes_are() {
         let mut s = session();
         s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();

@@ -150,7 +150,7 @@ pub fn extract(doc: &Document, row: NodeId) -> Option<Document> {
 
 /// Pairs each id in `old`'s tree with the id at the same place in `new`'s (a [`Document::reid`]
 /// copy has the same shape).
-fn pair_ids(old: &Node, new: &Node, map: &mut HashMap<u64, u64>) {
+pub(crate) fn pair_ids(old: &Node, new: &Node, map: &mut HashMap<u64, u64>) {
     map.insert(old.id.0, new.id.0);
     if let (Some(a), Some(b)) = (old.children(), new.children()) {
         for (o, n) in a.iter().zip(b) {
