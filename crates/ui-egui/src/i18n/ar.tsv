@@ -61,6 +61,7 @@
 	Add Anchor Point	إضافة نقطة ربط
 	Add Anchor Point Tool	أداة إضافة نقطة ربط
 	Add Anchor Points	إضافة نقاط ربط
+	Add Curve Deformer	إضافة مشوِّه منحنى
 	Add Effect	إضافة تأثير
 	Add Freeform Line	إضافة خط حر
 	Add Freeform Point	إضافة نقطة حرة
@@ -538,6 +539,8 @@
 	Current Symbol	الرمز الحالي
 	Curvature	الانحناء
 	Curvature Tool	أداة الانحناء
+	Curve Deformer	مشوِّه المنحنى
+	Curve Key	مفتاح المنحنى
 	Curves…	المنحنيات…
 	Custom	مخصص
 	Customize…	تخصيص…
@@ -2368,6 +2371,7 @@
 	Serif / Mincho	Serif / Mincho
 	Server-side (.map)	من جهة الخادم (.map)
 	Set 1	المجموعة 1
+	Set Curve Deformer	ضبط مشوِّه المنحنى
 	Set Anchors	ضبط نقاط الربط
 	Set base color	تعيين اللون الأساسي
 	Set base color to the current color	تعيين اللون الأساسي إلى اللون الحالي
@@ -5670,6 +5674,8 @@ font-technology	Variable	متغير
 	Pin Mesh Vertex	تثبيت رأس الشبكة
 	Unpin Mesh Vertex	فك تثبيت رأس الشبكة
 	Mesh Key	مفتاح الشبكة
+	Remove Curve Deformer	إزالة مشوِّه المنحنى
+	Remove Curve Key	إزالة مفتاح المنحنى
 	Remove Mesh Key	حذف مفتاح الشبكة
 	Remove Mesh	حذف الشبكة
 	Pin Mesh	تثبيت الشبكة
