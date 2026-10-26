@@ -14,7 +14,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Add Mesh",
             [],
             None,
-            "{node?: id (default: the one selected object; error if none or several), cols?: 1–60 (default 4), rows?: 1–60 (default 4)} adds a grid mesh over the object's bounds, no pins → {node, vertices, triangles}",
+            "{node?: id (default: the one selected object; error if none or several), cols?: 1–60 (default 4), rows?: 1–60 (default 4)} adds a grid mesh over the object's bounds, no pins, and selects the object → {node, vertices, triangles}",
             has_doc,
             add
         ),
@@ -177,6 +177,8 @@ fn add(s: &mut Session, p: &Value) -> Result<Value> {
     let out = json!({"node": node.0, "vertices": m.rest.len(), "triangles": m.tris.len()});
     meshes.meshes.push(m);
     commit(s, "Add Mesh", meshes, C)?;
+    // Selected, so the Mesh Deform tool and its overlay work on this mesh next.
+    s.select(|_, sel| sel.set([node]))?;
     Ok(out)
 }
 
