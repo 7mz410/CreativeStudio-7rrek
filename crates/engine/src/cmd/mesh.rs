@@ -261,6 +261,8 @@ pub(crate) fn warped(n: &Node, warps: &BTreeMap<u64, Warp>) -> bool {
 
 /// The mesh over the one selected object, else the document's only mesh, at the current frame,
 /// for the Mesh Deform tool and the canvas overlay.
+// shortcut: solves on every call (each repaint and pointer event); cache by document revision when
+// meshes past a few hundred vertices make the canvas lag.
 pub fn points(doc: &Document, selected: &[vectorcraft_doc::NodeId]) -> Option<vectorcraft_tools::MeshPoints> {
     let meshes = Meshes::of(doc);
     let m = match (selected, meshes.meshes.as_slice()) {
