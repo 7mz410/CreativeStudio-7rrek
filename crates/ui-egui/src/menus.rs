@@ -54,6 +54,8 @@ use Item::Sep;
 pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
     ("anim.exportGifAs", "Export Animated GIF…", "", "{path?, scale?, from?, to?} anim.exportGif, picking the file (the web downloads it)"),
     ("anim.soundImportAs", "Import Sound…", "", "{path?, start?, gain?} anim.soundImport, picking the file"),
+    ("character.saveAs", "Save Character…", "", "{path?, row?} character.save, picking the file (the web downloads it)"),
+    ("character.loadAs", "Load Character…", "", "{path?} character.load, picking the file"),
     (
         "anim.exportVideoAs",
         "Export Video…",
@@ -1367,6 +1369,8 @@ pub fn run_ui_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<R
         "file.export.png" => io::export(app, Some("png"), s("path"), p),
         "anim.exportGifAs" => crate::timeline::export_gif(app, s("path"), p),
         "anim.soundImportAs" => crate::timeline::import_sound(app, s("path"), p),
+        "character.saveAs" => crate::timeline::save_character(app, s("path"), p),
+        "character.loadAs" => crate::timeline::load_character(app, s("path")),
         "anim.exportVideoAs" => crate::timeline::export_video(app, s("path"), p),
         "file.documentSetup" => crate::dialogs::open_document_setup(app),
         "edit.preferences" => {
@@ -3220,6 +3224,9 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 Sep,
                 c("Camera Keyframe", "anim.cameraKey"),
                 c("Import Sound…", "anim.soundImportAs"),
+                Sep,
+                c("Save Character…", "character.saveAs"),
+                c("Load Character…", "character.loadAs"),
                 Sep,
                 c("Export Animated GIF…", "anim.exportGifAs"),
                 c("Export Video…", "anim.exportVideoAs"),

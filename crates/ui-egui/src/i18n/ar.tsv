@@ -5655,6 +5655,11 @@ font-technology	Variable	متغير
 	Key the current layer's peg at this frame	ضع مفتاحًا لوتد الطبقة الحالية عند هذا الإطار
 	Bone Tool	أداة العظام
 	Mesh Deform Tool	أداة تشويه الشبكة
+	Save Character	حفظ الشخصية
+	Load Character	تحميل شخصية
+	Save Character…	حفظ الشخصية…
+	Load Character…	تحميل شخصية…
+	Character Templates	قوالب الشخصيات
 	Pose Joint	تحريك مفصل
 	Reach	الوصول
 	Move Joint	نقل مفصل

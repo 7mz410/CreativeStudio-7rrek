@@ -260,6 +260,34 @@ pub fn import_sound(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -
     app.run("anim.soundImport", p)
 }
 
+/// `character.saveAs`: the current layer's row (or `row`) as a character template at `path`, else a
+/// picked file (the web downloads it).
+pub fn save_character(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> Result<Value, String> {
+    use vectorcraft_engine::cmd::{anim::row_of, character};
+    let st = app.session.active().ok_or("no document")?;
+    let row = match p.get("row").and_then(Value::as_u64) {
+        Some(r) => vectorcraft_doc::NodeId(r),
+        None => st.current_layer().and_then(|l| row_of(&st.doc, l)).ok_or("no current layer")?,
+    };
+    let bytes = character::template_bytes(&st.doc, row).ok_or("no such layer")?;
+    let path = crate::io::target_path(app, path, character::EXTENSION)?;
+    crate::io::write_to(&mut app.services, &path, &bytes)?;
+    Ok(json!({"path": path, "bytes": bytes.len()}))
+}
+
+/// `character.loadAs`: `character.load` for `path`, else a picked template.
+pub fn load_character(app: &mut VectorcraftApp, path: Option<String>) -> Result<Value, String> {
+    use vectorcraft_engine::cmd::character::EXTENSION;
+    let path = match path {
+        Some(p) => p,
+        None => {
+            let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Character Templates", &[EXTENSION])], ..Default::default() };
+            crate::picks::open(app, &pick).ok_or("cancelled")?
+        }
+    };
+    app.run("character.load", json!({"path": path}))
+}
+
 fn run_reporting(app: &mut VectorcraftApp, id: &str) {
     if let Err(e) = app.run(id, json!({})) {
         app.status(e);
