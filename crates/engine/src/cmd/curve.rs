@@ -101,6 +101,23 @@ impl Curve {
     }
 }
 
+/// The curve deformer over the one selected object, else the document's only one, at the current
+/// frame, for the Curve Deform tool.
+pub fn points(doc: &Document, selected: &[vectorcraft_doc::NodeId]) -> Option<vectorcraft_tools::CurvePoints> {
+    let curves = Curves::of(doc);
+    let found = |n: u64| curves.curves.iter().find(|c| c.node == n);
+    let c = match selected {
+        [one] => found(one.0),
+        _ => None,
+    }
+    .or(match curves.curves.as_slice() {
+        [only] => Some(only),
+        _ => None,
+    })?;
+    let frame = super::anim::Anim::of(doc).current;
+    Some(vectorcraft_tools::CurvePoints { node: c.node, frame, points: c.at(frame), closed: c.closed })
+}
+
 type Seg = [Point; 4];
 
 fn segs(p: &[Point], closed: bool) -> Vec<Seg> {
@@ -125,7 +142,8 @@ fn tangent(s: &Seg, t: f64) -> Vec2 {
 /// The parameter of `s`'s point nearest `p`: a coarse scan, then a few Newton steps.
 fn nearest(s: &Seg, p: Point) -> f64 {
     const SCAN: usize = 32;
-    let mut t = (0..=SCAN).map(|i| i as f64 / SCAN as f64).min_by(|a, b| (eval(s, *a) - p).hypot2().total_cmp(&(eval(s, *b) - p).hypot2())).unwrap_or(0.0);
+    let mut t =
+        (0..=SCAN).map(|i| i as f64 / SCAN as f64).min_by(|a, b| (eval(s, *a) - p).hypot2().total_cmp(&(eval(s, *b) - p).hypot2())).unwrap_or(0.0);
     for _ in 0..4 {
         let h = 1e-4;
         let f = |t: f64| (eval(s, t) - p).hypot2();
@@ -268,5 +286,29 @@ mod tests {
         assert!(!Curve { rest: line(0.0, 1.0, 1)[..3].to_vec(), ..Default::default() }.valid());
         assert!(!Curve { rest: vec![[0.0, 0.0]; 3], closed: true, ..Default::default() }.valid());
         assert!(!Curve { rest: line(0.0, 1.0, 1), radius: Some(f64::NAN), ..Default::default() }.valid());
+    }
+}
+
+#[cfg(test)]
+mod points_tests {
+    use serde_json::json;
+    use vectorcraft_doc::NodeId;
+
+    use super::points;
+    use crate::Session;
+
+    #[test]
+    fn points_return_the_keyed_anchor_after_curve_key() {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({})).unwrap();
+        let n = s.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 100, "height": 50})).unwrap()["id"].as_u64().unwrap();
+        s.execute("curve.add", &json!({"node": n})).unwrap();
+        let before = points(&s.doc().unwrap().doc, &[NodeId(n)]).unwrap();
+        assert_eq!((before.node, before.closed, before.points.len()), (n, false, 7));
+        s.execute("curve.key", &json!({"node": n, "anchor": 1, "x": 70.0, "y": 9.0})).unwrap();
+        let after = points(&s.doc().unwrap().doc, &[NodeId(n)]).unwrap();
+        let anchor = after.points[3];
+        assert!((anchor.x - 70.0).abs() < 1e-9 && (anchor.y - 9.0).abs() < 1e-9, "{anchor:?}");
+        assert_eq!(after.frame, before.frame);
     }
 }

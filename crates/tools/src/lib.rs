@@ -13,6 +13,7 @@ pub mod builder;
 pub mod catalog;
 pub mod corners;
 pub mod cropimage;
+pub mod curve_deform;
 pub mod cut;
 pub mod dimension;
 pub mod direct;
@@ -167,6 +168,19 @@ pub struct MeshPoints {
     pub tris: Vec<[u32; 3]>,
     /// The pinned vertices, in pin order (a pin's index is its place here).
     pub pins: Vec<usize>,
+}
+
+/// The curve deformer over the selected object (or the document's only one) at the current frame,
+/// for the Curve Deform tool.
+#[derive(Clone, Debug, PartialEq)]
+pub struct CurvePoints {
+    /// The object the curve bends.
+    pub node: u64,
+    pub frame: u32,
+    /// Each point where the chain puts it at this frame: anchor, out handle, in handle, anchor, ….
+    pub points: Vec<Point>,
+    /// A closed chain (an envelope); its last segment runs back to the first anchor.
+    pub closed: bool,
 }
 
 /// What a tool asks the engine to do.
@@ -400,6 +414,8 @@ pub struct ToolContext<'a> {
     pub bones: Option<&'a Bones>,
     /// The mesh the Mesh Deform tool works on.
     pub mesh: Option<&'a MeshPoints>,
+    /// The curve the Curve Deform tool works on.
+    pub curve: Option<&'a CurvePoints>,
 }
 
 impl ToolContext<'_> {
@@ -887,6 +903,7 @@ pub fn create(id: &str) -> Box<dyn Tool> {
         "pen" => Box::new(pen::PenTool::default()),
         "bone" => Box::new(bone::BoneTool::default()),
         "meshDeform" => Box::new(mesh_deform::MeshDeformTool::default()),
+        "curveDeform" => Box::new(curve_deform::CurveDeformTool::default()),
         "dimension" => Box::new(dimension::DimensionTool::default()),
         "type" | "areaType" | "typeOnPath" | "verticalType" | "verticalAreaType" | "verticalTypeOnPath" => Box::new(text::TypeTool::new(id)),
         "rectangle" | "roundedRectangle" | "ellipse" | "polygon" | "star" | "lineSegment" => Box::new(shape::ShapeTool::new(id)),
@@ -1107,6 +1124,7 @@ pub(crate) mod testutil {
             plane_widget: Some(Default::default()),
             bones: None,
             mesh: None,
+            curve: None,
         }
     }
 }

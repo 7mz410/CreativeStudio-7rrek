@@ -24,6 +24,7 @@ pub mod community;
 pub mod control;
 pub mod credits;
 pub mod cursors;
+pub mod curve_overlay;
 pub mod dialogs;
 pub mod dock;
 mod edit_toolbar;

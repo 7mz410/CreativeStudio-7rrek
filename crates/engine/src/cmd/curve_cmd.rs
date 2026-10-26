@@ -126,7 +126,9 @@ fn anchor_param(p: &Value, n: usize, cmd: &str) -> Result<usize> {
 fn radius_param(p: &Value, cmd: &str) -> Result<Option<f64>> {
     match p.get("radius") {
         None | Some(Value::Null) => Ok(None),
-        Some(v) => v.as_f64().filter(|r| r.is_finite() && *r >= 0.0).map(Some).ok_or_else(|| bad(cmd, "`radius` must be a number of 0 or more, or null")),
+        Some(v) => {
+            v.as_f64().filter(|r| r.is_finite() && *r >= 0.0).map(Some).ok_or_else(|| bad(cmd, "`radius` must be a number of 0 or more, or null"))
+        }
     }
 }
 

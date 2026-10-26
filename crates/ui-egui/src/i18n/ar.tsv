@@ -5684,6 +5684,7 @@ font-technology	Variable	متغير
 	Key the current layer's peg at this frame	ضع مفتاحًا لوتد الطبقة الحالية عند هذا الإطار
 	Bone Tool	أداة العظام
 	Mesh Deform Tool	أداة تشويه الشبكة
+	Curve Deform Tool	أداة تشويه المنحنى
 	Save Character	حفظ الشخصية
 	Load Character	تحميل شخصية
 	Save Character…	حفظ الشخصية…
