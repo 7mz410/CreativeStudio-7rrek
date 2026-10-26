@@ -11,6 +11,7 @@ mod assets;
 mod attributes;
 mod brushsym;
 mod buildcmds;
+pub mod character;
 pub mod clipboard;
 mod colorcmds;
 pub mod colormgmt;
@@ -317,6 +318,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(anim_draw::specs());
         v.extend(anim_mouth::specs());
         v.extend(mesh_cmd::specs());
+        v.extend(character::specs());
         v.extend(anim_sound::specs());
         v.extend(rig_cmd::specs());
         v.extend(peg_cmd::specs());

@@ -181,7 +181,9 @@ impl Anim {
 
 /// `doc` showing `frame`: each animated row shows its keyframe in effect, the others hidden.
 /// With `onion`, the document's onion-skin keyframes around it show faintly and locked.
-pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
+/// `doc` without what the frame shown added: its in-between and posed copies gone, the art they
+/// stood in for shown again (the ghost and posed lists are left for the caller).
+pub(crate) fn unposed(doc: &Document) -> Document {
     let anim = Anim::of(doc);
     let mut d = doc.clone();
     for g in &anim.ghosts {
@@ -193,6 +195,12 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
             n.visible = true;
         }
     }
+    d
+}
+
+pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
+    let anim = Anim::of(doc);
+    let mut d = unposed(doc);
     let mut ghosts = Vec::new();
     for row in &doc.layers {
         let keys = anim.row_frames(row);
@@ -433,7 +441,7 @@ pub fn at_frame(doc: &Document, frame: u32) -> Document {
 }
 
 /// The top-level layer (timeline row) that holds `id`.
-pub(crate) fn row_of(doc: &Document, id: NodeId) -> Option<NodeId> {
+pub fn row_of(doc: &Document, id: NodeId) -> Option<NodeId> {
     let mut cur = id;
     while let Some(p) = doc.parent_of(cur) {
         cur = p;
