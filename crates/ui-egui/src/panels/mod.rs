@@ -44,6 +44,7 @@ pub mod swatches;
 pub mod symbols;
 pub mod tabs;
 pub mod text_styles;
+pub mod topview;
 pub mod transform;
 pub mod transparency;
 pub mod variables;
@@ -180,6 +181,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         drawings::ID => drawings::show(app, ui),
         xsheet::ID => xsheet::show(app, ui),
         palettes::ID => palettes::show(app, ui),
+        topview::ID => topview::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),
         links::ID => links::show(app, ui),
         asset_export::ID => asset_export::show(app, ui),

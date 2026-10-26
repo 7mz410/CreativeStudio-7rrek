@@ -3260,6 +3260,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 panel("Drawings", crate::panels::drawings::ID),
                 panel("Xsheet", crate::panels::xsheet::ID),
                 panel("Palettes", crate::panels::palettes::ID),
+                panel("Top View", crate::panels::topview::ID),
                 panel("Flattener Preview", crate::panels::flattener_preview::ID),
                 panel("Gradient", "gradient"),
                 panel("Graphic Styles", "graphicStyles"),
