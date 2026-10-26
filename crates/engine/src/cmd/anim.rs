@@ -103,6 +103,12 @@ pub struct Anim {
     /// shape left out falls back to the row's drawing named after it.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub mouths: BTreeMap<u64, BTreeMap<char, u64>>,
+    /// The rows the frame shown cut with an opacity mask, and the matte rows it hid (both taken
+    /// back on the next frame change; see cutter.rs).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub cut: Vec<u64>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub mattes: Vec<u64>,
 }
 
 impl Default for Anim {
@@ -122,6 +128,8 @@ impl Default for Anim {
             posed: Vec::new(),
             exposures: BTreeMap::new(),
             mouths: BTreeMap::new(),
+            cut: Vec::new(),
+            mattes: Vec::new(),
         }
     }
 }
@@ -188,9 +196,14 @@ pub(crate) fn unposed(doc: &Document) -> Document {
         // Already gone (deleted by hand) is fine.
         let _ = d.remove(NodeId(*g));
     }
-    for id in &anim.posed {
+    for id in anim.posed.iter().chain(&anim.mattes) {
         if let Some(n) = d.node_mut(NodeId(*id)) {
             n.visible = true;
+        }
+    }
+    for id in &anim.cut {
+        if let Some(n) = d.node_mut(NodeId(*id)) {
+            n.extras_mut().mask = None;
         }
     }
     d
@@ -237,9 +250,11 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
         }
     }
     let posed = pose(&mut d, frame, &mut ghosts);
+    let (cut, mattes) = super::cutter::apply(&mut d);
     let mut a = anim;
     a.ghosts = ghosts;
     a.posed = posed;
+    (a.cut, a.mattes) = (cut, mattes);
     a.current = frame.clamp(1, a.frames);
     a.store(&mut d);
     d
@@ -1161,5 +1176,15 @@ mod tests {
         s.execute("anim.exportVideo", &json!({"path": path.to_string_lossy(), "scale": 0.25, "format": "mp4"})).unwrap();
         assert_eq!(std::fs::read(&path).unwrap().get(4..8), Some(&b"ftyp"[..]));
         std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn a_new_layer_made_from_a_keyframe_is_a_new_row() {
+        let mut s = session();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        let id = s.execute("layer.new", &json!({})).unwrap()["id"].as_u64().unwrap();
+        let d = &s.doc().unwrap().doc;
+        assert_eq!(d.layers.len(), 2, "a top-level row, not a sublayer beside the keyframe");
+        assert!(d.layers.iter().any(|l| l.id.0 == id));
     }
 }
