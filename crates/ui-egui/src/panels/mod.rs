@@ -46,6 +46,7 @@ pub mod text_styles;
 pub mod transform;
 pub mod transparency;
 pub mod variables;
+pub mod xsheet;
 
 use egui::{Rect, Sense, Ui, vec2};
 use serde_json::{Value, json};
@@ -176,6 +177,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         svg_interactivity::ID => svg_interactivity::show(app, ui),
         variables::ID => variables::show(app, ui),
         drawings::ID => drawings::show(app, ui),
+        xsheet::ID => xsheet::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),
         links::ID => links::show(app, ui),
         asset_export::ID => asset_export::show(app, ui),

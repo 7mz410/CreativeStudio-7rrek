@@ -193,6 +193,7 @@ pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     (crate::panels::css_properties::ID, "CSS Properties", "globe"),
     (crate::panels::variables::ID, "Variables", "chart-column"),
     (crate::panels::drawings::ID, "Drawings", "layers"),
+    (crate::panels::xsheet::ID, "Xsheet", "layers"),
 ];
 
 /// Groups of icon panels separated by dividers in the collapsed column.
