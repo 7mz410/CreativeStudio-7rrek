@@ -194,6 +194,7 @@ pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     (crate::panels::variables::ID, "Variables", "chart-column"),
     (crate::panels::drawings::ID, "Drawings", "layers"),
     (crate::panels::xsheet::ID, "Xsheet", "layers"),
+    (crate::panels::palettes::ID, "Palettes", "swatch-book"),
 ];
 
 /// Groups of icon panels separated by dividers in the collapsed column.

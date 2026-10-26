@@ -32,6 +32,7 @@ pub mod links;
 pub mod magic_wand;
 pub mod navigator;
 pub mod opentype;
+pub mod palettes;
 pub mod paragraph;
 pub mod pathfinder;
 pub mod pattern_options;
@@ -178,6 +179,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         variables::ID => variables::show(app, ui),
         drawings::ID => drawings::show(app, ui),
         xsheet::ID => xsheet::show(app, ui),
+        palettes::ID => palettes::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),
         links::ID => links::show(app, ui),
         asset_export::ID => asset_export::show(app, ui),
