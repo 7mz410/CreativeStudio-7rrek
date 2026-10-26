@@ -1501,7 +1501,9 @@ fn shared_param_check_errors_show_their_values_as_given() {
             let (entries, _) = parse_entries(lang.0.source);
             let row = entries.iter().find(|(ctx, src, _)| ctx == "@msg" && src == template);
             let shown = message(lang, &e.to_string());
-            let as_given = shown.contains(&fmt(template, values)) || row.is_some_and(|(_, _, tr)| shown.contains(&fmt(tr, values)));
+            // Right-to-left catalogs hold their translations in visual word order (see `bidi`).
+            let stored = |tr: &str| if super::bidi::RTL_CODES.contains(&lang.code()) { super::bidi::visual(tr) } else { tr.to_string() };
+            let as_given = shown.contains(&fmt(template, values)) || row.is_some_and(|(_, _, tr)| shown.contains(&fmt(&stored(tr), values)));
             assert!(as_given, "{}: {shown}", lang.code());
         }
     }
