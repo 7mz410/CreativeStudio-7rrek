@@ -661,6 +661,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         selection_overlay(app, &painter, &xf, overlays.iter().any(|o| matches!(o, Overlay::CurvePoint { .. })));
         mirror_axis_overlay(app, &painter, &xf);
         crate::rig_overlay::paint(app, &painter, &xf);
+        crate::mesh_overlay::paint(app, &painter, &xf);
         if app.ui.view.text_threads {
             // Under the tools' overlays: a selected frame's own ports are drawn over its thread's.
             let mut threads = thread_overlays(app, xf.zoom);

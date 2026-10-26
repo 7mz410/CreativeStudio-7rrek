@@ -52,6 +52,7 @@ pub mod prefs_dialog;
 pub mod print;
 pub mod recovery;
 pub mod render_worker;
+pub mod mesh_overlay;
 pub mod rig_overlay;
 pub mod screen_color;
 mod scrub;
