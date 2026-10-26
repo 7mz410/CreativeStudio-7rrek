@@ -227,6 +227,7 @@ impl Session {
         let Some(st) = self.active.and_then(|i| self.docs.get(i)) else { return R::default() };
         let (unit, stroke_unit) = (self.general_unit(), self.stroke_unit());
         let bones = crate::cmd::rig::bones(&st.doc, st.current_layer());
+        let mesh = crate::cmd::mesh::points(&st.doc, &st.selection.objects);
         let cx = ToolContext {
             doc: &st.doc,
             ruler_origin: st.doc.ruler_origin_for(view.artboard),
@@ -293,6 +294,7 @@ impl Session {
             screen: view.screen,
             plane_widget: self.prefs.perspective_widget.show.then_some(self.prefs.perspective_widget.position),
             bones: bones.as_ref(),
+            mesh: mesh.as_ref(),
         };
         let tool = &mut self.tool;
         match crate::guard::catch_panic(|| f(tool.as_mut(), &cx)) {

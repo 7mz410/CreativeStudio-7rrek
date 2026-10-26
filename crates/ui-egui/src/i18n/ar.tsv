@@ -5654,6 +5654,7 @@ font-technology	Variable	متغير
 	Hang the current layer from a new peg	علّق الطبقة الحالية على وتد جديد
 	Key the current layer's peg at this frame	ضع مفتاحًا لوتد الطبقة الحالية عند هذا الإطار
 	Bone Tool	أداة العظام
+	Mesh Deform Tool	أداة تشويه الشبكة
 	Pose Joint	تحريك مفصل
 	Reach	الوصول
 	Move Joint	نقل مفصل

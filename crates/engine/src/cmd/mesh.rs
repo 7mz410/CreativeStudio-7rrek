@@ -259,6 +259,20 @@ pub(crate) fn warped(n: &Node, warps: &BTreeMap<u64, Warp>) -> bool {
     hit
 }
 
+/// The mesh over the one selected object, else the document's only mesh, at the current frame,
+/// for the Mesh Deform tool and the canvas overlay.
+pub fn points(doc: &Document, selected: &[vectorcraft_doc::NodeId]) -> Option<vectorcraft_tools::MeshPoints> {
+    let meshes = Meshes::of(doc);
+    let m = match (selected, meshes.meshes.as_slice()) {
+        ([one], _) if meshes.of_node(one.0).is_some() => meshes.of_node(one.0)?,
+        (_, [only]) => only,
+        _ => return None,
+    };
+    let frame = super::anim::Anim::of(doc).current;
+    let points = m.at(frame).unwrap_or_else(|| m.rest.iter().map(pt).collect());
+    Some(vectorcraft_tools::MeshPoints { node: m.node, frame, points, tris: m.tris.clone(), pins: m.pins.iter().map(|&v| v as usize).collect() })
+}
+
 /// A symmetric sparse matrix as rows of (column, value), built by adding entries.
 struct Sparse(Vec<BTreeMap<usize, f64>>);
 

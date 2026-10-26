@@ -21,6 +21,7 @@ pub mod draw2;
 pub mod extra;
 pub mod guides;
 pub mod intertwine;
+pub mod mesh_deform;
 pub mod meshblend;
 pub mod meshedit;
 pub mod mirror;
@@ -152,6 +153,20 @@ pub struct Bones {
     pub parents: Vec<Option<usize>>,
     /// Each joint's turn from rest at this frame (degrees).
     pub angles: Vec<f64>,
+}
+
+/// The mesh deformer's mesh over the selected object (or the document's only one) at the current
+/// frame, for the Mesh Deform tool.
+#[derive(Clone, Debug, PartialEq)]
+pub struct MeshPoints {
+    /// The object the mesh bends.
+    pub node: u64,
+    pub frame: u32,
+    /// Each vertex where the mesh puts it at this frame.
+    pub points: Vec<Point>,
+    pub tris: Vec<[u32; 3]>,
+    /// The pinned vertices, in pin order (a pin's index is its place here).
+    pub pins: Vec<usize>,
 }
 
 /// What a tool asks the engine to do.
@@ -383,6 +398,8 @@ pub struct ToolContext<'a> {
     pub plane_widget: Option<distort::perspective::widget::WidgetCorner>,
     /// The current layer's skeleton posed at the current frame, for the Bone tool.
     pub bones: Option<&'a Bones>,
+    /// The mesh the Mesh Deform tool works on.
+    pub mesh: Option<&'a MeshPoints>,
 }
 
 impl ToolContext<'_> {
@@ -869,6 +886,7 @@ pub fn create(id: &str) -> Box<dyn Tool> {
         "groupSelection" => Box::new(direct::DirectSelectionTool::new(true)),
         "pen" => Box::new(pen::PenTool::default()),
         "bone" => Box::new(bone::BoneTool::default()),
+        "meshDeform" => Box::new(mesh_deform::MeshDeformTool::default()),
         "dimension" => Box::new(dimension::DimensionTool::default()),
         "type" | "areaType" | "typeOnPath" | "verticalType" | "verticalAreaType" | "verticalTypeOnPath" => Box::new(text::TypeTool::new(id)),
         "rectangle" | "roundedRectangle" | "ellipse" | "polygon" | "star" | "lineSegment" => Box::new(shape::ShapeTool::new(id)),
@@ -1088,6 +1106,7 @@ pub(crate) mod testutil {
             screen: None,
             plane_widget: Some(Default::default()),
             bones: None,
+            mesh: None,
         }
     }
 }
