@@ -136,6 +136,10 @@ mod tests {
         s.execute("layer.setProps", &json!({"ids": [ids[0]], "name": "blink"})).unwrap();
         s.execute("anim.expose", &json!({"frame": 7, "name": "blink"})).unwrap();
         assert_eq!(keys(&mut s).last(), Some(&(7, ids[0])));
+        // A number that ends a name picks that drawing before the one at that place.
+        s.execute("layer.setProps", &json!({"ids": [ids[2]], "name": "Frame 1"})).unwrap();
+        s.execute("anim.expose", &json!({"frame": 8, "name": "1"})).unwrap();
+        assert_eq!(keys(&mut s).last(), Some(&(8, ids[2])), "`1` reads as \"Frame 1\"");
         assert!(s.execute("anim.expose", &json!({"frame": 8, "name": "9"})).is_err());
         assert!(s.execute("anim.expose", &json!({"frame": 8, "name": 5})).is_err());
     }

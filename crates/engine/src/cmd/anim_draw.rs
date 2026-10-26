@@ -14,7 +14,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Expose Drawing",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), drawing?: id of one of the row's drawings (its keyframe sublayers), name?: a drawing's name, or its number in the row (1 is the first), as typed in the Xsheet; neither clears the exposure at the frame} shows the drawing from the frame on → {frame, drawing}",
+            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), drawing?: id of one of the row's drawings (its keyframe sublayers), name?: as typed in the Xsheet: a drawing's name, else one whose name ends in that number (`Frame 4` for 4), else the drawing at that place in the row (1 is the first); neither clears the exposure at the frame} shows the drawing from the frame on → {frame, drawing}",
             has_doc,
             expose
         ),
@@ -41,9 +41,19 @@ fn expose(s: &mut Session, p: &Value) -> Result<Value> {
             let typed = p.get("name").and_then(Value::as_str).map(str::trim).ok_or_else(|| bad(C, "`name` must be text"))?;
             let row_node = d.node(row).ok_or_else(|| bad(C, "no such layer"))?;
             let keys = anim.row_keys(row_node);
-            let named = keys.iter().find(|(_, k)| d.node(*k).and_then(|n| n.name.as_deref()).is_some_and(|n| n.trim() == typed));
+            let name_of = |k: NodeId| d.node(k).and_then(|n| n.name.as_deref()).map(str::trim).unwrap_or_default();
+            // The name as typed; else a name ending in the typed number, as the cells read
+            // ("Frame 4" for `4`); else the drawing at that place in the row (1 is the first).
+            let named = keys.iter().find(|(_, k)| name_of(*k) == typed);
+            let ends = || {
+                typed
+                    .parse::<u32>()
+                    .ok()
+                    .and_then(|_| keys.iter().find(|(_, k)| name_of(*k).rsplit(' ').next() == Some(typed) && name_of(*k) != typed))
+            };
             let numbered = || typed.parse::<usize>().ok().and_then(|i| i.checked_sub(1)).and_then(|i| keys.get(i));
-            let (_, k) = named.or_else(numbered).ok_or_else(|| bad(C, format!("this layer has no drawing named or numbered `{typed}`")))?;
+            let (_, k) =
+                named.or_else(ends).or_else(numbered).ok_or_else(|| bad(C, format!("this layer has no drawing named or numbered `{typed}`")))?;
             Some(k.0)
         }
         None | Some(Value::Null) => None,
