@@ -21,6 +21,7 @@ pub(crate) mod create;
 mod css;
 mod cut;
 pub mod cutter;
+pub mod depth;
 pub(crate) mod dimension;
 pub(crate) mod distortcmds;
 mod docinfo;
@@ -323,6 +324,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(anim_xsheet::specs());
         v.extend(palette::specs());
         v.extend(cutter::specs());
+        v.extend(depth::specs());
         v.extend(mesh_cmd::specs());
         v.extend(character::specs());
         v.extend(anim_sound::specs());

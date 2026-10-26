@@ -41,7 +41,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Peg Key",
             [],
             None,
-            "{peg?: peg index (default: the peg holding the current layer), frame?: (default: the current frame), x?, y?: move (document points), dx?, dy?: added to the move, angle?: turn (degrees, about the pivot), sx?, sy?: scale (factors, 1 is unchanged), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the key at the frame; fields not given keep the value the peg has there → the key",
+            "{peg?: peg index (default: the peg holding the current layer), frame?: (default: the current frame), x?, y?: move (document points), dx?, dy?: added to the move, angle?: turn (degrees, about the pivot), sx?, sy?: scale (factors, 1 is unchanged), z?: multiplane depth it adds to its rows (document points; behind the stage is positive), dz?: added to z, ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the key at the frame; fields not given keep the value the peg has there → the key",
             has_doc,
             key
         ),
@@ -236,6 +236,7 @@ fn key(s: &mut Session, p: &Value) -> Result<Value> {
         angle: num_or(p, "angle", now.angle, C)?,
         sx: num_or(p, "sx", now.sx, C)?,
         sy: num_or(p, "sy", now.sy, C)?,
+        z: num_or(p, "z", now.z, C)? + num_or(p, "dz", 0.0, C)?,
         ease: ease_param(p, C)?.unwrap_or(own_ease),
     };
     if let Some(peg) = pegs.pegs.get_mut(i) {

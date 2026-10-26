@@ -30,6 +30,9 @@ pub struct PegKey {
     pub sx: f64,
     #[serde(default = "one")]
     pub sy: f64,
+    /// Multiplane depth the peg adds to the rows it carries (document points; see depth.rs).
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub z: f64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ease: Option<[f64; 4]>,
 }
@@ -38,15 +41,19 @@ fn one() -> f64 {
     1.0
 }
 
+fn is_zero(v: &f64) -> bool {
+    *v == 0.0
+}
+
 impl Default for PegKey {
     fn default() -> Self {
-        Self { x: 0.0, y: 0.0, angle: 0.0, sx: 1.0, sy: 1.0, ease: None }
+        Self { x: 0.0, y: 0.0, angle: 0.0, sx: 1.0, sy: 1.0, z: 0.0, ease: None }
     }
 }
 
 impl PegKey {
     fn valid(&self) -> bool {
-        [self.x, self.y, self.angle, self.sx, self.sy].iter().all(|v| v.is_finite())
+        [self.x, self.y, self.angle, self.sx, self.sy, self.z].iter().all(|v| v.is_finite())
             && [self.sx, self.sy].iter().all(|s| (0.001..=1000.0).contains(&s.abs()))
             && self.ease.as_ref().is_none_or(valid_ease)
     }
@@ -110,6 +117,19 @@ impl Pegs {
         m
     }
 
+    /// The depth the pegs carrying `row` add at `frame`: its peg's and every parent's.
+    pub fn row_z(&self, row: u64, frame: u32) -> f64 {
+        let mut at = self.pegs.iter().position(|p| p.rows.contains(&row));
+        let mut z = 0.0;
+        // Parents come before children, so the walk ends; the cap guards a broken list anyway.
+        for _ in 0..self.pegs.len() {
+            let Some(p) = at.and_then(|i| self.pegs.get(i)) else { break };
+            z += p.key_at(frame).z;
+            at = p.parent;
+        }
+        z
+    }
+
     /// How `row` moves at `frame`: the transform of the first peg holding it, None when still.
     pub fn row_matrix(&self, row: u64, frame: u32) -> Option<Affine> {
         let i = self.pegs.iter().position(|p| p.rows.contains(&row))?;
@@ -130,7 +150,15 @@ impl Peg {
                 let mix = |x: f64, y: f64| x + (y - x) * t;
                 let geo = |x: f64, y: f64| if x * y > 0.0 { x * (y / x).powf(t) } else { mix(x, y) };
                 let turn = (b.angle - a.angle + 180.0).rem_euclid(360.0) - 180.0;
-                PegKey { x: mix(a.x, b.x), y: mix(a.y, b.y), angle: a.angle + turn * t, sx: geo(a.sx, b.sx), sy: geo(a.sy, b.sy), ease: None }
+                PegKey {
+                    x: mix(a.x, b.x),
+                    y: mix(a.y, b.y),
+                    angle: a.angle + turn * t,
+                    sx: geo(a.sx, b.sx),
+                    sy: geo(a.sy, b.sy),
+                    z: mix(a.z, b.z),
+                    ease: None,
+                }
             }
             (Some((_, k)), _) | (None, Some((_, k))) => *k,
             (None, None) => PegKey::default(),

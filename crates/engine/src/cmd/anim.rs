@@ -41,11 +41,19 @@ pub struct Cam {
     pub rotation: f64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ease: Option<[f64; 4]>,
+    /// How far the camera has moved in toward the stage (document points; multiplane only, see
+    /// depth.rs): rows look bigger and nearer as it does.
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub z: f64,
+}
+
+fn is_zero(v: &f64) -> bool {
+    *v == 0.0
 }
 
 impl Cam {
     pub fn valid(&self) -> bool {
-        [self.x, self.y, self.zoom, self.rotation].iter().all(|v| v.is_finite())
+        [self.x, self.y, self.zoom, self.rotation, self.z].iter().all(|v| v.is_finite())
             && (0.01..=100.0).contains(&self.zoom)
             && self.ease.as_ref().is_none_or(valid_ease)
     }
@@ -109,6 +117,12 @@ pub struct Anim {
     pub cut: Vec<u64>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub mattes: Vec<u64>,
+    /// Multiplane: row id → how far behind the stage it sits (document points; negative is in
+    /// front), and the rows that keep their size as they move back (see depth.rs).
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub depth: BTreeMap<u64, f64>,
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub maintain: BTreeSet<u64>,
 }
 
 impl Default for Anim {
@@ -130,6 +144,8 @@ impl Default for Anim {
             mouths: BTreeMap::new(),
             cut: Vec::new(),
             mattes: Vec::new(),
+            depth: BTreeMap::new(),
+            maintain: BTreeSet::new(),
         }
     }
 }
@@ -296,6 +312,7 @@ impl Anim {
                     zoom: a.zoom * (b.zoom / a.zoom).powf(t),
                     rotation: a.rotation + turn * t,
                     ease: None,
+                    z: mix(a.z, b.z),
                 })
             }
             (Some((_, c)), _) | (None, Some((_, c))) => Some(*c),
@@ -308,13 +325,7 @@ impl Anim {
 /// artboard's, zoomed and turned.
 pub fn through_camera(mut doc: Document, cam: Option<Cam>, rect: Rect) -> Document {
     let Some(c) = cam else { return doc };
-    let m = Affine::translate(rect.center().to_vec2())
-        * Affine::rotate(-c.rotation.to_radians())
-        * Affine::scale(c.zoom)
-        * Affine::translate((-c.x, -c.y));
-    for l in &mut doc.layers {
-        Arc::make_mut(l).transform(m, true);
-    }
+    super::depth::project(&mut doc, &c, rect);
     doc
 }
 
@@ -1105,7 +1116,7 @@ mod tests {
     fn the_camera_holds_outside_its_keys_and_eases_between() {
         let mut a = Anim::default();
         assert_eq!(a.camera_at(5), None);
-        let k = |x: f64, zoom: f64, rotation: f64| Cam { x, y: 0.0, zoom, rotation, ease: None };
+        let k = |x: f64, zoom: f64, rotation: f64| Cam { x, y: 0.0, zoom, rotation, ease: None, z: 0.0 };
         a.camera.insert(3, k(0.0, 1.0, 350.0));
         a.camera.insert(7, k(100.0, 4.0, 10.0));
         assert_eq!(a.camera_at(1).unwrap().x, 0.0);
@@ -1118,7 +1129,7 @@ mod tests {
         rect(&mut s, 100.0);
         let doc = s.doc().unwrap().doc.clone();
         let board = doc.artboards[0].rect;
-        let seen = through_camera((*doc).clone(), Some(Cam { x: 110.0, y: 20.0, zoom: 2.0, rotation: 0.0, ease: None }), board);
+        let seen = through_camera((*doc).clone(), Some(Cam { x: 110.0, y: 20.0, zoom: 2.0, rotation: 0.0, ease: None, z: 0.0 }), board);
         let b = seen.layers[0].children().unwrap()[0].geometric_bounds().unwrap();
         assert!((b.center() - board.center()).hypot() < 1e-6 && (b.width() - 40.0).abs() < 1e-6);
     }
