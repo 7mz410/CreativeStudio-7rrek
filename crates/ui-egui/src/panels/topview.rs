@@ -89,7 +89,8 @@ fn diagram(ui: &mut Ui, rows: &[Row], cur: Option<u64>) {
         painter.line_segment([pos2(cx, cam_y), pos2(cx + s * spread, top)], Stroke::new(1.0, t.divider));
     }
     painter.line_segment([pos2(cx - half, stage_y), pos2(cx + half, stage_y)], Stroke::new(1.5, t.text));
-    painter.text(pos2(cx + half + 6.0, stage_y), Align2::LEFT_CENTER, tl!("Stage"), FontId::proportional(11.0), t.text);
+    // On the left, so a row at the stage can name itself on the right.
+    painter.text(pos2(cx - half - 6.0, stage_y), Align2::RIGHT_CENTER, tl!("Stage"), FontId::proportional(11.0), t.text_dim);
 
     for r in rows {
         let d = (LENS + r.z) as f32;
@@ -99,7 +100,10 @@ fn diagram(ui: &mut Ui, rows: &[Row], cur: Option<u64>) {
         let colour = if current { t.accent } else { t.text_dim };
         let width = if current { 2.5 } else { 1.5 };
         painter.line_segment([pos2(cx - w / 2.0, y), pos2(cx + w / 2.0, y)], Stroke::new(width, colour));
-        painter.text(pos2(cx + w / 2.0 + 6.0, y), Align2::LEFT_CENTER, &r.name, FontId::proportional(11.0), colour);
+        // Past the segment's end, else (a segment as wide as the panel) over its right end.
+        let (x, align) =
+            if cx + w / 2.0 + 60.0 < rect.right() { (cx + w / 2.0 + 6.0, Align2::LEFT_CENTER) } else { (rect.right() - 4.0, Align2::RIGHT_BOTTOM) };
+        painter.text(pos2(x, y), align, &r.name, FontId::proportional(11.0), colour);
     }
 
     let camera = vec![pos2(cx - 7.0, cam_y + 4.0), pos2(cx + 7.0, cam_y + 4.0), pos2(cx, cam_y - 8.0)];
