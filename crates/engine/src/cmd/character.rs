@@ -11,6 +11,7 @@ use vectorcraft_doc::{Document, Node, NodeId, NodeKind};
 
 use super::anim::{Anim, row_param, show, unposed};
 use super::mesh::Meshes;
+use super::palette::Palettes;
 use super::peg::{MAX_PEGS, Pegs};
 use super::rig::Rig;
 use super::*;
@@ -132,8 +133,15 @@ pub fn extract(doc: &Document, row: NodeId) -> Option<Document> {
     let mut meshes = Meshes::of(doc);
     meshes.meshes.retain(|m| has(&m.node));
 
+    // The palette the row shows (its own, else the scene's), as the template's only one, held by
+    // the row. Its global swatches stay in the template (the whole swatch list comes along).
+    let all = Palettes::of(doc);
+    let shown = all.rows.get(&row.0).copied().or(all.scene).and_then(|i| all.palettes.get(i)).cloned();
+    let palettes = Palettes { rows: shown.iter().map(|_| (row.0, 0)).collect(), palettes: shown.into_iter().collect(), scene: None };
+
     t.unknown.clear();
     keep.store(&mut t);
+    palettes.store(&mut t);
     rig.store(&mut t);
     pegs.store(&mut t);
     meshes.store(&mut t);
@@ -226,6 +234,23 @@ pub fn insert(doc: &mut Document, t: &Document) -> Option<NodeId> {
     }
     pegs.store(doc);
 
+    // Swatches the character's art links to that the document lacks, by name; a name the document
+    // has keeps the document's colour.
+    let missing: Vec<_> = t.swatches_iter().filter(|w| doc.swatch(&w.name).is_none()).cloned().collect();
+    doc.swatches.extend(missing);
+    let mut palettes = Palettes::of(doc);
+    let tp = Palettes::of(t);
+    let base = palettes.palettes.len();
+    if base + tp.palettes.len() <= super::palette::MAX_PALETTES {
+        for (r, i) in &tp.rows {
+            if let Some(r) = id(r) {
+                palettes.rows.insert(r, i + base);
+            }
+        }
+        palettes.palettes.extend(tp.palettes);
+        palettes.store(doc);
+    }
+
     let mut meshes = Meshes::of(doc);
     for mut m in Meshes::of(t).meshes {
         let Some(n) = id(&m.node) else { continue };
@@ -267,6 +292,12 @@ mod tests {
         s.execute("peg.key", &json!({"frame": 5, "x": 30})).unwrap();
         s.execute("mesh.add", &json!({"node": rect})).unwrap();
         s.execute("mesh.pin", &json!({"node": rect, "vertex": 0})).unwrap();
+        s.execute("swatch.new", &json!({"name": "Hero Skin", "color": "#ffcc99", "global": true})).unwrap();
+        s.execute("paint.setFill", &json!({"ids": [rect], "swatch": "Hero Skin"})).unwrap();
+        let night = s.execute("palette.clone", &json!({"name": "Hero Night"})).unwrap()["index"].as_u64().unwrap();
+        s.execute("palette.setColor", &json!({"palette": night, "swatch": "Hero Skin", "color": "#223344"})).unwrap();
+        let row = s.doc().unwrap().doc.layers[0].id.0;
+        s.execute("palette.use", &json!({"palette": night, "row": row})).unwrap();
         let row = s.doc().unwrap().doc.layers[0].id.0;
         (s, row)
     }
@@ -319,6 +350,10 @@ mod tests {
         assert_eq!((pegs[3].parent, pegs[3].rows.clone()), (Some(2), vec![new_row.0]));
         let m = Meshes::of(&d);
         assert_eq!(m.meshes.len(), 2);
+        // Its palette comes along and the new row shows it.
+        let pals = Palettes::of(&d);
+        assert_eq!(pals.palettes.len(), 2, "the file's own palette plus the character's");
+        assert_eq!(pals.rows.get(&new_row.0), Some(&1));
         assert!(ids.contains(&m.meshes[1].node));
         // The dropped character animates: its peg moves it 30 pt by frame 5.
         let x = |d: &Document| d.bounds_of(&[new_row], false).unwrap().min_x();
@@ -339,6 +374,8 @@ mod tests {
         let _ = std::fs::remove_file(path);
         let d = &other.doc().unwrap().doc;
         assert!(Rig::of(d).skeletons.contains_key(&layer), "its bones");
+        assert!(d.global_color("Hero Skin").is_some(), "the swatch its art links to comes along");
+        assert_eq!(Palettes::of(d).rows.get(&layer), Some(&0), "and the palette it showed");
         assert_eq!(d.node(NodeId(layer)).unwrap().name, Some(format!("hero-{}", std::process::id())), "named after the file");
         assert_eq!(other.execute("anim.drawings", &json!({"row": layer})).unwrap()["drawings"].as_array().unwrap().len(), 2, "its drawings");
         other.execute("edit.undo", &json!({})).unwrap();
