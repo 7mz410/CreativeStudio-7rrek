@@ -5636,6 +5636,12 @@ font-technology	Variable	متغير
 	Drawings	الرسومات
 	Xsheet	ورقة التعريض
 	Palettes	الباليتات
+	New Palette	باليتة جديدة
+	Scene	المشهد
+	Show in Scene	أظهرها في المشهد
+	Show on This Layer	أظهرها على هذه الطبقة
+	Make a swatch Global to recolour it with palettes	اجعل العينة عامة لتلوينها بالباليتات
+	No palettes yet: New Palette clones the global swatches	لا توجد باليتات بعد: «باليتة جديدة» تنسخ العينات العامة
 	No drawings yet: add keyframes on the timeline	لا توجد رسومات بعد: أضف إطارات مفتاحية على الخط الزمني
 	Increase Exposure	زيادة التعريض
 	Decrease Exposure	تقليل التعريض
