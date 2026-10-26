@@ -5706,3 +5706,8 @@ font-technology	Variable	متغير
 	Move the keyframe's art toward the next keyframe	حرّك رسم الإطار الرئيسي نحو الإطار الرئيسي التالي
 	Show the keyframes before and after faintly	اعرض الإطارات الرئيسية السابقة واللاحقة بشفافية
 	Export Animated GIF	تصدير GIF متحرك
+	Add Row Effect	إضافة تأثير للصف
+	Key Row Effect	وضع مفتاح لتأثير الصف
+	Remove Row Effect Key	إزالة مفتاح تأثير الصف
+	Remove Row Effect	إزالة تأثير الصف
+	Row Effects	تأثيرات الصف

@@ -123,6 +123,9 @@ pub struct Anim {
     pub depth: BTreeMap<u64, f64>,
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub maintain: BTreeSet<u64>,
+    /// Live effects applied per row by `at_frame_with`: row id → count of added effects (undone in `unposed`).
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub row_fx: BTreeMap<u64, usize>,
 }
 
 impl Default for Anim {
@@ -146,6 +149,7 @@ impl Default for Anim {
             mattes: Vec::new(),
             depth: BTreeMap::new(),
             maintain: BTreeSet::new(),
+            row_fx: BTreeMap::new(),
         }
     }
 }
@@ -222,6 +226,11 @@ pub(crate) fn unposed(doc: &Document) -> Document {
             n.extras_mut().mask = None;
         }
     }
+    for id in anim.row_fx.keys() {
+        if let Some(n) = d.node_mut(NodeId(*id)) {
+            n.appearance.effects.retain(|e| e.params.get(super::row_fx::MARK).is_none());
+        }
+    }
     d
 }
 
@@ -267,10 +276,12 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     }
     let posed = pose(&mut d, frame, &mut ghosts);
     let (cut, mattes) = super::cutter::apply(&mut d);
+    let row_fx = super::row_fx::apply(&mut d, frame);
     let mut a = anim;
     a.ghosts = ghosts;
     a.posed = posed;
     (a.cut, a.mattes) = (cut, mattes);
+    a.row_fx = row_fx;
     a.current = frame.clamp(1, a.frames);
     a.store(&mut d);
     d
