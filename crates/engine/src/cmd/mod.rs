@@ -21,6 +21,7 @@ pub(crate) mod create;
 mod css;
 mod cut;
 pub mod curve;
+pub mod curve_cmd;
 pub mod cutter;
 pub mod depth;
 pub(crate) mod dimension;
@@ -327,6 +328,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(cutter::specs());
         v.extend(depth::specs());
         v.extend(mesh_cmd::specs());
+        v.extend(curve_cmd::specs());
         v.extend(character::specs());
         v.extend(anim_sound::specs());
         v.extend(rig_cmd::specs());
