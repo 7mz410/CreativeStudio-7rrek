@@ -179,8 +179,6 @@ impl Anim {
     }
 }
 
-/// `doc` showing `frame`: each animated row shows its keyframe in effect, the others hidden.
-/// With `onion`, the document's onion-skin keyframes around it show faintly and locked.
 /// `doc` without what the frame shown added: its in-between and posed copies gone, the art they
 /// stood in for shown again (the ghost and posed lists are left for the caller).
 pub(crate) fn unposed(doc: &Document) -> Document {
@@ -198,6 +196,8 @@ pub(crate) fn unposed(doc: &Document) -> Document {
     d
 }
 
+/// `doc` showing `frame`: each animated row shows its keyframe in effect, the others hidden.
+/// With `onion`, the document's onion-skin keyframes around it show faintly and locked.
 pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     let anim = Anim::of(doc);
     let mut d = unposed(doc);

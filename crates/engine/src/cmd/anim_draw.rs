@@ -14,7 +14,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Expose Drawing",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), drawing?: id of one of the row's drawings (its keyframe sublayers); none clears the exposure at the frame} shows the drawing from the frame on → {frame, drawing}",
+            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), drawing?: id of one of the row's drawings (its keyframe sublayers), name?: a drawing's name, or its number in the row (1 is the first), as typed in the Xsheet; neither clears the exposure at the frame} shows the drawing from the frame on → {frame, drawing}",
             has_doc,
             expose
         ),
@@ -37,6 +37,15 @@ fn expose(s: &mut Session, p: &Value) -> Result<Value> {
     let anim = Anim::of(d);
     let frame = frame_param(p, &anim, C)?;
     let drawing = match p.get("drawing") {
+        None | Some(Value::Null) if p.get("name").is_some_and(|n| !n.is_null()) => {
+            let typed = p.get("name").and_then(Value::as_str).map(str::trim).ok_or_else(|| bad(C, "`name` must be text"))?;
+            let row_node = d.node(row).ok_or_else(|| bad(C, "no such layer"))?;
+            let keys = anim.row_keys(row_node);
+            let named = keys.iter().find(|(_, k)| d.node(*k).and_then(|n| n.name.as_deref()).is_some_and(|n| n.trim() == typed));
+            let numbered = || typed.parse::<usize>().ok().and_then(|i| i.checked_sub(1)).and_then(|i| keys.get(i));
+            let (_, k) = named.or_else(numbered).ok_or_else(|| bad(C, format!("this layer has no drawing named or numbered `{typed}`")))?;
+            Some(k.0)
+        }
         None | Some(Value::Null) => None,
         Some(v) => {
             let id = v.as_u64().ok_or_else(|| bad(C, "`drawing` must be a layer id"))?;

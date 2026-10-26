@@ -7,6 +7,7 @@ pub mod anim_camera;
 pub mod anim_draw;
 pub mod anim_mouth;
 pub mod anim_sound;
+pub mod anim_xsheet;
 mod assets;
 mod attributes;
 mod brushsym;
@@ -317,6 +318,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(anim_camera::specs());
         v.extend(anim_draw::specs());
         v.extend(anim_mouth::specs());
+        v.extend(anim_xsheet::specs());
         v.extend(mesh_cmd::specs());
         v.extend(character::specs());
         v.extend(anim_sound::specs());
