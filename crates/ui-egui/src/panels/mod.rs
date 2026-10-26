@@ -11,6 +11,7 @@ pub mod asset_export;
 pub mod attributes;
 pub mod blend;
 pub mod brushes;
+pub mod camera_preview;
 pub mod character;
 pub mod color;
 pub mod color_guide;
@@ -182,6 +183,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         xsheet::ID => xsheet::show(app, ui),
         palettes::ID => palettes::show(app, ui),
         topview::ID => topview::show(app, ui),
+        camera_preview::ID => camera_preview::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),
         links::ID => links::show(app, ui),
         asset_export::ID => asset_export::show(app, ui),
