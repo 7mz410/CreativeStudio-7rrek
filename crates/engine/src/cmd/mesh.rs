@@ -146,6 +146,8 @@ pub struct Warp {
     rest: Vec<Point>,
     now: Vec<Point>,
     tris: Vec<[u32; 3]>,
+    /// A curve or envelope deformer maps points exactly; its grid (above) only redraws images.
+    curve: Option<super::curve::CurveMap>,
 }
 
 impl Warp {
@@ -153,11 +155,30 @@ impl Warp {
     pub fn of(m: &Mesh, frame: u32) -> Option<Self> {
         let now = m.at(frame)?;
         let rest: Vec<Point> = m.rest.iter().map(pt).collect();
-        let tris = live(&rest, &m.tris).into_iter().filter_map(|i| m.tris.get(i).copied()).collect();
-        Some(Warp { rest, now, tris })
+        let tris: Vec<[u32; 3]> = live(&rest, &m.tris).into_iter().filter_map(|i| m.tris.get(i).copied()).collect();
+        Some(Warp::from_points(m, now).with_tris(tris))
+    }
+
+    /// `m`'s rest vertices carried to `now`, over all its triangles.
+    pub(crate) fn from_points(m: &Mesh, now: Vec<Point>) -> Self {
+        Warp { rest: m.rest.iter().map(pt).collect(), now, tris: m.tris.clone(), curve: None }
+    }
+
+    fn with_tris(mut self, tris: Vec<[u32; 3]>) -> Self {
+        self.tris = tris;
+        self
+    }
+
+    /// A curve deformer's warp: points by its map, images by `grid` (left as they are without one).
+    pub(crate) fn curve(map: super::curve::CurveMap, grid: Option<Warp>) -> Self {
+        let g = grid.unwrap_or(Warp { rest: Vec::new(), now: Vec::new(), tris: Vec::new(), curve: None });
+        Warp { curve: Some(map), ..g }
     }
 
     pub fn map(&self, p: Point) -> Point {
+        if let Some(c) = &self.curve {
+            return c.map(p);
+        }
         // Barycentric coordinates in each rest triangle; the one whose smallest is largest holds p
         // (or, outside the mesh, is nearest to holding it).
         let mut best: Option<(f64, [f64; 3], [Point; 3])> = None;

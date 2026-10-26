@@ -371,8 +371,12 @@ fn tween(d: &mut Document, a: NodeId, b: NodeId, t: f64) -> Option<NodeId> {
 /// bent and moved (a tween's in-between is bent in place, being a copy already) → the hidden ids.
 fn pose(d: &mut Document, frame: u32, ghosts: &mut Vec<u64>) -> Vec<u64> {
     let (rig, pegs) = (super::rig::Rig::of(d), super::peg::Pegs::of(d));
-    let warps: BTreeMap<u64, super::mesh::Warp> =
+    let mut warps: BTreeMap<u64, super::mesh::Warp> =
         super::mesh::Meshes::of(d).meshes.iter().filter_map(|m| Some((m.node, super::mesh::Warp::of(m, frame)?))).collect();
+    // A node with a mesh and a curve deformer: the mesh wins (shortcut: no chaining yet).
+    for (k, w) in super::curve::warps(d, frame) {
+        warps.entry(k).or_insert(w);
+    }
     let mut hidden = Vec::new();
     let rows: Vec<NodeId> = d.layers.iter().map(|l| l.id).collect();
     for row in rows {

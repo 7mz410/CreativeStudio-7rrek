@@ -20,6 +20,7 @@ pub mod colortheme;
 pub(crate) mod create;
 mod css;
 mod cut;
+pub mod curve;
 pub mod cutter;
 pub mod depth;
 pub(crate) mod dimension;
