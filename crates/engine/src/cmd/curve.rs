@@ -71,8 +71,8 @@ fn pt(p: &[f64; 2]) -> Point {
 
 /// Segment count for `len` chain points, None when the layout is wrong.
 fn segments(len: usize, closed: bool) -> Option<usize> {
-    let n = if closed { (len % 3 == 0).then_some(len / 3)? } else { (len % 3 == 1).then_some(len / 3)? };
-    (n >= 1 && n <= MAX_SEGMENTS && (!closed || n >= 2)).then_some(n)
+    let n = if closed { len.is_multiple_of(3).then_some(len / 3)? } else { (len % 3 == 1).then_some(len / 3)? };
+    ((1..=MAX_SEGMENTS).contains(&n) && (!closed || n >= 2)).then_some(n)
 }
 
 impl Curve {
