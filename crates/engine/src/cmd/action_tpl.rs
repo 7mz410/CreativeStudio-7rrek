@@ -5,10 +5,10 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use vectorcraft_doc::{Document, Node, NodeId};
 
-use super::anim::{row_param, show, Anim};
+use super::anim::{Anim, row_param, show};
 use super::curve::Curves;
 use super::mesh::Meshes;
 use super::peg::{PegKey, Pegs};
@@ -97,14 +97,29 @@ pub struct Actions {
     pub actions: Vec<Action>,
 }
 
+impl Action {
+    /// Every frame inside the action and the action within [`MAX_LENGTH`], so pasting at a frame up
+    /// to [`MAX_LENGTH`] never overflows (files and documents are untrusted).
+    pub fn valid(&self) -> bool {
+        let t = &self.tracks;
+        let ok = |f: &u32| *f < self.length;
+        self.length <= MAX_LENGTH
+            && t.exposures.keys().all(ok)
+            && t.bones.values().all(|k| k.keys().all(ok))
+            && t.bone_eases.keys().all(ok)
+            && t.peg.keys().all(ok)
+            && t.meshes.iter().all(|m| m.keys.keys().all(ok))
+            && t.curves.iter().all(|c| c.keys.keys().all(ok))
+            && t.row_fx.iter().all(|r| r.keys.keys().all(ok))
+            && t.tweens.iter().all(ok)
+            && t.eases.keys().all(ok)
+    }
+}
+
 impl Actions {
     pub fn of(doc: &Document) -> Self {
         let a: Actions = doc.unknown.get(KEY).and_then(|v| serde_json::from_value(v.clone()).ok()).unwrap_or_default();
-        if a.actions.len() <= MAX_ACTIONS {
-            a
-        } else {
-            Actions::default()
-        }
+        if a.actions.len() <= MAX_ACTIONS && a.actions.iter().all(Action::valid) { a } else { Actions::default() }
     }
 
     pub fn store(&self, doc: &mut Document) {
@@ -177,11 +192,13 @@ fn ids_in(n: &Node) -> Vec<u64> {
 fn save(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "action.save";
     let row = row_param(s, p, C)?;
-    let from = p.get("from").and_then(Value::as_u64).map(|v| v as u32).ok_or_else(|| bad(C, "`from` must be a whole number >= 1"))?;
+    let from =
+        p.get("from").and_then(Value::as_u64).and_then(|v| u32::try_from(v).ok()).ok_or_else(|| bad(C, "`from` must be a whole number >= 1"))?;
     if from < 1 {
         return Err(bad(C, "`from` must be >= 1"));
     }
-    let to = p.get("to").and_then(Value::as_u64).map(|v| v as u32).ok_or_else(|| bad(C, "`to` must be a whole number >= `from`"))?;
+    let to =
+        p.get("to").and_then(Value::as_u64).and_then(|v| u32::try_from(v).ok()).ok_or_else(|| bad(C, "`to` must be a whole number >= `from`"))?;
     if to < from {
         return Err(bad(C, "`to` must be >= `from`"));
     }
@@ -367,8 +384,12 @@ fn paste(s: &mut Session, p: &Value) -> Result<Value> {
     let doc = &s.doc()?.doc;
     let anim = Anim::of(doc);
     let at = match p.get("at") {
-        None | Some(Value::Null) => anim.current,
-        Some(v) => v.as_u64().filter(|f| *f >= 1).map(|f| f as u32).ok_or_else(|| bad(C, "`at` must be a whole number >= 1"))?,
+        None | Some(Value::Null) => anim.current.clamp(1, MAX_LENGTH),
+        Some(v) => v
+            .as_u64()
+            .filter(|f| (1..=MAX_LENGTH as u64).contains(f))
+            .map(|f| f as u32)
+            .ok_or_else(|| bad(C, format!("`at` must be a whole number 1..{MAX_LENGTH}")))?,
     };
     let actions = Actions::of(doc);
     let action = actions.actions.iter().find(|a| a.name == name).cloned().ok_or_else(|| bad(C, format!("action `{name}` not found")))?;
@@ -590,8 +611,8 @@ fn import(s: &mut Session, p: &Value) -> Result<Value> {
     if action.name.trim().is_empty() {
         return Err(bad(C, "action has empty name"));
     }
-    if action.length > MAX_LENGTH {
-        return Err(bad(C, format!("action length {} exceeds maximum of {MAX_LENGTH}", action.length)));
+    if !action.valid() {
+        return Err(bad(C, format!("{path}: the action's frames go past its length or past {MAX_LENGTH}")));
     }
 
     s.edit("Import Action", |d, _| {
@@ -893,5 +914,20 @@ mod tests {
 
         // nonexistent action in remove
         assert!(s.execute("action.remove", &json!({"name": "no_such_action"})).is_err());
+    }
+
+    #[test]
+    fn a_file_with_frames_past_its_length_is_refused_and_far_pastes_never_overflow() {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({})).unwrap();
+        let dir = std::env::temp_dir().join(format!("7rrek-action-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("far.7rrekaction");
+        let bad_action = json!({"name": "far", "length": 2, "tracks": {"peg": {"4294967295": {}}}});
+        std::fs::write(&path, serde_json::to_vec(&bad_action).unwrap()).unwrap();
+        assert!(s.execute("action.import", &json!({"path": path.to_str().unwrap()})).is_err());
+        assert!(s.execute("action.paste", &json!({"name": "far", "at": u64::MAX})).is_err());
+        assert!(s.execute("action.save", &json!({"from": 4294967297u64, "to": 4294967298u64, "name": "x"})).is_err());
+        std::fs::remove_dir_all(&dir).ok();
     }
 }

@@ -2,10 +2,10 @@
 //! (`action.*`).
 
 use egui::{DragValue, ScrollArea, TextEdit, Ui};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
-use crate::widgets;
 use crate::VectorcraftApp;
+use crate::widgets;
 
 pub const ID: &str = "actionTemplates";
 
