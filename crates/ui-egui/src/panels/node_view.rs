@@ -88,7 +88,7 @@ struct GraphEdge {
 
 enum Act {
     Connect { from: String, to: String, port: String },
-    Disconnect { to: String, port: String },
+    Disconnect { from: String, to: String, port: String },
 }
 
 fn parse_graph(val: &Value) -> (Vec<GraphNode>, Vec<GraphEdge>) {
@@ -332,7 +332,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let drag_id = ui.id().with("node_view_drag");
     let mut drag_from = ui.data_mut(|d| d.get_temp::<String>(drag_id));
     let sel_id = ui.id().with("node_view_selected_edge");
-    let mut selected_edge = ui.data_mut(|d| d.get_temp::<(String, String)>(sel_id));
+    let mut selected_edge = ui.data_mut(|d| d.get_temp::<(String, String, String)>(sel_id));
 
     let diagram_size = vec2(total_width + MARGIN_X * 2.0, comp_y + NODE_H + MARGIN_Y);
 
@@ -400,23 +400,23 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             if let Some(h_idx) = hovered_edge_idx {
                 if let Some(edge) = edges.get(h_idx) {
                     if secondary_clicked {
-                        acts.push(Act::Disconnect { to: edge.to.clone(), port: edge.port.clone() });
+                        acts.push(Act::Disconnect { from: edge.from.clone(), to: edge.to.clone(), port: edge.port.clone() });
                         selected_edge = None;
-                        ui.data_mut(|d| d.remove_temp::<(String, String)>(sel_id));
+                        ui.data_mut(|d| d.remove_temp::<(String, String, String)>(sel_id));
                     } else if primary_pressed {
-                        selected_edge = Some((edge.to.clone(), edge.port.clone()));
+                        selected_edge = Some((edge.from.clone(), edge.to.clone(), edge.port.clone()));
                         ui.data_mut(|d| d.insert_temp(sel_id, selected_edge.clone()));
                     }
                 }
             } else if primary_pressed && !output_ports.values().any(|&pos| ptr_pos.is_some_and(|p| p.distance(pos) <= PORT_R + 5.0)) {
                 selected_edge = None;
-                ui.data_mut(|d| d.remove_temp::<(String, String)>(sel_id));
+                ui.data_mut(|d| d.remove_temp::<(String, String, String)>(sel_id));
             }
 
             let to_disconnect = if delete_pressed { selected_edge.take() } else { None };
-            if let Some((to, port)) = to_disconnect {
-                acts.push(Act::Disconnect { to, port });
-                ui.data_mut(|d| d.remove_temp::<(String, String)>(sel_id));
+            if let Some((from, to, port)) = to_disconnect {
+                acts.push(Act::Disconnect { from, to, port });
+                ui.data_mut(|d| d.remove_temp::<(String, String, String)>(sel_id));
             }
         }
 
@@ -424,7 +424,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         for (i, edge) in edges.iter().enumerate() {
             let Some(pts) = edge_curves.get(i) else { continue };
             let is_hovered = hovered_edge_idx == Some(i);
-            let is_selected = selected_edge.as_ref().is_some_and(|(to, port)| to == &edge.to && port == &edge.port);
+            let is_selected = selected_edge.as_ref().is_some_and(|(from, to, port)| from == &edge.from && to == &edge.to && port == &edge.port);
 
             let (base_color, base_width, is_dashed) = match edge.port.as_str() {
                 "transform" => (t.accent, 2.0, false),
@@ -560,8 +560,8 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     app.status(e);
                 }
             }
-            Act::Disconnect { to, port } => {
-                if let Err(e) = app.run("nodes.disconnect", json!({"to": to, "port": port})) {
+            Act::Disconnect { from, to, port } => {
+                if let Err(e) = app.run("nodes.disconnect", json!({"from": from, "to": to, "port": port})) {
                     app.status(e);
                 }
             }

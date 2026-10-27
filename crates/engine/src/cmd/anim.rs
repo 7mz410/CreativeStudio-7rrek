@@ -133,6 +133,12 @@ pub struct Anim {
     /// (given back on the next frame change).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub lit: Vec<(u64, f32, bool)>,
+    /// Rows unplugged from the composite in the node view: never drawn, in exports or on the canvas.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub unplugged: BTreeSet<u64>,
+    /// The rows the frame shown hid because they are unplugged (shown again on the next frame).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub dropped: Vec<u64>,
 }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
@@ -165,6 +171,8 @@ impl Default for Anim {
             row_fx: BTreeMap::new(),
             light_table: None,
             lit: Vec::new(),
+            unplugged: BTreeSet::new(),
+            dropped: Vec::new(),
         }
     }
 }
@@ -231,7 +239,7 @@ pub(crate) fn unposed(doc: &Document) -> Document {
         // Already gone (deleted by hand) is fine.
         let _ = d.remove(NodeId(*g));
     }
-    for id in anim.posed.iter().chain(&anim.mattes) {
+    for id in anim.posed.iter().chain(&anim.mattes).chain(&anim.dropped) {
         if let Some(n) = d.node_mut(NodeId(*id)) {
             n.visible = true;
         }
@@ -307,8 +315,19 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
             }
         }
     }
+    // Rows unplugged from the composite in the node view are not drawn.
+    let mut dropped = Vec::new();
+    for &id in &anim.unplugged {
+        if let Some(n) = d.node_mut(NodeId(id))
+            && n.visible
+        {
+            n.visible = false;
+            dropped.push(id);
+        }
+    }
     let mut a = anim;
     a.lit = lit;
+    a.dropped = dropped;
     a.ghosts = ghosts;
     a.posed = posed;
     (a.cut, a.mattes) = (cut, mattes);

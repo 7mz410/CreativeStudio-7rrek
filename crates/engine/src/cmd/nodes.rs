@@ -2,8 +2,9 @@
 //! the scene (rows, pegs, cutters, row effects) every time, and rewiring a cable edits those, so
 //! the graph and the render can never disagree. Node ids: `row:<layer id>`, `peg:<index>`,
 //! `cut:<cut row id>`, `fx:<row id>:<index>`, `comp` (the one composite). Cables run from an
-//! output to a node's `image`, `matte` or `transform` port; the composite takes rows in timeline
-//! order.
+//! output to a node's `image`, `matte` or `transform` port. The composite takes rows in timeline
+//! order (its cables carry `order`, 0 at the bottom): plugging a row in above or below another
+//! moves the row, and unplugging one stops it being drawn (`Anim.unplugged`).
 
 use serde_json::json;
 use vectorcraft_doc::Document;
@@ -30,7 +31,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Connect Nodes",
             [],
             None,
-            "{from, to, port} peg → row or peg (transform: carries it / hangs it from an earlier peg); row → cut (image: that row is cut instead; matte: cuts by it); row → row (matte: adds a cutter) → {from, to, port}",
+            "{from, to, port, above?|below?: row node} peg → row or peg (transform: carries it / hangs it from an earlier peg); row → cut (image: that row is cut instead; matte: cuts by it); row → row (matte: adds a cutter); row (or the last node of its chain) → comp (image: the row is drawn again; with above/below it moves above or below that row, which is the composite order) → {from, to, port}",
             has_doc,
             connect
         ),
@@ -39,7 +40,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Disconnect Nodes",
             [],
             None,
-            "{to, port} the row leaves its peg, the peg its parent, or the cutter goes (image or matte) → {to, port}",
+            "{to, port, from?} the row leaves its peg, the peg its parent, or the cutter goes (image or matte); to comp (with from: the row, or the last node of its chain) the row is no longer drawn → {to, port}",
             has_doc,
             disconnect
         ),
@@ -50,14 +51,14 @@ fn graph(s: &mut Session, _: &Value) -> Result<Value> {
     let d = &s.doc()?.doc;
     let (pegs, cuts, fx) = (Pegs::of(d), Cutters::of(d), RowFxList::of(d));
     let (mut nodes, mut edges) = (Vec::new(), Vec::new());
-    let mut edge = |from: String, to: String, port: &str| edges.push(json!({"from": from, "to": to, "port": port}));
+    let edge = |from: String, to: String, port: &str| json!({"from": from, "to": to, "port": port});
     for (i, p) in pegs.pegs.iter().enumerate() {
         nodes.push(json!({"id": format!("peg:{i}"), "kind": "peg", "name": p.name}));
         if let Some(q) = p.parent {
-            edge(format!("peg:{q}"), format!("peg:{i}"), "transform");
+            edges.push(edge(format!("peg:{q}"), format!("peg:{i}"), "transform"));
         }
         for r in &p.rows {
-            edge(format!("peg:{i}"), format!("row:{r}"), "transform");
+            edges.push(edge(format!("peg:{i}"), format!("row:{r}"), "transform"));
         }
     }
     for l in &d.layers {
@@ -65,10 +66,12 @@ fn graph(s: &mut Session, _: &Value) -> Result<Value> {
     }
     for c in &cuts.cutters {
         nodes.push(json!({"id": format!("cut:{}", c.row), "kind": "cutter", "inverted": c.inverted}));
-        edge(format!("row:{}", c.row), format!("cut:{}", c.row), "image");
-        edge(format!("row:{}", c.matte), format!("cut:{}", c.row), "matte");
+        edges.push(edge(format!("row:{}", c.row), format!("cut:{}", c.row), "image"));
+        edges.push(edge(format!("row:{}", c.matte), format!("cut:{}", c.row), "matte"));
     }
     nodes.push(json!({"id": "comp", "kind": "composite"}));
+    let unplugged = Anim::of(d).unplugged;
+    let mut order = 0;
     for l in &d.layers {
         let r = l.id.0;
         // A matte row's art isn't drawn, so it doesn't reach the composite.
@@ -79,10 +82,13 @@ fn graph(s: &mut Session, _: &Value) -> Result<Value> {
         for (i, e) in fx.rows.iter().filter(|f| f.row == r).flat_map(|f| &f.effects).enumerate() {
             let id = format!("fx:{r}:{i}");
             nodes.push(json!({"id": id, "kind": "effect", "fx": e.kind.as_str()}));
-            edge(last, id.clone(), "image");
+            edges.push(edge(last, id.clone(), "image"));
             last = id;
         }
-        edge(last, "comp".into(), "image");
+        if !unplugged.contains(&r) {
+            edges.push(json!({"from": last, "to": "comp", "port": "image", "order": order}));
+            order += 1;
+        }
     }
     Ok(json!({"nodes": nodes, "edges": edges}))
 }
@@ -125,8 +131,56 @@ fn commit(s: &mut Session, label: &str, pegs: Option<Pegs>, cuts: Option<Cutters
     Ok(())
 }
 
+/// The row a cable into the composite carries: `row:<id>`, `cut:<id>` or `fx:<id>:<i>` all
+/// stand for row `id`.
+fn comp_row(d: &Document, v: &Value, cmd: &str) -> Result<u64> {
+    let s = v.as_str().ok_or_else(|| bad(cmd, "`from` must be a node id"))?;
+    let id = s.split(':').nth(1).and_then(|n| n.parse().ok()).filter(|_| ["row:", "cut:", "fx:"].iter().any(|k| s.starts_with(k)));
+    row(d, id.ok_or_else(|| bad(cmd, format!("{s} doesn't carry a row into the composite")))?, cmd)
+}
+
+/// Plugs a row into the composite (drawn again), above or below another row if asked.
+fn plug(s: &mut Session, p: &Value, on: bool) -> Result<Value> {
+    let cmd = if on { "nodes.connect" } else { "nodes.disconnect" };
+    let d = &s.doc()?.doc;
+    let r = comp_row(d, p.get("from").unwrap_or(&Value::Null), cmd)?;
+    let place = ["above", "below"].into_iter().find_map(|k| p.get(k).map(|v| (k, v)));
+    let target = match place {
+        Some((k, v)) => Some((k, comp_row(d, v, cmd)?)),
+        None => None,
+    };
+    let mut a = Anim::of(d);
+    let changed = if on { a.unplugged.remove(&r) } else { a.unplugged.insert(r) };
+    if !changed && target.is_none() {
+        return Err(bad(cmd, if on { "that row is already drawn" } else { "no cable there" }));
+    }
+    s.begin_named_undo_group(Some(if on { "Connect Nodes".into() } else { "Disconnect Nodes".into() }));
+    let done = (|| -> Result<()> {
+        if changed {
+            s.edit(if on { "Plug Row" } else { "Unplug Row" }, |d, _| {
+                let mut b = Anim::of(d);
+                b.unplugged = a.unplugged.clone();
+                b.store(d);
+                Ok(())
+            })?;
+        }
+        if let Some((place, t)) = target.filter(|(_, t)| *t != r) {
+            s.execute("layer.move", &json!({"id": r, "target": t, "place": place}))?;
+        }
+        let current = Anim::of(&s.doc()?.doc).current;
+        show(s, current)?;
+        Ok(())
+    })();
+    s.end_undo_group(done.is_err());
+    done?;
+    Ok(json!({"from": p["from"], "to": "comp", "port": "image"}))
+}
+
 fn connect(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "nodes.connect";
+    if p.get("to").and_then(Value::as_str) == Some("comp") {
+        return plug(s, p, true);
+    }
     let (from, to, port) = (parse(p, "from", C)?, parse(p, "to", C)?, port(p, C)?);
     let d = &s.doc()?.doc;
     let (mut pegs, mut cuts) = (Pegs::of(d), Cutters::of(d));
@@ -176,6 +230,9 @@ fn connect(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn disconnect(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "nodes.disconnect";
+    if p.get("to").and_then(Value::as_str) == Some("comp") {
+        return plug(s, p, false);
+    }
     let (to, port) = (parse(p, "to", C)?, port(p, C)?);
     let d = &s.doc()?.doc;
     let (mut pegs, mut cuts) = (Pegs::of(d), Cutters::of(d));
@@ -233,7 +290,7 @@ mod tests {
     }
 
     fn has(g: &Value, from: &str, to: &str, port: &str) -> bool {
-        g["edges"].as_array().unwrap().contains(&json!({"from": from, "to": to, "port": port}))
+        g["edges"].as_array().unwrap().iter().any(|e| e["from"] == from && e["to"] == to && e["port"] == port)
     }
 
     #[test]
@@ -309,5 +366,40 @@ mod tests {
         assert!(s.execute("nodes.connect", &json!({"from": format!("row:{blue}"), "to": "row:999999", "port": "matte"})).is_err());
         assert!(s.execute("nodes.disconnect", &json!({"to": "row:999999", "port": "transform"})).is_err());
         assert_eq!(s.execute("cutter.list", &json!({})).unwrap()["cutters"], json!([]));
+    }
+
+    /// C1: the composite's cables are the render order; unplugging a row stops it being drawn, and
+    /// rewiring two rows' order swaps them in the export.
+    #[test]
+    fn the_composite_order_and_its_cables_are_the_render() {
+        let (mut s, [red, blue, green]) = scene();
+        let comp_order = |s: &mut Session| -> Vec<String> {
+            let g = s.execute("nodes.graph", &json!({})).unwrap();
+            let mut e: Vec<(u64, String)> = g["edges"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|e| e["to"] == "comp")
+                .map(|e| (e["order"].as_u64().unwrap(), e["from"].as_str().unwrap().to_string()))
+                .collect();
+            e.sort();
+            e.into_iter().map(|(_, f)| f).collect()
+        };
+        assert_eq!(comp_order(&mut s), [format!("row:{red}"), format!("row:{blue}"), format!("row:{green}")]);
+        assert_eq!(at(&s, 50, 50), [0, 0, 255], "blue over red");
+        // Plug red in above blue: red is drawn over it.
+        s.execute("nodes.connect", &json!({"from": format!("row:{red}"), "to": "comp", "port": "image", "above": format!("row:{blue}")})).unwrap();
+        assert_eq!(comp_order(&mut s)[..2], [format!("row:{blue}"), format!("row:{red}")]);
+        assert_eq!(at(&s, 50, 50), [255, 0, 0], "red over blue now");
+        // Unplugged, red isn't drawn, on the canvas or in exports.
+        s.execute("nodes.disconnect", &json!({"from": format!("row:{red}"), "to": "comp", "port": "image"})).unwrap();
+        assert_eq!(at(&s, 50, 50), [0, 0, 255]);
+        assert_eq!(at(&s, 90, 90), [255, 255, 255], "red's corner is gone too");
+        assert!(!comp_order(&mut s).contains(&format!("row:{red}")));
+        assert!(s.execute("nodes.disconnect", &json!({"from": format!("row:{red}"), "to": "comp", "port": "image"})).is_err());
+        // One undo plugs it back; the art itself never changed.
+        s.execute("edit.undo", &json!({})).unwrap();
+        assert_eq!(at(&s, 50, 50), [255, 0, 0]);
+        assert!(s.execute("nodes.connect", &json!({"from": "peg:9", "to": "comp", "port": "image"})).is_err());
     }
 }
