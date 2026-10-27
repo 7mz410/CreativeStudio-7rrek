@@ -62,3 +62,62 @@ fn walk(n: &Node, part: Part, out: &mut Vec<NodeId>) {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::*;
+    use crate::Session;
+
+    /// A drawing on frame 1: a black 10 pt square outline, and a red fill of it on Colour Art.
+    /// Returns (session, row, line id, colour art id).
+    fn drawing() -> (Session, u64, u64, u64) {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        let row = s.doc().unwrap().doc.layers[0].id.0;
+        let line = s.execute("shape.rectangle", &json!({"x": 20, "y": 20, "width": 60, "height": 60})).unwrap()["id"].as_u64().unwrap();
+        s.execute("paint.setFill", &json!({"none": true})).unwrap();
+        s.execute("stroke.set", &json!({"weight": 10})).unwrap();
+        s.execute("art.fill", &json!({"ids": [line], "color": "#ff0000"})).unwrap();
+        let d = &s.doc().unwrap().doc;
+        let drawing = d.layers[0].children().unwrap()[0].id;
+        let ca = d.node(drawing).unwrap().children().unwrap().iter().find(|c| c.name.as_deref() == Some(COLOUR_ART)).unwrap().id.0;
+        (s, row, line, ca)
+    }
+
+    /// How many effects the node carries on the frame shown.
+    fn effects(s: &Session, id: u64) -> usize {
+        s.doc().unwrap().doc.node(NodeId(id)).unwrap().appearance.effects.len()
+    }
+
+    #[test]
+    fn line_art_takes_the_effect_and_colour_art_does_not() {
+        let (mut s, row, line, ca) = drawing();
+        s.execute("fx.add", &json!({"row": row, "kind": "glow", "part": "lineArt"})).unwrap();
+        s.execute("anim.goto", &json!({"frame": 1})).unwrap();
+        assert_eq!(effects(&s, ca), 0, "colour art has no effect");
+        assert_eq!(effects(&s, line), 1, "the line has the glow");
+    }
+
+    #[test]
+    fn colour_art_takes_the_effect_and_line_art_does_not() {
+        let (mut s, row, line, ca) = drawing();
+        s.execute("fx.add", &json!({"row": row, "kind": "glow", "part": "colourArt"})).unwrap();
+        s.execute("anim.goto", &json!({"frame": 1})).unwrap();
+        assert_eq!(effects(&s, line), 0, "the line has no effect");
+        assert_eq!(effects(&s, ca), 1, "colour art has the glow");
+    }
+
+    #[test]
+    fn showing_frames_again_never_stacks_a_selector_effect() {
+        let (mut s, row, line, ca) = drawing();
+        s.execute("fx.add", &json!({"row": row, "kind": "glow", "part": "lineArt"})).unwrap();
+        for f in [2, 1, 1, 2, 1] {
+            s.execute("anim.goto", &json!({"frame": f})).unwrap();
+            assert_eq!(effects(&s, line), 1, "after showing frame {f}");
+            assert_eq!(effects(&s, ca), 0, "colour art after showing frame {f}");
+        }
+    }
+}

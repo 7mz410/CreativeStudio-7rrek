@@ -196,7 +196,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Add Cutter",
             [],
             None,
-            "{row?: layer id to cut (default: the current layer's row), matte: layer id whose shape cuts it, inverted?: bool (keep only the overlap; default false: hide the overlap)} a row has one cutter, so this replaces any it had; the matte row's art stops showing → {row, matte, inverted}",
+            "{row?: layer id to cut (default: the current layer's row), matte: layer id whose shape cuts it, inverted?: bool (keep only the overlap; default false: hide the overlap), by?: \"shape\"|\"brightness\" (what of the matte counts: its shape, or its brightness, white cutting fully and black not at all; default shape), also?: [layer ids] (up to 8 more matte rows; no row twice), op?: \"add\"|\"subtract\"|\"intersect\" (how the mattes combine: all cut; the first less the others; only where all overlap; default add)} a row has one cutter, so this replaces any it had; the matte row's art stops showing → {row, matte, inverted, by, also, op}",
             has_doc,
             add
         ),
@@ -218,6 +218,17 @@ fn top_row(d: &Document, v: &Value, cmd: &str, key: &str) -> Result<NodeId> {
     d.layers.iter().any(|l| l.id.0 == id).then_some(NodeId(id)).ok_or_else(|| bad(cmd, format!("`{key}` must be a top-level layer (a timeline row)")))
 }
 
+/// The option `key` names (one of `options`), or None when it is absent or null.
+fn choice<T: Copy>(p: &Value, key: &str, cmd: &str, options: &[(&str, T)]) -> Result<Option<T>> {
+    match p.get(key) {
+        None | Some(Value::Null) => Ok(None),
+        Some(v) => v.as_str().and_then(|s| options.iter().find(|(name, _)| *name == s)).map(|(_, t)| Some(*t)).ok_or_else(|| {
+            let names: Vec<&str> = options.iter().map(|(name, _)| *name).collect();
+            bad(cmd, format!("`{key}` must be one of {}", names.join(", ")))
+        }),
+    }
+}
+
 fn commit(s: &mut Session, label: &str, c: Cutters) -> Result<()> {
     s.edit(label, |d, _| {
         c.store(d);
@@ -236,15 +247,35 @@ fn add(s: &mut Session, p: &Value) -> Result<Value> {
     if matte == row {
         return Err(bad(C, "a row can't cut itself"));
     }
+    const MAX_ALSO: usize = 8;
+    let also = match p.get("also") {
+        None | Some(Value::Null) => Vec::new(),
+        Some(Value::Array(v)) if v.len() <= MAX_ALSO => v.iter().map(|x| top_row(d, x, C, "also")).collect::<Result<Vec<NodeId>>>()?,
+        Some(Value::Array(_)) => return Err(bad(C, format!("`also` takes at most {MAX_ALSO} matte rows"))),
+        Some(_) => return Err(bad(C, "`also` must be a list of layer ids")),
+    };
+    let mut seen = vec![matte];
+    for id in &also {
+        if *id == row {
+            return Err(bad(C, "a row can't cut itself"));
+        }
+        if seen.contains(id) {
+            return Err(bad(C, "`also` repeats a matte row"));
+        }
+        seen.push(*id);
+    }
     let inverted = p.get("inverted").and_then(Value::as_bool).unwrap_or(false);
+    let by = choice(p, "by", C, &[("shape", MatteBy::Shape), ("brightness", MatteBy::Brightness)])?.unwrap_or_default();
+    let op = choice(p, "op", C, &[("add", MatteOp::Add), ("subtract", MatteOp::Subtract), ("intersect", MatteOp::Intersect)])?.unwrap_or_default();
     let mut all = Cutters::of(d);
     all.cutters.retain(|c| c.row != row.0);
     if all.cutters.len() >= MAX_CUTTERS {
         return Err(bad(C, format!("a document takes at most {MAX_CUTTERS} cutters")));
     }
-    all.cutters.push(Cutter { row: row.0, matte: matte.0, inverted, ..Cutter::default() });
+    let also: Vec<u64> = also.iter().map(|id| id.0).collect();
+    all.cutters.push(Cutter { row: row.0, matte: matte.0, inverted, by, also: also.clone(), op });
     commit(s, "Add Cutter", all)?;
-    Ok(json!({"row": row.0, "matte": matte.0, "inverted": inverted}))
+    Ok(json!({"row": row.0, "matte": matte.0, "inverted": inverted, "by": by, "also": also, "op": op}))
 }
 
 fn remove(s: &mut Session, p: &Value) -> Result<Value> {
@@ -368,5 +399,95 @@ mod tests {
         assert_eq!(at(&s, 50, 50), [0, 0, 255]);
         assert!(s.execute("cutter.add", &json!({"row": red, "matte": red})).is_err());
         assert!(s.execute("cutter.remove", &json!({"row": red})).is_err());
+    }
+
+    /// A 100 pt red page at frame 1 on the bottom row. Its id.
+    fn red_page() -> (Session, u64) {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 100, "height": 100})).unwrap();
+        s.execute("paint.setFill", &json!({"color": "#ff0000"})).unwrap();
+        let red = s.doc().unwrap().doc.layers[0].id.0;
+        (s, red)
+    }
+
+    /// A new row on top with one solid rectangle at frame 1. Its id.
+    fn rect_row(s: &mut Session, x: f64, y: f64, w: f64, h: f64, hex: &str) -> u64 {
+        let row = s.execute("layer.new", &json!({})).unwrap()["id"].as_u64().unwrap();
+        s.execute("layer.setCurrent", &json!({"id": row})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": x, "y": y, "width": w, "height": h})).unwrap();
+        s.execute("paint.setFill", &json!({"color": hex})).unwrap();
+        row
+    }
+
+    /// The red page with two full-height strips over it: x 0..60 (blue) and x 40..90 (green).
+    /// Points: x 10 is in the first only, 50 in both, 80 in the second only, 95 in neither.
+    fn two_strips() -> (Session, u64, u64, u64) {
+        let (mut s, red) = red_page();
+        let a = rect_row(&mut s, 0.0, 0.0, 60.0, 100.0, "#0000ff");
+        let b = rect_row(&mut s, 40.0, 0.0, 50.0, 100.0, "#00ff00");
+        (s, red, a, b)
+    }
+
+    #[test]
+    fn a_brightness_matte_cuts_part_way_by_its_grey_and_smoothly() {
+        let (mut s, red) = red_page();
+        let m = s.execute("layer.new", &json!({})).unwrap()["id"].as_u64().unwrap();
+        s.execute("layer.setCurrent", &json!({"id": m})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 100, "height": 100})).unwrap();
+        s.execute("paint.editGradient", &json!({"kind": "linear", "stops": [{"offset": 0, "color": "#000000"}, {"offset": 1, "color": "#ffffff"}]}))
+            .unwrap();
+        s.execute("cutter.add", &json!({"row": red, "matte": m, "by": "brightness"})).unwrap();
+        // Red over white: the green channel is 255 minus the red's alpha, so it rises left to right.
+        let g: Vec<i32> = [10, 30, 50, 70, 90].iter().map(|&x| i32::from(at(&s, x, 50)[1])).collect();
+        assert!(g.windows(2).all(|w| w[0] <= w[1]), "monotonic left to right: {g:?}");
+        assert!(g.windows(2).all(|w| w[1] - w[0] <= 127), "no jump over half the range: {g:?}");
+        assert!(g[0] < 128 && g[4] > 128, "red at the black end, cut at the white end: {g:?}");
+    }
+
+    #[test]
+    fn subtract_shows_the_row_again_where_the_second_matte_overlaps_the_first() {
+        let (mut s, red, a, b) = two_strips();
+        s.execute("cutter.add", &json!({"row": red, "matte": a, "also": [b], "op": "subtract"})).unwrap();
+        assert_eq!(at(&s, 10, 50), [255, 255, 255], "the first matte alone is cut");
+        assert_eq!(at(&s, 50, 50), [255, 0, 0], "the overlap shows the row again");
+        assert_eq!(at(&s, 80, 50), [255, 0, 0], "the second matte alone doesn't cut");
+    }
+
+    #[test]
+    fn intersect_cuts_only_where_both_mattes_cover() {
+        let (mut s, red, a, b) = two_strips();
+        s.execute("cutter.add", &json!({"row": red, "matte": a, "also": [b], "op": "intersect"})).unwrap();
+        assert_eq!(at(&s, 50, 50), [255, 255, 255], "both cover: cut");
+        assert_eq!(at(&s, 10, 50), [255, 0, 0], "the first alone: not cut");
+        assert_eq!(at(&s, 80, 50), [255, 0, 0], "the second alone: not cut");
+    }
+
+    #[test]
+    fn add_cuts_where_either_matte_covers() {
+        let (mut s, red, a, b) = two_strips();
+        s.execute("cutter.add", &json!({"row": red, "matte": a, "also": [b]})).unwrap();
+        assert_eq!(at(&s, 10, 50), [255, 255, 255]);
+        assert_eq!(at(&s, 50, 50), [255, 255, 255]);
+        assert_eq!(at(&s, 80, 50), [255, 255, 255]);
+        assert_eq!(at(&s, 95, 50), [255, 0, 0], "in neither: kept");
+    }
+
+    #[test]
+    fn cutter_add_rejects_unknown_by_and_op_and_bad_also() {
+        let (mut s, red, a, b) = two_strips();
+        assert!(s.execute("cutter.add", &json!({"row": red, "matte": a, "by": "colour"})).is_err());
+        assert!(s.execute("cutter.add", &json!({"row": red, "matte": a, "op": "xor"})).is_err());
+        assert!(s.execute("cutter.add", &json!({"row": red, "matte": a, "also": [red]})).is_err(), "a row can't cut itself");
+        assert!(s.execute("cutter.add", &json!({"row": red, "matte": a, "also": [b, b]})).is_err(), "no duplicates");
+        assert!(s.execute("cutter.add", &json!({"row": red, "matte": a, "also": [a]})).is_err(), "the matte again");
+        assert!(s.execute("cutter.add", &json!({"row": red, "matte": a, "also": "x"})).is_err());
+        assert!(Cutters::of(&s.doc().unwrap().doc).cutters.is_empty(), "nothing stored by the rejected calls");
+        let r = s.execute("cutter.add", &json!({"row": red, "matte": a, "also": [b], "op": "intersect", "by": "brightness"})).unwrap();
+        assert_eq!((r["by"].as_str(), r["op"].as_str()), (Some("brightness"), Some("intersect")));
+        assert_eq!(r["also"], json!([b]));
     }
 }
