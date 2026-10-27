@@ -844,6 +844,7 @@
 	Exclude	استبعاد
 	Exclusion	الاستبعاد
 	Exit Isolation Mode	الخروج من وضع العزل
+	Collapse	طيّ
 	Expand	توسيع
 	Expand Appearance	توسيع المظهر
 	Expand applies to compound shapes (Alt-click a shape mode) — on the roadmap	التوسيع ينطبق على الأشكال المركّبة (Alt+نقر على وضع شكل) — ضمن خطة العمل
@@ -5637,6 +5638,8 @@ font-technology	Variable	متغير
 	Remove Peg	حذف الوتد
 	Pegs	الأوتاد
 	Move Peg	تحريك الوتد
+	Parent Peg	تعيين أب للوتد
+	Unparent Peg	إزالة أب الوتد
 	Drawings	الرسومات
 	Xsheet	ورقة التعريض
 	Palettes	الباليتات
@@ -5654,6 +5657,7 @@ font-technology	Variable	متغير
 	Remove Cutter	إزالة القاطع
 	Add Cutter	إضافة قاطع
 	Cutters	القواطع
+	Rewire Cutter	إعادة توصيل القاطع
 	Hide this layer where another layer's shape covers it	أخفِ هذه الطبقة حيث يغطيها شكل طبقة أخرى
 	New Palette	باليتة جديدة
 	Scene	المشهد
@@ -5711,6 +5715,10 @@ font-technology	Variable	متغير
 	Remove Row Effect Key	إزالة مفتاح تأثير الصف
 	Remove Row Effect	إزالة تأثير الصف
 	Row Effects	تأثيرات الصف
+	Node View	عرض العقد
+	Node Graph	مخطط العقد
+	Connect Nodes	توصيل العقد
+	Disconnect Nodes	قطع اتصال العقد
 	Glow	توهج
 	Color Adjust	ضبط الألوان
 	Key at this frame	مفتاح عند هذا الإطار
