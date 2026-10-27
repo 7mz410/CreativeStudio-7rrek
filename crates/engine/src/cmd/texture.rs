@@ -13,7 +13,7 @@ use vectorcraft_doc::pattern::{PatternDef, TileType};
 use vectorcraft_doc::{Appearance, AppearanceItem, Document, FillLayer, Node, OpacityMask};
 use vectorcraft_geom::{Point, Rect};
 
-use super::edit::selected_roots;
+use super::edit::{roots_of, selected_roots};
 use super::*;
 
 const KEY: &str = "textures";
@@ -401,8 +401,15 @@ fn apply(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn remove(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "texture.remove";
+    // Given ids take the same roots as the selection: an object inside a listed group is the group's.
     let ids = match ids_param(p, "ids") {
-        Some(v) => v,
+        Some(v) => {
+            let d = &s.doc()?.doc;
+            for id in &v {
+                d.node(*id).ok_or(EngineError::NoNode(*id))?;
+            }
+            roots_of(d, v)
+        }
         None => selected_roots(s)?,
     };
 
