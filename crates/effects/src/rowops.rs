@@ -1,5 +1,5 @@
 //! Raster operations for animation row effects: greyscale, box blur, directional blur,
-//! radial zoom blur, colour scale, colour fade, transparency, and gamma.
+//! radial zoom blur, colour scale, and transparency.
 //!
 //! Evaluates pixel buffers safely without unwraps, bounds-checked, and capped (radius ≤ 250).
 
@@ -82,80 +82,6 @@ pub fn box_blur(px: &mut [[u8; 4]], w: usize, h: usize, radius: f64) {
                 out[1] = (sum[1] / win).round().clamp(0.0, 255.0) as u8;
                 out[2] = (sum[2] / win).round().clamp(0.0, 255.0) as u8;
                 out[3] = (sum[3] / win).round().clamp(0.0, 255.0) as u8;
-            }
-        }
-    }
-}
-
-/// Applies a 2D separable Gaussian blur to a `w` × `h` RGBA pixel buffer.
-/// `radius` is clamped to [0, 250].
-pub fn gaussian_blur(px: &mut [[u8; 4]], w: usize, h: usize, radius: f64) {
-    if w == 0 || h == 0 || px.len() < w * h {
-        return;
-    }
-    let r = radius.clamp(0.0, MAX_RADIUS).round() as usize;
-    if r == 0 {
-        return;
-    }
-
-    let sigma = (r as f32) / 2.0;
-    let two_sigma_sq = 2.0 * sigma * sigma;
-    let mut kernel = Vec::with_capacity(2 * r + 1);
-    let mut weight_sum = 0.0f32;
-    for k in -(r as isize)..=(r as isize) {
-        let w_val = (-((k * k) as f32) / two_sigma_sq).exp();
-        kernel.push(w_val);
-        weight_sum += w_val;
-    }
-    for w_val in &mut kernel {
-        *w_val /= weight_sum;
-    }
-
-    let mut temp = vec![[0u8; 4]; w * h];
-
-    // Horizontal pass: px -> temp
-    for y in 0..h {
-        let row = y * w;
-        for x in 0..w {
-            let mut sum = [0.0f32; 4];
-            for (idx, &kw) in kernel.iter().enumerate() {
-                let offset = idx as isize - r as isize;
-                let sx = (x as isize + offset).clamp(0, w.saturating_sub(1) as isize) as usize;
-                if let Some(p) = px.get(row + sx) {
-                    sum[0] += p[0] as f32 * kw;
-                    sum[1] += p[1] as f32 * kw;
-                    sum[2] += p[2] as f32 * kw;
-                    sum[3] += p[3] as f32 * kw;
-                }
-            }
-            if let Some(out) = temp.get_mut(row + x) {
-                out[0] = sum[0].round().clamp(0.0, 255.0) as u8;
-                out[1] = sum[1].round().clamp(0.0, 255.0) as u8;
-                out[2] = sum[2].round().clamp(0.0, 255.0) as u8;
-                out[3] = sum[3].round().clamp(0.0, 255.0) as u8;
-            }
-        }
-    }
-
-    // Vertical pass: temp -> px
-    for x in 0..w {
-        for y in 0..h {
-            let mut sum = [0.0f32; 4];
-            for (idx, &kw) in kernel.iter().enumerate() {
-                let offset = idx as isize - r as isize;
-                let sy = (y as isize + offset).clamp(0, h.saturating_sub(1) as isize) as usize;
-                if let Some(p) = temp.get(sy * w + x) {
-                    sum[0] += p[0] as f32 * kw;
-                    sum[1] += p[1] as f32 * kw;
-                    sum[2] += p[2] as f32 * kw;
-                    sum[3] += p[3] as f32 * kw;
-                }
-            }
-            if let Some(out) = px.get_mut(y * w + x) {
-                out[0] = sum[0].round().clamp(0.0, 255.0) as u8;
-                out[1] = sum[1].round().clamp(0.0, 255.0) as u8;
-                out[2] = sum[2].round().clamp(0.0, 255.0) as u8;
-                out[3] = sum[3].round().clamp(0.0, 255.0) as u8;
             }
         }
     }
@@ -263,61 +189,31 @@ pub fn radial_zoom_blur(px: &mut [[u8; 4]], w: usize, h: usize, cx: f64, cy: f64
     }
 }
 
-/// Multiplies each channel by (r, g, b, a) multipliers.
+/// Multiplies each channel by (r, g, b, a) multipliers while preserving premultiplied RGBA bounds.
 pub fn colour_scale(px: &mut [[u8; 4]], r: f64, g: f64, b: f64, a: f64) {
     let rf = r.max(0.0) as f32;
     let gf = g.max(0.0) as f32;
     let bf = b.max(0.0) as f32;
-    let af = a.max(0.0) as f32;
+    let af = a.clamp(0.0, 100.0) as f32;
 
     for p in px.iter_mut() {
-        p[0] = (p[0] as f32 * rf).round().clamp(0.0, 255.0) as u8;
-        p[1] = (p[1] as f32 * gf).round().clamp(0.0, 255.0) as u8;
-        p[2] = (p[2] as f32 * bf).round().clamp(0.0, 255.0) as u8;
-        p[3] = (p[3] as f32 * af).round().clamp(0.0, 255.0) as u8;
+        let new_a = (p[3] as f32 * af).round().clamp(0.0, 255.0) as u8;
+        p[0] = (p[0] as f32 * rf * af).round().clamp(0.0, new_a as f32) as u8;
+        p[1] = (p[1] as f32 * gf * af).round().clamp(0.0, new_a as f32) as u8;
+        p[2] = (p[2] as f32 * bf * af).round().clamp(0.0, new_a as f32) as u8;
+        p[3] = new_a;
     }
 }
 
-/// Blends pixels towards `color` by `amount` in [0, 100] percent.
-pub fn colour_fade(px: &mut [[u8; 4]], color: [u8; 3], amount: f64) {
-    let t = (amount / 100.0).clamp(0.0, 1.0) as f32;
-    if t <= 0.0 {
-        return;
-    }
-    let tr = color[0] as f32;
-    let tg = color[1] as f32;
-    let tb = color[2] as f32;
-
-    for p in px.iter_mut() {
-        let r = p[0] as f32;
-        let g = p[1] as f32;
-        let b = p[2] as f32;
-        p[0] = ((1.0 - t) * r + t * tr).round().clamp(0.0, 255.0) as u8;
-        p[1] = ((1.0 - t) * g + t * tg).round().clamp(0.0, 255.0) as u8;
-        p[2] = ((1.0 - t) * b + t * tb).round().clamp(0.0, 255.0) as u8;
-    }
-}
-
-/// Multiplies pixel alpha by `(1.0 - amount / 100)`.
+/// Multiplies pixel alpha by `(1.0 - amount / 100)` and scales RGB to preserve premultiplication.
 pub fn transparency(px: &mut [[u8; 4]], amount: f64) {
     let t = (amount / 100.0).clamp(0.0, 1.0) as f32;
     let factor = 1.0 - t;
     for p in px.iter_mut() {
-        p[3] = (p[3] as f32 * factor).round().clamp(0.0, 255.0) as u8;
-    }
-}
-
-/// Applies power-law gamma correction to RGB: C' = 255 * (C / 255)^(1 / gamma).
-pub fn gamma(px: &mut [[u8; 4]], gamma_val: f64) {
-    let g = gamma_val.clamp(0.1, 10.0) as f32;
-    if (g - 1.0).abs() < 1e-4 {
-        return;
-    }
-    let inv_g = 1.0 / g;
-    for p in px.iter_mut() {
-        p[0] = ((p[0] as f32 / 255.0).powf(inv_g) * 255.0).round().clamp(0.0, 255.0) as u8;
-        p[1] = ((p[1] as f32 / 255.0).powf(inv_g) * 255.0).round().clamp(0.0, 255.0) as u8;
-        p[2] = ((p[2] as f32 / 255.0).powf(inv_g) * 255.0).round().clamp(0.0, 255.0) as u8;
+        p[0] = (p[0] as f32 * factor).round() as u8;
+        p[1] = (p[1] as f32 * factor).round() as u8;
+        p[2] = (p[2] as f32 * factor).round() as u8;
+        p[3] = (p[3] as f32 * factor).round() as u8;
     }
 }
 
@@ -336,14 +232,12 @@ mod tests {
     }
 
     #[test]
-    fn gaussian_and_box_blur_symmetric_energy_within_1_percent() {
-        // 51 × 51 image with a 1pt white dot at center (25, 25)
+    fn box_blur_symmetric_energy_within_1_percent() {
         let w = 51;
         let h = 51;
         let cx = 25;
         let cy = 25;
 
-        // 1) Test Box Blur
         let mut px_box = vec![[0u8, 0u8, 0u8, 0u8]; w * h];
         px_box[cy * w + cx] = [255, 255, 255, 255];
         box_blur(&mut px_box, w, h, 10.0);
@@ -377,46 +271,10 @@ mod tests {
 
         assert!(lr_diff < 0.01, "box blur left/right asymmetry {lr_diff:.4} > 1%");
         assert!(tb_diff < 0.01, "box blur top/bottom asymmetry {tb_diff:.4} > 1%");
-
-        // 2) Test Gaussian Blur
-        let mut px_gauss = vec![[0u8, 0u8, 0u8, 0u8]; w * h];
-        px_gauss[cy * w + cx] = [255, 255, 255, 255];
-        gaussian_blur(&mut px_gauss, w, h, 10.0);
-
-        let mut left_g = 0.0f64;
-        let mut right_g = 0.0f64;
-        let mut top_g = 0.0f64;
-        let mut bottom_g = 0.0f64;
-        let mut total_g = 0.0f64;
-
-        for y in 0..h {
-            for x in 0..w {
-                let val = px_gauss[y * w + x][0] as f64;
-                total_g += val;
-                if x < cx {
-                    left_g += val;
-                } else if x > cx {
-                    right_g += val;
-                }
-                if y < cy {
-                    top_g += val;
-                } else if y > cy {
-                    bottom_g += val;
-                }
-            }
-        }
-
-        assert!(total_g > 0.0, "gaussian blur should produce energy");
-        let lr_diff_g = (left_g - right_g).abs() / total_g;
-        let tb_diff_g = (top_g - bottom_g).abs() / total_g;
-
-        assert!(lr_diff_g < 0.01, "gaussian blur left/right asymmetry {lr_diff_g:.4} > 1%");
-        assert!(tb_diff_g < 0.01, "gaussian blur top/bottom asymmetry {tb_diff_g:.4} > 1%");
     }
 
     #[test]
     fn directional_blur_angle_0_spreads_horizontally_only() {
-        // 31 × 31 image with 1pt dot at center (15, 15)
         let w = 31;
         let h = 31;
         let cx = 15;
@@ -426,7 +284,6 @@ mod tests {
 
         directional_blur(&mut px, w, h, 8.0, 0.0);
 
-        // Check vertical extent: non-zero pixels must only exist at y = cy
         for y in 0..h {
             for x in 0..w {
                 let val = px[y * w + x][0];
@@ -436,7 +293,6 @@ mod tests {
             }
         }
 
-        // Check horizontal spread at y = cy
         let horizontal_nonzeros = (0..w).filter(|&x| px[cy * w + x][0] > 0).count();
         assert!(horizontal_nonzeros > 1, "horizontal spread should occur");
     }
@@ -444,31 +300,14 @@ mod tests {
     #[test]
     fn colour_scale_multiplies_channels() {
         let mut px = vec![[100, 100, 100, 200]];
-        colour_scale(&mut px, 1.5, 0.5, 2.0, 0.5);
-        assert_eq!(px[0], [150, 50, 200, 100]);
+        colour_scale(&mut px, 1.0, 0.5, 0.0, 0.5);
+        assert_eq!(px[0], [50, 25, 0, 100]);
     }
 
     #[test]
-    fn colour_fade_interpolates_properly() {
-        let mut px = vec![[0, 100, 200, 255]];
-        colour_fade(&mut px, [100, 200, 0], 50.0);
-        assert_eq!(px[0][0], 50);
-        assert_eq!(px[0][1], 150);
-        assert_eq!(px[0][2], 100);
-    }
-
-    #[test]
-    fn transparency_reduces_alpha() {
-        let mut px = vec![[255, 255, 255, 200]];
+    fn transparency_reduces_alpha_and_rgb() {
+        let mut px = vec![[200, 100, 50, 200]];
         transparency(&mut px, 50.0);
-        assert_eq!(px[0][3], 100);
-    }
-
-    #[test]
-    fn gamma_bends_midtones() {
-        let mut px = vec![[128, 128, 128, 255]];
-        gamma(&mut px, 2.0);
-        // (128/255)^0.5 * 255 ≈ 180
-        assert!(px[0][0] > 175 && px[0][0] < 185);
+        assert_eq!(px[0], [100, 50, 25, 100]);
     }
 }

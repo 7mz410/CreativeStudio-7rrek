@@ -44,7 +44,7 @@ pub use sketch::{HALFTONE_TYPES, HalftonePattern};
 pub use texture::{GRAIN_TYPES, Grain, LIGHT_DIRECTIONS, Light, TEXTURES, TEXTURES_LOADED, Texture};
 
 /// The Photoshop-style effect ids (all raster effects, see [`crate::is_raster`]).
-pub const PIXEL_EFFECTS: [&str; 56] = [
+pub const PIXEL_EFFECTS: [&str; 62] = [
     "artistic.coloredPencil",
     "artistic.cutout",
     "artistic.dryBrush",
@@ -60,7 +60,10 @@ pub const PIXEL_EFFECTS: [&str; 56] = [
     "artistic.sponge",
     "artistic.underpainting",
     "artistic.watercolor",
+    "blur.box",
+    "blur.directional",
     "blur.radial",
+    "blur.radialZoom",
     "blur.smart",
     "brushStrokes.accentedEdges",
     "brushStrokes.angledStrokes",
@@ -101,6 +104,9 @@ pub const PIXEL_EFFECTS: [&str; 56] = [
     "texture.texturizer",
     "video.deinterlace",
     "video.ntscColors",
+    "adjust.greyscale",
+    "adjust.colourScale",
+    "adjust.transparency",
 ];
 
 /// A Photoshop-style raster effect with its parameters read and clamped to their ranges. Lengths
@@ -286,6 +292,18 @@ pub enum PixelFx {
     DeInterlace { even: bool, interpolate: bool },
     /// Video › NTSC Colors: colours a television signal can't carry made less saturated.
     NtscColors,
+    /// Blur › Box Blur: separable 2D box blur by `radius`.
+    BoxBlur { radius: f64 },
+    /// Blur › Directional Blur: directional smear along `angle` (degrees) by `radius`.
+    DirectionalBlur { radius: f64, angle: f64 },
+    /// Blur › Radial Zoom Blur: radiating blur by `amount` from `(cx, cy)` (0..1).
+    RadialZoomBlur { amount: f64, cx: f64, cy: f64 },
+    /// Adjust › Greyscale: desaturates using Rec.709 luma by `amount` (0..100%).
+    Greyscale { amount: f64 },
+    /// Adjust › Colour Scale: scales each channel by multipliers `(r, g, b, a)`.
+    ColourScale { r: f64, g: f64, b: f64, a: f64 },
+    /// Adjust › Transparency: scales alpha by `(1.0 - amount / 100)`.
+    Transparency { amount: f64 },
 }
 
 /// What a raster's colour channels hold, for the filters that treat them apart (Color Halftone
@@ -597,6 +615,19 @@ pub(crate) fn parse(id: &str, p: &Value) -> Option<PixelFx> {
             interpolate: text(p, "create", "duplication").eq_ignore_ascii_case("interpolation"),
         },
         "video.ntscColors" => PixelFx::NtscColors,
+        "blur.box" => PixelFx::BoxBlur { radius: num(p, "radius", 5.0).clamp(0.0, 250.0) },
+        "blur.directional" => PixelFx::DirectionalBlur { radius: num(p, "radius", 5.0).clamp(0.0, 250.0), angle: num(p, "angle", 0.0) },
+        "blur.radialZoom" => PixelFx::RadialZoomBlur {
+            amount: num(p, "amount", 10.0).clamp(0.0, 100.0),
+            cx: num(p, "cx", 0.5).clamp(0.0, 1.0),
+            cy: num(p, "cy", 0.5).clamp(0.0, 1.0),
+        },
+        "adjust.greyscale" => PixelFx::Greyscale { amount: num(p, "amount", 100.0).clamp(0.0, 100.0) },
+        "adjust.colourScale" => {
+            let k = num(p, "amount", 100.0) / 100.0;
+            PixelFx::ColourScale { r: num(p, "r", 1.0) * k, g: num(p, "g", 1.0) * k, b: num(p, "b", 1.0) * k, a: num(p, "a", 1.0) }
+        }
+        "adjust.transparency" => PixelFx::Transparency { amount: num(p, "amount", 50.0).clamp(0.0, 100.0) },
         _ => return None,
     })
 }
@@ -611,6 +642,9 @@ impl PixelFx {
             // A rotated corner reaches the circle through the corners.
             PixelFx::RadialBlur { zoom: false, .. } => (far - near).max(0.0),
             PixelFx::RadialBlur { amount, zoom: true, .. } => far * (blur::zoom_extent(amount).exp() - 1.0),
+            PixelFx::BoxBlur { radius } | PixelFx::DirectionalBlur { radius, .. } => radius,
+            PixelFx::RadialZoomBlur { amount, .. } => far * (amount / 100.0 * 0.5),
+            PixelFx::Greyscale { .. } | PixelFx::ColourScale { .. } | PixelFx::Transparency { .. } => 0.0,
             PixelFx::SmartBlur { radius, .. } => radius,
             PixelFx::AccentedEdges { .. } => 0.0,
             // Strokes reach out of the object as far as they reach into it.
@@ -740,6 +774,9 @@ impl PixelFx {
             // The lines above and below.
             PixelFx::DeInterlace { .. } => Some(video::MAX_LINE),
             PixelFx::NtscColors => Some(0.0),
+            PixelFx::BoxBlur { radius } | PixelFx::DirectionalBlur { radius, .. } => Some(radius),
+            PixelFx::RadialZoomBlur { .. } => None,
+            PixelFx::Greyscale { .. } | PixelFx::ColourScale { .. } | PixelFx::Transparency { .. } => Some(0.0),
         }
     }
 
@@ -824,6 +861,12 @@ impl PixelFx {
             }
             PixelFx::DeInterlace { even, interpolate } => video::deinterlace(px, w, h, space, even, interpolate),
             PixelFx::NtscColors => video::ntsc(px),
+            PixelFx::BoxBlur { radius } => crate::rowops::box_blur(px, w, h, to_px(radius)),
+            PixelFx::DirectionalBlur { radius, angle } => crate::rowops::directional_blur(px, w, h, to_px(radius), angle),
+            PixelFx::RadialZoomBlur { amount, cx, cy } => crate::rowops::radial_zoom_blur(px, w, h, cx * w as f64, cy * h as f64, amount),
+            PixelFx::Greyscale { amount } => crate::rowops::greyscale(px, amount),
+            PixelFx::ColourScale { r, g, b, a } => crate::rowops::colour_scale(px, r, g, b, a),
+            PixelFx::Transparency { amount } => crate::rowops::transparency(px, amount),
         }
     }
 }

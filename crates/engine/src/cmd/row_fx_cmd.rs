@@ -380,4 +380,137 @@ mod tests {
         let ids: Vec<_> = rest.layers.iter().find(|l| l.id.0 == layer).unwrap().appearance.effects.iter().map(|e| e.id.clone()).collect();
         assert_eq!(ids, ["stylize.dropShadow"]);
     }
+
+    #[test]
+    fn greyscale_100_percent_on_pure_red_row_gives_luma_54_plus_minus_one() {
+        let (mut s, layer) = session_with_rect();
+        s.execute("paint.setFill", &json!({"color": "#ff0000"})).unwrap();
+        s.execute("fx.add", &json!({"row": layer, "kind": "greyscale"})).unwrap();
+        s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 1, "params": {"amount": 100.0}})).unwrap();
+
+        let doc = &s.doc().unwrap().doc;
+        let rect = doc.artboards[0].rect;
+        let fd = at_frame(doc, 1);
+        let mut r = vectorcraft_render::Renderer::new();
+        let img = r.render_region(&fd, rect, 1.0, false);
+
+        assert!(img.width > 0 && img.height > 0);
+        let p = img.pixel(img.width / 2, img.height / 2);
+        let luma: f64 = 0.2126 * p[0] as f64 + 0.7152 * p[1] as f64 + 0.0722 * p[2] as f64;
+        assert!((luma - 54.0).abs() <= 1.0, "pure red under 100% greyscale must have luma 54±1, got {luma} (pixel: {p:?})");
+    }
+
+    #[test]
+    fn box_and_gaussian_for_1pt_white_dot_at_radius_10_energy_symmetric_within_1_percent() {
+        for kind in ["box", "blur"] {
+            let mut s = Session::new();
+            s.execute("file.new", &json!({"width": 200, "height": 200})).unwrap();
+            s.execute("anim.setFrames", &json!({"frames": 12})).unwrap();
+            s.execute("shape.rectangle", &json!({"x": 99.5, "y": 99.5, "width": 1.0, "height": 1.0})).unwrap();
+            s.execute("paint.setFill", &json!({"color": "#ffffff"})).unwrap();
+            s.execute("paint.setStroke", &json!({"none": true})).unwrap();
+            let layer = s.doc().unwrap().doc.layers[0].id.0;
+
+            s.execute("fx.add", &json!({"row": layer, "kind": kind})).unwrap();
+            s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 1, "params": {"radius": 10.0}})).unwrap();
+
+            let doc = &s.doc().unwrap().doc;
+            let rect = doc.artboards[0].rect;
+            let fd = at_frame(doc, 1);
+            let mut r = vectorcraft_render::Renderer::new();
+            let img = r.render_region(&fd, rect, 1.0, false);
+
+            let w = img.width;
+            let h = img.height;
+            let cx = w / 2;
+            let cy = h / 2;
+
+            let mut left = 0.0f64;
+            let mut right = 0.0f64;
+            let mut top = 0.0f64;
+            let mut bottom = 0.0f64;
+            let mut total = 0.0f64;
+
+            for y in 0..h {
+                for x in 0..w {
+                    let val = img.pixel(x, y)[0] as f64;
+                    total += val;
+                    if x < cx {
+                        left += val;
+                    } else {
+                        right += val;
+                    }
+                    if y < cy {
+                        top += val;
+                    } else {
+                        bottom += val;
+                    }
+                }
+            }
+
+            assert!(total > 0.0, "blur of kind {kind} must produce energy");
+            let lr_diff = (left - right).abs() / total;
+            let tb_diff = (top - bottom).abs() / total;
+            assert!(lr_diff < 0.01, "{kind} left/right asymmetry {lr_diff:.4} >= 1%");
+            assert!(tb_diff < 0.01, "{kind} top/bottom asymmetry {tb_diff:.4} >= 1%");
+        }
+    }
+
+    #[test]
+    fn directional_blur_at_angle_zero_has_no_vertical_spread() {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 200, "height": 200})).unwrap();
+        s.execute("anim.setFrames", &json!({"frames": 12})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": 99.5, "y": 99.5, "width": 1.0, "height": 1.0})).unwrap();
+        s.execute("paint.setFill", &json!({"color": "#ffffff"})).unwrap();
+        s.execute("paint.setStroke", &json!({"none": true})).unwrap();
+        let layer = s.doc().unwrap().doc.layers[0].id.0;
+
+        let rect = s.doc().unwrap().doc.artboards[0].rect;
+        let fd_orig = at_frame(&s.doc().unwrap().doc, 1);
+        let img_orig = vectorcraft_render::Renderer::new().render_region(&fd_orig, rect, 1.0, false);
+        let w = img_orig.width;
+        let h = img_orig.height;
+        let y_extent_orig: Vec<u32> = (0..h).filter(|&y| (0..w).any(|x| img_orig.pixel(x, y)[3] > 0)).collect();
+
+        s.execute("fx.add", &json!({"row": layer, "kind": "directional"})).unwrap();
+        s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 1, "params": {"radius": 15.0, "angle": 0.0}})).unwrap();
+
+        let fd_blur = at_frame(&s.doc().unwrap().doc, 1);
+        let img_blur = vectorcraft_render::Renderer::new().render_region(&fd_blur, rect, 1.0, false);
+        let y_extent_blur: Vec<u32> = (0..h).filter(|&y| (0..w).any(|x| img_blur.pixel(x, y)[3] > 0)).collect();
+
+        assert_eq!(y_extent_orig, y_extent_blur, "directional blur at angle 0 must not spread vertically");
+
+        let x_extent_orig = (0..w).filter(|&x| (0..h).any(|y| img_orig.pixel(x, y)[3] > 0)).count();
+        let x_extent_blur = (0..w).filter(|&x| (0..h).any(|y| img_blur.pixel(x, y)[3] > 0)).count();
+        assert!(x_extent_blur > x_extent_orig + 10, "directional blur must spread horizontally");
+    }
+
+    #[test]
+    fn rendering_same_frame_5_times_gives_same_pixels_and_row_opacity_unchanged() {
+        let (mut s, layer) = session_with_rect();
+        s.execute("fx.add", &json!({"row": layer, "kind": "transparency"})).unwrap();
+        s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 1, "params": {"amount": 50.0}})).unwrap();
+        s.execute("fx.add", &json!({"row": layer, "kind": "box"})).unwrap();
+        s.execute("fx.key", &json!({"row": layer, "index": 1, "frame": 1, "params": {"radius": 5.0}})).unwrap();
+
+        let initial_opacity = s.doc().unwrap().doc.node(vectorcraft_doc::NodeId(layer)).unwrap().opacity;
+        let rect = s.doc().unwrap().doc.artboards[0].rect;
+
+        let mut first_pixels = None;
+        for _ in 0..5 {
+            let fd = at_frame(&s.doc().unwrap().doc, 1);
+            let mut r = vectorcraft_render::Renderer::new();
+            let img = r.render_region(&fd, rect, 1.0, false);
+            if let Some(ref prev) = first_pixels {
+                assert_eq!(&img.pixels, prev, "repeated render must produce identical pixels");
+            } else {
+                first_pixels = Some(img.pixels);
+            }
+        }
+
+        let final_opacity = s.doc().unwrap().doc.node(vectorcraft_doc::NodeId(layer)).unwrap().opacity;
+        assert_eq!(initial_opacity, final_opacity, "row opacity in document must not change");
+    }
 }

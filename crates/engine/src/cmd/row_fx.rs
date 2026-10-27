@@ -109,7 +109,7 @@ impl FxKind {
             Self::BoxBlur => json!({"radius": 5.0}),
             Self::DirectionalBlur => json!({"radius": 5.0, "angle": 0.0}),
             Self::RadialBlur => json!({"radius": 5.0}),
-            Self::RadialZoomBlur => json!({"amount": 10.0, "cx": 0.0, "cy": 0.0}),
+            Self::RadialZoomBlur => json!({"amount": 10.0, "cx": 0.5, "cy": 0.5}),
         }
     }
 
@@ -121,18 +121,18 @@ impl FxKind {
             Self::ColorAdjust => "adjust.brightnessContrast",
             Self::Tint => "adjust.shiftToColor",
             Self::Transparency => "adjust.transparency",
-            Self::Greyscale => "adjust.hueSaturation",
+            Self::Greyscale => "adjust.greyscale",
             Self::Levels => "adjust.levels",
             Self::Contrast => "adjust.brightnessContrast",
             Self::Gamma => "adjust.levels",
             Self::HueSaturation => "adjust.hueSaturation",
-            Self::ColourScale => "adjust.levels",
+            Self::ColourScale => "adjust.colourScale",
             Self::Curves => "adjust.curves",
             Self::ColourFade => "adjust.shiftToColor",
-            Self::BoxBlur => "blur.gaussian",
-            Self::DirectionalBlur => "blur.gaussian",
+            Self::BoxBlur => "blur.box",
+            Self::DirectionalBlur => "blur.directional",
             Self::RadialBlur => "blur.radial",
-            Self::RadialZoomBlur => "blur.radial",
+            Self::RadialZoomBlur => "blur.radialZoom",
         }
     }
 }
@@ -285,11 +285,7 @@ impl RowEffect {
             FxKind::ColorAdjust => {}
             FxKind::Tint => {}
             FxKind::Transparency => {}
-            FxKind::Greyscale => {
-                if let Some(amt) = params.get("amount").and_then(Value::as_f64) {
-                    params["saturation"] = json!(-amt.clamp(0.0, 100.0));
-                }
-            }
+            FxKind::Greyscale => {}
             FxKind::Levels => {
                 let ib = params.get("inBlack").cloned().unwrap_or(json!(0.0));
                 let iw = params.get("inWhite").cloned().unwrap_or(json!(255.0));
@@ -316,20 +312,13 @@ impl RowEffect {
                 params["outputWhite"] = json!(255.0);
             }
             FxKind::HueSaturation => {}
-            FxKind::ColourScale => {
-                let r = params.get("r").and_then(Value::as_f64).unwrap_or(1.0);
-                let g = params.get("g").and_then(Value::as_f64).unwrap_or(1.0);
-                let b = params.get("b").and_then(Value::as_f64).unwrap_or(1.0);
-                let avg = ((r + g + b) / 3.0).clamp(0.0, 1.0);
-                params["outputWhite"] = json!(255.0 * avg);
-                params["inputBlack"] = json!(0.0);
-                params["inputWhite"] = json!(255.0);
-                params["outputBlack"] = json!(0.0);
-                params["gamma"] = json!(1.0);
-            }
+            FxKind::ColourScale => {}
             FxKind::Curves => {}
             FxKind::ColourFade => {
                 params["preserveLightness"] = json!(false);
+                let col = params.get("color").cloned().unwrap_or(json!("#ff0000"));
+                params["color"] = col.clone();
+                params["target"] = col;
             }
             FxKind::RadialBlur => {
                 let r = params.get("radius").and_then(Value::as_f64).unwrap_or(5.0);
@@ -340,8 +329,10 @@ impl RowEffect {
             FxKind::RadialZoomBlur => {
                 let amt = params.get("amount").and_then(Value::as_f64).unwrap_or(10.0);
                 params["amount"] = json!(amt.clamp(0.0, 100.0));
-                params["method"] = json!("zoom");
-                params["quality"] = json!("good");
+                let cx = params.get("cx").and_then(Value::as_f64).unwrap_or(0.5);
+                params["cx"] = json!(cx.clamp(0.0, 1.0));
+                let cy = params.get("cy").and_then(Value::as_f64).unwrap_or(0.5);
+                params["cy"] = json!(cy.clamp(0.0, 1.0));
             }
         }
         let is_zero = match self.kind {
