@@ -199,6 +199,7 @@ pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     (crate::panels::camera_preview::ID, "Camera Preview", "layers"),
     (crate::panels::row_effects::ID, "Row Effects", "layers"),
     (crate::panels::node_view::ID, "Node View", "layers"),
+    (crate::panels::actions_tpl::ID, "Action Templates", "layers"),
 ];
 
 /// Groups of icon panels separated by dividers in the collapsed column.

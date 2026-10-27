@@ -32,6 +32,7 @@ pub mod library_panel;
 pub mod links;
 pub mod magic_wand;
 pub mod navigator;
+pub mod actions_tpl;
 pub mod node_view;
 pub mod opentype;
 pub mod palettes;
@@ -188,6 +189,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         camera_preview::ID => camera_preview::show(app, ui),
         row_effects::ID => row_effects::show(app, ui),
         node_view::ID => node_view::show(app, ui),
+        actions_tpl::ID => actions_tpl::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),
         links::ID => links::show(app, ui),
         asset_export::ID => asset_export::show(app, ui),

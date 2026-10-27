@@ -5719,6 +5719,9 @@ font-technology	Variable	متغير
 	Node Graph	مخطط العقد
 	Connect Nodes	توصيل العقد
 	Disconnect Nodes	قطع اتصال العقد
+	Cutter (Inv)	قاطع (معكوس)
+	No rows in document	لا توجد صفوف في المستند
+	Action Templates	قوالب الحركة
 	Glow	توهج
 	Color Adjust	ضبط الألوان
 	Key at this frame	مفتاح عند هذا الإطار
