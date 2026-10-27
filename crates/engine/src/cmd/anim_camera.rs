@@ -13,7 +13,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Camera Keyframe",
             [],
             None,
-            "{frame?: (default: the current frame), x?, y?: the view's centre (document points), zoom?: 0.01–100 (1: the artboard's size), rotation?: degrees (counter-clockwise), z?: how far the camera moves in toward the stage (document points; multiplane), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the camera key at the frame. Missing fields keep the camera there, or with no camera yet, the first artboard's centre at zoom 1 → {frame, x, y, zoom, rotation, ease}",
+            "{frame?: (default: the current frame), x?, y?: the view's centre (document points), zoom?: 0.01–100 (1: the artboard's size), rotation?: degrees the camera turns counter-clockwise (so the picture turns clockwise, as in Harmony), z?: how far the camera moves in toward the stage (document points; multiplane), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the camera key at the frame. Missing fields keep the camera there, or with no camera yet, the first artboard's centre at zoom 1 → {frame, x, y, zoom, rotation, ease}",
             has_doc,
             camera_key
         ),

@@ -1306,6 +1306,22 @@ mod tests {
     }
 
     #[test]
+    fn a_camera_turned_counter_clockwise_turns_the_picture_clockwise() {
+        // As in Harmony: the camera turns, so what it sees turns the other way. On screen (y down)
+        // clockwise by 90° takes a point right of centre to below it.
+        let mut s = session();
+        rect(&mut s, 100.0);
+        let doc = s.doc().unwrap().doc.clone();
+        let board = doc.artboards[0].rect;
+        let c = board.center();
+        let seen = through_camera((*doc).clone(), Some(Cam { x: c.x, y: c.y, zoom: 1.0, rotation: 90.0, ease: None, z: 0.0 }), board);
+        let b = seen.layers[0].children().unwrap()[0].geometric_bounds().unwrap();
+        let (vx, vy) = (110.0 - c.x, 20.0 - c.y);
+        let want = (c.x - vy, c.y + vx);
+        assert!((b.center().x - want.0).abs() < 1e-6 && (b.center().y - want.1).abs() < 1e-6, "{:?} vs {want:?}", b.center());
+    }
+
+    #[test]
     fn objects_pair_by_name_before_order_and_odd_pairs_morph() {
         let mut s = session();
         s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();

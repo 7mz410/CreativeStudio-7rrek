@@ -46,7 +46,7 @@ pub(crate) fn project(doc: &mut Document, c: &Cam, rect: Rect) {
     let anim = Anim::of(doc);
     let depths = row_depths(doc);
     let flat = depths.iter().all(|(_, z)| *z == 0.0) && c.z == 0.0;
-    let view = |s: f64| Affine::translate(rect.center().to_vec2()) * Affine::rotate(-c.rotation.to_radians()) * Affine::scale(c.zoom * s);
+    let view = |s: f64| Affine::translate(rect.center().to_vec2()) * Affine::rotate(c.rotation.to_radians()) * Affine::scale(c.zoom * s);
     let pan = Affine::translate((-c.x, -c.y));
     for l in &mut doc.layers {
         let depth = depths.iter().find(|(id, _)| *id == l.id.0).map_or(0.0, |(_, z)| *z);
