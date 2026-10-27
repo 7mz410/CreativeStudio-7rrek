@@ -62,6 +62,7 @@ pub mod mesh;
 pub mod mesh_cmd;
 pub(crate) mod newart;
 pub mod newdoc;
+pub mod nodes;
 mod object;
 pub(crate) mod objects_on_path;
 mod opacitymask;
@@ -336,6 +337,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(rig_cmd::specs());
         v.extend(peg_cmd::specs());
         v.extend(row_fx_cmd::specs());
+        v.extend(nodes::specs());
         v.extend(halftone::specs());
         v.extend(perspgrid::specs());
         v.extend(shortcutset::specs());

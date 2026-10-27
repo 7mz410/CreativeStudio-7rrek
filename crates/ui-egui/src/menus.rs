@@ -3263,6 +3263,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 panel("Top View", crate::panels::topview::ID),
                 panel("Camera Preview", crate::panels::camera_preview::ID),
                 panel("Row Effects", crate::panels::row_effects::ID),
+                panel("Node View", crate::panels::node_view::ID),
                 panel("Flattener Preview", crate::panels::flattener_preview::ID),
                 panel("Gradient", "gradient"),
                 panel("Graphic Styles", "graphicStyles"),
