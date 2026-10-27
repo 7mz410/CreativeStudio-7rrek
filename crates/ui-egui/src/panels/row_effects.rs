@@ -52,10 +52,29 @@ fn hex(rgb: [u8; 3]) -> String {
 /// Menu button allowing the user to append an effect to the row.
 fn add_effect_menu(ui: &mut Ui, acts: &mut Vec<Act>) {
     ui.menu_button(tl!("Add Effect"), |ui| {
+        // Blurs
         if ui.button(tl!("Blur")).clicked() {
             acts.push(Act::Add("blur"));
             ui.close();
         }
+        if ui.button(tl!("Box Blur")).clicked() {
+            acts.push(Act::Add("box"));
+            ui.close();
+        }
+        if ui.button(tl!("Directional Blur")).clicked() {
+            acts.push(Act::Add("directional"));
+            ui.close();
+        }
+        if ui.button(tl!("Radial Blur")).clicked() {
+            acts.push(Act::Add("radial"));
+            ui.close();
+        }
+        if ui.button(tl!("Radial Zoom Blur")).clicked() {
+            acts.push(Act::Add("radialZoom"));
+            ui.close();
+        }
+        ui.separator();
+        // Light & Shadow
         if ui.button(tl!("Glow")).clicked() {
             acts.push(Act::Add("glow"));
             ui.close();
@@ -64,8 +83,46 @@ fn add_effect_menu(ui: &mut Ui, acts: &mut Vec<Act>) {
             acts.push(Act::Add("dropShadow"));
             ui.close();
         }
+        ui.separator();
+        // Color & Tone
         if ui.button(tl!("Color Adjust")).clicked() {
             acts.push(Act::Add("colorAdjust"));
+            ui.close();
+        }
+        if ui.button(tl!("Transparency")).clicked() {
+            acts.push(Act::Add("transparency"));
+            ui.close();
+        }
+        if ui.button(tl!("Greyscale")).clicked() {
+            acts.push(Act::Add("greyscale"));
+            ui.close();
+        }
+        if ui.button(tl!("Levels")).clicked() {
+            acts.push(Act::Add("levels"));
+            ui.close();
+        }
+        if ui.button(tl!("Contrast")).clicked() {
+            acts.push(Act::Add("contrast"));
+            ui.close();
+        }
+        if ui.button(tl!("Gamma")).clicked() {
+            acts.push(Act::Add("gamma"));
+            ui.close();
+        }
+        if ui.button(tl!("Hue / Saturation")).clicked() {
+            acts.push(Act::Add("hueSaturation"));
+            ui.close();
+        }
+        if ui.button(tl!("Colour Scale")).clicked() {
+            acts.push(Act::Add("colourScale"));
+            ui.close();
+        }
+        if ui.button(tl!("Curves")).clicked() {
+            acts.push(Act::Add("curves"));
+            ui.close();
+        }
+        if ui.button(tl!("Colour Fade")).clicked() {
+            acts.push(Act::Add("colourFade"));
             ui.close();
         }
         if ui.button(tl!("Tint")).clicked() {
@@ -128,6 +185,19 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 FxKind::DropShadow => tl!("Drop Shadow"),
                 FxKind::ColorAdjust => tl!("Color Adjust"),
                 FxKind::Tint => tl!("Tint"),
+                FxKind::Transparency => tl!("Transparency"),
+                FxKind::Greyscale => tl!("Greyscale"),
+                FxKind::Levels => tl!("Levels"),
+                FxKind::Contrast => tl!("Contrast"),
+                FxKind::Gamma => tl!("Gamma"),
+                FxKind::HueSaturation => tl!("Hue / Saturation"),
+                FxKind::ColourScale => tl!("Colour Scale"),
+                FxKind::Curves => tl!("Curves"),
+                FxKind::ColourFade => tl!("Colour Fade"),
+                FxKind::BoxBlur => tl!("Box Blur"),
+                FxKind::DirectionalBlur => tl!("Directional Blur"),
+                FxKind::RadialBlur => tl!("Radial Blur"),
+                FxKind::RadialZoomBlur => tl!("Radial Zoom Blur"),
             };
 
             let open_id = ui.id().with(("fx_open", i));
@@ -327,6 +397,253 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                             }
                         });
                     }
+                    FxKind::Transparency => {
+                        let mut amount = params.get("amount").and_then(Value::as_f64).unwrap_or(100.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Amount:"));
+                            if ui.add(DragValue::new(&mut amount).speed(1.0).range(0.0..=100.0)).changed() {
+                                params["amount"] = json!(amount);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::Greyscale => {
+                        let mut amount = params.get("amount").and_then(Value::as_f64).unwrap_or(100.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Amount:"));
+                            if ui.add(DragValue::new(&mut amount).speed(1.0).range(0.0..=100.0)).changed() {
+                                params["amount"] = json!(amount);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::Levels => {
+                        let mut in_black = params.get("inBlack").and_then(Value::as_f64).unwrap_or(0.0);
+                        let mut in_white = params.get("inWhite").and_then(Value::as_f64).unwrap_or(255.0);
+                        let mut gamma = params.get("gamma").and_then(Value::as_f64).unwrap_or(1.0);
+                        let mut out_black = params.get("outBlack").and_then(Value::as_f64).unwrap_or(0.0);
+                        let mut out_white = params.get("outWhite").and_then(Value::as_f64).unwrap_or(255.0);
+
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("In Black:"));
+                            if ui.add(DragValue::new(&mut in_black).speed(1.0).range(0.0..=255.0)).changed() {
+                                params["inBlack"] = json!(in_black);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                            ui.label(tl!("In White:"));
+                            if ui.add(DragValue::new(&mut in_white).speed(1.0).range(0.0..=255.0)).changed() {
+                                params["inWhite"] = json!(in_white);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Gamma:"));
+                            if ui.add(DragValue::new(&mut gamma).speed(0.05).range(0.1..=10.0)).changed() {
+                                params["gamma"] = json!(gamma);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Out Black:"));
+                            if ui.add(DragValue::new(&mut out_black).speed(1.0).range(0.0..=255.0)).changed() {
+                                params["outBlack"] = json!(out_black);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                            ui.label(tl!("Out White:"));
+                            if ui.add(DragValue::new(&mut out_white).speed(1.0).range(0.0..=255.0)).changed() {
+                                params["outWhite"] = json!(out_white);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::Contrast => {
+                        let mut amount = params.get("amount").and_then(Value::as_f64).unwrap_or(0.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Amount:"));
+                            if ui.add(DragValue::new(&mut amount).speed(1.0).range(-100.0..=100.0)).changed() {
+                                params["amount"] = json!(amount);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::Gamma => {
+                        let mut gamma = params.get("gamma").and_then(Value::as_f64).unwrap_or(1.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Gamma:"));
+                            if ui.add(DragValue::new(&mut gamma).speed(0.05).range(0.1..=10.0)).changed() {
+                                params["gamma"] = json!(gamma);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::HueSaturation => {
+                        let mut hue = params.get("hue").and_then(Value::as_f64).unwrap_or(0.0);
+                        let mut saturation = params.get("saturation").and_then(Value::as_f64).unwrap_or(0.0);
+                        let mut lightness = params.get("lightness").and_then(Value::as_f64).unwrap_or(0.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Hue:"));
+                            if ui.add(DragValue::new(&mut hue).speed(1.0).range(-180.0..=180.0)).changed() {
+                                params["hue"] = json!(hue);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Saturation:"));
+                            if ui.add(DragValue::new(&mut saturation).speed(1.0).range(-100.0..=100.0)).changed() {
+                                params["saturation"] = json!(saturation);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Lightness:"));
+                            if ui.add(DragValue::new(&mut lightness).speed(1.0).range(-100.0..=100.0)).changed() {
+                                params["lightness"] = json!(lightness);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::ColourScale => {
+                        let mut r = params.get("r").and_then(Value::as_f64).unwrap_or(1.0);
+                        let mut g = params.get("g").and_then(Value::as_f64).unwrap_or(1.0);
+                        let mut b = params.get("b").and_then(Value::as_f64).unwrap_or(1.0);
+                        let mut a = params.get("a").and_then(Value::as_f64).unwrap_or(1.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("R:"));
+                            if ui.add(DragValue::new(&mut r).speed(0.05).range(0.0..=5.0)).changed() {
+                                params["r"] = json!(r);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                            ui.label(tl!("G:"));
+                            if ui.add(DragValue::new(&mut g).speed(0.05).range(0.0..=5.0)).changed() {
+                                params["g"] = json!(g);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("B:"));
+                            if ui.add(DragValue::new(&mut b).speed(0.05).range(0.0..=5.0)).changed() {
+                                params["b"] = json!(b);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                            ui.label(tl!("A:"));
+                            if ui.add(DragValue::new(&mut a).speed(0.05).range(0.0..=5.0)).changed() {
+                                params["a"] = json!(a);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::Curves => {
+                        let cur_points_str = params.get("points").map(|v| v.to_string()).unwrap_or_else(|| "[[0,0],[255,255]]".to_string());
+                        let text_id = ui.id().with(("curves_pts", i));
+                        let mut text_pts = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| cur_points_str.clone());
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Points:"));
+                            if ui.add(TextEdit::singleline(&mut text_pts).desired_width(140.0)).changed() {
+                                ui.data_mut(|d| d.insert_temp(text_id, text_pts.clone()));
+                                if let Ok(parsed) = serde_json::from_str::<Value>(&text_pts)
+                                    && parsed.is_array()
+                                {
+                                    params["points"] = parsed;
+                                    acts.push(Act::Key { index: i, params: params.clone() });
+                                }
+                            }
+                        });
+                    }
+                    FxKind::ColourFade => {
+                        let mut amount = params.get("amount").and_then(Value::as_f64).unwrap_or(0.0);
+                        let color_str = params.get("color").and_then(Value::as_str).unwrap_or("#000000").to_string();
+
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Amount:"));
+                            if ui.add(DragValue::new(&mut amount).speed(1.0).range(0.0..=100.0)).changed() {
+                                params["amount"] = json!(amount);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Color:"));
+                            let mut rgb = parse_hex(&color_str).unwrap_or([0, 0, 0]);
+                            if ui.color_edit_button_srgb(&mut rgb).changed() {
+                                let new_hex = hex(rgb);
+                                params["color"] = json!(new_hex);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+
+                            let text_id = ui.id().with(("fade_hex", i));
+                            let mut text_hex = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| color_str.clone());
+                            if ui.add(TextEdit::singleline(&mut text_hex).desired_width(70.0)).changed() {
+                                ui.data_mut(|d| d.insert_temp(text_id, text_hex.clone()));
+                                if parse_hex(&text_hex).is_some() {
+                                    let normalized = if text_hex.starts_with('#') { text_hex.clone() } else { format!("#{text_hex}") };
+                                    params["color"] = json!(normalized);
+                                    acts.push(Act::Key { index: i, params: params.clone() });
+                                }
+                            }
+                        });
+                    }
+                    FxKind::BoxBlur => {
+                        let mut radius = params.get("radius").and_then(Value::as_f64).unwrap_or(5.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Radius:"));
+                            if ui.add(DragValue::new(&mut radius).speed(0.1).range(0.0..=250.0)).changed() {
+                                params["radius"] = json!(radius);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::DirectionalBlur => {
+                        let mut radius = params.get("radius").and_then(Value::as_f64).unwrap_or(10.0);
+                        let mut angle = params.get("angle").and_then(Value::as_f64).unwrap_or(0.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Radius:"));
+                            if ui.add(DragValue::new(&mut radius).speed(0.1).range(0.0..=250.0)).changed() {
+                                params["radius"] = json!(radius);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Angle:"));
+                            if ui.add(DragValue::new(&mut angle).speed(1.0).range(0.0..=360.0)).changed() {
+                                params["angle"] = json!(angle);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::RadialBlur => {
+                        let mut radius = params.get("radius").and_then(Value::as_f64).unwrap_or(5.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Radius:"));
+                            if ui.add(DragValue::new(&mut radius).speed(0.1).range(0.0..=250.0)).changed() {
+                                params["radius"] = json!(radius);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::RadialZoomBlur => {
+                        let mut amount = params.get("amount").and_then(Value::as_f64).unwrap_or(10.0);
+                        let mut cx = params.get("cx").and_then(Value::as_f64).unwrap_or(0.5);
+                        let mut cy = params.get("cy").and_then(Value::as_f64).unwrap_or(0.5);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Amount:"));
+                            if ui.add(DragValue::new(&mut amount).speed(0.5).range(0.0..=100.0)).changed() {
+                                params["amount"] = json!(amount);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Center X:"));
+                            if ui.add(DragValue::new(&mut cx).speed(0.01).range(0.0..=1.0)).changed() {
+                                params["cx"] = json!(cx);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                            ui.label(tl!("Center Y:"));
+                            if ui.add(DragValue::new(&mut cy).speed(0.01).range(0.0..=1.0)).changed() {
+                                params["cy"] = json!(cy);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
                 });
             }
         }
@@ -441,5 +758,37 @@ mod tests {
         let effects = list["effects"].as_array().unwrap();
         assert_eq!(effects.len(), 1);
         assert_eq!(effects[0]["kind"], "blur");
+    }
+
+    #[test]
+    fn all_effect_kinds_show_in_ui_without_panic() {
+        let all_kinds = [
+            "blur",
+            "glow",
+            "dropShadow",
+            "colorAdjust",
+            "tint",
+            "transparency",
+            "greyscale",
+            "levels",
+            "contrast",
+            "gamma",
+            "hueSaturation",
+            "colourScale",
+            "curves",
+            "colourFade",
+            "box",
+            "directional",
+            "radial",
+            "radialZoom",
+        ];
+        let mut app = anim_doc();
+        for kind in all_kinds {
+            app.run("fx.add", json!({"kind": kind})).unwrap();
+        }
+        let ctx = ctx();
+        frame(&mut app, &ctx);
+        let list = app.session.execute("fx.list", &json!({})).unwrap();
+        assert_eq!(list["effects"].as_array().unwrap().len(), 18);
     }
 }

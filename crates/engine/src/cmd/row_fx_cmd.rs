@@ -15,7 +15,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Add Row Effect",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), kind: \"blur\"|\"glow\"|\"dropShadow\"|\"colorAdjust\"|\"tint\", part?: \"all\"|\"lineArt\"|\"colourArt\" (drawing selector: only the lines, or only the Colour Art fills, of each drawing; default all)} adds an effect to the row → {row, index, kind}",
+            "{row?: layer id (default: the current layer's row), kind: \"blur\"|\"glow\"|\"dropShadow\"|\"colorAdjust\"|\"tint\"|\"transparency\"|\"greyscale\"|\"levels\"|\"contrast\"|\"gamma\"|\"hueSaturation\"|\"colourScale\"|\"curves\"|\"colourFade\"|\"box\"|\"directional\"|\"radial\"|\"radialZoom\", part?: \"all\"|\"lineArt\"|\"colourArt\" (drawing selector: only the lines, or only the Colour Art fills, of each drawing; default all)} adds an effect to the row → {row, index, kind}",
             has_doc,
             add
         ),
@@ -71,9 +71,8 @@ fn commit(s: &mut Session, label: &str, all: RowFxList) -> Result<()> {
 fn add(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "fx.add";
     let row = row_param(s, p, C)?;
-    let kind_str = str_param(p, "kind").ok_or_else(|| bad(C, "`kind` is required (blur, glow, dropShadow, colorAdjust, tint)"))?;
-    let kind =
-        FxKind::parse(kind_str).ok_or_else(|| bad(C, format!("unknown kind {kind_str:?} (expected blur, glow, dropShadow, colorAdjust, tint)")))?;
+    let kind_str = str_param(p, "kind").ok_or_else(|| bad(C, "`kind` is required"))?;
+    let kind = FxKind::parse(kind_str).ok_or_else(|| bad(C, format!("unknown kind {kind_str:?}")))?;
 
     let part = match str_param(p, "part") {
         None => Part::All,
@@ -111,6 +110,17 @@ fn key(s: &mut Session, p: &Value) -> Result<Value> {
     let params_val = p.get("params").ok_or_else(|| bad(C, "`params` is required"))?;
     if !params_val.is_object() {
         return Err(bad(C, "`params` must be an object"));
+    }
+
+    // Parameter limits and validations
+    if params_val.get("radius").and_then(Value::as_f64).is_some_and(|r| !(0.0..=250.0).contains(&r)) {
+        return Err(bad(C, "radius must be in 0..250"));
+    }
+    if params_val.get("blur").and_then(Value::as_f64).is_some_and(|b| !(0.0..=250.0).contains(&b)) {
+        return Err(bad(C, "blur must be in 0..250"));
+    }
+    if params_val.get("gamma").and_then(Value::as_f64).is_some_and(|g| g <= 0.0) {
+        return Err(bad(C, "gamma must be positive (0.1..10)"));
     }
 
     let mut all = RowFxList::of(&s.doc()?.doc);
@@ -234,6 +244,14 @@ mod tests {
         assert!(s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 50, "params": {}})).is_err(), "frame > frames");
         assert!(s.execute("fx.removeKey", &json!({"row": layer, "index": 0, "frame": 1})).is_err(), "no key yet");
         assert!(s.execute("fx.remove", &json!({"row": layer, "index": 5})).is_err());
+
+        // Negative radius or > 250
+        assert!(s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 1, "params": {"radius": -5.0}})).is_err());
+        assert!(s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 1, "params": {"radius": 300.0}})).is_err());
+
+        // Gamma 0
+        s.execute("fx.add", &json!({"row": layer, "kind": "gamma"})).unwrap();
+        assert!(s.execute("fx.key", &json!({"row": layer, "index": 1, "frame": 1, "params": {"gamma": 0.0}})).is_err());
     }
 
     #[test]
@@ -297,6 +315,58 @@ mod tests {
             hashes.insert(hash);
         }
         assert_eq!(hashes.len(), 12, "all 12 frames must produce different pixel outputs");
+    }
+
+    fn check_12_distinct_frames(kind: &str, k1: Value, k12: Value, initial_color: Option<&str>) {
+        let (mut s, layer) = session_with_rect();
+        if let Some(c) = initial_color {
+            s.execute("paint.setFill", &json!({"color": c})).unwrap();
+        }
+        s.execute("fx.add", &json!({"row": layer, "kind": kind})).unwrap();
+        s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 1, "params": k1})).unwrap();
+        s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 12, "params": k12})).unwrap();
+
+        let doc = &s.doc().unwrap().doc;
+        let rect = doc.artboards[0].rect;
+
+        let mut hashes = BTreeSet::new();
+        for f in 1..=12 {
+            let fd = at_frame(doc, f);
+            let mut r = vectorcraft_render::Renderer::new();
+            let img = r.render_region(&fd, rect, 1.0, false);
+            let mut hasher = DefaultHasher::new();
+            img.pixels.hash(&mut hasher);
+            hashes.insert(hasher.finish());
+        }
+        assert_eq!(hashes.len(), 12, "kind {kind} must produce 12 distinct frames across keyframes");
+    }
+
+    #[test]
+    fn each_new_kind_keyed_0_to_full_over_12_frames_exports_12_different_frames() {
+        let kinds: &[(&str, Value, Value, Option<&str>)] = &[
+            ("transparency", json!({"amount": 0.0}), json!({"amount": 100.0}), None),
+            ("greyscale", json!({"amount": 0.0}), json!({"amount": 100.0}), Some("#ff2200")),
+            (
+                "levels",
+                json!({"inBlack": 0.0, "inWhite": 255.0, "outBlack": 0.0}),
+                json!({"inBlack": 80.0, "inWhite": 255.0, "outBlack": 100.0}),
+                Some("#888888"),
+            ),
+            ("contrast", json!({"amount": 0.0}), json!({"amount": 90.0}), Some("#888888")),
+            ("gamma", json!({"gamma": 1.0}), json!({"gamma": 4.0}), Some("#888888")),
+            ("hueSaturation", json!({"hue": 0.0}), json!({"hue": 180.0}), Some("#ff0000")),
+            ("colourScale", json!({"r": 1.0, "g": 1.0, "b": 1.0}), json!({"r": 0.0, "g": 0.0, "b": 0.0}), Some("#ffffff")),
+            ("curves", json!({"points": "0,0 128,128 255,255"}), json!({"points": "0,0 128,255 255,255"}), Some("#888888")),
+            ("colourFade", json!({"amount": 0.0, "color": "#00ff00"}), json!({"amount": 100.0, "color": "#00ff00"}), Some("#ff0000")),
+            ("box", json!({"radius": 0.0}), json!({"radius": 25.0}), None),
+            ("directional", json!({"radius": 0.0, "angle": 0.0}), json!({"radius": 25.0, "angle": 45.0}), None),
+            ("radial", json!({"radius": 1.0}), json!({"radius": 15.0}), None),
+            ("radialZoom", json!({"amount": 1.0}), json!({"amount": 50.0}), None),
+        ];
+
+        for &(kind, ref k1, ref k12, init_col) in kinds {
+            check_12_distinct_frames(kind, k1.clone(), k12.clone(), init_col);
+        }
     }
 
     #[test]

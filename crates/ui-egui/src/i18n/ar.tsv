@@ -5763,3 +5763,25 @@ font-technology	Variable	متغير
 	Combine	الدمج
 	How this layer's art mixes with the layers beneath it	كيف يمتزج رسم هذه الطبقة مع الطبقات التي تحتها
 	Drag a row's output dot onto another row to move it above or below that row	اسحب نقطة خرج الصف فوق صف آخر لنقله أعلى ذلك الصف أو أسفله
+	Box Blur	تمويه مربّع
+	Directional Blur	تمويه اتجاهي
+	Radial Zoom Blur	تمويه تكبير شعاعي
+	Greyscale	تدرج رمادي
+	Hue / Saturation	تدرّج اللون / التشبّع
+	Colour Scale	مقياس الألوان
+	Curves	المنحنيات
+	Colour Fade	تلاشي اللون
+	In Black:	الأسود المدخل:
+	In White:	الأبيض المدخل:
+	Out Black:	الأسود المخرج:
+	Out White:	الأبيض المخرج:
+	Gamma:	غاما:
+	Hue:	تدرّج اللون:
+	Saturation:	التشبّع:
+	Lightness:	الإضاءة:
+	R:	R:
+	G:	G:
+	B:	B:
+	A:	A:
+	Center X:	المركز X:
+	Center Y:	المركز Y:

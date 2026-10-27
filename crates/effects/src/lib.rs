@@ -48,6 +48,7 @@ pub mod preview;
 mod raster;
 mod reshape;
 mod revolve;
+pub mod rowops;
 mod solids;
 pub mod stroke;
 mod stylize;
@@ -86,6 +87,7 @@ pub use reshape::{
     outline_text, reshape,
 };
 pub use revolve::{REVOLVE, has_revolve, revolve_art, revolve_options, validate_revolve};
+pub use rowops::*;
 pub use solids::{
     EXTRUDE, INFLATE, ROTATE, ROTATION_PRESETS, SOLIDS, extrude_options, has_solid, inflate_options, is_three_d, solid_art, validate_solid,
     validate_three_d, view_options,
@@ -819,6 +821,10 @@ pub fn effect_catalog() -> Vec<EffectInfo> {
             "{temperature: -100 (cooler) .. 100 (warmer) (0), tint: -100 (greener) .. 100 (more magenta) (0)} recolours as Brightness/Contrast does",
             json!({"temperature": 0.0, "tint": 0.0}),
         ),
+        g("adjust.greyscale", "Greyscale…", ADJUST, "{amount: 0..100 % (100)}", json!({"amount": 100.0})),
+        g("adjust.colourScale", "Colour Scale…", ADJUST, "{r: multiplier (1), g: multiplier (1), b: multiplier (1), a: multiplier (1)}", json!({"r": 1.0, "g": 1.0, "b": 1.0, "a": 1.0})),
+        g("adjust.colourFade", "Colour Fade…", ADJUST, "{color: \"#rrggbb\" (\"#ff0000\"), amount: 0..100 % (50)}", json!({"color": "#ff0000", "amount": 50.0})),
+        g("adjust.transparency", "Transparency…", ADJUST, "{amount: 0..100 % (50)}", json!({"amount": 50.0})),
     ]);
     for (suffix, label) in WARP_STYLES {
         let id: &'static str = match suffix {

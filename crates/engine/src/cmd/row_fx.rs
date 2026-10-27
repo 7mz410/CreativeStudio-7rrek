@@ -25,16 +25,44 @@ pub enum FxKind {
     DropShadow,
     ColorAdjust,
     Tint,
+    // C2 Color ops:
+    Transparency,
+    Greyscale,
+    Levels,
+    Contrast,
+    Gamma,
+    HueSaturation,
+    ColourScale,
+    Curves,
+    ColourFade,
+    // C3 Blurs:
+    BoxBlur,
+    DirectionalBlur,
+    RadialBlur,
+    RadialZoomBlur,
 }
 
 impl FxKind {
     pub fn parse(s: &str) -> Option<Self> {
         match s {
-            "blur" => Some(Self::Blur),
+            "blur" | "gaussian" => Some(Self::Blur),
             "glow" => Some(Self::Glow),
             "dropShadow" => Some(Self::DropShadow),
             "colorAdjust" => Some(Self::ColorAdjust),
             "tint" => Some(Self::Tint),
+            "transparency" => Some(Self::Transparency),
+            "greyscale" => Some(Self::Greyscale),
+            "levels" => Some(Self::Levels),
+            "contrast" => Some(Self::Contrast),
+            "gamma" => Some(Self::Gamma),
+            "hueSaturation" => Some(Self::HueSaturation),
+            "colourScale" | "colorScale" => Some(Self::ColourScale),
+            "curves" => Some(Self::Curves),
+            "colourFade" | "colorFade" => Some(Self::ColourFade),
+            "box" => Some(Self::BoxBlur),
+            "directional" => Some(Self::DirectionalBlur),
+            "radial" => Some(Self::RadialBlur),
+            "radialZoom" => Some(Self::RadialZoomBlur),
             _ => None,
         }
     }
@@ -46,6 +74,19 @@ impl FxKind {
             Self::DropShadow => "dropShadow",
             Self::ColorAdjust => "colorAdjust",
             Self::Tint => "tint",
+            Self::Transparency => "transparency",
+            Self::Greyscale => "greyscale",
+            Self::Levels => "levels",
+            Self::Contrast => "contrast",
+            Self::Gamma => "gamma",
+            Self::HueSaturation => "hueSaturation",
+            Self::ColourScale => "colourScale",
+            Self::Curves => "curves",
+            Self::ColourFade => "colourFade",
+            Self::BoxBlur => "box",
+            Self::DirectionalBlur => "directional",
+            Self::RadialBlur => "radial",
+            Self::RadialZoomBlur => "radialZoom",
         }
     }
 
@@ -56,6 +97,19 @@ impl FxKind {
             Self::DropShadow => json!({"x": 7.0, "y": 7.0, "blur": 5.0, "opacity": 75.0, "color": "#000000", "mode": "multiply"}),
             Self::ColorAdjust => json!({"brightness": 0.0, "contrast": 0.0}),
             Self::Tint => json!({"color": "#ff8800", "amount": 50.0}),
+            Self::Transparency => json!({"amount": 50.0}),
+            Self::Greyscale => json!({"amount": 100.0}),
+            Self::Levels => json!({"inBlack": 0.0, "inWhite": 255.0, "gamma": 1.0, "outBlack": 0.0, "outWhite": 255.0}),
+            Self::Contrast => json!({"amount": 25.0}),
+            Self::Gamma => json!({"gamma": 1.5}),
+            Self::HueSaturation => json!({"hue": 0.0, "saturation": 0.0, "lightness": 0.0}),
+            Self::ColourScale => json!({"r": 1.0, "g": 1.0, "b": 1.0, "a": 1.0}),
+            Self::Curves => json!({"points": "0,0 128,128 255,255"}),
+            Self::ColourFade => json!({"color": "#ff0000", "amount": 50.0}),
+            Self::BoxBlur => json!({"radius": 5.0}),
+            Self::DirectionalBlur => json!({"radius": 5.0, "angle": 0.0}),
+            Self::RadialBlur => json!({"radius": 5.0}),
+            Self::RadialZoomBlur => json!({"amount": 10.0, "cx": 0.0, "cy": 0.0}),
         }
     }
 
@@ -66,8 +120,35 @@ impl FxKind {
             Self::DropShadow => "stylize.dropShadow",
             Self::ColorAdjust => "adjust.brightnessContrast",
             Self::Tint => "adjust.shiftToColor",
+            Self::Transparency => "adjust.transparency",
+            Self::Greyscale => "adjust.hueSaturation",
+            Self::Levels => "adjust.levels",
+            Self::Contrast => "adjust.brightnessContrast",
+            Self::Gamma => "adjust.levels",
+            Self::HueSaturation => "adjust.hueSaturation",
+            Self::ColourScale => "adjust.levels",
+            Self::Curves => "adjust.curves",
+            Self::ColourFade => "adjust.shiftToColor",
+            Self::BoxBlur => "blur.gaussian",
+            Self::DirectionalBlur => "blur.gaussian",
+            Self::RadialBlur => "blur.radial",
+            Self::RadialZoomBlur => "blur.radial",
         }
     }
+}
+
+fn parse_point_str(s: &str) -> Option<Vec<(f64, f64)>> {
+    let pts: Vec<(f64, f64)> = s
+        .split(|c: char| c.is_whitespace() || c == ';')
+        .filter(|w| !w.is_empty())
+        .map(|pair| {
+            let mut parts = pair.split(',');
+            let x = parts.next()?.trim().parse::<f64>().ok()?;
+            let y = parts.next()?.trim().parse::<f64>().ok()?;
+            Some((x, y))
+        })
+        .collect::<Option<Vec<_>>>()?;
+    if pts.is_empty() { None } else { Some(pts) }
 }
 
 /// Recursively interpolates two JSON values with parameter `t` in [0, 1].
@@ -89,11 +170,36 @@ pub fn interpolate_value(a: &Value, b: &Value, t: f64) -> Value {
                 let g = mix(ga, gb);
                 let b = mix(ba, bb);
                 json!(vectorcraft_color::Color::rgb(r, g, b).to_hex())
+            } else if let (Some(pa), Some(pb)) = (parse_point_str(sa), parse_point_str(sb)) {
+                if pa.len() == pb.len() {
+                    let parts: Vec<String> = pa
+                        .iter()
+                        .zip(&pb)
+                        .map(|((xa, ya), (xb, yb))| {
+                            let x = xa + (xb - xa) * t;
+                            let y = ya + (yb - ya) * t;
+                            format!("{x:.2},{y:.2}")
+                        })
+                        .collect();
+                    json!(parts.join(" "))
+                } else if t >= 1.0 {
+                    b.clone()
+                } else {
+                    a.clone()
+                }
             } else if t >= 1.0 {
                 b.clone()
             } else {
                 a.clone()
             }
+        }
+        (Value::Array(va), Value::Array(vb)) => {
+            let len = va.len().min(vb.len());
+            let mut out = Vec::with_capacity(len);
+            for (elem_a, elem_b) in va.iter().zip(vb.iter()) {
+                out.push(interpolate_value(elem_a, elem_b, t));
+            }
+            Value::Array(out)
         }
         (Value::Object(oa), Value::Object(ob)) => {
             let mut out = serde_json::Map::new();
@@ -161,35 +267,120 @@ impl RowEffect {
     /// Converts this row effect at `frame` into a VectorCraft live effect.
     pub fn to_live_effect(&self, frame: u32) -> Effect {
         let mut params = self.params_at(frame);
-        // Normalize radius / blur parameter for the underlying effect
+        // Normalize parameters for underlying live effect rendering
         match self.kind {
-            FxKind::Blur => {
+            FxKind::Blur | FxKind::BoxBlur | FxKind::DirectionalBlur => {
                 if let Some(b) = params.get("blur").filter(|_| params.get("radius").is_none()) {
                     params["radius"] = b.clone();
                 }
-            }
-            FxKind::Glow => {
-                if let Some(r) = params.get("radius").filter(|_| params.get("blur").is_none()) {
-                    params["blur"] = r.clone();
+                if let Some(r) = params.get("radius").and_then(Value::as_f64) {
+                    params["radius"] = json!(r.clamp(0.0, 250.0));
                 }
             }
-            FxKind::DropShadow => {
+            FxKind::Glow | FxKind::DropShadow => {
                 if let Some(r) = params.get("radius").filter(|_| params.get("blur").is_none()) {
                     params["blur"] = r.clone();
                 }
             }
             FxKind::ColorAdjust => {}
             FxKind::Tint => {}
+            FxKind::Transparency => {}
+            FxKind::Greyscale => {
+                if let Some(amt) = params.get("amount").and_then(Value::as_f64) {
+                    params["saturation"] = json!(-amt.clamp(0.0, 100.0));
+                }
+            }
+            FxKind::Levels => {
+                let ib = params.get("inBlack").cloned().unwrap_or(json!(0.0));
+                let iw = params.get("inWhite").cloned().unwrap_or(json!(255.0));
+                let g = params.get("gamma").cloned().unwrap_or(json!(1.0));
+                let ob = params.get("outBlack").cloned().unwrap_or(json!(0.0));
+                let ow = params.get("outWhite").cloned().unwrap_or(json!(255.0));
+                params["inputBlack"] = ib;
+                params["inputWhite"] = iw;
+                params["gamma"] = g;
+                params["outputBlack"] = ob;
+                params["outputWhite"] = ow;
+            }
+            FxKind::Contrast => {
+                let c = params.get("amount").cloned().unwrap_or(json!(0.0));
+                params["contrast"] = c;
+                params["brightness"] = json!(0.0);
+            }
+            FxKind::Gamma => {
+                let g = params.get("gamma").cloned().unwrap_or(json!(1.0));
+                params["gamma"] = g;
+                params["inputBlack"] = json!(0.0);
+                params["inputWhite"] = json!(255.0);
+                params["outputBlack"] = json!(0.0);
+                params["outputWhite"] = json!(255.0);
+            }
+            FxKind::HueSaturation => {}
+            FxKind::ColourScale => {
+                let r = params.get("r").and_then(Value::as_f64).unwrap_or(1.0);
+                let g = params.get("g").and_then(Value::as_f64).unwrap_or(1.0);
+                let b = params.get("b").and_then(Value::as_f64).unwrap_or(1.0);
+                let avg = ((r + g + b) / 3.0).clamp(0.0, 1.0);
+                params["outputWhite"] = json!(255.0 * avg);
+                params["inputBlack"] = json!(0.0);
+                params["inputWhite"] = json!(255.0);
+                params["outputBlack"] = json!(0.0);
+                params["gamma"] = json!(1.0);
+            }
+            FxKind::Curves => {}
+            FxKind::ColourFade => {
+                params["preserveLightness"] = json!(false);
+            }
+            FxKind::RadialBlur => {
+                let r = params.get("radius").and_then(Value::as_f64).unwrap_or(5.0);
+                params["amount"] = json!(r.clamp(0.0, 250.0));
+                params["method"] = json!("spin");
+                params["quality"] = json!("good");
+            }
+            FxKind::RadialZoomBlur => {
+                let amt = params.get("amount").and_then(Value::as_f64).unwrap_or(10.0);
+                params["amount"] = json!(amt.clamp(0.0, 100.0));
+                params["method"] = json!("zoom");
+                params["quality"] = json!("good");
+            }
         }
         let is_zero = match self.kind {
-            FxKind::Blur => params.get("radius").and_then(Value::as_f64).is_some_and(|r| r <= 0.0),
+            FxKind::Blur | FxKind::BoxBlur | FxKind::DirectionalBlur => params.get("radius").and_then(Value::as_f64).is_some_and(|r| r <= 0.0),
             FxKind::Glow => {
                 params.get("blur").and_then(Value::as_f64).is_some_and(|b| b <= 0.0)
                     || params.get("opacity").and_then(Value::as_f64).is_some_and(|o| o <= 0.0)
             }
             FxKind::DropShadow => params.get("opacity").and_then(Value::as_f64).is_some_and(|o| o <= 0.0),
-            FxKind::ColorAdjust => false,
-            FxKind::Tint => params.get("amount").and_then(Value::as_f64).is_some_and(|a| a <= 0.0),
+            FxKind::ColorAdjust => {
+                params.get("brightness").and_then(Value::as_f64).is_some_and(|b| b == 0.0)
+                    && params.get("contrast").and_then(Value::as_f64).is_some_and(|c| c == 0.0)
+            }
+            FxKind::Tint | FxKind::Transparency | FxKind::Greyscale | FxKind::ColourFade => {
+                params.get("amount").and_then(Value::as_f64).is_some_and(|a| a <= 0.0)
+            }
+            FxKind::Levels => {
+                params.get("inBlack").and_then(Value::as_f64).is_some_and(|b| b <= 0.0)
+                    && params.get("inWhite").and_then(Value::as_f64).is_some_and(|w| w >= 255.0)
+                    && params.get("gamma").and_then(Value::as_f64).is_some_and(|g| (g - 1.0).abs() < 1e-4)
+                    && params.get("outBlack").and_then(Value::as_f64).is_some_and(|b| b <= 0.0)
+                    && params.get("outWhite").and_then(Value::as_f64).is_some_and(|w| w >= 255.0)
+            }
+            FxKind::Contrast => params.get("amount").and_then(Value::as_f64).is_some_and(|a| a == 0.0),
+            FxKind::Gamma => params.get("gamma").and_then(Value::as_f64).is_some_and(|g| (g - 1.0).abs() < 1e-4),
+            FxKind::HueSaturation => {
+                params.get("hue").and_then(Value::as_f64).is_some_and(|h| h == 0.0)
+                    && params.get("saturation").and_then(Value::as_f64).is_some_and(|s| s == 0.0)
+                    && params.get("lightness").and_then(Value::as_f64).is_some_and(|l| l == 0.0)
+            }
+            FxKind::ColourScale => {
+                params.get("r").and_then(Value::as_f64).is_some_and(|r| (r - 1.0).abs() < 1e-4)
+                    && params.get("g").and_then(Value::as_f64).is_some_and(|g| (g - 1.0).abs() < 1e-4)
+                    && params.get("b").and_then(Value::as_f64).is_some_and(|b| (b - 1.0).abs() < 1e-4)
+                    && params.get("a").and_then(Value::as_f64).is_some_and(|a| (a - 1.0).abs() < 1e-4)
+            }
+            FxKind::Curves => false,
+            FxKind::RadialBlur => params.get("radius").and_then(Value::as_f64).is_some_and(|r| r <= 0.0),
+            FxKind::RadialZoomBlur => params.get("amount").and_then(Value::as_f64).is_some_and(|a| a <= 0.0),
         };
         if let Some(o) = params.as_object_mut() {
             o.insert(MARK.into(), json!(true));
