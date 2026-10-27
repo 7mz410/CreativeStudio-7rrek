@@ -87,8 +87,27 @@ struct GraphEdge {
 }
 
 enum Act {
-    Connect { from: String, to: String, port: String },
-    Disconnect { from: String, to: String, port: String },
+    Connect {
+        from: String,
+        to: String,
+        port: String,
+    },
+    Disconnect {
+        from: String,
+        to: String,
+        port: String,
+    },
+    /// Moves row `from` above or below row `target` in the composite (`place` is "above" or "below").
+    Reorder {
+        from: String,
+        target: String,
+        place: &'static str,
+    },
+}
+
+/// Where a row dropped on `target` lands: above it in the upper half, below it otherwise.
+fn place_for_drop(pointer_y: f32, target: Rect) -> &'static str {
+    if pointer_y < target.center().y { "above" } else { "below" }
 }
 
 fn parse_graph(val: &Value) -> (Vec<GraphNode>, Vec<GraphEdge>) {
@@ -337,7 +356,8 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let diagram_size = vec2(total_width + MARGIN_X * 2.0, comp_y + NODE_H + MARGIN_Y);
 
     egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
-        let (canvas_rect, _resp) = ui.allocate_exact_size(diagram_size, Sense::click_and_drag());
+        let (canvas_rect, resp) = ui.allocate_exact_size(diagram_size, Sense::click_and_drag());
+        resp.on_hover_text(tl!("Drag a row's output dot onto another row to move it above or below that row").to_string());
         let painter = ui.painter_at(canvas_rect);
         // The layout above is in diagram space; place it where the canvas landed.
         let off = canvas_rect.min.to_vec2();
@@ -481,10 +501,18 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         if let Some(from_id) = released_from {
             ui.data_mut(|d| d.remove_temp::<String>(drag_id));
             if let Some(p) = ptr_pos {
-                for inp in &input_ports {
-                    if p.distance(inp.pos) <= PORT_R + 8.0 && inp.node_id != from_id {
-                        acts.push(Act::Connect { from: from_id.clone(), to: inp.node_id.clone(), port: inp.port.clone() });
-                        break;
+                let from_is_row = row_nodes.iter().any(|r| r.id == from_id);
+                let port_hit = input_ports.iter().find(|inp| p.distance(inp.pos) <= PORT_R + 8.0 && inp.node_id != from_id);
+                if let Some(inp) = port_hit {
+                    acts.push(Act::Connect { from: from_id.clone(), to: inp.node_id.clone(), port: inp.port.clone() });
+                } else if from_is_row {
+                    // A row dropped on another row's body moves into that row's slot in the composite.
+                    let hit = row_nodes.iter().find_map(|r| {
+                        let rect = rects.get(&r.id)?;
+                        (r.id != from_id && rect.contains(p)).then(|| (r.id.clone(), *rect))
+                    });
+                    if let Some((target, rect)) = hit {
+                        acts.push(Act::Reorder { from: from_id.clone(), target, place: place_for_drop(p.y, rect) });
                     }
                 }
             }
@@ -565,6 +593,11 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     app.status(e);
                 }
             }
+            Act::Reorder { from, target, place } => {
+                if let Err(e) = app.run("nodes.connect", json!({"from": from, "to": "comp", "port": "image", (place): target})) {
+                    app.status(e);
+                }
+            }
         }
     }
 }
@@ -601,6 +634,33 @@ mod tests {
         crate::theme::install_fonts(&ctx);
         crate::theme::apply(&ctx, Default::default());
         frame(&mut app, &ctx);
+    }
+
+    #[test]
+    fn drop_in_upper_half_goes_above_lower_half_below() {
+        let target = Rect::from_min_size(pos2(0.0, 100.0), vec2(124.0, 36.0));
+        assert_eq!(place_for_drop(105.0, target), "above");
+        assert_eq!(place_for_drop(129.0, target), "below");
+    }
+
+    #[test]
+    fn row_reorder_moves_the_row_in_the_composite() {
+        let mut app = app();
+        let s = &mut app.session;
+        s.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        let r0 = s.doc().unwrap().doc.layers[0].id.0;
+        let r1 = s.execute("layer.new", &json!({})).unwrap()["id"].as_u64().unwrap();
+        s.execute("nodes.connect", &json!({"from": format!("row:{r0}"), "to": "comp", "port": "image", "above": format!("row:{r1}")})).unwrap();
+        let graph = s.execute("nodes.graph", &json!({})).unwrap();
+        let order = |id: u64| {
+            graph["edges"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e["from"] == format!("row:{id}") && e["to"] == "comp")
+                .and_then(|e| e["order"].as_u64())
+        };
+        assert!(order(r0) > order(r1), "row:{r0} drawn above row:{r1}");
     }
 
     #[test]
