@@ -14,7 +14,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Add Row Effect",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), kind: \"blur\"|\"glow\"|\"dropShadow\"|\"colorAdjust\"} adds an effect to the row → {row, index, kind}",
+            "{row?: layer id (default: the current layer's row), kind: \"blur\"|\"glow\"|\"dropShadow\"|\"colorAdjust\"|\"tint\"} adds an effect to the row → {row, index, kind}",
             has_doc,
             add
         ),
@@ -70,8 +70,9 @@ fn commit(s: &mut Session, label: &str, all: RowFxList) -> Result<()> {
 fn add(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "fx.add";
     let row = row_param(s, p, C)?;
-    let kind_str = str_param(p, "kind").ok_or_else(|| bad(C, "`kind` is required (blur, glow, dropShadow, colorAdjust)"))?;
-    let kind = FxKind::parse(kind_str).ok_or_else(|| bad(C, format!("unknown kind {kind_str:?} (expected blur, glow, dropShadow, colorAdjust)")))?;
+    let kind_str = str_param(p, "kind").ok_or_else(|| bad(C, "`kind` is required (blur, glow, dropShadow, colorAdjust, tint)"))?;
+    let kind =
+        FxKind::parse(kind_str).ok_or_else(|| bad(C, format!("unknown kind {kind_str:?} (expected blur, glow, dropShadow, colorAdjust, tint)")))?;
 
     let mut all = RowFxList::of(&s.doc()?.doc);
     let idx = match all.rows.iter().position(|r| r.row == row.0) {
@@ -256,6 +257,30 @@ mod tests {
         let rect = doc.artboards[0].rect;
 
         let mut hashes = BTreeSet::new();
+        for f in 1..=12 {
+            let fd = at_frame(doc, f);
+            let mut r = vectorcraft_render::Renderer::new();
+            let img = r.render_region(&fd, rect, 1.0, false);
+            let mut hasher = DefaultHasher::new();
+            img.pixels.hash(&mut hasher);
+            let hash = hasher.finish();
+            hashes.insert(hash);
+        }
+        assert_eq!(hashes.len(), 12, "all 12 frames must produce different pixel outputs");
+    }
+
+    #[test]
+    fn tint_keyed_0_to_50_over_12_frames_exports_12_different_frames() {
+        let (mut s, layer) = session_with_rect();
+        s.execute("paint.setFill", &json!({"color": "#888888"})).unwrap();
+        s.execute("fx.add", &json!({"row": layer, "kind": "tint"})).unwrap();
+        s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 1, "params": {"amount": 0.0, "color": "#ff0000"}})).unwrap();
+        s.execute("fx.key", &json!({"row": layer, "index": 0, "frame": 12, "params": {"amount": 50.0, "color": "#ff0000"}})).unwrap();
+
+        let doc = &s.doc().unwrap().doc;
+        let rect = doc.artboards[0].rect;
+
+        let mut hashes = std::collections::BTreeSet::new();
         for f in 1..=12 {
             let fd = at_frame(doc, f);
             let mut r = vectorcraft_render::Renderer::new();

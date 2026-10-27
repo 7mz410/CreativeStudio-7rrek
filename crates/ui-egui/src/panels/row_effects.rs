@@ -68,6 +68,10 @@ fn add_effect_menu(ui: &mut Ui, acts: &mut Vec<Act>) {
             acts.push(Act::Add("colorAdjust"));
             ui.close();
         }
+        if ui.button(tl!("Tint")).clicked() {
+            acts.push(Act::Add("tint"));
+            ui.close();
+        }
     });
 }
 
@@ -123,6 +127,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 FxKind::Glow => tl!("Glow"),
                 FxKind::DropShadow => tl!("Drop Shadow"),
                 FxKind::ColorAdjust => tl!("Color Adjust"),
+                FxKind::Tint => tl!("Tint"),
             };
 
             let open_id = ui.id().with(("fx_open", i));
@@ -286,6 +291,39 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                             if ui.add(DragValue::new(&mut contrast).speed(1.0).range(-100.0..=100.0)).changed() {
                                 params["contrast"] = json!(contrast);
                                 acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::Tint => {
+                        let mut amount = params.get("amount").and_then(Value::as_f64).unwrap_or(50.0);
+                        let color_str = params.get("color").and_then(Value::as_str).unwrap_or("#ff8800").to_string();
+
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Amount:"));
+                            if ui.add(DragValue::new(&mut amount).speed(1.0).range(0.0..=100.0)).changed() {
+                                params["amount"] = json!(amount);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Color:"));
+                            let mut rgb = parse_hex(&color_str).unwrap_or([255, 136, 0]);
+                            if ui.color_edit_button_srgb(&mut rgb).changed() {
+                                let new_hex = hex(rgb);
+                                params["color"] = json!(new_hex);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+
+                            let text_id = ui.id().with(("tint_hex", i));
+                            let mut text_hex = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| color_str.clone());
+                            if ui.add(TextEdit::singleline(&mut text_hex).desired_width(70.0)).changed() {
+                                ui.data_mut(|d| d.insert_temp(text_id, text_hex.clone()));
+                                if parse_hex(&text_hex).is_some() {
+                                    let normalized = if text_hex.starts_with('#') { text_hex.clone() } else { format!("#{text_hex}") };
+                                    params["color"] = json!(normalized);
+                                    acts.push(Act::Key { index: i, params: params.clone() });
+                                }
                             }
                         });
                     }

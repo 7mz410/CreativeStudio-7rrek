@@ -21,6 +21,8 @@ enum Act {
     Delete(usize),
     Colour { palette: usize, swatch: String, color: Option<String> },
     Use { palette: Option<usize>, scene: bool },
+    Protect { swatch: String, on: bool },
+    Recover,
 }
 
 /// The palette picked in the list, by index (panel-local; not in the document).
@@ -66,6 +68,8 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let list = app.session.execute("palette.list", &json!({})).unwrap_or(Value::Null);
     let palettes = list["palettes"].as_array().cloned().unwrap_or_default();
     let swatches: Vec<String> = list["swatches"].as_array().into_iter().flatten().filter_map(|s| s.as_str().map(str::to_string)).collect();
+    let protected: std::collections::BTreeSet<String> =
+        list["protected"].as_array().into_iter().flatten().filter_map(|s| s.as_str().map(str::to_string)).collect();
     let scene = list["scene"].as_u64().and_then(|i| usize::try_from(i).ok());
     // The current layer's row, and the palette it shows (none without a row).
     let layer_row = app.session.execute("anim.drawings", &json!({})).ok().and_then(|v| v["row"].as_u64());
@@ -100,6 +104,9 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     acts.push(Act::Delete(i));
                 }
             }
+            if widgets::secondary_button(ui, tl!("Recover Missing Swatches")).clicked() {
+                acts.push(Act::Recover);
+            }
         });
         if swatches.is_empty() {
             widgets::dim_label(ui, tl!("Make a swatch Global to recolour it with palettes"));
@@ -133,6 +140,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 let mine = colors.get(swatch).and_then(|v| serde_json::from_value::<Color>(v.clone()).ok());
                 let Some(shown) = mine.or_else(|| own.get(swatch).copied()) else { continue };
                 let [r, g, b, _] = shown.to_rgba8(1.0);
+                let is_protected = protected.contains(swatch);
                 ui.horizontal(|ui| {
                     // shortcut: every step of a picker drag is its own undo step; commit once when
                     // the picker closes if that clutters History.
@@ -150,6 +158,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     if ui.add_enabled(mine.is_some(), egui::Button::new(tl!("Reset")).small()).clicked() {
                         acts.push(Act::Colour { palette: i, swatch: swatch.clone(), color: None });
                     }
+                    let mut prot = is_protected;
+                    if ui.checkbox(&mut prot, tl!("Protected")).changed() {
+                        acts.push(Act::Protect { swatch: swatch.clone(), on: prot });
+                    }
                 });
             }
             ui.add_space(8.0);
@@ -160,6 +172,24 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             let on = layer_palette == Some(i);
             if widgets::check(ui, "Show on This Layer", on, layer_row.is_some()) {
                 acts.push(Act::Use { palette: if on { None } else { Some(i) }, scene: false });
+            }
+        } else if !swatches.is_empty() {
+            ui.add_space(8.0);
+            widgets::divider(ui);
+            for swatch in &swatches {
+                let is_protected = protected.contains(swatch);
+                ui.horizontal(|ui| {
+                    if let Some(col) = own.get(swatch) {
+                        let [r, g, b, _] = col.to_rgba8(1.0);
+                        let mut rgb = [r, g, b];
+                        ui.color_edit_button_srgb(&mut rgb);
+                    }
+                    ui.label(swatch.as_str());
+                    let mut prot = is_protected;
+                    if ui.checkbox(&mut prot, tl!("Protected")).changed() {
+                        acts.push(Act::Protect { swatch: swatch.clone(), on: prot });
+                    }
+                });
             }
         }
     });
@@ -193,6 +223,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     params["scene"] = json!(true);
                 }
                 run(app, "palette.use", params);
+            }
+            Act::Protect { swatch, on } => {
+                run(app, "palette.protect", json!({"name": swatch, "on": on}));
+            }
+            Act::Recover => {
+                run(app, "palette.recover", json!({}));
             }
         }
     }

@@ -26,7 +26,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Paint",
             [],
             None,
-            "{x, y: document point, gap?: pt 0..20 (default 4; Harmony's presets 0/2/4/8), color?, row?: layer id (default: the current layer's row)} fills the area round the point that the drawing shown at the current frame closes with its lines, closing gaps up to `gap` invisibly; the fill goes on the drawing's Colour Art, under its lines → {id}",
+            "{x, y: document point, mode?: \"paint\"|\"unpaint\"|\"repaint\" (default: paint), gap?: pt 0..20 (default 4; Harmony's presets 0/2/4/8), color?, swatch?, row?: layer id (default: the current layer's row)} fills, unpaints, or repaints the area round the point on Colour Art; leaves protected colours intact → {id}",
             has_doc,
             paint_at
         ),
@@ -35,7 +35,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Paint Colour Art",
             [],
             None,
-            "{ids?: closed paths inside a drawing (default: the selection), color?: \"#rrggbb\" (default: the current fill)} copies each path's shape onto its drawing's Colour Art sublayer (made at the bottom of the drawing on first use) filled with the colour, under every line; the line itself is left as it is → {ids: the fills made}",
+            "{ids?: closed paths inside a drawing (default: the selection), color?: \"#rrggbb\" (default: the current fill), swatch?} copies each path's shape onto its drawing's Colour Art sublayer filled with the colour, leaving protected colours intact → {ids: the fills made}",
             has_doc,
             fill
         ),
@@ -57,16 +57,51 @@ fn colour_art(d: &Document, drawing: NodeId) -> Option<NodeId> {
     d.node(drawing)?.children()?.iter().find(|c| matches!(c.kind, NodeKind::Layer { .. }) && c.name.as_deref() == Some(COLOUR_ART)).map(|c| c.id)
 }
 
-/// The paint a command asks for: `color`, else the current fill (never None).
+/// The paint a command asks for: `color` or `swatch`, else the current fill (never None).
 fn paint_param(s: &Session, p: &Value, cmd: &str) -> Result<Paint> {
-    let paint = match p.get("color").and_then(Value::as_str) {
-        Some(c) => Paint::solid(vectorcraft_color::Color::from_hex(c).ok_or_else(|| bad(cmd, format!("`color`: {c} isn't a colour")))?),
-        None => s.paint.fill.clone(),
+    let d = &s.doc()?.doc;
+    let swatch_name = p.get("swatch").and_then(Value::as_str);
+    let color_str = p.get("color").and_then(Value::as_str);
+
+    let resolve_swatch = |name: &str| -> Option<Paint> {
+        let w = d.swatch(name)?;
+        if let Some((base, tint)) = d.swatch_link(name) {
+            let col = d.global_color(&base)?;
+            Some(Paint::Solid { color: col.tinted(tint), swatch: Some(base), tint })
+        } else if let Some(col) = w.paint.color() {
+            Some(Paint::Solid { color: col, swatch: w.global.then(|| name.to_string()), tint: 1.0 })
+        } else {
+            Some(w.paint.clone())
+        }
+    };
+
+    let paint = if let Some(name) = swatch_name {
+        resolve_swatch(name).ok_or_else(|| bad(cmd, format!("unknown swatch {name:?}")))?
+    } else if let Some(c) = color_str {
+        if let Some(p) = resolve_swatch(c) {
+            p
+        } else {
+            Paint::solid(vectorcraft_color::Color::from_hex(c).ok_or_else(|| bad(cmd, format!("`color`: {c} isn't a colour")))?)
+        }
+    } else {
+        s.paint.fill.clone()
     };
     if paint.is_none() {
         return Err(bad(cmd, "the fill colour is None: pick a colour to paint with"));
     }
     Ok(paint)
+}
+
+fn find_fill_under(d: &Document, ca: Option<NodeId>, point: Point) -> Option<NodeId> {
+    let ca_id = ca?;
+    let layer_node = d.node(ca_id)?;
+    for child in layer_node.children()?.iter().rev() {
+        let hit = child.path_data().is_some_and(|path| vectorcraft_geom::hit::fill_contains(&path.to_bezpath(), FillRule::NonZero, point));
+        if hit {
+            return Some(child.id);
+        }
+    }
+    None
 }
 
 /// Puts `path` filled with `paint` on top of `drawing`'s Colour Art (made on first use).
@@ -91,7 +126,10 @@ fn paint_at(s: &mut Session, p: &Value) -> Result<Value> {
     if !(0.0..=20.0).contains(&gap) {
         return Err(bad(C, "`gap` must be 0..20 pt"));
     }
-    let paint = paint_param(s, p, C)?;
+    let mode = str_param(p, "mode").unwrap_or("paint");
+    if !matches!(mode, "paint" | "unpaint" | "repaint") {
+        return Err(bad(C, format!("unknown mode {mode:?} (expected paint, unpaint, repaint)")));
+    }
     let row = super::anim::row_param(s, p, C)?;
     let d = &s.doc()?.doc;
     let anim = Anim::of(d);
@@ -102,41 +140,76 @@ fn paint_at(s: &mut Session, p: &Value) -> Result<Value> {
         .rfind(|(f, _)| *f <= anim.current)
         .map(|(_, id)| id)
         .ok_or_else(|| bad(C, "no drawing at this frame"))?;
-    // The lines: every stroked path of the drawing outside its Colour Art, outlined with the gap
-    // added, so a gap up to `gap` wide closes.
-    let ca = colour_art(d, drawing);
-    let mut lines = Vec::new();
-    let mut widest: f64 = 0.0;
-    let mut walk = vec![d.node(drawing).ok_or(EngineError::NoNode(drawing))?];
-    while let Some(n) = walk.pop() {
-        if Some(n.id) == ca {
-            continue;
-        }
-        walk.extend(n.children().into_iter().flatten().map(|c| c.as_ref()));
-        if let (Some(path), Some(st)) = (n.path_data(), n.appearance.stroke()) {
-            widest = widest.max(st.width);
-            lines.push(po::outline_stroke(path, st.width + gap, po::Cap::Round, po::Join::Round, 4.0));
-        }
-    }
-    let refs: Vec<(&PathData, FillRule)> = lines.iter().map(|l| (l, FillRule::NonZero)).collect();
-    let walls = po::boolean_n(&refs, |v| v.iter().any(|b| *b));
-    let Some(r) = walls.bounds() else { return Err(bad(C, "the drawing has no lines to paint inside")) };
-    let outside = r.inflate(10.0, 10.0);
-    let open = po::boolean(&vectorcraft_geom::shapes::rectangle(outside), FillRule::NonZero, &walls, FillRule::NonZero, po::BoolOp::Difference);
+
     let point = Point::new(x, y);
-    let zone = po::region_at(&[po::Shape::new(open, FillRule::NonZero, 0)], point).ok_or_else(|| bad(C, "that point is on a line"))?;
-    // The face that reaches the frame round the lines is outside them: the area leaks.
-    if zone.path.bounds().is_none_or(|b| b.width() >= outside.width() - 1.0 || b.height() >= outside.height() - 1.0) {
-        return Err(bad(C, "the area isn't closed: raise `gap` or close the lines"));
+    let ca = colour_art(d, drawing);
+    let existing_fill = find_fill_under(d, ca, point);
+
+    if existing_fill.is_some_and(|old_id| super::palette::is_node_protected(d, old_id)) {
+        return Err(bad(C, "that area is painted with a protected colour"));
     }
-    // Grown back under the lines, so no seam shows between fill and line.
-    let path = po::offset_path(&zone.path, (widest + gap) / 2.0, po::Join::Round, 4.0);
-    let mut made = None;
-    s.edit("Paint", |d, _| {
-        made = Some(add_fill(d, drawing, path, &paint)?);
-        Ok(())
-    })?;
-    Ok(json!({"id": made.map(|i| i.0)}))
+
+    match mode {
+        "unpaint" => {
+            let fill_id = existing_fill.ok_or_else(|| bad(C, "nothing to unpaint"))?;
+            s.edit("Unpaint", |d, _| {
+                d.remove(fill_id)?;
+                Ok(())
+            })?;
+            Ok(json!({"id": null, "unpainted": fill_id.0}))
+        }
+        "repaint" => {
+            let fill_id = existing_fill.ok_or_else(|| bad(C, "nothing to repaint"))?;
+            let paint = paint_param(s, p, C)?;
+            s.edit("Repaint", |d, _| {
+                let node = d.node_mut(fill_id).ok_or(EngineError::NoNode(fill_id))?;
+                *node.appearance = Appearance { items: vec![AppearanceItem::Fill(FillLayer::new(paint.clone()))], ..Appearance::default() };
+                Ok(())
+            })?;
+            Ok(json!({"id": fill_id.0}))
+        }
+        "paint" => {
+            let paint = paint_param(s, p, C)?;
+            // The lines: every stroked path of the drawing outside its Colour Art, outlined with the gap
+            // added, so a gap up to `gap` wide closes.
+            let mut lines = Vec::new();
+            let mut widest: f64 = 0.0;
+            let mut walk = vec![d.node(drawing).ok_or(EngineError::NoNode(drawing))?];
+            while let Some(n) = walk.pop() {
+                if Some(n.id) == ca {
+                    continue;
+                }
+                walk.extend(n.children().into_iter().flatten().map(|c| c.as_ref()));
+                if let (Some(path), Some(st)) = (n.path_data(), n.appearance.stroke()) {
+                    widest = widest.max(st.width);
+                    lines.push(po::outline_stroke(path, st.width + gap, po::Cap::Round, po::Join::Round, 4.0));
+                }
+            }
+            let refs: Vec<(&PathData, FillRule)> = lines.iter().map(|l| (l, FillRule::NonZero)).collect();
+            let walls = po::boolean_n(&refs, |v| v.iter().any(|b| *b));
+            let Some(r) = walls.bounds() else { return Err(bad(C, "the drawing has no lines to paint inside")) };
+            let outside = r.inflate(10.0, 10.0);
+            let open =
+                po::boolean(&vectorcraft_geom::shapes::rectangle(outside), FillRule::NonZero, &walls, FillRule::NonZero, po::BoolOp::Difference);
+            let zone = po::region_at(&[po::Shape::new(open, FillRule::NonZero, 0)], point).ok_or_else(|| bad(C, "that point is on a line"))?;
+            // The face that reaches the frame round the lines is outside them: the area leaks.
+            if zone.path.bounds().is_none_or(|b| b.width() >= outside.width() - 1.0 || b.height() >= outside.height() - 1.0) {
+                return Err(bad(C, "the area isn't closed: raise `gap` or close the lines"));
+            }
+            // Grown back under the lines, so no seam shows between fill and line.
+            let path = po::offset_path(&zone.path, (widest + gap) / 2.0, po::Join::Round, 4.0);
+            let mut made = None;
+            s.edit("Paint", |d, _| {
+                if let Some(old_id) = existing_fill {
+                    let _ = d.remove(old_id);
+                }
+                made = Some(add_fill(d, drawing, path, &paint)?);
+                Ok(())
+            })?;
+            Ok(json!({"id": made.map(|i| i.0)}))
+        }
+        _ => Err(bad(C, "mode must be paint, unpaint, or repaint")),
+    }
 }
 
 fn fill(s: &mut Session, p: &Value) -> Result<Value> {
@@ -151,8 +224,18 @@ fn fill(s: &mut Session, p: &Value) -> Result<Value> {
     let mut jobs = Vec::new();
     for id in ids {
         let n = d.node(id).ok_or(EngineError::NoNode(id))?;
+        if super::palette::is_node_protected(d, id) {
+            return Err(bad(C, format!("{} has a protected colour", id.0)));
+        }
         let path = n.path_data().filter(|p| p.is_closed()).ok_or_else(|| bad(C, format!("{} isn't a closed path", id.0)))?;
         let drawing = drawing_of(d, &anim, id).ok_or_else(|| bad(C, format!("{} isn't in a drawing (a keyframe)", id.0)))?;
+        let is_ca_protected = colour_art(d, drawing)
+            .and_then(|ca| path.bounds().map(|b| (ca, b.center())))
+            .and_then(|(ca, center)| find_fill_under(d, Some(ca), center))
+            .is_some_and(|existing| super::palette::is_node_protected(d, existing));
+        if is_ca_protected {
+            return Err(bad(C, format!("{} has a protected colour on Colour Art", id.0)));
+        }
         jobs.push((drawing, path.clone()));
     }
     if jobs.is_empty() {
@@ -233,5 +316,65 @@ mod tests {
         s.execute("edit.undo", &json!({})).unwrap();
         assert_eq!(s.doc().unwrap().doc.node(ca).unwrap().children().unwrap().len(), 1);
         assert!(s.execute("art.fill", &json!({"ids": [999999]})).is_err());
+    }
+
+    #[test]
+    fn painting_over_protected_colour_leaves_it() {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        s.execute("swatch.new", &json!({"name": "ProtectedRed", "color": "#ff0000", "global": true})).unwrap();
+        s.execute("palette.protect", &json!({"name": "ProtectedRed"})).unwrap();
+
+        let sq = s.execute("shape.rectangle", &json!({"x": 20, "y": 20, "width": 60, "height": 60})).unwrap()["id"].as_u64().unwrap();
+        s.execute("paint.setFill", &json!({"none": true})).unwrap();
+        s.execute("stroke.set", &json!({"weight": 4})).unwrap();
+
+        // Paint with protected swatch
+        s.execute("art.paintAt", &json!({"x": 50, "y": 50, "color": "ProtectedRed"})).unwrap();
+        assert_eq!(at(&s, 1, 50, 50), [255, 0, 0]);
+
+        // Attempting to paint over protected colour returns Err
+        assert!(s.execute("art.paintAt", &json!({"x": 50, "y": 50, "color": "#0000ff"})).is_err());
+        assert_eq!(at(&s, 1, 50, 50), [255, 0, 0], "protected colour remains intact");
+
+        // Attempting to unpaint or repaint protected colour returns Err
+        assert!(s.execute("art.paintAt", &json!({"x": 50, "y": 50, "mode": "unpaint"})).is_err());
+        assert!(s.execute("art.paintAt", &json!({"x": 50, "y": 50, "mode": "repaint", "color": "#00ff00"})).is_err());
+        assert_eq!(at(&s, 1, 50, 50), [255, 0, 0]);
+
+        // art.fill over protected fill returns Err
+        assert!(s.execute("art.fill", &json!({"ids": [sq], "color": "#00ff00"})).is_err());
+    }
+
+    #[test]
+    fn paint_modes_unpaint_and_repaint() {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        let _ = s.execute("shape.rectangle", &json!({"x": 20, "y": 20, "width": 60, "height": 60})).unwrap();
+        s.execute("paint.setFill", &json!({"none": true})).unwrap();
+        s.execute("stroke.set", &json!({"weight": 4})).unwrap();
+
+        // Repaint on empty space returns Err
+        assert!(s.execute("art.paintAt", &json!({"x": 50, "y": 50, "mode": "repaint", "color": "#00ff00"})).is_err());
+
+        // Paint fills empty space
+        s.execute("art.paintAt", &json!({"x": 50, "y": 50, "mode": "paint", "color": "#ff0000"})).unwrap();
+        assert_eq!(at(&s, 1, 50, 50), [255, 0, 0]);
+
+        // Repaint changes color
+        s.execute("art.paintAt", &json!({"x": 50, "y": 50, "mode": "repaint", "color": "#00ff00"})).unwrap();
+        assert_eq!(at(&s, 1, 50, 50), [0, 255, 0]);
+
+        // Unpaint removes fill
+        s.execute("art.paintAt", &json!({"x": 50, "y": 50, "mode": "unpaint"})).unwrap();
+        assert_eq!(at(&s, 1, 50, 50), [255, 255, 255]);
+
+        // Unpaint again on empty space returns Err
+        assert!(s.execute("art.paintAt", &json!({"x": 50, "y": 50, "mode": "unpaint"})).is_err());
+
+        // Invalid mode returns Err
+        assert!(s.execute("art.paintAt", &json!({"x": 50, "y": 50, "mode": "invalid"})).is_err());
     }
 }

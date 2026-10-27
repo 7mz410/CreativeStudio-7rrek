@@ -22,6 +22,7 @@ pub enum FxKind {
     Glow,
     DropShadow,
     ColorAdjust,
+    Tint,
 }
 
 impl FxKind {
@@ -31,6 +32,7 @@ impl FxKind {
             "glow" => Some(Self::Glow),
             "dropShadow" => Some(Self::DropShadow),
             "colorAdjust" => Some(Self::ColorAdjust),
+            "tint" => Some(Self::Tint),
             _ => None,
         }
     }
@@ -41,6 +43,7 @@ impl FxKind {
             Self::Glow => "glow",
             Self::DropShadow => "dropShadow",
             Self::ColorAdjust => "colorAdjust",
+            Self::Tint => "tint",
         }
     }
 
@@ -50,6 +53,7 @@ impl FxKind {
             Self::Glow => json!({"blur": 5.0, "color": "#ffff00", "opacity": 75.0, "mode": "screen"}),
             Self::DropShadow => json!({"x": 7.0, "y": 7.0, "blur": 5.0, "opacity": 75.0, "color": "#000000", "mode": "multiply"}),
             Self::ColorAdjust => json!({"brightness": 0.0, "contrast": 0.0}),
+            Self::Tint => json!({"color": "#ff8800", "amount": 50.0}),
         }
     }
 
@@ -59,6 +63,7 @@ impl FxKind {
             Self::Glow => "stylize.outerGlow",
             Self::DropShadow => "stylize.dropShadow",
             Self::ColorAdjust => "adjust.brightnessContrast",
+            Self::Tint => "adjust.shiftToColor",
         }
     }
 }
@@ -71,6 +76,21 @@ pub fn interpolate_value(a: &Value, b: &Value, t: f64) -> Value {
                 json!(va + (vb - va) * t)
             } else {
                 b.clone()
+            }
+        }
+        (Value::String(sa), Value::String(sb)) => {
+            if let (Some(ca), Some(cb)) = (vectorcraft_color::Color::from_hex(sa), vectorcraft_color::Color::from_hex(sb)) {
+                let [ra, ga, ba] = ca.to_rgb();
+                let [rb, gb, bb] = cb.to_rgb();
+                let mix = |va: f32, vb: f32| va + (vb - va) * t as f32;
+                let r = mix(ra, rb);
+                let g = mix(ga, gb);
+                let b = mix(ba, bb);
+                json!(vectorcraft_color::Color::rgb(r, g, b).to_hex())
+            } else if t >= 1.0 {
+                b.clone()
+            } else {
+                a.clone()
             }
         }
         (Value::Object(oa), Value::Object(ob)) => {
@@ -150,6 +170,7 @@ impl RowEffect {
                 }
             }
             FxKind::ColorAdjust => {}
+            FxKind::Tint => {}
         }
         let is_zero = match self.kind {
             FxKind::Blur => params.get("radius").and_then(Value::as_f64).is_some_and(|r| r <= 0.0),
@@ -159,6 +180,7 @@ impl RowEffect {
             }
             FxKind::DropShadow => params.get("opacity").and_then(Value::as_f64).is_some_and(|o| o <= 0.0),
             FxKind::ColorAdjust => false,
+            FxKind::Tint => params.get("amount").and_then(Value::as_f64).is_some_and(|a| a <= 0.0),
         };
         if let Some(o) = params.as_object_mut() {
             o.insert(MARK.into(), json!(true));
@@ -254,5 +276,21 @@ mod tests {
         assert_eq!(live.id, "stylize.outerGlow");
         assert_eq!(live.params["blur"], json!(8.0));
         assert_eq!(live.params["opacity"], json!(80.0));
+    }
+
+    #[test]
+    fn tint_to_live_effect_and_zero_visibility() {
+        let mut fx = RowEffect::new(FxKind::Tint);
+        fx.keys.insert(1, json!({"amount": 0.0, "color": "#00ff00"}));
+        fx.keys.insert(10, json!({"amount": 50.0, "color": "#ff0000"}));
+
+        let live1 = fx.to_live_effect(1);
+        assert_eq!(live1.id, "adjust.shiftToColor");
+        assert!(!live1.visible, "amount 0 should have visible: false");
+
+        let live10 = fx.to_live_effect(10);
+        assert_eq!(live10.id, "adjust.shiftToColor");
+        assert!(live10.visible, "amount 50 should have visible: true");
+        assert_eq!(live10.params["amount"], json!(50.0));
     }
 }

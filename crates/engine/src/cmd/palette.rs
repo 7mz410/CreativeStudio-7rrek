@@ -6,7 +6,7 @@
 //! active palette, else from the swatch itself. Palettes live in the document's preserved extra
 //! data (`"palettes"`).
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -38,6 +38,8 @@ pub struct Palettes {
     pub rows: BTreeMap<u64, usize>,
 }
 
+const PROTECTED_KEY: &str = "palette_protected";
+
 impl Palettes {
     /// The document's palettes; none if they are broken (an index out of range).
     pub fn of(doc: &Document) -> Self {
@@ -54,6 +56,34 @@ impl Palettes {
             doc.unknown.insert(KEY.into(), v);
         }
     }
+}
+
+pub fn protected_swatches(doc: &Document) -> BTreeSet<String> {
+    doc.unknown.get(PROTECTED_KEY).and_then(|v| serde_json::from_value(v.clone()).ok()).unwrap_or_default()
+}
+
+pub fn store_protected_swatches(doc: &mut Document, protected: &BTreeSet<String>) {
+    if protected.is_empty() {
+        doc.unknown.remove(PROTECTED_KEY);
+    } else if let Ok(v) = serde_json::to_value(protected) {
+        doc.unknown.insert(PROTECTED_KEY.into(), v);
+    }
+}
+
+pub fn is_swatch_protected(doc: &Document, name: &str) -> bool {
+    protected_swatches(doc).contains(name)
+}
+
+pub fn is_paint_protected(doc: &Document, paint: &vectorcraft_color::Paint) -> bool {
+    match paint {
+        vectorcraft_color::Paint::Solid { swatch: Some(name), .. } => is_swatch_protected(doc, name),
+        _ => false,
+    }
+}
+
+pub fn is_node_protected(doc: &Document, node_id: NodeId) -> bool {
+    let Some(node) = doc.node(node_id) else { return false };
+    is_paint_protected(doc, &node.appearance.fill_paint())
 }
 
 /// Colours every top-level row's linked paints from the palette it shows (its own, else the
@@ -86,7 +116,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Palettes",
             [],
             None,
-            "{} the palettes → {palettes: [{index, name, colors: {swatch: colour}}], scene: index or null, rows: {layer id: index}, swatches: [the global swatch names a palette can recolour]}",
+            "{} the palettes → {palettes: [{index, name, colors: {swatch: colour}}], scene: index or null, rows: {layer id: index}, swatches: [the global swatch names a palette can recolour], protected: [names]}",
             has_doc,
             list
         ),
@@ -126,6 +156,24 @@ pub fn specs() -> Vec<CommandSpec> {
             has_doc,
             remove
         ),
+        cmd!(
+            "palette.protect",
+            "Protect Swatch",
+            [],
+            None,
+            "{name: swatch name, on?: bool (default: true)} marks or unmarks a swatch as protected against overwriting → {name, on}",
+            has_doc,
+            protect
+        ),
+        cmd!(
+            "palette.recover",
+            "Recover Missing Swatches",
+            [],
+            None,
+            "{} recreates missing global swatches from artwork in the document → {recovered: [names]}",
+            has_doc,
+            recover
+        ),
     ]
 }
 
@@ -153,7 +201,8 @@ fn list(s: &mut Session, _: &Value) -> Result<Value> {
     let p = Palettes::of(d);
     let palettes: Vec<Value> = p.palettes.iter().enumerate().map(|(i, pl)| json!({"index": i, "name": pl.name, "colors": pl.colors})).collect();
     let swatches: Vec<&str> = d.swatches_iter().filter(|w| d.global_color(&w.name).is_some()).map(|w| w.name.as_str()).collect();
-    Ok(json!({"palettes": palettes, "scene": p.scene, "rows": p.rows, "swatches": swatches}))
+    let protected: Vec<String> = protected_swatches(d).into_iter().collect();
+    Ok(json!({"palettes": palettes, "scene": p.scene, "rows": p.rows, "swatches": swatches, "protected": protected}))
 }
 
 fn clone(s: &mut Session, p: &Value) -> Result<Value> {
@@ -251,6 +300,77 @@ fn remove(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(json!({"removed": i}))
 }
 
+fn protect(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "palette.protect";
+    let name = str_param(p, "name").ok_or_else(|| bad(C, "`name` is required"))?;
+    let d = &s.doc()?.doc;
+    if d.global_color(name).is_none() && !d.swatches_iter().any(|s| s.name == name) {
+        return Err(bad(C, format!("unknown swatch {name:?}")));
+    }
+    let on = p.get("on").and_then(Value::as_bool).unwrap_or(true);
+    let mut protected = protected_swatches(d);
+    if on {
+        protected.insert(name.to_string());
+    } else {
+        protected.remove(name);
+    }
+    s.edit(if on { "Protect Swatch" } else { "Unprotect Swatch" }, |d, _| {
+        store_protected_swatches(d, &protected);
+        Ok(())
+    })?;
+    Ok(json!({"name": name, "on": on}))
+}
+
+fn recover(s: &mut Session, _p: &Value) -> Result<Value> {
+    let mut missing: BTreeMap<String, Color> = BTreeMap::new();
+    {
+        let d = &s.doc()?.doc;
+        d.visit_paints(&mut |p| match p {
+            vectorcraft_color::Paint::Solid { color, swatch: Some(name), .. } => {
+                if d.swatch(name).is_none() && !missing.contains_key(name) {
+                    missing.insert(name.clone(), *color);
+                }
+            }
+            vectorcraft_color::Paint::Gradient(g) => {
+                for stop in &g.gradient.stops {
+                    if let Some(name) = stop.swatch.as_ref().filter(|n| d.swatch(n).is_none() && !missing.contains_key(*n)) {
+                        missing.insert(name.clone(), stop.color);
+                    }
+                }
+            }
+            _ => {}
+        });
+        let p = Palettes::of(d);
+        for pl in &p.palettes {
+            for (name, color) in &pl.colors {
+                if d.swatch(name).is_none() && !missing.contains_key(name) {
+                    missing.insert(name.clone(), *color);
+                }
+            }
+        }
+    }
+    if missing.is_empty() {
+        return Ok(json!({"recovered": []}));
+    }
+    let recovered: Vec<String> = missing.keys().cloned().collect();
+    s.edit("Recover Missing Swatches", |d, _| {
+        for (name, color) in missing {
+            if d.swatch(&name).is_none() {
+                d.swatches.push(vectorcraft_color::Swatch {
+                    name,
+                    paint: vectorcraft_color::Paint::Solid { color, swatch: None, tint: 1.0 },
+                    global: true,
+                    spot: false,
+                });
+            }
+        }
+        Ok(())
+    })?;
+    let current = Anim::of(&s.doc()?.doc).current;
+    show(s, current)?;
+    Ok(json!({"recovered": recovered}))
+}
+
 /// Every linked paint back to its swatch's own colour (after the last palette goes).
 fn restore(d: &mut Document) {
     let own: BTreeMap<String, Color> = d.swatches_iter().filter_map(|w| Some((w.name.clone(), d.global_color(&w.name)?))).collect();
@@ -338,5 +458,43 @@ mod tests {
         assert_eq!(d.node(NodeId(ids[0])).unwrap().appearance.fill_paint().color().unwrap().to_hex().to_lowercase(), "#ffcc99");
         assert!(s.execute("palette.setColor", &json!({"palette": 0, "swatch": "Skin", "color": "#000000"})).is_err());
         assert!(s.execute("palette.clone", &json!({"from": 7})).is_err());
+    }
+
+    #[test]
+    fn protect_and_unprotect_swatch() {
+        let (mut s, _) = scene();
+        let r = s.execute("palette.protect", &json!({"name": "Skin"})).unwrap();
+        assert_eq!(r["name"], "Skin");
+        assert_eq!(r["on"], true);
+
+        let list = s.execute("palette.list", &json!({})).unwrap();
+        assert_eq!(list["protected"], json!(["Skin"]));
+        assert!(is_swatch_protected(&s.doc().unwrap().doc, "Skin"));
+
+        s.execute("palette.protect", &json!({"name": "Skin", "on": false})).unwrap();
+        assert!(!is_swatch_protected(&s.doc().unwrap().doc, "Skin"));
+        assert!(s.execute("palette.protect", &json!({"name": "NoSuchSwatch"})).is_err());
+    }
+
+    #[test]
+    fn recover_missing_swatches_brings_back_global_swatches() {
+        let (mut s, ids) = scene();
+        assert_eq!(hex(&s, ids[0], 1).to_lowercase(), "#ffcc99");
+
+        s.edit("Delete Swatch", |d, _| {
+            d.remove_swatch("Skin");
+            Ok(())
+        })
+        .unwrap();
+
+        assert!(s.doc().unwrap().doc.swatch("Skin").is_none());
+
+        let res = s.execute("palette.recover", &json!({})).unwrap();
+        assert_eq!(res["recovered"], json!(["Skin"]));
+
+        let d = &s.doc().unwrap().doc;
+        let recovered_swatch = d.swatch("Skin").expect("recovered swatch");
+        assert!(recovered_swatch.global);
+        assert_eq!(d.global_color("Skin").unwrap().to_hex().to_lowercase(), "#ffcc99");
     }
 }
