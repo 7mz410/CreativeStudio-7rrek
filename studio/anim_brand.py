@@ -91,6 +91,12 @@ TARGETED = {
         ('text.galley.job.text == "rsm")', 'text.galley.job.text == "7rrek")'),
         ('text.galley.job.text != "rsm")', 'text.galley.job.text != "7rrek")'),
     ],
+    # The process name macOS shows in bold in the menu bar, and the first window title.
+    'apps/vectorcraft/src/main.rs': [
+        ('.with_title("VectorCraft")', '.with_title("7rrek")'),
+        ('linux_stylus::run_native("VectorCraft", options, app_creator)', 'linux_stylus::run_native("7rrek", options, app_creator)'),
+        ('eframe::run_native("VectorCraft", options, app_creator)', 'eframe::run_native("7rrek", options, app_creator)'),
+    ],
     'apps/vectorcraft/src/mac_save_format.rs': [
         ('Some(&["rsm"][..])', 'Some(&["7rrek"][..])'),
     ],
