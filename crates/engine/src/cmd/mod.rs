@@ -109,6 +109,7 @@ pub mod symbollib;
 pub(crate) mod tabs;
 mod textedit;
 pub mod textstyles;
+pub mod texture;
 pub(crate) mod textwrap;
 pub(crate) mod threads;
 pub(crate) mod typecmd;
@@ -341,6 +342,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(row_fx_cmd::specs());
         v.extend(nodes::specs());
         v.extend(action_tpl::specs());
+        v.extend(texture::specs());
         v.extend(art_layers::specs());
         v.extend(halftone::specs());
         v.extend(perspgrid::specs());
