@@ -7,7 +7,7 @@ use std::sync::Arc;
 use kurbo::{CubicBez, ParamCurve, ParamCurveNearest};
 use serde_json::{Value, json};
 use vectorcraft_color::{Color, Paint};
-use vectorcraft_doc::{Appearance, Document, Node, NodeId, NodeKind, PressureProfile, Selection};
+use vectorcraft_doc::{Appearance, Document, Node, NodeId, NodeKind, PressureProfile, Selection, WidthProfile};
 use vectorcraft_geom::hit::fill_contains;
 use vectorcraft_geom::{Anchor, AnchorKind, BezPath, FillRule, PathData, Point, Rect, SubPath, Vec2};
 use vectorcraft_pathops as po;
@@ -26,7 +26,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Pencil",
             [],
             None,
-            "{points: [[x,y]…] or [[x,y,pressure]…] (pen pressure 0..1: the stroke keeps it, for Calligraphic brushes with Pressure variation; a point without one presses fully), fidelity?: pt (1.5), closed?, style?: \"pencil\"|\"brush\", fill?: bool, keepSelected?: bool (true: the drawn or continued path is selected; false: it is not, and the rest of the selection stays), extend?: {id, end: \"start\"|\"end\"}, redraw?: {id, within?: pt (12)}} fit a freehand stroke → {id}. extend continues the path from that end; redraw (Edit Selected Paths) replaces the section of the path between where the stroke starts and ends, each within `within` of one subpath (the shorter way round a closed one), and draws a new path when the stroke doesn't end on it",
+            "{points: [[x,y]…] or [[x,y,pressure]…] (pen pressure 0..1: the stroke keeps it, for Calligraphic brushes with Pressure variation; a point without one presses fully), fidelity?: pt (1.5), closed?, style?: \"pencil\"|\"brush\", pressureWidth?: bool (7rrek pencil lines: the pressure becomes the stroke's width profile, half pressure = the weight), fill?: bool, keepSelected?: bool (true: the drawn or continued path is selected; false: it is not, and the rest of the selection stays), extend?: {id, end: \"start\"|\"end\"}, redraw?: {id, within?: pt (12)}} fit a freehand stroke → {id}. extend continues the path from that end; redraw (Edit Selected Paths) replaces the section of the path between where the stroke starts and ends, each within `within` of one subpath (the shorter way round a closed one), and draws a new path when the stroke doesn't end on it",
             has_doc,
             freehand
         ),
@@ -770,7 +770,14 @@ fn freehand(s: &mut Session, p: &Value) -> Result<Value> {
     // gets black. A brush is its stroke.
     let stroke = if brush || fill.is_none() { stroke_paint(s) } else { s.paint.stroke.clone() };
     let mut look = s.new_art_look(fill, stroke, s.paint.stroke_width.max(0.1));
+    let pressure_width = switch_or(p, "pressureWidth", false, C)?;
     if let Some(st) = look.appearance.stroke_mut() {
+        // 7rrek pencil lines: the pen pressure becomes the line's width profile (half pressure is
+        // the stroke weight), which the Width tool edits point by point afterwards.
+        if pressure_width && let Some(pr) = &pressure {
+            let w = |v: f64| (2.0 * v).max(0.05);
+            st.profile = Some(WidthProfile { points: pr.points.iter().map(|&(t, v)| (t, w(v), w(v))).collect() });
+        }
         st.pressure = pressure;
     }
     insert_look(s, if brush { "Paintbrush" } else { "Pencil" }, path_kind(PathData::single(sp)), look, None, keep_selected)

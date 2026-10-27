@@ -1219,3 +1219,30 @@ fn symbol_nine_slice_guides_round_trip() {
     s.execute("symbol.delete", &json!({"name": "Box copy"})).unwrap();
     assert!(s.doc().unwrap().doc.unknown.get(vectorcraft_doc::SYMBOL_NINE_SLICE).is_none());
 }
+
+/// 7rrek D1: a pencil line drawn with pressure keeps its widths after save/open, and moving one
+/// width point changes only that part of the line.
+#[test]
+fn pencil_pressure_becomes_a_width_profile_that_lasts_and_edits_locally() {
+    let mut s = session();
+    let pts = json!([[0, 0, 0.2], [100, 0, 0.5], [200, 0, 1.0], [300, 0, 0.5]]);
+    let id = NodeId(s.execute("path.freehand", &json!({"points": pts, "style": "pencil", "pressureWidth": true})).unwrap()["id"].as_u64().unwrap());
+    let doc: Document = (*s.doc().unwrap().doc).clone();
+    let prof = doc.node(id).unwrap().appearance.stroke().unwrap().profile.clone().expect("a width profile");
+    let w = |t: f64| prof.at(t).0;
+    assert!(w(0.0) < 0.5 && w(1.0) > 0.9 && w(1.0) < 1.1, "{prof:?}");
+    assert!(w(2.0 / 3.0) > 1.9, "full pressure is twice the weight: {prof:?}");
+    let back = vectorcraft_format::load(&vectorcraft_format::save(&doc, false)).unwrap();
+    assert_eq!(back.node(id).unwrap().appearance.stroke().unwrap().profile.as_ref(), Some(&prof));
+    // One point moved: only the widths around it change.
+    let mut edited = prof.clone();
+    let last = edited.points.len() - 1;
+    edited.points[last].1 = 3.0;
+    edited.points[last].2 = 3.0;
+    assert_eq!(edited.at(0.0), prof.at(0.0));
+    assert_eq!(edited.at(0.5), prof.at(0.5));
+    assert_ne!(edited.at(1.0), prof.at(1.0));
+    // Without the switch a pencil line keeps an even weight.
+    let plain = NodeId(s.execute("path.freehand", &json!({"points": pts, "style": "pencil"})).unwrap()["id"].as_u64().unwrap());
+    assert!(node(&s, plain).appearance.stroke().unwrap().profile.is_none());
+}
