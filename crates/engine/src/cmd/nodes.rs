@@ -263,4 +263,51 @@ mod tests {
         assert!(s.execute("nodes.connect", &json!({"from": format!("row:{red}"), "to": format!("row:{red}"), "port": "matte"})).is_err());
         assert!(s.execute("nodes.connect", &json!({"from": "peg:0", "to": "comp", "port": "image"})).is_err());
     }
+
+    #[test]
+    fn a_peg_hangs_from_an_earlier_peg_and_only_that_way() {
+        let (mut s, _) = scene();
+        s.execute("peg.add", &json!({})).unwrap();
+        s.execute("peg.add", &json!({})).unwrap();
+        s.execute("nodes.connect", &json!({"from": "peg:0", "to": "peg:1", "port": "transform"})).unwrap();
+        let g = s.execute("nodes.graph", &json!({})).unwrap();
+        assert!(has(&g, "peg:0", "peg:1", "transform"));
+        assert!(s.execute("nodes.connect", &json!({"from": "peg:1", "to": "peg:0", "port": "transform"})).is_err());
+        s.execute("nodes.disconnect", &json!({"to": "peg:1", "port": "transform"})).unwrap();
+        let g = s.execute("nodes.graph", &json!({})).unwrap();
+        assert!(!has(&g, "peg:0", "peg:1", "transform"));
+    }
+
+    #[test]
+    fn moving_the_image_port_moves_the_cutter_to_the_new_row() {
+        let (mut s, [red, blue, green]) = scene();
+        s.execute("nodes.connect", &json!({"from": format!("row:{blue}"), "to": format!("row:{red}"), "port": "matte"})).unwrap();
+        s.execute("nodes.connect", &json!({"from": format!("row:{green}"), "to": format!("cut:{red}"), "port": "image"})).unwrap();
+        let g = s.execute("nodes.graph", &json!({})).unwrap();
+        let has_node = |id: String| g["nodes"].as_array().unwrap().iter().any(|n| n["id"] == id.as_str());
+        assert!(has_node(format!("cut:{green}")));
+        assert!(!has_node(format!("cut:{red}")));
+        assert!(has(&g, &format!("row:{green}"), &format!("cut:{green}"), "image"));
+        assert!(has(&g, &format!("row:{blue}"), &format!("cut:{green}"), "matte"));
+    }
+
+    #[test]
+    fn undo_takes_back_one_connect() {
+        let (mut s, [red, blue, _]) = scene();
+        s.execute("nodes.connect", &json!({"from": format!("row:{blue}"), "to": format!("row:{red}"), "port": "matte"})).unwrap();
+        assert_eq!(s.execute("cutter.list", &json!({})).unwrap()["cutters"].as_array().unwrap().len(), 1);
+        s.execute("edit.undo", &json!({})).unwrap();
+        assert_eq!(s.execute("cutter.list", &json!({})).unwrap()["cutters"], json!([]));
+    }
+
+    #[test]
+    fn bad_node_ids_and_ports_are_errors() {
+        let (mut s, [red, blue, _]) = scene();
+        assert!(s.execute("nodes.connect", &json!({"to": format!("row:{red}"), "port": "matte"})).is_err());
+        assert!(s.execute("nodes.connect", &json!({"from": "fx:1:0", "to": format!("row:{red}"), "port": "image"})).is_err());
+        assert!(s.execute("nodes.connect", &json!({"from": format!("row:{blue}"), "to": format!("row:{red}"), "port": "foo"})).is_err());
+        assert!(s.execute("nodes.connect", &json!({"from": format!("row:{blue}"), "to": "row:999999", "port": "matte"})).is_err());
+        assert!(s.execute("nodes.disconnect", &json!({"to": "row:999999", "port": "transform"})).is_err());
+        assert_eq!(s.execute("cutter.list", &json!({})).unwrap()["cutters"], json!([]));
+    }
 }
