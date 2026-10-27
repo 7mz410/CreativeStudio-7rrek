@@ -9,6 +9,7 @@ pub mod anim_draw;
 pub mod anim_mouth;
 pub mod anim_sound;
 pub mod anim_xsheet;
+pub mod art_layers;
 mod assets;
 mod attributes;
 mod brushsym;
@@ -340,6 +341,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(row_fx_cmd::specs());
         v.extend(nodes::specs());
         v.extend(action_tpl::specs());
+        v.extend(art_layers::specs());
         v.extend(halftone::specs());
         v.extend(perspgrid::specs());
         v.extend(shortcutset::specs());
