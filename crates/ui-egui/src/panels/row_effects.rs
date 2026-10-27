@@ -10,9 +10,11 @@ use vectorcraft_engine::cmd::row_fx::{FxKind, RowEffect};
 
 use crate::VectorcraftApp;
 use crate::theme::Tokens;
-use crate::widgets;
+use crate::widgets::{self, Live};
 
 pub const ID: &str = "rowEffects";
+/// A value drag is open (its undo step not yet committed).
+const LIVE: &str = "rowEffects.live";
 
 /// Actions triggered by the UI, run once the panel is drawn.
 enum Act {
@@ -292,13 +294,19 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
     });
 
+    // A drag previews each step and lands as one undo step on release (see `live_run`).
+    let down = ui.input(|i| i.pointer.any_down());
+    let mut keyed = false;
     for act in acts {
         match act {
             Act::Add(kind) => {
                 run(app, "fx.add", json!({"kind": kind}));
             }
             Act::Key { index, params } => {
-                run(app, "fx.key", json!({"index": index, "frame": current_frame, "params": params}));
+                keyed = true;
+                let phase = if down { Live::Dragging } else { Live::Released };
+                super::live_run(app, "Key Row Effect", "fx.key", json!({"index": index, "frame": current_frame, "params": params}), phase);
+                super::set_pstate(ui.ctx(), LIVE, down);
             }
             Act::RemoveKey { index } => {
                 run(app, "fx.removeKey", json!({"index": index, "frame": current_frame}));
@@ -307,6 +315,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 run(app, "fx.remove", json!({"index": index}));
             }
         }
+    }
+    // Released without a last change: close the drag's undo step.
+    if !keyed && !down && super::pstate::<bool>(ui.ctx(), LIVE) {
+        super::set_pstate(ui.ctx(), LIVE, false);
+        app.session.commit_interaction().ok();
+        app.sync_views();
     }
 }
 
