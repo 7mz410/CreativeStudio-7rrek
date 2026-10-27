@@ -179,10 +179,11 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             for swatch in &swatches {
                 let is_protected = protected.contains(swatch);
                 ui.horizontal(|ui| {
+                    // A chip, not an editor: swatch colours are edited in the Swatches panel.
                     if let Some(col) = own.get(swatch) {
                         let [r, g, b, _] = col.to_rgba8(1.0);
-                        let mut rgb = [r, g, b];
-                        ui.color_edit_button_srgb(&mut rgb);
+                        let (rect, _) = ui.allocate_exact_size(egui::vec2(16.0, 16.0), egui::Sense::hover());
+                        ui.painter().rect_filled(rect, 2.0, egui::Color32::from_rgb(r, g, b));
                     }
                     ui.label(swatch.as_str());
                     let mut prot = is_protected;
