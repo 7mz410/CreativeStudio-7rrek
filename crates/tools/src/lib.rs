@@ -677,6 +677,8 @@ pub enum Cursor {
     MeshAdd,
     /// Puppet Warp over the selection's mesh where a pin can go: a click adds one.
     PuppetPin,
+    /// The Curve Deform tool: a drag moves an anchor or a handle of the curve deformer.
+    CurveDeform,
 }
 
 impl Cursor {
@@ -798,7 +800,8 @@ impl Cursor {
             | Cursor::SymbolStainer
             | Cursor::SymbolScreener
             | Cursor::SymbolStyler
-            | Cursor::Scissors => Some(Cursor::Crosshair),
+            | Cursor::Scissors
+            | Cursor::CurveDeform => Some(Cursor::Crosshair),
             Cursor::TypeVertical | Cursor::LoadedText => Some(Cursor::Text),
             Cursor::MeshAdd | Cursor::PuppetPin => Some(Cursor::PenAdd),
             Cursor::ScissorsNotAllowed => Some(Cursor::NotAllowed),

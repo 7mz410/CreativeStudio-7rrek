@@ -119,7 +119,7 @@ impl Tool for CurveDeformTool {
     }
 
     fn cursor(&self, _cx: &ToolContext, _p: Point, _m: Mods) -> Cursor {
-        Cursor::Crosshair
+        Cursor::CurveDeform
     }
 }
 
@@ -224,12 +224,12 @@ mod tests {
     }
 
     #[test]
-    fn the_cursor_is_a_crosshair() {
+    fn the_cursor_is_curve_deform() {
         let (d, id) = doc_with_rect();
         let (s, p) = (Selection::default(), paint());
         let c = curve(id.0, 0);
         let cx = ToolContext { curve: Some(&c), ..cx(&d, &s, &p) };
-        assert_eq!(CurveDeformTool::default().cursor(&cx, Point::new(60.0, 0.0), Mods::default()), Cursor::Crosshair);
+        assert_eq!(CurveDeformTool::default().cursor(&cx, Point::new(60.0, 0.0), Mods::default()), Cursor::CurveDeform);
     }
 
     #[test]

@@ -927,6 +927,7 @@ fn cursor_icon(c: Cursor) -> egui::CursorIcon {
         | Cursor::ScissorsNotAllowed
         | Cursor::MeshAdd
         | Cursor::PuppetPin
+        | Cursor::CurveDeform
         | Cursor::LoadedText => cursor_icon(c.stand_in().unwrap_or(Cursor::Crosshair)),
     }
 }
