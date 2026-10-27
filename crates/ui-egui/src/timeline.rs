@@ -201,6 +201,7 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
             run_reporting(app, "peg.key");
         }
         cutter_menu(app, ui);
+        blend_menu(app, ui);
         if ui.button(tl!("Import Sound…")).on_hover_text(tl!("Add a WAV, MP3 or Ogg sound at this frame")).clicked() {
             run_reporting(app, "anim.soundImportAs");
         }
@@ -302,22 +303,54 @@ fn cutter_menu(app: &mut VectorcraftApp, ui: &mut egui::Ui) {
     let others: Vec<(u64, String)> = st.doc.layers.iter().rev().filter(|l| Some(l.id) != row).map(|l| (l.id.0, l.display_name())).collect();
     let list = app.session.execute("cutter.list", &json!({})).unwrap_or(Value::Null);
     let mine = list["cutters"].as_array().into_iter().flatten().find(|c| c["row"].as_u64() == row.map(|r| r.0)).cloned();
+    // The cutter's fields as they are now. Every change re-sends all of them, so none is lost.
+    let matte = mine.as_ref().map_or(Value::Null, |c| c["matte"].clone());
+    let inverted = mine.as_ref().and_then(|c| c["inverted"].as_bool()).unwrap_or(false);
+    let by = mine.as_ref().and_then(|c| c["by"].as_str()).unwrap_or("shape").to_string();
+    let also: Vec<u64> = mine.as_ref().and_then(|c| c["also"].as_array()).into_iter().flatten().filter_map(Value::as_u64).collect();
+    let op = mine.as_ref().and_then(|c| c["op"].as_str()).unwrap_or("add").to_string();
     let mut act: Option<(&str, Value)> = None;
     ui.menu_button(tl!("Cutter"), |ui| {
         ui.label(tl!("Cut This Layer By"));
         for (id, name) in &others {
             let on = mine.as_ref().is_some_and(|c| c["matte"].as_u64() == Some(*id));
             if ui.selectable_label(on, name).clicked() {
-                let inverted = mine.as_ref().and_then(|c| c["inverted"].as_bool()).unwrap_or(false);
-                act = Some(("cutter.add", json!({"matte": id, "inverted": inverted})));
+                // The new matte leaves the also-list: it can't be both.
+                let rest: Vec<u64> = also.iter().copied().filter(|a| a != id).collect();
+                act = Some(("cutter.add", cutter_args(json!(id), inverted, &by, &rest, &op)));
                 ui.close();
             }
         }
-        if let Some(c) = &mine {
+        if mine.is_some() {
             ui.separator();
-            let inverted = c["inverted"].as_bool().unwrap_or(false);
+            let next = if by == "brightness" { "shape" } else { "brightness" };
+            if ui.selectable_label(by == "brightness", tl!("By Brightness")).clicked() {
+                act = Some(("cutter.add", cutter_args(matte.clone(), inverted, next, &also, &op)));
+                ui.close();
+            }
+            ui.menu_button(tl!("Also Cut By"), |ui| {
+                for (id, name) in others.iter().filter(|(id, _)| Some(*id) != matte.as_u64()) {
+                    let on = also.contains(id);
+                    if ui.selectable_label(on, name).clicked() {
+                        let next: Vec<u64> =
+                            if on { also.iter().copied().filter(|a| a != id).collect() } else { also.iter().copied().chain([*id]).collect() };
+                        act = Some(("cutter.add", cutter_args(matte.clone(), inverted, &by, &next, &op)));
+                    }
+                }
+            });
+            if !also.is_empty() {
+                ui.label(tl!("Combine"));
+                ui.horizontal(|ui| {
+                    for (key, label) in [("add", tl!("Add")), ("subtract", tl!("Subtract")), ("intersect", tl!("Intersect"))] {
+                        if ui.selectable_label(op == key, label).clicked() {
+                            act = Some(("cutter.add", cutter_args(matte.clone(), inverted, &by, &also, key)));
+                            ui.close();
+                        }
+                    }
+                });
+            }
             if ui.selectable_label(inverted, tl!("Inverted (Keep Only the Overlap)")).clicked() {
-                act = Some(("cutter.add", json!({"matte": c["matte"], "inverted": !inverted})));
+                act = Some(("cutter.add", cutter_args(matte.clone(), !inverted, &by, &also, &op)));
                 ui.close();
             }
             if ui.button(tl!("Remove Cutter")).clicked() {
@@ -330,6 +363,34 @@ fn cutter_menu(app: &mut VectorcraftApp, ui: &mut egui::Ui) {
     .on_hover_text(tl!("Hide this layer where another layer's shape covers it"));
     if let Some((id, p)) = act
         && let Err(e) = app.run(id, p)
+    {
+        app.status(e);
+    }
+}
+
+/// The `cutter.add` params for a whole cutter.
+fn cutter_args(matte: Value, inverted: bool, by: &str, also: &[u64], op: &str) -> Value {
+    json!({"matte": matte, "inverted": inverted, "by": by, "also": also, "op": op})
+}
+
+/// The Blend menu: how the current layer's row mixes with the rows beneath it (its blend mode).
+fn blend_menu(app: &mut VectorcraftApp, ui: &mut egui::Ui) {
+    let Some(st) = app.session.active() else { return };
+    let Some(row) = st.current_layer().and_then(|l| vectorcraft_engine::cmd::anim::row_of(&st.doc, l)) else { return };
+    let current = st.doc.node(row).map_or(vectorcraft_color::BlendMode::Normal, |n| n.blend);
+    let mut pick = None;
+    ui.menu_button(tl!("Blend"), |ui| {
+        for mode in vectorcraft_color::BlendMode::ALL {
+            if ui.selectable_label(mode == current, tl!(mode.label())).clicked() {
+                pick = Some(mode);
+                ui.close();
+            }
+        }
+    })
+    .response
+    .on_hover_text(tl!("How this layer's art mixes with the layers beneath it"));
+    if let Some(mode) = pick
+        && let Err(e) = app.run("object.set", json!({"id": row.0, "blend": mode.label()}))
     {
         app.status(e);
     }

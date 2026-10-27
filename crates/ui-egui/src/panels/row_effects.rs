@@ -119,7 +119,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
 
             let has_key = keys.contains_key(&current_frame);
-            let row_fx = RowEffect { kind, keys };
+            let row_fx = RowEffect { keys, ..RowEffect::new(kind) };
             let mut params = row_fx.params_at(current_frame);
 
             let kind_label = match kind {
