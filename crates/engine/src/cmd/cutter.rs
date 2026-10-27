@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use vectorcraft_color::{Color, Paint};
 use vectorcraft_doc::recolor::{ColorVisitor, Reach, recolor_node};
-use vectorcraft_doc::{Appearance, AppearanceItem, Document, FillLayer, Node, OpacityMask};
+use vectorcraft_doc::{Appearance, AppearanceItem, Document, FillLayer, ImageBlob, Node, OpacityMask};
 
 use super::anim::{Anim, row_param, show};
 use super::*;
@@ -51,21 +51,28 @@ impl Cutters {
     }
 }
 
-/// Turns every colour one colour: a matte cuts by its shape, not its colours.
-struct Flat(Color);
+/// Turns every colour one colour: a matte cuts by its shape, not its colours. An image keeps its
+/// alpha and takes the colour on every pixel; the copies it makes are kept in `new`.
+struct Flat<'a> {
+    color: Color,
+    doc: &'a Document,
+    new: Vec<(String, ImageBlob)>,
+}
 
-impl ColorVisitor for Flat {
+impl ColorVisitor for Flat<'_> {
     fn paint(&mut self, p: &mut Paint) -> bool {
-        let c = self.0;
+        let c = self.color;
         vectorcraft_doc::recolor::map_paint(p, &|_| c)
     }
     fn color(&mut self, _: Color) -> Color {
-        self.0
+        self.color
     }
-    // shortcut: an image in a matte cuts by its own brightness, not its outline; turn its pixels
-    // white (keeping alpha) when image mattes matter.
-    fn image(&mut self, _: &str) -> Option<String> {
-        None
+    fn image(&mut self, key: &str) -> Option<String> {
+        let [r, g, b, _] = self.color.to_rgba8(1.0);
+        let blob = self.doc.images.get(key)?.map_rgb(|_| [r, g, b])?;
+        let k = blob.content_key();
+        self.new.push((k.clone(), blob));
+        Some(k)
     }
 }
 
@@ -86,17 +93,19 @@ pub(crate) fn apply(d: &mut Document) -> (Vec<u64>, Vec<u64>) {
         // The mask shows where it is white: inverted, the matte itself in white (all else hidden);
         // by default, white over the whole row with the matte in black on it. A see-through matte
         // comes out grey and cuts part way.
+        let mut flat = Flat { color: if c.inverted { Color::WHITE } else { Color::BLACK }, doc: &*d, new: Vec::new() };
+        recolor_node(&mut matte_art, Reach::ALL, &mut flat);
+        let new = flat.new;
         let art = if c.inverted {
-            recolor_node(&mut matte_art, Reach::ALL, &mut Flat(Color::WHITE));
             matte_art
         } else {
-            recolor_node(&mut matte_art, Reach::ALL, &mut Flat(Color::BLACK));
             let Some(r) = d.bounds_of(&[row], true) else { continue };
             let margin = 0.1 * r.width().max(r.height()) + 10.0;
             let fill = Appearance { items: vec![AppearanceItem::Fill(FillLayer::new(Paint::solid(Color::WHITE)))], ..Appearance::default() };
             let backdrop = Node::path(NodeId(0), vectorcraft_geom::shapes::rectangle(r.inflate(margin, margin)), fill);
             Node::group(NodeId(0), vec![std::sync::Arc::new(backdrop), std::sync::Arc::new(matte_art)])
         };
+        d.images.extend(new);
         let mask = OpacityMask::new(art, true);
         if let Some(n) = d.node_mut(row) {
             n.extras_mut().mask = Some(Box::new(mask));
@@ -189,7 +198,8 @@ fn list(s: &mut Session, _: &Value) -> Result<Value> {
 
 #[cfg(test)]
 mod tests {
-    use vectorcraft_geom::Rect;
+    use vectorcraft_doc::{ImageObject, NodeKind};
+    use vectorcraft_geom::{Affine, Rect};
 
     use super::*;
 
@@ -234,6 +244,45 @@ mod tests {
         s.execute("cutter.add", &json!({"row": red, "matte": blue, "inverted": true})).unwrap();
         assert_eq!(at(&s, 50, 50), [255, 0, 0]);
         assert_eq!(at(&s, 10, 10), [255, 255, 255]);
+    }
+
+    /// A matte row holding an opaque white 4×4 image at (25, 25), 50 pt square, and the red row
+    /// below it. White, so the cut comes from its outline: its own brightness would show the red.
+    #[test]
+    fn a_matte_image_cuts_by_its_outline_not_its_brightness() {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 100, "height": 100})).unwrap();
+        s.execute("paint.setFill", &json!({"color": "#ff0000"})).unwrap();
+        let red = s.doc().unwrap().doc.layers[0].id.0;
+        let matte = s.execute("layer.new", &json!({})).unwrap()["id"].as_u64().unwrap();
+        s.execute("layer.setCurrent", &json!({"id": matte})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        let mut png = vec![];
+        image::RgbaImage::from_pixel(4, 4, image::Rgba([255, 255, 255, 255]))
+            .write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png)
+            .unwrap();
+        s.edit("Place", |d, _| {
+            d.images.insert("white".into(), ImageBlob::png(png));
+            let id = d.alloc_id();
+            let im = ImageObject {
+                key: "white".into(),
+                width: 4,
+                height: 4,
+                xf: Affine::new([12.5, 0.0, 0.0, 12.5, 25.0, 25.0]),
+                link: None,
+                placement: Default::default(),
+                pixels: None,
+            };
+            d.insert(Some(NodeId(matte)), 0, Node::new(id, NodeKind::Image(Box::new(im))))?;
+            Ok(())
+        })
+        .unwrap();
+        assert_eq!(at(&s, 50, 50), [255, 255, 255], "the white image on top before cutting");
+        s.execute("cutter.add", &json!({"row": red, "matte": matte})).unwrap();
+        assert_eq!(at(&s, 50, 50), [255, 255, 255], "the row is hidden under the image's outline");
+        assert_eq!(at(&s, 10, 10), [255, 0, 0], "the rest stays");
     }
 
     #[test]
