@@ -390,7 +390,7 @@ fn blend_menu(app: &mut VectorcraftApp, ui: &mut egui::Ui) {
     .response
     .on_hover_text(tl!("How this layer's art mixes with the layers beneath it"));
     if let Some(mode) = pick
-        && let Err(e) = app.run("object.set", json!({"id": row.0, "blend": mode.label()}))
+        && let Err(e) = app.run("object.setProps", json!({"id": row.0, "blend": mode.label()}))
     {
         app.status(e);
     }
