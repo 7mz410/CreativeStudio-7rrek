@@ -25,7 +25,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let mut save_from: u32 = ui.data(|d| d.get_temp(from_id).unwrap_or(1));
     let mut save_to: u32 = ui.data(|d| d.get_temp(to_id).unwrap_or(24));
 
-    let actions_val = app.run("action.list", json!({})).unwrap_or(Value::Null);
+    let actions_val = app.session.execute("action.list", &json!({})).unwrap_or(Value::Null);
     let actions = actions_val.get("actions").and_then(Value::as_array);
 
     if actions.as_ref().is_none_or(|a| a.is_empty()) {

@@ -5724,6 +5724,16 @@ font-technology	Variable	متغير
 	Cutter (Inv)	قاطع (معكوس)
 	No rows in document	لا توجد صفوف في المستند
 	Action Templates	قوالب الحركة
+	No action templates	لا توجد قوالب حركة
+	Save Action	حفظ الحركة
+	Paste Action	لصق الحركة
+	Remove Action	حذف الحركة
+	Export Action	تصدير الحركة
+	Import Action	استيراد الحركة
+	List Actions	قائمة الحركات
+	From:	من:
+	To:	إلى:
+	Paint	تلوين
 	Glow	توهج
 	Color Adjust	ضبط الألوان
 	Key at this frame	مفتاح عند هذا الإطار

@@ -126,6 +126,19 @@ pub struct Anim {
     /// Live effects applied per row by `at_frame_with`: row id → count of added effects (undone in `unposed`).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub row_fx: BTreeMap<u64, usize>,
+    /// Light table: while drawing on `row`, every other row shows at `opacity` and locked.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub light_table: Option<LightTable>,
+    /// The rows the frame shown faded for the light table, with the opacity and lock they had
+    /// (given back on the next frame change).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub lit: Vec<(u64, f32, bool)>,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+pub struct LightTable {
+    pub row: u64,
+    pub opacity: f32,
 }
 
 impl Default for Anim {
@@ -150,6 +163,8 @@ impl Default for Anim {
             depth: BTreeMap::new(),
             maintain: BTreeSet::new(),
             row_fx: BTreeMap::new(),
+            light_table: None,
+            lit: Vec::new(),
         }
     }
 }
@@ -231,6 +246,11 @@ pub(crate) fn unposed(doc: &Document) -> Document {
             n.appearance.effects.retain(|e| e.params.get(super::row_fx::MARK).is_none());
         }
     }
+    for &(id, opacity, locked) in &anim.lit {
+        if let Some(n) = d.node_mut(NodeId(id)) {
+            (n.opacity, n.locked) = (opacity, locked);
+        }
+    }
     d
 }
 
@@ -277,7 +297,18 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     let posed = pose(&mut d, frame, &mut ghosts);
     let (cut, mattes) = super::cutter::apply(&mut d);
     let row_fx = super::row_fx::apply(&mut d, frame);
+    // The light table fades the other rows on the canvas only (exports don't take `onion`).
+    let mut lit = Vec::new();
+    if let Some(lt) = anim.light_table.filter(|_| onion) {
+        for row in d.layers.iter().map(|l| l.id).filter(|id| id.0 != lt.row).collect::<Vec<_>>() {
+            if let Some(n) = d.node_mut(row) {
+                lit.push((row.0, n.opacity, n.locked));
+                (n.opacity, n.locked) = (n.opacity * lt.opacity, true);
+            }
+        }
+    }
     let mut a = anim;
+    a.lit = lit;
     a.ghosts = ghosts;
     a.posed = posed;
     (a.cut, a.mattes) = (cut, mattes);
@@ -567,6 +598,15 @@ pub fn specs() -> Vec<CommandSpec> {
             onion
         ),
         cmd!(
+            "anim.lightTable",
+            "Light Table",
+            [],
+            None,
+            "{on?: bool (default: toggle), opacity?: 0..1 (default 0.3), row?: layer id (default: the current layer's row)} while on, every row but `row` shows faded to `opacity` and locked on the canvas (exports are untouched). View state: not an undo step → {on, row, opacity}",
+            has_doc,
+            light_table
+        ),
+        cmd!(
             "anim.tween",
             "Motion Tween",
             [],
@@ -730,6 +770,25 @@ fn onion(s: &mut Session, p: &Value) -> Result<Value> {
     st.doc = Arc::new(d);
     show(s, current)?;
     Ok(json!({"before": a.onion_before, "after": a.onion_after}))
+}
+
+fn light_table(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "anim.lightTable";
+    let row = row_param(s, p, C)?;
+    let opacity = match p.get("opacity") {
+        None | Some(Value::Null) => 0.3,
+        Some(v) => v.as_f64().filter(|o| (0.0..=1.0).contains(o)).ok_or_else(|| bad(C, "`opacity` must be 0..1"))?,
+    };
+    let st = s.doc_mut()?;
+    let mut d = (*st.doc).clone();
+    let mut a = Anim::of(&d);
+    let on = p.get("on").and_then(Value::as_bool).unwrap_or(a.light_table.is_none());
+    a.light_table = on.then_some(LightTable { row: row.0, opacity: opacity as f32 });
+    a.store(&mut d);
+    let current = a.current;
+    st.doc = Arc::new(d);
+    show(s, current)?;
+    Ok(json!({"on": on, "row": row.0, "opacity": opacity}))
 }
 
 /// `p.ease`: absent → None, "linear" → Some(None), a name or [x1, y1, x2, y2] → Some(Some(curve)).
@@ -1049,6 +1108,37 @@ mod tests {
         assert!(!clean.node(NodeId(k1)).unwrap().visible && clean.node(NodeId(k3)).unwrap().opacity == 1.0, "exports see only frame 3");
         s.execute("anim.onion", &json!({"before": 0, "after": 0})).unwrap();
         assert!(!s.doc().unwrap().doc.node(NodeId(k1)).unwrap().visible);
+    }
+
+    /// D6: the light table shows the 2 other rows at 30% while drawing on the third; exports and
+    /// the rows themselves are untouched once it is off.
+    #[test]
+    fn the_light_table_fades_the_other_rows_on_the_canvas_only() {
+        let mut s = session();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        rect(&mut s, 10.0);
+        let mut rows = vec![s.doc().unwrap().doc.layers[0].id.0];
+        for _ in 0..2 {
+            let id = s.execute("layer.new", &json!({})).unwrap()["id"].as_u64().unwrap();
+            s.execute("layer.setCurrent", &json!({"id": id})).unwrap();
+            s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+            rect(&mut s, 10.0);
+            rows.push(id);
+        }
+        s.execute("anim.lightTable", &json!({"on": true})).unwrap();
+        let d = s.doc().unwrap().doc.clone();
+        let n = |d: &Document, id: u64| d.node(NodeId(id)).unwrap().clone();
+        for &r in &rows[..2] {
+            assert!((n(&d, r).opacity - 0.3).abs() < 1e-6 && n(&d, r).locked, "other rows at 30%");
+        }
+        assert_eq!(n(&d, rows[2]).opacity, 1.0, "the row drawn on stays");
+        assert_eq!(n(&at_frame(&d, 1), rows[0]).opacity, 1.0, "exports see it whole");
+        s.execute("anim.goto", &json!({"frame": 2})).unwrap();
+        assert!((n(&s.doc().unwrap().doc, rows[0]).opacity - 0.3).abs() < 1e-6, "no stacking across frames");
+        s.execute("anim.lightTable", &json!({"on": false})).unwrap();
+        let d = s.doc().unwrap().doc.clone();
+        assert!(n(&d, rows[0]).opacity == 1.0 && !n(&d, rows[0]).locked);
+        assert!(s.execute("anim.lightTable", &json!({"opacity": 2})).is_err());
     }
 
     #[test]
