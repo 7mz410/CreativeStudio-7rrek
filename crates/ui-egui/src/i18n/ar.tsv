@@ -5673,6 +5673,8 @@ font-technology	Variable	متغير
 	No drawings: add keyframes to this layer	لا توجد رسومات: أضف مفاتيح إطارات إلى هذه الطبقة
 	frames: {frames}	الإطارات: {frames}
 	Lip Sync	مزامنة الشفاه
+	Light Table	طاولة الإضاءة
+	Show the other rows faded while drawing on this one	إظهار الصفوف الأخرى باهتة أثناء الرسم على هذا الصف
 	Pick the current layer's mouth drawings from the first sound	اختر رسومات فم الطبقة الحالية من الصوت الأول
 	Mouth Shape	شكل الفم
 	Mouth Chart	جدول الأفواه

@@ -49,6 +49,7 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     let current = info["current"].as_u64().unwrap_or(1) as u32;
     let fps = info["fps"].as_u64().unwrap_or(12).max(1) as u32;
     let onion = info["onion"].as_bool().unwrap_or(false);
+    let light = info["lightTable"].as_bool().unwrap_or(false);
 
     tick(app, ui, fps);
 
@@ -61,7 +62,7 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.scope_builder(egui::UiBuilder::new().max_rect(bar), |ui| {
         egui::ScrollArea::horizontal().id_salt("timeline-bar").show(ui, |ui| {
             ui.set_min_height(BAR_H);
-            ui.with_layout(flow, |ui| controls(app, ui, &t, current, frames, fps, onion));
+            ui.with_layout(flow, |ui| controls(app, ui, &t, current, frames, fps, onion, light));
         });
     });
     let below = Rect::from_min_max(pos2(full.min.x, bar.max.y), full.max);
@@ -88,7 +89,7 @@ fn info_of(doc: &vectorcraft_doc::Document) -> Value {
             json!({"id": r.id.0, "name": r.name.clone().unwrap_or_default(), "keys": keys})
         })
         .collect();
-    json!({"fps": a.fps, "frames": a.frames, "current": a.current, "rows": rows, "onion": a.onion_before + a.onion_after > 0})
+    json!({"fps": a.fps, "frames": a.frames, "current": a.current, "rows": rows, "onion": a.onion_before + a.onion_after > 0, "lightTable": a.light_table.is_some()})
 }
 
 /// Step the playhead while playing.
@@ -118,7 +119,8 @@ fn set_playing(ui: &Ui, on: bool) {
     ui.ctx().data_mut(|d| d.insert_temp(playback_id(), Playback { playing: on, acc: 0.0 }));
 }
 
-fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32, onion: bool) {
+#[allow(clippy::too_many_arguments)]
+fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32, onion: bool, light: bool) {
     let playing = ui.ctx().data(|d| d.get_temp::<Playback>(playback_id())).is_some_and(|p| p.playing);
     {
         ui.add_space(8.0);
@@ -210,6 +212,9 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         if ui.selectable_label(onion, tl!("Onion Skin")).on_hover_text(tl!("Show the keyframes before and after faintly")).clicked() {
             let n = if onion { 0 } else { 1 };
             let _ = app.run("anim.onion", json!({"before": n, "after": n}));
+        }
+        if ui.selectable_label(light, tl!("Light Table")).on_hover_text(tl!("Show the other rows faded while drawing on this one")).clicked() {
+            run_reporting(app, "anim.lightTable");
         }
         ui.add_space(8.0);
         if ui.button(tl!("Export GIF…")).on_hover_text(tl!("Export Animated GIF")).clicked() {
