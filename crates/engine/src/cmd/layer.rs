@@ -569,6 +569,8 @@ fn copy_anim(d: &mut Document, n: &Node, c: &Node) {
     }
     let mut a = before.clone();
     a.keys.extend(before.keys.iter().filter_map(|(k, f)| Some((id(k)?, *f))));
+    a.tweens.extend(before.tweens.iter().filter_map(id));
+    a.eases.extend(before.eases.iter().filter_map(|(k, e)| Some((id(k)?, *e))));
     for (r, e) in &before.exposures {
         let Some(r) = id(r) else { continue };
         a.exposures.insert(r, e.iter().filter_map(|(f, drawing)| Some((*f, id(drawing)?))).collect());

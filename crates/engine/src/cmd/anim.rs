@@ -989,6 +989,23 @@ mod tests {
     }
 
     #[test]
+    fn a_duplicated_row_keeps_its_tweens_and_eases() {
+        let mut s = session();
+        let k1 = s.execute("anim.keyframe", &json!({"frame": 1})).unwrap()["id"].as_u64().unwrap();
+        rect(&mut s, 10.0);
+        s.execute("anim.keyframe", &json!({"frame": 5})).unwrap();
+        rect(&mut s, 200.0);
+        s.execute("anim.tween", &json!({"frame": 1, "ease": "easeIn"})).unwrap();
+        let row = s.doc().unwrap().doc.parent_of(NodeId(k1)).unwrap();
+        let copy = NodeId(s.execute("layer.duplicate", &json!({"ids": [row.0]})).unwrap()["ids"][0].as_u64().unwrap());
+        let d = s.doc().unwrap().doc.clone();
+        let a = Anim::of(&d);
+        let k1c = a.row_keys(d.node(copy).unwrap())[0].1;
+        assert!(a.tweens.contains(&k1c.0));
+        assert_eq!(a.eases.get(&k1c.0), a.eases.get(&k1));
+    }
+
+    #[test]
     fn a_duplicated_keyframe_is_not_a_second_key_on_its_frame() {
         let mut s = session();
         s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
