@@ -97,6 +97,7 @@ pub mod row_fx;
 pub mod row_fx_cmd;
 pub mod scripts;
 mod select;
+pub mod selector;
 pub(crate) mod shaper;
 pub mod shortcutset;
 pub(crate) mod slices;

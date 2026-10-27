@@ -28,6 +28,37 @@ pub struct Cutter {
     /// Keep only where the matte covers the row (instead of hiding it there).
     #[serde(default)]
     pub inverted: bool,
+    /// What of the matte counts: its shape (default), or its brightness (white cuts fully, black
+    /// not at all; a gradient cuts part way along it).
+    #[serde(default, skip_serializing_if = "is_default")]
+    pub by: MatteBy,
+    /// More matte rows, combined with the first by `op` (a matte composite).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub also: Vec<u64>,
+    #[serde(default, skip_serializing_if = "is_default")]
+    pub op: MatteOp,
+}
+
+fn is_default<T: Default + PartialEq>(v: &T) -> bool {
+    *v == T::default()
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
+pub enum MatteBy {
+    #[default]
+    Shape,
+    Brightness,
+}
+
+/// How a cutter's mattes combine: all of them, the first less the others, or only where all overlap.
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
+pub enum MatteOp {
+    #[default]
+    Add,
+    Subtract,
+    Intersect,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
@@ -76,6 +107,19 @@ impl ColorVisitor for Flat<'_> {
     }
 }
 
+/// The visible art of matte row `id` as one group, every colour `paint` if given (else its own);
+/// image copies it makes go in `new`.
+fn matte_art(d: &Document, id: NodeId, paint: Option<Color>, new: &mut Vec<(String, ImageBlob)>) -> Option<Node> {
+    let m = d.layers.iter().find(|l| l.id == id)?;
+    let mut art = Node::group(NodeId(0), m.children().into_iter().flatten().filter(|c| c.visible).cloned().collect());
+    if let Some(color) = paint {
+        let mut flat = Flat { color, doc: d, new: Vec::new() };
+        recolor_node(&mut art, Reach::ALL, &mut flat);
+        new.extend(flat.new);
+    }
+    Some(art)
+}
+
 /// Builds every cutter for the frame shown in `d`: the input row gets an opacity mask of its
 /// matte's visible art in white, and the matte row is hidden. A row that already has an opacity
 /// mask of its own keeps it (and isn't cut). Returns (rows masked, matte rows hidden), for the next
@@ -83,39 +127,63 @@ impl ColorVisitor for Flat<'_> {
 pub(crate) fn apply(d: &mut Document) -> (Vec<u64>, Vec<u64>) {
     let (mut cut, mut mattes) = (Vec::new(), Vec::new());
     for c in Cutters::of(d).cutters {
-        let (row, matte) = (NodeId(c.row), NodeId(c.matte));
-        if row == matte || !d.layers.iter().any(|l| l.id == row) || d.node(row).is_some_and(|n| n.extras().mask.is_some()) {
+        let row = NodeId(c.row);
+        let ids: Vec<NodeId> = std::iter::once(c.matte).chain(c.also.iter().copied()).map(NodeId).collect();
+        if ids.contains(&row) || !d.layers.iter().any(|l| l.id == row) || d.node(row).is_some_and(|n| n.extras().mask.is_some()) {
             continue;
         }
-        let Some(m) = d.layers.iter().find(|l| l.id == matte) else { continue };
-        let shown = m.children().into_iter().flatten().filter(|c| c.visible).cloned().collect();
-        let mut matte_art = Node::group(NodeId(0), shown);
-        // The mask shows where it is white: inverted, the matte itself in white (all else hidden);
-        // by default, white over the whole row with the matte in black on it. A see-through matte
-        // comes out grey and cuts part way.
-        let mut flat = Flat { color: if c.inverted { Color::WHITE } else { Color::BLACK }, doc: &*d, new: Vec::new() };
-        recolor_node(&mut matte_art, Reach::ALL, &mut flat);
-        let new = flat.new;
-        let art = if c.inverted {
-            matte_art
-        } else {
-            let Some(r) = d.bounds_of(&[row], true) else { continue };
-            let margin = 0.1 * r.width().max(r.height()) + 10.0;
-            let fill = Appearance { items: vec![AppearanceItem::Fill(FillLayer::new(Paint::solid(Color::WHITE)))], ..Appearance::default() };
-            let backdrop = Node::path(NodeId(0), vectorcraft_geom::shapes::rectangle(r.inflate(margin, margin)), fill);
-            Node::group(NodeId(0), vec![std::sync::Arc::new(backdrop), std::sync::Arc::new(matte_art)])
+        let Some(r) = d.bounds_of(&[row], true) else { continue };
+        // The mask shows where it is white. By shape: inverted, the mattes in white (all else
+        // hidden); by default, white over the whole row with the mattes in black on it. A
+        // see-through matte comes out grey and cuts part way. By brightness the mattes keep their
+        // colours over black, and the mask is inverted unless the cutter is.
+        let (on, off, back) = match (c.by, c.inverted) {
+            (MatteBy::Shape, true) => (Some(Color::WHITE), Color::BLACK, None),
+            (MatteBy::Shape, false) => (Some(Color::BLACK), Color::WHITE, Some(Color::WHITE)),
+            (MatteBy::Brightness, _) => (None, Color::BLACK, Some(Color::BLACK)),
         };
+        let mut new = Vec::new();
+        let mut parts = Vec::new();
+        for (i, id) in ids.iter().enumerate() {
+            let paint = if i == 0 || c.op == MatteOp::Add {
+                on
+            } else if c.op == MatteOp::Subtract {
+                Some(off)
+            } else {
+                Some(Color::WHITE)
+            };
+            let Some(art) = matte_art(d, *id, paint, &mut new) else { continue };
+            match (c.op, parts.pop()) {
+                (MatteOp::Intersect, Some(first)) if i > 0 => {
+                    let mut g = Node::group(NodeId(0), vec![std::sync::Arc::new(first)]);
+                    g.extras_mut().mask = Some(Box::new(OpacityMask::new(art, true)));
+                    parts.push(g);
+                }
+                (_, prev) => parts.extend(prev.into_iter().chain([art])),
+            }
+        }
+        if parts.is_empty() {
+            continue;
+        }
+        if let Some(back) = back {
+            let margin = 0.1 * r.width().max(r.height()) + 10.0;
+            let fill = Appearance { items: vec![AppearanceItem::Fill(FillLayer::new(Paint::solid(back)))], ..Appearance::default() };
+            parts.insert(0, Node::path(NodeId(0), vectorcraft_geom::shapes::rectangle(r.inflate(margin, margin)), fill));
+        }
         d.images.extend(new);
-        let mask = OpacityMask::new(art, true);
+        let mut mask = OpacityMask::new(Node::group(NodeId(0), parts.into_iter().map(std::sync::Arc::new).collect()), true);
+        mask.invert = c.by == MatteBy::Brightness && !c.inverted;
         if let Some(n) = d.node_mut(row) {
             n.extras_mut().mask = Some(Box::new(mask));
             cut.push(row.0);
         }
-        if let Some(n) = d.node_mut(matte)
-            && n.visible
-        {
-            n.visible = false;
-            mattes.push(matte.0);
+        for id in ids {
+            if let Some(n) = d.node_mut(id)
+                && n.visible
+            {
+                n.visible = false;
+                mattes.push(id.0);
+            }
         }
     }
     (cut, mattes)
@@ -174,7 +242,7 @@ fn add(s: &mut Session, p: &Value) -> Result<Value> {
     if all.cutters.len() >= MAX_CUTTERS {
         return Err(bad(C, format!("a document takes at most {MAX_CUTTERS} cutters")));
     }
-    all.cutters.push(Cutter { row: row.0, matte: matte.0, inverted });
+    all.cutters.push(Cutter { row: row.0, matte: matte.0, inverted, ..Cutter::default() });
     commit(s, "Add Cutter", all)?;
     Ok(json!({"row": row.0, "matte": matte.0, "inverted": inverted}))
 }

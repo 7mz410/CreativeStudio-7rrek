@@ -5,6 +5,7 @@ use serde_json::{Value, json};
 
 use super::anim::{Anim, frame_param, row_param, show};
 use super::row_fx::{FxKind, MAX_ROW_EFFECTS, RowEffect, RowFx, RowFxList};
+use super::selector::Part;
 use super::*;
 
 pub fn specs() -> Vec<CommandSpec> {
@@ -14,7 +15,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Add Row Effect",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), kind: \"blur\"|\"glow\"|\"dropShadow\"|\"colorAdjust\"|\"tint\"} adds an effect to the row → {row, index, kind}",
+            "{row?: layer id (default: the current layer's row), kind: \"blur\"|\"glow\"|\"dropShadow\"|\"colorAdjust\"|\"tint\", part?: \"all\"|\"lineArt\"|\"colourArt\" (drawing selector: only the lines, or only the Colour Art fills, of each drawing; default all)} adds an effect to the row → {row, index, kind}",
             has_doc,
             add
         ),
@@ -74,6 +75,11 @@ fn add(s: &mut Session, p: &Value) -> Result<Value> {
     let kind =
         FxKind::parse(kind_str).ok_or_else(|| bad(C, format!("unknown kind {kind_str:?} (expected blur, glow, dropShadow, colorAdjust, tint)")))?;
 
+    let part = match str_param(p, "part") {
+        None => Part::All,
+        Some(v) => Part::parse(v).ok_or_else(|| bad(C, format!("unknown part {v:?} (expected all, lineArt, colourArt)")))?,
+    };
+
     let mut all = RowFxList::of(&s.doc()?.doc);
     let idx = match all.rows.iter().position(|r| r.row == row.0) {
         Some(i) => i,
@@ -89,7 +95,7 @@ fn add(s: &mut Session, p: &Value) -> Result<Value> {
     }
 
     let index = row_fx.effects.len();
-    row_fx.effects.push(RowEffect::new(kind));
+    row_fx.effects.push(RowEffect { part, ..RowEffect::new(kind) });
 
     commit(s, "Add Row Effect", all)?;
     Ok(json!({"row": row.0, "index": index, "kind": kind.as_str()}))

@@ -203,7 +203,7 @@ fn connect(s: &mut Session, p: &Value) -> Result<Value> {
         (("row", m), ("cut", r), "image" | "matte") | (("row", m), ("row", r), "matte") => {
             let (m, r) = (row(d, m, C)?, row(d, r, C)?);
             let old = cuts.cutters.iter().find(|c| c.row == r).cloned();
-            let mut c = old.clone().unwrap_or(Cutter { row: r, matte: m, inverted: false });
+            let mut c = old.clone().unwrap_or(Cutter { row: r, matte: m, ..Cutter::default() });
             if to.0 == "cut" && old.is_none() {
                 return Err(bad(C, format!("cut:{r} doesn't exist")));
             }

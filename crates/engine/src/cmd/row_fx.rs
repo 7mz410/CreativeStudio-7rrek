@@ -8,6 +8,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use vectorcraft_doc::{Document, Effect, NodeId};
 
+use super::selector::Part;
+
 pub const KEY: &str = "rowFx";
 pub const MAX_ROW_EFFECTS: usize = 32;
 /// Marks a live effect added for a frame, so `unposed` removes it and never the user's own.
@@ -125,11 +127,18 @@ pub struct RowEffect {
     pub kind: FxKind,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub keys: BTreeMap<u32, Value>,
+    /// Which part of each drawing the effect takes (drawing selector; default all of the row).
+    #[serde(default, skip_serializing_if = "is_all")]
+    pub part: Part,
+}
+
+fn is_all(p: &Part) -> bool {
+    *p == Part::All
 }
 
 impl RowEffect {
     pub fn new(kind: FxKind) -> Self {
-        Self { kind, keys: BTreeMap::new() }
+        Self { kind, keys: BTreeMap::new(), part: Part::All }
     }
 
     /// Evaluates parameters at `frame`: straight interpolation between keys, held before and after.
@@ -219,22 +228,20 @@ impl RowFxList {
 }
 
 /// Applies every row's effects for `frame` onto the document layers.
-/// Returns a map of `row_id -> count of effects added` so `unposed` can revert them.
+/// Returns a map of `node id -> count of effects added` (the row, or the parts a selector picks) so `unposed` can revert them.
 pub(crate) fn apply(d: &mut Document, frame: u32) -> BTreeMap<u64, usize> {
     let all = RowFxList::of(d);
     let mut applied = BTreeMap::new();
     for r in all.rows {
-        if r.effects.is_empty() {
-            continue;
-        }
         let row_id = NodeId(r.row);
-        let count = r.effects.len();
-        let effects_to_add: Vec<_> = r.effects.iter().map(|fx| fx.to_live_effect(frame)).collect();
-        if let Some(n) = d.node_mut(row_id) {
-            for fx in effects_to_add {
-                n.appearance.effects.push(fx);
+        for fx in &r.effects {
+            let live = fx.to_live_effect(frame);
+            for id in super::selector::targets(d, row_id, fx.part) {
+                if let Some(n) = d.node_mut(id) {
+                    n.appearance.effects.push(live.clone());
+                    *applied.entry(id.0).or_insert(0) += 1;
+                }
             }
-            applied.insert(r.row, count);
         }
     }
     applied
