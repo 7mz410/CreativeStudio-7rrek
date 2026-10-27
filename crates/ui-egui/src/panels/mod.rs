@@ -4,6 +4,7 @@
 //! Every icon panel has a body (`show_icon_panel`) and a panel (≡) menu (`panel_menu`).
 
 pub mod actions;
+pub mod actions_tpl;
 pub mod align;
 pub mod appearance;
 pub mod artboards;
@@ -32,7 +33,6 @@ pub mod library_panel;
 pub mod links;
 pub mod magic_wand;
 pub mod navigator;
-pub mod actions_tpl;
 pub mod node_view;
 pub mod opentype;
 pub mod palettes;

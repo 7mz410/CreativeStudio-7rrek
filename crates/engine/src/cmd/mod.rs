@@ -2,6 +2,7 @@
 
 pub(crate) mod appearance;
 // 7rrek (Creative Studio): frame-by-frame animation.
+pub mod action_tpl;
 pub mod anim;
 pub mod anim_camera;
 pub mod anim_draw;
@@ -62,7 +63,6 @@ pub mod mesh;
 pub mod mesh_cmd;
 pub(crate) mod newart;
 pub mod newdoc;
-pub mod action_tpl;
 pub mod nodes;
 mod object;
 pub(crate) mod objects_on_path;

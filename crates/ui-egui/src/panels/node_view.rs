@@ -339,6 +339,11 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
         let (canvas_rect, _resp) = ui.allocate_exact_size(diagram_size, Sense::click_and_drag());
         let painter = ui.painter_at(canvas_rect);
+        // The layout above is in diagram space; place it where the canvas landed.
+        let off = canvas_rect.min.to_vec2();
+        let rects: HashMap<String, Rect> = rects.iter().map(|(k, r)| (k.clone(), r.translate(off))).collect();
+        let input_ports: Vec<InputPort> = input_ports.iter().map(|p| InputPort { pos: p.pos + off, ..p.clone() }).collect();
+        let output_ports: HashMap<String, Pos2> = output_ports.iter().map(|(k, p)| (k.clone(), *p + off)).collect();
 
         let ptr_pos = ui.input(|i| i.pointer.hover_pos());
         let primary_pressed = ui.input(|i| i.pointer.primary_pressed());
