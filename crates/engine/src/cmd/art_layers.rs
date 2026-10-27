@@ -214,8 +214,12 @@ fn paint_at(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn fill(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "art.fill";
+    // Given ids stand in for the selection: an object inside a group also given goes, as there.
     let ids = match ids_param(p, "ids") {
-        Some(v) => v,
+        Some(v) => {
+            let d = &s.doc()?.doc;
+            super::edit::roots_of(d, d.paint_order(v))
+        }
         None => selected_roots(s)?,
     };
     let paint = paint_param(s, p, C)?;
