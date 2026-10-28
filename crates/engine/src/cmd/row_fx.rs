@@ -40,6 +40,8 @@ pub enum FxKind {
     DirectionalBlur,
     RadialBlur,
     RadialZoomBlur,
+    // C4 Mattes:
+    ChromaKey,
 }
 
 impl FxKind {
@@ -63,6 +65,7 @@ impl FxKind {
             "directional" => Some(Self::DirectionalBlur),
             "radial" => Some(Self::RadialBlur),
             "radialZoom" => Some(Self::RadialZoomBlur),
+            "chromaKey" => Some(Self::ChromaKey),
             _ => None,
         }
     }
@@ -87,6 +90,7 @@ impl FxKind {
             Self::DirectionalBlur => "directional",
             Self::RadialBlur => "radial",
             Self::RadialZoomBlur => "radialZoom",
+            Self::ChromaKey => "chromaKey",
         }
     }
 
@@ -110,6 +114,7 @@ impl FxKind {
             Self::DirectionalBlur => json!({"radius": 5.0, "angle": 0.0}),
             Self::RadialBlur => json!({"radius": 5.0}),
             Self::RadialZoomBlur => json!({"amount": 10.0, "cx": 0.5, "cy": 0.5}),
+            Self::ChromaKey => json!({"color": "#00ff00", "threshold": 20.0, "softness": 10.0, "spill": 50.0}),
         }
     }
 
@@ -133,6 +138,7 @@ impl FxKind {
             Self::DirectionalBlur => "blur.directional",
             Self::RadialBlur => "blur.radial",
             Self::RadialZoomBlur => "blur.radialZoom",
+            Self::ChromaKey => "key.chroma",
         }
     }
 }
@@ -334,6 +340,18 @@ impl RowEffect {
                 let cy = params.get("cy").and_then(Value::as_f64).unwrap_or(0.5);
                 params["cy"] = json!(cy.clamp(0.0, 1.0));
             }
+            FxKind::ChromaKey => {
+                // The colour stays a string; the effect ignores it when it isn't #rrggbb.
+                let clamped: Vec<(&str, f64)> = [("threshold", 20.0), ("softness", 10.0), ("spill", 50.0)]
+                    .into_iter()
+                    .map(|(key, default)| (key, params.get(key).and_then(Value::as_f64).unwrap_or(default).clamp(0.0, 100.0)))
+                    .collect();
+                if let Some(o) = params.as_object_mut() {
+                    for (key, v) in clamped {
+                        o.insert(key.into(), json!(v));
+                    }
+                }
+            }
         }
         let is_zero = match self.kind {
             FxKind::Blur | FxKind::BoxBlur | FxKind::DirectionalBlur => params.get("radius").and_then(Value::as_f64).is_some_and(|r| r <= 0.0),
@@ -372,6 +390,10 @@ impl RowEffect {
             FxKind::Curves => false,
             FxKind::RadialBlur => params.get("radius").and_then(Value::as_f64).is_some_and(|r| r <= 0.0),
             FxKind::RadialZoomBlur => params.get("amount").and_then(Value::as_f64).is_some_and(|a| a <= 0.0),
+            FxKind::ChromaKey => {
+                params.get("threshold").and_then(Value::as_f64).is_some_and(|t| t <= 0.0)
+                    && params.get("softness").and_then(Value::as_f64).is_some_and(|s| s <= 0.0)
+            }
         };
         if let Some(o) = params.as_object_mut() {
             o.insert(MARK.into(), json!(true));
@@ -481,5 +503,21 @@ mod tests {
         assert_eq!(live10.id, "adjust.shiftToColor");
         assert!(live10.visible, "amount 50 should have visible: true");
         assert_eq!(live10.params["amount"], json!(50.0));
+    }
+
+    #[test]
+    fn chroma_key_clamps_parameters_and_is_hidden_only_at_zero_threshold_and_softness() {
+        let mut fx = RowEffect::new(FxKind::ChromaKey);
+        fx.keys.insert(1, json!({"threshold": 500.0, "softness": -3.0, "spill": 200.0, "color": "#00ff00"}));
+        fx.keys.insert(2, json!({"threshold": 0.0, "softness": 0.0}));
+
+        let live = fx.to_live_effect(1);
+        assert_eq!(live.id, "key.chroma");
+        assert_eq!(live.params["threshold"], json!(100.0));
+        assert_eq!(live.params["softness"], json!(0.0));
+        assert_eq!(live.params["spill"], json!(100.0));
+        assert_eq!(live.params["color"], json!("#00ff00"), "colour passes through");
+        assert!(live.visible);
+        assert!(!fx.to_live_effect(2).visible, "zero threshold and softness keys nothing");
     }
 }

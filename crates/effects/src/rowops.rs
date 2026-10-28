@@ -217,9 +217,90 @@ pub fn transparency(px: &mut [[u8; 4]], amount: f64) {
     }
 }
 
+/// Chroma of an RGB colour in YCbCr: `(Cb, Cr)` centred on 0, each on a 0..100 scale (the full
+/// 8-bit range is 100), so brightness alone does not move a colour.
+fn chroma(r: f64, g: f64, b: f64) -> (f64, f64) {
+    let cb = (-0.168_736 * r - 0.331_264 * g + 0.5 * b) / 255.0 * 100.0;
+    let cr = (0.5 * r - 0.418_688 * g - 0.081_312 * b) / 255.0 * 100.0;
+    (cb, cr)
+}
+
+/// Chroma key: pixels whose chroma lies within `threshold` (0..100) of `color` become transparent,
+/// fade back in over `softness` above that, and green spill on the kept pixels is pulled down
+/// toward the larger of red and blue by `spill` (0..100 percent). Premultiplied RGBA, as the other
+/// ops here; the distance is taken on the straight colour.
+pub fn chroma_key(px: &mut [[u8; 4]], w: usize, h: usize, color: [u8; 3], threshold: f64, softness: f64, spill: f64) {
+    if w == 0 || h == 0 || px.len() < w * h {
+        return;
+    }
+    let (kcb, kcr) = chroma(color[0] as f64, color[1] as f64, color[2] as f64);
+    let threshold = threshold.clamp(0.0, 100.0);
+    let softness = softness.clamp(0.0, 100.0);
+    let spill = (spill / 100.0).clamp(0.0, 1.0);
+
+    for p in px.iter_mut().take(w * h) {
+        let a = p[3];
+        if a == 0 {
+            continue;
+        }
+        let unpremultiply = 255.0 / a as f64;
+        let (cb, cr) =
+            chroma((p[0] as f64 * unpremultiply).min(255.0), (p[1] as f64 * unpremultiply).min(255.0), (p[2] as f64 * unpremultiply).min(255.0));
+        let d = (cb - kcb).hypot(cr - kcr);
+        // `softness` is positive whenever the middle branch is taken, so the division is safe.
+        let keep = if d < threshold {
+            0.0
+        } else if d < threshold + softness {
+            (d - threshold) / softness
+        } else {
+            1.0
+        };
+
+        let new_a = (a as f64 * keep).round();
+        let k = new_a / a as f64;
+        let mut rgb = [p[0] as f64 * k, p[1] as f64 * k, p[2] as f64 * k];
+        let larger = rgb[0].max(rgb[2]);
+        if rgb[1] > larger {
+            rgb[1] -= (rgb[1] - larger) * spill;
+        }
+        p[0] = rgb[0].round().clamp(0.0, 255.0) as u8;
+        p[1] = rgb[1].round().clamp(0.0, 255.0) as u8;
+        p[2] = rgb[2].round().clamp(0.0, 255.0) as u8;
+        p[3] = new_a.clamp(0.0, 255.0) as u8;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn chroma_key_keys_green_and_keeps_red() {
+        let (w, h) = (4, 2);
+        let mut px: Vec<[u8; 4]> = (0..w * h).map(|i| if i % w < w / 2 { [0, 255, 0, 255] } else { [255, 0, 0, 255] }).collect();
+        chroma_key(&mut px, w, h, [0, 255, 0], 20.0, 10.0, 50.0);
+        for (i, p) in px.iter().enumerate() {
+            if i % w < w / 2 {
+                assert_eq!(p[3], 0, "green pixel {i} must be keyed out, got {p:?}");
+            } else {
+                assert_eq!(*p, [255, 0, 0, 255], "red pixel {i} must be unchanged");
+            }
+        }
+    }
+
+    #[test]
+    fn chroma_key_spill_pulls_green_down_on_kept_pixels() {
+        let mut px = vec![[100, 200, 100, 255]];
+        chroma_key(&mut px, 1, 1, [0, 255, 0], 20.0, 10.0, 100.0);
+        assert_eq!(px[0], [100, 100, 100, 255]);
+    }
+
+    #[test]
+    fn chroma_key_ignores_brightness_alone() {
+        let mut px = vec![[0, 0, 0, 255], [128, 128, 128, 255], [255, 255, 255, 255]];
+        chroma_key(&mut px, 3, 1, [0, 255, 0], 20.0, 10.0, 50.0);
+        assert!(px.iter().all(|p| p[3] == 255), "neutral greys are not green: {px:?}");
+    }
 
     #[test]
     fn greyscale_100_percent_pure_red_gives_luma_54_plus_minus_1() {

@@ -44,7 +44,7 @@ pub use sketch::{HALFTONE_TYPES, HalftonePattern};
 pub use texture::{GRAIN_TYPES, Grain, LIGHT_DIRECTIONS, Light, TEXTURES, TEXTURES_LOADED, Texture};
 
 /// The Photoshop-style effect ids (all raster effects, see [`crate::is_raster`]).
-pub const PIXEL_EFFECTS: [&str; 62] = [
+pub const PIXEL_EFFECTS: [&str; 63] = [
     "artistic.coloredPencil",
     "artistic.cutout",
     "artistic.dryBrush",
@@ -76,6 +76,7 @@ pub const PIXEL_EFFECTS: [&str; 62] = [
     "distort.diffuseGlow",
     "distort.glass",
     "distort.oceanRipple",
+    "key.chroma",
     "pixelate.colorHalftone",
     "pixelate.crystallize",
     "pixelate.mezzotint",
@@ -304,6 +305,8 @@ pub enum PixelFx {
     ColourScale { r: f64, g: f64, b: f64, a: f64 },
     /// Adjust › Transparency: scales alpha by `(1.0 - amount / 100)`.
     Transparency { amount: f64 },
+    /// Key › Chroma Key: makes pixels near `color` in Cb/Cr transparent by `threshold` (0..100), fades them in over `softness`, pulls green spill down by `spill` (0..100).
+    ChromaKey { color: [u8; 3], threshold: f64, softness: f64, spill: f64 },
 }
 
 /// What a raster's colour channels hold, for the filters that treat them apart (Color Halftone
@@ -628,6 +631,15 @@ pub(crate) fn parse(id: &str, p: &Value) -> Option<PixelFx> {
             PixelFx::ColourScale { r: num(p, "r", 1.0) * k, g: num(p, "g", 1.0) * k, b: num(p, "b", 1.0) * k, a: num(p, "a", 1.0) }
         }
         "adjust.transparency" => PixelFx::Transparency { amount: num(p, "amount", 50.0).clamp(0.0, 100.0) },
+        "key.chroma" => {
+            let color = hex_rgb(text(p, "color", "#00ff00"))?;
+            PixelFx::ChromaKey {
+                color,
+                threshold: num(p, "threshold", 20.0).clamp(0.0, 100.0),
+                softness: num(p, "softness", 10.0).clamp(0.0, 100.0),
+                spill: num(p, "spill", 50.0).clamp(0.0, 100.0),
+            }
+        }
         _ => return None,
     })
 }
@@ -644,7 +656,7 @@ impl PixelFx {
             PixelFx::RadialBlur { amount, zoom: true, .. } => far * (blur::zoom_extent(amount).exp() - 1.0),
             PixelFx::BoxBlur { radius } | PixelFx::DirectionalBlur { radius, .. } => radius,
             PixelFx::RadialZoomBlur { amount, .. } => far * (amount / 100.0 * 0.5),
-            PixelFx::Greyscale { .. } | PixelFx::ColourScale { .. } | PixelFx::Transparency { .. } => 0.0,
+            PixelFx::Greyscale { .. } | PixelFx::ColourScale { .. } | PixelFx::Transparency { .. } | PixelFx::ChromaKey { .. } => 0.0,
             PixelFx::SmartBlur { radius, .. } => radius,
             PixelFx::AccentedEdges { .. } => 0.0,
             // Strokes reach out of the object as far as they reach into it.
@@ -776,7 +788,7 @@ impl PixelFx {
             PixelFx::NtscColors => Some(0.0),
             PixelFx::BoxBlur { radius } | PixelFx::DirectionalBlur { radius, .. } => Some(radius),
             PixelFx::RadialZoomBlur { .. } => None,
-            PixelFx::Greyscale { .. } | PixelFx::ColourScale { .. } | PixelFx::Transparency { .. } => Some(0.0),
+            PixelFx::Greyscale { .. } | PixelFx::ColourScale { .. } | PixelFx::Transparency { .. } | PixelFx::ChromaKey { .. } => Some(0.0),
         }
     }
 
@@ -867,6 +879,7 @@ impl PixelFx {
             PixelFx::Greyscale { amount } => crate::rowops::greyscale(px, amount),
             PixelFx::ColourScale { r, g, b, a } => crate::rowops::colour_scale(px, r, g, b, a),
             PixelFx::Transparency { amount } => crate::rowops::transparency(px, amount),
+            PixelFx::ChromaKey { color, threshold, softness, spill } => crate::rowops::chroma_key(px, w, h, color, threshold, softness, spill),
         }
     }
 }
@@ -875,6 +888,16 @@ impl PixelFx {
 /// otherwise.
 fn pick<T: Clone>(table: &[(&str, &str)], all: &[T], value: &str, default: T) -> T {
     table.iter().zip(all).find(|((_, v), _)| v.eq_ignore_ascii_case(value)).map_or(default, |(_, t)| t.clone())
+}
+
+/// `#rrggbb` as RGB bytes; `None` for anything else.
+fn hex_rgb(s: &str) -> Option<[u8; 3]> {
+    let digits = s.strip_prefix('#')?;
+    if digits.len() != 6 || !digits.bytes().all(|c| c.is_ascii_hexdigit()) {
+        return None;
+    }
+    let v = u32::from_str_radix(digits, 16).ok()?;
+    Some([(v >> 16) as u8, (v >> 8) as u8, v as u8])
 }
 
 /// `data` as `w` × `h` RGBA pixels, `None` when it isn't that size (or is empty).

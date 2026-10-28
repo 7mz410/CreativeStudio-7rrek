@@ -22,6 +22,12 @@ enum Act {
     Key { index: usize, params: Value },
     RemoveKey { index: usize },
     Remove { index: usize },
+    SetPart { index: usize, part: String },
+}
+
+/// The drawing parts an effect can apply to: value for `fx.set`, and its menu label.
+fn part_options() -> [(&'static str, &'static str); 3] {
+    [("all", tl!("All")), ("lineArt", tl!("Line Art")), ("colourArt", tl!("Colour Art"))]
 }
 
 /// Runs a command; failures are routed to the status bar.
@@ -129,6 +135,10 @@ fn add_effect_menu(ui: &mut Ui, acts: &mut Vec<Act>) {
             acts.push(Act::Add("tint"));
             ui.close();
         }
+        if ui.button(tl!("Chroma Key")).clicked() {
+            acts.push(Act::Add("chromaKey"));
+            ui.close();
+        }
     });
 }
 
@@ -198,6 +208,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 FxKind::DirectionalBlur => tl!("Directional Blur"),
                 FxKind::RadialBlur => tl!("Radial Blur"),
                 FxKind::RadialZoomBlur => tl!("Radial Zoom Blur"),
+                FxKind::ChromaKey => tl!("Chroma Key"),
             };
 
             let open_id = ui.id().with(("fx_open", i));
@@ -227,6 +238,23 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
 
                 if widgets::secondary_button(ui, tl!("Remove")).clicked() {
                     acts.push(Act::Remove { index: i });
+                }
+            });
+
+            // `fx.list` may omit `part`; then the effect applies to all of the drawing.
+            let part = fx_val.get("part").and_then(Value::as_str).unwrap_or("all").to_string();
+            let options = part_options();
+            let part_label = options.iter().find(|(v, _)| *v == part).map_or(options[0].1, |(_, l)| *l);
+            ui.horizontal(|ui| {
+                ui.label(tl!("Applies To:"));
+                let mut sel = part.clone();
+                egui::ComboBox::from_id_salt(("fx_part", i)).selected_text(part_label).width(120.0).show_ui(ui, |ui| {
+                    for (value, label) in options {
+                        ui.selectable_value(&mut sel, value.to_string(), label);
+                    }
+                });
+                if sel != part {
+                    acts.push(Act::SetPart { index: i, part: sel });
                 }
             });
 
@@ -644,6 +672,57 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                             }
                         });
                     }
+                    FxKind::ChromaKey => {
+                        let mut threshold = params.get("threshold").and_then(Value::as_f64).unwrap_or(20.0);
+                        let mut softness = params.get("softness").and_then(Value::as_f64).unwrap_or(10.0);
+                        let mut spill = params.get("spill").and_then(Value::as_f64).unwrap_or(50.0);
+                        let color_str = params.get("color").and_then(Value::as_str).unwrap_or("#00ff00").to_string();
+
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Color:"));
+                            let mut rgb = parse_hex(&color_str).unwrap_or([0, 255, 0]);
+                            if ui.color_edit_button_srgb(&mut rgb).changed() {
+                                let new_hex = hex(rgb);
+                                params["color"] = json!(new_hex);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+
+                            let text_id = ui.id().with(("chroma_hex", i));
+                            let mut text_hex = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| color_str.clone());
+                            if ui.add(TextEdit::singleline(&mut text_hex).desired_width(70.0)).changed() {
+                                ui.data_mut(|d| d.insert_temp(text_id, text_hex.clone()));
+                                if parse_hex(&text_hex).is_some() {
+                                    let normalized = if text_hex.starts_with('#') { text_hex.clone() } else { format!("#{text_hex}") };
+                                    params["color"] = json!(normalized);
+                                    acts.push(Act::Key { index: i, params: params.clone() });
+                                }
+                            }
+                        });
+
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Threshold:"));
+                            if ui.add(DragValue::new(&mut threshold).speed(0.5).range(0.0..=100.0)).changed() {
+                                params["threshold"] = json!(threshold);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Softness:"));
+                            if ui.add(DragValue::new(&mut softness).speed(0.5).range(0.0..=100.0)).changed() {
+                                params["softness"] = json!(softness);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Spill:"));
+                            if ui.add(DragValue::new(&mut spill).speed(0.5).range(0.0..=100.0)).changed() {
+                                params["spill"] = json!(spill);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
                 });
             }
         }
@@ -668,6 +747,9 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
             Act::Remove { index } => {
                 run(app, "fx.remove", json!({"index": index}));
+            }
+            Act::SetPart { index, part } => {
+                run(app, "fx.set", json!({"index": index, "part": part}));
             }
         }
     }
@@ -781,6 +863,7 @@ mod tests {
             "directional",
             "radial",
             "radialZoom",
+            "chromaKey",
         ];
         let mut app = anim_doc();
         for kind in all_kinds {
@@ -789,6 +872,6 @@ mod tests {
         let ctx = ctx();
         frame(&mut app, &ctx);
         let list = app.session.execute("fx.list", &json!({})).unwrap();
-        assert_eq!(list["effects"].as_array().unwrap().len(), 18);
+        assert_eq!(list["effects"].as_array().unwrap().len(), 19);
     }
 }

@@ -505,6 +505,13 @@ pub fn effect_catalog() -> Vec<EffectInfo> {
             json!({"amount": 10.0, "cx": 0.5, "cy": 0.5}),
         ),
         r(
+            "key.chroma",
+            "Chroma Key…",
+            ADJUST,
+            "{color: #rrggbb (#00ff00), threshold: 0..100 (20; chroma distance from the key colour that is keyed out), softness: 0..100 (10; the ramp above threshold that fades pixels back in), spill: 0..100 (50; pulls the key colour's spill out of the kept pixels)}. Distance is in the Cb/Cr chroma plane, so brightness alone does not key. Original visual approximation; chosen VectorCraft defaults.",
+            json!({"color": "#00ff00", "threshold": 20.0, "softness": 10.0, "spill": 50.0}),
+        ),
+        r(
             "blur.smart",
             "Smart Blur…",
             BLUR,

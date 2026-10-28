@@ -15,7 +15,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Add Row Effect",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), kind: \"blur\"|\"glow\"|\"dropShadow\"|\"colorAdjust\"|\"tint\"|\"transparency\"|\"greyscale\"|\"levels\"|\"contrast\"|\"gamma\"|\"hueSaturation\"|\"colourScale\"|\"curves\"|\"colourFade\"|\"box\"|\"directional\"|\"radial\"|\"radialZoom\", part?: \"all\"|\"lineArt\"|\"colourArt\" (drawing selector: only the lines, or only the Colour Art fills, of each drawing; default all)} adds an effect to the row → {row, index, kind}",
+            "{row?: layer id (default: the current layer's row), kind: \"blur\"|\"glow\"|\"dropShadow\"|\"colorAdjust\"|\"tint\"|\"transparency\"|\"greyscale\"|\"levels\"|\"contrast\"|\"gamma\"|\"hueSaturation\"|\"colourScale\"|\"curves\"|\"colourFade\"|\"box\"|\"directional\"|\"radial\"|\"radialZoom\"|\"chromaKey\", part?: \"all\"|\"lineArt\"|\"colourArt\" (drawing selector: only the lines, or only the Colour Art fills, of each drawing; default all)} adds an effect to the row → {row, index, kind}",
             has_doc,
             add
         ),
@@ -27,6 +27,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{row?: layer id (default: the current layer's row), index?: effect index (default 0), frame?: frame number (default: current frame), params: object} keys the effect parameters at that frame → {row, index, frame, params}",
             has_doc,
             key
+        ),
+        cmd!(
+            "fx.set",
+            "Set Row Effect Part",
+            [],
+            None,
+            "{row?: layer id (default: the current layer's row), index: effect index, part: \"all\"|\"lineArt\"|\"colourArt\" (drawing selector: which part of each drawing the effect takes)} changes the part of an existing effect → {row, index, part}",
+            has_doc,
+            set_part
         ),
         cmd!(
             "fx.removeKey",
@@ -127,6 +136,10 @@ fn key(s: &mut Session, p: &Value) -> Result<Value> {
     let row_fx = all.rows.iter_mut().find(|r| r.row == row.0).ok_or_else(|| bad(C, "this row has no effects"))?;
     let fx = row_fx.effects.get_mut(index).ok_or_else(|| bad(C, format!("no effect at index {index}")))?;
 
+    if fx.kind == FxKind::ChromaKey && params_val.get("color").is_some_and(|c| !c.as_str().is_some_and(is_hex_colour)) {
+        return Err(bad(C, "chroma key colour must be #rrggbb"));
+    }
+
     fx.keys.insert(frame, params_val.clone());
 
     commit(s, "Key Row Effect", all)?;
@@ -150,6 +163,27 @@ fn remove_key(s: &mut Session, p: &Value) -> Result<Value> {
 
     commit(s, "Remove Row Effect Key", all)?;
     Ok(json!({"row": row.0, "index": index, "frame": frame}))
+}
+
+/// `#rrggbb`, the only colour form the chroma key reads.
+fn is_hex_colour(s: &str) -> bool {
+    s.strip_prefix('#').is_some_and(|d| d.len() == 6 && d.bytes().all(|c| c.is_ascii_hexdigit()))
+}
+
+fn set_part(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "fx.set";
+    let row = row_param(s, p, C)?;
+    let index = p.get("index").and_then(Value::as_u64).and_then(|i| usize::try_from(i).ok()).ok_or_else(|| bad(C, "`index` is required"))?;
+    let part_str = str_param(p, "part").ok_or_else(|| bad(C, "`part` is required"))?;
+    let part = Part::parse(part_str).ok_or_else(|| bad(C, format!("unknown part {part_str:?} (expected all, lineArt, colourArt)")))?;
+
+    let mut all = RowFxList::of(&s.doc()?.doc);
+    let row_fx = all.rows.iter_mut().find(|r| r.row == row.0).ok_or_else(|| bad(C, "this row has no effects"))?;
+    let fx = row_fx.effects.get_mut(index).ok_or_else(|| bad(C, format!("no effect at index {index}")))?;
+    fx.part = part;
+
+    commit(s, "Set Row Effect Part", all)?;
+    Ok(json!({"row": row.0, "index": index, "part": part_str}))
 }
 
 fn remove(s: &mut Session, p: &Value) -> Result<Value> {
@@ -187,6 +221,7 @@ fn list(s: &mut Session, p: &Value) -> Result<Value> {
                     "index": i,
                     "kind": fx.kind.as_str(),
                     "keys": fx.keys,
+                    "part": fx.part,
                 })
             })
             .collect(),
@@ -204,6 +239,7 @@ mod tests {
 
     use super::*;
     use crate::cmd::anim::{at_frame, unposed};
+    use crate::cmd::art_layers::COLOUR_ART;
 
     fn session_with_rect() -> (Session, u64) {
         let mut s = Session::new();
@@ -512,5 +548,88 @@ mod tests {
 
         let final_opacity = s.doc().unwrap().doc.node(vectorcraft_doc::NodeId(layer)).unwrap().opacity;
         assert_eq!(initial_opacity, final_opacity, "row opacity in document must not change");
+    }
+
+    #[test]
+    fn chroma_key_keyed_spill_0_to_full_over_12_frames_exports_12_different_frames() {
+        check_12_distinct_frames(
+            "chromaKey",
+            json!({"threshold": 20.0, "softness": 10.0, "spill": 0.0}),
+            json!({"threshold": 20.0, "softness": 10.0, "spill": 100.0}),
+            Some("#64c864"),
+        );
+    }
+
+    /// A black outline square on frame 1 with a red Colour Art fill. Returns (session, row, line id, colour art id).
+    fn drawing_with_colour_art() -> (Session, u64, u64, u64) {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        let row = s.doc().unwrap().doc.layers[0].id.0;
+        let line = s.execute("shape.rectangle", &json!({"x": 20, "y": 20, "width": 60, "height": 60})).unwrap()["id"].as_u64().unwrap();
+        s.execute("paint.setFill", &json!({"none": true})).unwrap();
+        s.execute("stroke.set", &json!({"weight": 10})).unwrap();
+        s.execute("art.fill", &json!({"ids": [line], "color": "#ff0000"})).unwrap();
+        let d = &s.doc().unwrap().doc;
+        let drawing = d.layers[0].children().unwrap()[0].id;
+        let ca = d.node(drawing).unwrap().children().unwrap().iter().find(|c| c.name.as_deref() == Some(COLOUR_ART)).unwrap().id.0;
+        (s, row, line, ca)
+    }
+
+    /// Effects on (row, line art, colour art) on frame 1.
+    fn effect_counts(s: &mut Session, row: u64, line: u64, ca: u64) -> (usize, usize, usize) {
+        s.execute("anim.goto", &json!({"frame": 1})).unwrap();
+        let count = |id: u64| s.doc().unwrap().doc.node(vectorcraft_doc::NodeId(id)).unwrap().appearance.effects.len();
+        (count(row), count(line), count(ca))
+    }
+
+    #[test]
+    fn fx_set_moves_the_effect_lineart_then_colourart_then_all_on_the_right_nodes() {
+        let (mut s, row, line, ca) = drawing_with_colour_art();
+        s.execute("fx.add", &json!({"row": row, "kind": "glow"})).unwrap();
+        assert_eq!(effect_counts(&mut s, row, line, ca), (1, 0, 0), "all: on the row");
+
+        s.execute("fx.set", &json!({"row": row, "index": 0, "part": "lineArt"})).unwrap();
+        assert_eq!(effect_counts(&mut s, row, line, ca), (0, 1, 0), "lineArt: on the line only");
+
+        s.execute("fx.set", &json!({"row": row, "index": 0, "part": "colourArt"})).unwrap();
+        assert_eq!(effect_counts(&mut s, row, line, ca), (0, 0, 1), "colourArt: on the colour art only");
+
+        s.execute("fx.set", &json!({"row": row, "index": 0, "part": "all"})).unwrap();
+        assert_eq!(effect_counts(&mut s, row, line, ca), (1, 0, 0), "all: back on the row");
+        assert_eq!(RowFxList::of(&s.doc().unwrap().doc).rows[0].effects[0].part, Part::All);
+    }
+
+    #[test]
+    fn fx_set_is_one_undo_step() {
+        let (mut s, row, line, ca) = drawing_with_colour_art();
+        s.execute("fx.add", &json!({"row": row, "kind": "glow"})).unwrap();
+        s.execute("fx.set", &json!({"row": row, "index": 0, "part": "lineArt"})).unwrap();
+        assert_eq!(effect_counts(&mut s, row, line, ca), (0, 1, 0));
+        s.execute("edit.undo", &json!({})).unwrap();
+        assert_eq!(RowFxList::of(&s.doc().unwrap().doc).rows[0].effects[0].part, Part::All, "undo restores the part");
+    }
+
+    #[test]
+    fn fx_set_bad_part_or_index_or_row_is_an_error_and_changes_nothing() {
+        let (mut s, row, _, _) = drawing_with_colour_art();
+        s.execute("fx.add", &json!({"row": row, "kind": "glow"})).unwrap();
+        assert!(s.execute("fx.set", &json!({"row": row, "index": 0, "part": "bogus"})).is_err());
+        assert!(s.execute("fx.set", &json!({"row": row, "index": 0})).is_err(), "part is required");
+        assert!(s.execute("fx.set", &json!({"row": row, "part": "lineArt"})).is_err(), "index is required");
+        assert!(s.execute("fx.set", &json!({"row": row, "index": 7, "part": "lineArt"})).is_err());
+        assert!(s.execute("fx.set", &json!({"row": row, "index": -1, "part": "lineArt"})).is_err());
+        assert!(s.execute("fx.set", &json!({"row": 999_999, "index": 0, "part": "all"})).is_err());
+        assert_eq!(RowFxList::of(&s.doc().unwrap().doc).rows[0].effects[0].part, Part::All);
+    }
+
+    #[test]
+    fn chroma_key_bad_colour_is_an_error_and_a_hex_colour_is_kept() {
+        let (mut s, row, _, _) = drawing_with_colour_art();
+        s.execute("fx.add", &json!({"row": row, "kind": "chromaKey"})).unwrap();
+        assert!(s.execute("fx.key", &json!({"row": row, "index": 0, "frame": 1, "params": {"color": "nope"}})).is_err());
+        assert!(s.execute("fx.key", &json!({"row": row, "index": 0, "frame": 1, "params": {"color": "#0f0"}})).is_err());
+        assert!(s.execute("fx.key", &json!({"row": row, "index": 0, "frame": 1, "params": {"color": 5}})).is_err());
+        assert!(s.execute("fx.key", &json!({"row": row, "index": 0, "frame": 1, "params": {"color": "#00ff00", "threshold": 30}})).is_ok());
     }
 }
