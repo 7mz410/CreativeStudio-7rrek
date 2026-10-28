@@ -139,6 +139,10 @@ pub struct Anim {
     pub display: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub write: Option<String>,
+    /// Cache-locked rows (node view): while a row comes out of a frame the same as last time, it
+    /// keeps the very same node, so the renderer reuses its effects instead of running them again.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub locked: BTreeSet<u64>,
     /// Rows unplugged from the composite in the node view: never drawn, in exports or on the canvas.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub unplugged: BTreeSet<u64>,
@@ -181,6 +185,7 @@ impl Default for Anim {
             dropped: Vec::new(),
             display: None,
             write: None,
+            locked: BTreeSet::new(),
         }
     }
 }
@@ -345,6 +350,7 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
             dropped.push(id);
         }
     }
+    keep_locked(&mut d, &anim.locked);
     let mut a = anim;
     a.lit = lit;
     a.dropped = dropped;
@@ -355,6 +361,28 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     a.current = frame.clamp(1, a.frames);
     a.store(&mut d);
     d
+}
+
+thread_local! {
+    /// The last node each cache-locked row came out as (row id → node).
+    static LOCKED: std::cell::RefCell<BTreeMap<u64, Arc<Node>>> = const { std::cell::RefCell::new(BTreeMap::new()) };
+}
+
+/// Swaps each locked row that equals its last output for that output's `Arc` (the renderer's
+/// caches key on it), and remembers the rest. Rows no longer locked are forgotten.
+fn keep_locked(d: &mut Document, locked: &BTreeSet<u64>) {
+    LOCKED.with(|c| {
+        let mut c = c.borrow_mut();
+        c.retain(|id, _| locked.contains(id));
+        for l in d.layers.iter_mut().filter(|l| locked.contains(&l.id.0)) {
+            match c.get(&l.id.0) {
+                Some(old) if **old == **l => *l = old.clone(),
+                _ => {
+                    c.insert(l.id.0, l.clone());
+                }
+            }
+        }
+    });
 }
 
 /// Named easings → CSS cubic-bezier control points (the CSS Easing Functions spec's values).
@@ -1036,6 +1064,36 @@ pub fn encode_gif(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
 mod tests {
     use super::*;
     use crate::Session;
+
+    #[test]
+    fn a_cache_locked_row_keeps_its_node_while_another_row_changes() {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 30, "height": 30})).unwrap();
+        s.execute("fx.add", &json!({"kind": "blur"})).unwrap();
+        let other = s.execute("layer.new", &json!({})).unwrap()["id"].as_u64().unwrap();
+        s.execute("layer.setCurrent", &json!({"id": other})).unwrap();
+        let shape = s.execute("shape.rectangle", &json!({"x": 50, "y": 50, "width": 30, "height": 30})).unwrap()["id"].as_u64().unwrap();
+        let (locked, open) = {
+            let d = &s.doc().unwrap().doc;
+            (d.layers[0].id.0, d.layers[1].id.0)
+        };
+        let mut a = Anim::of(&s.doc().unwrap().doc);
+        a.locked.insert(locked);
+        a.store(Arc::make_mut(&mut s.doc_mut().unwrap().doc));
+        let row = |d: &Document, id: u64| d.layers.iter().find(|l| l.id.0 == id).cloned().unwrap();
+        let first = at_frame(&s.doc().unwrap().doc, 1);
+        s.execute("object.move", &json!({"ids": [shape], "dx": 5, "dy": 0})).unwrap();
+        let second = at_frame(&s.doc().unwrap().doc, 1);
+        assert!(Arc::ptr_eq(&row(&first, locked), &row(&second, locked)), "locked row is reused");
+        assert!(!Arc::ptr_eq(&row(&first, open), &row(&second, open)), "the edited row is not");
+        // Unlocked, the row is made again every frame (its effect is pushed anew).
+        let mut a = Anim::of(&s.doc().unwrap().doc);
+        a.locked.clear();
+        a.store(Arc::make_mut(&mut s.doc_mut().unwrap().doc));
+        let (x, y) = (at_frame(&s.doc().unwrap().doc, 1), at_frame(&s.doc().unwrap().doc, 1));
+        assert!(!Arc::ptr_eq(&row(&x, locked), &row(&y, locked)));
+    }
 
     fn session() -> Session {
         let mut s = Session::new();
