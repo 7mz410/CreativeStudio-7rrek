@@ -5794,3 +5794,9 @@ font-technology	Variable	متغير
 	Set Row Effect Part	تحديد جزء تأثير الصف
 	Rename Group	إعادة تسمية المجموعة
 	GROUP	مجموعة
+	Write	الكتابة
+	Lock Cache	قفل الذاكرة المؤقتة
+	Lock Node Cache	قفل ذاكرة العقدة
+	Unlock Node Cache	فك قفل ذاكرة العقدة
+	Display Node	عقدة العرض
+	Write Node	عقدة الكتابة

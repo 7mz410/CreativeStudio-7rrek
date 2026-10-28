@@ -22,7 +22,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Node Graph",
             [],
             None,
-            "{} → {nodes: [{id, kind: \"row\"|\"peg\"|\"cutter\"|\"effect\"|\"composite\", name?, inverted?, fx?, ports: {in, out}}], edges: [{from, to, port: \"image\"|\"matte\"|\"transform\"}], groups: [{id, name, members, collapsed}]}",
+            "{} → {nodes: [{id, kind: \"row\"|\"peg\"|\"cutter\"|\"effect\"|\"composite\", name?, inverted?, fx?, ports: {in, out}}], edges: [{from, to, port: \"image\"|\"matte\"|\"transform\"}], groups: [{id, name, members, collapsed}], display: id|null, write: id|null}",
             has_doc,
             graph
         ),
@@ -44,7 +44,93 @@ pub fn specs() -> Vec<CommandSpec> {
             has_doc,
             disconnect
         ),
+        cmd!(
+            "nodes.lock",
+            "Lock Node Cache",
+            [],
+            None,
+            "{node: row, effect or cutter id, on?: bool (default true)} cache-locks that node's row: while the row comes out of a frame unchanged the renderer reuses its effects → {row, on}",
+            has_doc,
+            lock_cmd
+        ),
+        cmd!(
+            "nodes.display",
+            "Display Node",
+            [],
+            None,
+            "{node?: id|null} the canvas shows only the rows feeding that node; null (or none) shows every row → {node}",
+            has_doc,
+            display_cmd
+        ),
+        cmd!(
+            "nodes.write",
+            "Write Node",
+            [],
+            None,
+            "{node?: id|null} exports only the rows feeding that node; null (or none) exports every row → {node}",
+            has_doc,
+            write_cmd
+        ),
     ]
+}
+
+/// Cache-locks the row a node belongs to (`on: false` unlocks it). One undo step.
+fn lock_cmd(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "nodes.lock";
+    let id = p.get("node").and_then(Value::as_str).ok_or_else(|| bad(C, "`node` must be a node id"))?;
+    let on = p.get("on").and_then(Value::as_bool).unwrap_or(true);
+    let row = id
+        .strip_prefix("row:")
+        .or_else(|| id.strip_prefix("fx:"))
+        .or_else(|| id.strip_prefix("cut:"))
+        .and_then(|r| r.split(':').next()?.parse::<u64>().ok())
+        .filter(|r| s.doc().is_ok_and(|d| d.doc.layers.iter().any(|l| l.id.0 == *r)))
+        .ok_or_else(|| bad(C, format!("{id} isn't a row, effect or cutter node")))?;
+    s.edit(if on { "Lock Node Cache" } else { "Unlock Node Cache" }, |d, _| {
+        let mut a = Anim::of(d);
+        if on {
+            a.locked.insert(row);
+        } else {
+            a.locked.remove(&row);
+        }
+        a.store(d);
+        Ok(())
+    })?;
+    Ok(json!({"row": row, "on": on}))
+}
+
+fn display_cmd(s: &mut Session, p: &Value) -> Result<Value> {
+    set_branch(s, p, "nodes.display", "Display Node", false)
+}
+
+fn write_cmd(s: &mut Session, p: &Value) -> Result<Value> {
+    set_branch(s, p, "nodes.write", "Write Node", true)
+}
+
+/// Sets `Anim.write` (exports) or `Anim.display` (canvas) to a node, or clears it with null. One undo step.
+fn set_branch(s: &mut Session, p: &Value, cmd: &str, label: &str, export: bool) -> Result<Value> {
+    let node = match p.get("node") {
+        None | Some(Value::Null) => None,
+        Some(v) => Some(v.as_str().ok_or_else(|| bad(cmd, "`node` must be a node id or null"))?.to_string()),
+    };
+    if let Some(id) = &node
+        && branch_rows(&s.doc()?.doc, id).is_none()
+    {
+        return Err(bad(cmd, format!("{id} isn't a node in the graph")));
+    }
+    s.edit(label, |d, _| {
+        let mut a = Anim::of(d);
+        if export {
+            a.write = node.clone();
+        } else {
+            a.display = node.clone();
+        }
+        a.store(d);
+        Ok(())
+    })?;
+    let current = Anim::of(&s.doc()?.doc).current;
+    show(s, current)?;
+    Ok(json!({"node": node}))
 }
 
 fn graph(s: &mut Session, _: &Value) -> Result<Value> {
@@ -102,7 +188,7 @@ fn graph(s: &mut Session, _: &Value) -> Result<Value> {
             "out": ["image"]
         }
     }));
-    let unplugged = Anim::of(d).unplugged;
+    let Anim { unplugged, display, write, locked, .. } = Anim::of(d);
     let mut order = 0;
     for l in &d.layers {
         let r = l.id.0;
@@ -142,7 +228,7 @@ fn graph(s: &mut Session, _: &Value) -> Result<Value> {
             })
         })
         .collect();
-    Ok(json!({"nodes": nodes, "edges": edges, "groups": groups_json}))
+    Ok(json!({"nodes": nodes, "edges": edges, "groups": groups_json, "display": display, "write": write, "locked": locked}))
 }
 
 /// The rows that feed node `id` (the composite: every row); None for an id that isn't in the graph.
@@ -493,5 +579,45 @@ mod tests {
         s.execute("edit.undo", &json!({})).unwrap();
         assert_eq!(at(&s, 50, 50), [255, 0, 0]);
         assert!(s.execute("nodes.connect", &json!({"from": "peg:9", "to": "comp", "port": "image"})).is_err());
+    }
+
+    #[test]
+    fn lock_marks_the_row_and_refuses_other_nodes() {
+        let (mut s, [red, ..]) = scene();
+        assert_eq!(s.execute("nodes.lock", &json!({"node": format!("row:{red}")})).unwrap()["row"], json!(red));
+        assert_eq!(s.execute("nodes.graph", &json!({})).unwrap()["locked"], json!([red]));
+        s.execute("nodes.lock", &json!({"node": format!("row:{red}"), "on": false})).unwrap();
+        assert_eq!(s.execute("nodes.graph", &json!({})).unwrap()["locked"], json!([]));
+        assert!(s.execute("nodes.lock", &json!({"node": "comp"})).is_err());
+        assert!(s.execute("nodes.lock", &json!({"node": "row:999999"})).is_err());
+        assert!(s.execute("nodes.lock", &json!({})).is_err());
+    }
+
+    #[test]
+    fn display_and_write_nodes_are_set_read_cleared_and_undone() {
+        let (mut s, [red, blue, _]) = scene();
+        let fixed = |s: &mut Session| {
+            let g = s.execute("nodes.graph", &json!({})).unwrap();
+            (g["display"].clone(), g["write"].clone())
+        };
+        assert_eq!(fixed(&mut s), (Value::Null, Value::Null));
+        s.execute("nodes.display", &json!({"node": format!("row:{red}")})).unwrap();
+        s.execute("nodes.write", &json!({"node": format!("row:{blue}")})).unwrap();
+        assert_eq!(fixed(&mut s), (json!(format!("row:{red}")), json!(format!("row:{blue}"))));
+        s.execute("nodes.display", &json!({"node": null})).unwrap();
+        assert_eq!(fixed(&mut s), (Value::Null, json!(format!("row:{blue}"))));
+        // One undo step per command: the clear goes back to red, the next undo clears the write.
+        s.execute("edit.undo", &json!({})).unwrap();
+        assert_eq!(fixed(&mut s), (json!(format!("row:{red}")), json!(format!("row:{blue}"))));
+        s.execute("edit.undo", &json!({})).unwrap();
+        assert_eq!(fixed(&mut s), (json!(format!("row:{red}")), Value::Null));
+        // Bad ids and non-id values are errors and change nothing.
+        assert!(s.execute("nodes.display", &json!({"node": "row:999999"})).is_err());
+        assert!(s.execute("nodes.write", &json!({"node": "peg:0"})).is_err());
+        assert!(s.execute("nodes.write", &json!({"node": 5})).is_err());
+        assert_eq!(fixed(&mut s), (json!(format!("row:{red}")), Value::Null));
+        // The composite is every row, so it is a valid node.
+        s.execute("nodes.write", &json!({"node": "comp"})).unwrap();
+        assert_eq!(fixed(&mut s).1, json!("comp"));
     }
 }
