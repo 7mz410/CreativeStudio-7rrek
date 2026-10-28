@@ -145,6 +145,24 @@ fn graph(s: &mut Session, _: &Value) -> Result<Value> {
     Ok(json!({"nodes": nodes, "edges": edges, "groups": groups_json}))
 }
 
+/// The rows that feed node `id` (the composite: every row); None for an id that isn't in the graph.
+pub fn branch_rows(d: &Document, id: &str) -> Option<std::collections::BTreeSet<u64>> {
+    if id == "comp" {
+        return Some(d.layers.iter().map(|l| l.id.0).collect());
+    }
+    let (kind, rest) = id.split_once(':')?;
+    let row: u64 = rest.split(':').next()?.parse().ok()?;
+    d.layers.iter().any(|l| l.id.0 == row).then_some(())?;
+    let mut rows = std::collections::BTreeSet::from([row]);
+    match kind {
+        "row" | "fx" => {}
+        // A cutter's output also takes its matte row.
+        "cut" => rows.extend(Cutters::of(d).cutters.iter().filter(|c| c.row == row).map(|c| c.matte)),
+        _ => return None,
+    }
+    Some(rows)
+}
+
 /// A node id's kind and number (`fx` ids aren't wired by hand).
 fn parse<'a>(v: &'a Value, key: &str, cmd: &str) -> Result<(&'a str, u64)> {
     let s = v.get(key).and_then(Value::as_str).ok_or_else(|| bad(cmd, format!("`{key}` must be a node id")))?;
@@ -339,6 +357,28 @@ mod tests {
         let px = img.to_straight();
         let i = ((y * img.width + x) * 4) as usize;
         [px[i], px[i + 1], px[i + 2]]
+    }
+
+    #[test]
+    fn write_node_exports_only_its_branch_and_display_only_shows_its_branch() {
+        let (mut s, [red, blue, _]) = scene();
+        let mut a = Anim::of(&s.doc().unwrap().doc);
+        (a.write, a.display) = (Some(format!("row:{blue}")), Some(format!("row:{red}")));
+        let st = s.doc_mut().unwrap();
+        a.store(std::sync::Arc::make_mut(&mut st.doc));
+        // Export: the blue square on white, no red around it, no green corner.
+        assert_eq!(at(&s, 50, 50), [0, 0, 255]);
+        assert_eq!(at(&s, 5, 5), [255, 255, 255]);
+        // Canvas: only red rows stay visible.
+        let d = crate::cmd::anim::at_frame_with(&s.doc().unwrap().doc, 1, true);
+        let vis: Vec<u64> = d.layers.iter().filter(|l| l.visible).map(|l| l.id.0).collect();
+        assert_eq!(vis, vec![red]);
+        // Back at rest every row shows again.
+        let rest = crate::cmd::anim::unposed(&d);
+        assert!(rest.layers.iter().all(|l| l.visible));
+        assert_eq!(branch_rows(&rest, "comp").map(|r| r.len()), Some(3));
+        assert_eq!(branch_rows(&rest, "row:999999"), None);
+        assert_eq!(branch_rows(&rest, "peg:0"), None);
     }
 
     fn has(g: &Value, from: &str, to: &str, port: &str) -> bool {

@@ -133,6 +133,12 @@ pub struct Anim {
     /// (given back on the next frame change).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub lit: Vec<(u64, f32, bool)>,
+    /// Display and Write nodes (node view ids, see nodes.rs): the canvas shows only the rows that
+    /// feed `display`, exports only those that feed `write`. None: every row.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub display: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub write: Option<String>,
     /// Rows unplugged from the composite in the node view: never drawn, in exports or on the canvas.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub unplugged: BTreeSet<u64>,
@@ -173,6 +179,8 @@ impl Default for Anim {
             lit: Vec::new(),
             unplugged: BTreeSet::new(),
             dropped: Vec::new(),
+            display: None,
+            write: None,
         }
     }
 }
@@ -317,6 +325,18 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     }
     // Rows unplugged from the composite in the node view are not drawn.
     let mut dropped = Vec::new();
+    // Past the Display (canvas) or Write (exports) node, only the rows feeding it are drawn.
+    let out = if onion { &anim.display } else { &anim.write };
+    if let Some(keep) = out.as_deref().and_then(|n| super::nodes::branch_rows(&d, n)) {
+        for id in d.layers.iter().map(|l| l.id.0).filter(|id| !keep.contains(id)).collect::<Vec<_>>() {
+            if let Some(n) = d.node_mut(NodeId(id))
+                && n.visible
+            {
+                n.visible = false;
+                dropped.push(id);
+            }
+        }
+    }
     for &id in &anim.unplugged {
         if let Some(n) = d.node_mut(NodeId(id))
             && n.visible
