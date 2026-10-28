@@ -23,6 +23,7 @@ enum Act {
     RemoveKey { index: usize },
     Remove { index: usize },
     SetPart { index: usize, part: String },
+    SetMatte { index: usize, matte: Option<u64> },
 }
 
 /// The drawing parts an effect can apply to: value for `fx.set`, and its menu label.
@@ -79,6 +80,10 @@ fn add_effect_menu(ui: &mut Ui, acts: &mut Vec<Act>) {
             acts.push(Act::Add("radialZoom"));
             ui.close();
         }
+        if ui.button(tl!("Motion Blur")).clicked() {
+            acts.push(Act::Add("motionBlur"));
+            ui.close();
+        }
         ui.separator();
         // Light & Shadow
         if ui.button(tl!("Glow")).clicked() {
@@ -89,8 +94,24 @@ fn add_effect_menu(ui: &mut Ui, acts: &mut Vec<Act>) {
             acts.push(Act::Add("dropShadow"));
             ui.close();
         }
+        if ui.button(tl!("Tone")).clicked() {
+            acts.push(Act::Add("tone"));
+            ui.close();
+        }
+        if ui.button(tl!("Highlight")).clicked() {
+            acts.push(Act::Add("highlight"));
+            ui.close();
+        }
+        if ui.button(tl!("Bloom")).clicked() {
+            acts.push(Act::Add("bloom"));
+            ui.close();
+        }
         ui.separator();
         // Color & Tone
+        if ui.button(tl!("Gradient")).clicked() {
+            acts.push(Act::Add("gradient"));
+            ui.close();
+        }
         if ui.button(tl!("Color Adjust")).clicked() {
             acts.push(Act::Add("colorAdjust"));
             ui.close();
@@ -156,6 +177,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let list_res = app.session.execute("fx.list", &json!({}));
     let effects_val = list_res.ok().unwrap_or(Value::Null);
     let effects = effects_val.get("effects").and_then(Value::as_array).cloned().unwrap_or_default();
+    let active_row_id = effects_val.get("row").and_then(Value::as_u64);
+
+    let layers: Vec<(u64, String)> = match app.session.active() {
+        Some(st) => st.doc.layers.iter().map(|l| (l.id.0, l.name.clone().unwrap_or_else(|| format!("Layer {}", l.id.0)))).collect(),
+        None => Vec::new(),
+    };
 
     let mut acts: Vec<Act> = Vec::new();
     let t = Tokens::get(ui.ctx());
@@ -209,6 +236,11 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 FxKind::RadialBlur => tl!("Radial Blur"),
                 FxKind::RadialZoomBlur => tl!("Radial Zoom Blur"),
                 FxKind::ChromaKey => tl!("Chroma Key"),
+                FxKind::Tone => tl!("Tone"),
+                FxKind::Highlight => tl!("Highlight"),
+                FxKind::Gradient => tl!("Gradient"),
+                FxKind::Bloom => tl!("Bloom"),
+                FxKind::MotionBlur => tl!("Motion Blur"),
             };
 
             let open_id = ui.id().with(("fx_open", i));
@@ -255,6 +287,26 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 });
                 if sel != part {
                     acts.push(Act::SetPart { index: i, part: sel });
+                }
+            });
+
+            ui.horizontal(|ui| {
+                ui.label(tl!("Matte:"));
+                let cur_matte = fx_val.get("matte").and_then(Value::as_u64);
+                let cur_matte_name = cur_matte
+                    .and_then(|m_id| layers.iter().find(|(id, _)| *id == m_id).map(|(_, name)| name.as_str()))
+                    .unwrap_or_else(|| tl!("None"));
+                let mut selected_matte = cur_matte;
+                egui::ComboBox::from_id_salt(("fx_matte", i)).selected_text(cur_matte_name).width(120.0).show_ui(ui, |ui| {
+                    ui.selectable_value(&mut selected_matte, None, tl!("None"));
+                    for (id, name) in &layers {
+                        if Some(*id) != active_row_id {
+                            ui.selectable_value(&mut selected_matte, Some(*id), name);
+                        }
+                    }
+                });
+                if selected_matte != cur_matte {
+                    acts.push(Act::SetMatte { index: i, matte: selected_matte });
                 }
             });
 
@@ -723,6 +775,137 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                             }
                         });
                     }
+                    FxKind::Tone => {
+                        let color_str = params.get("color").and_then(Value::as_str).unwrap_or("#000000").to_string();
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Color:"));
+                            let mut rgb = parse_hex(&color_str).unwrap_or([0, 0, 0]);
+                            if ui.color_edit_button_srgb(&mut rgb).changed() {
+                                params["color"] = json!(hex(rgb));
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        let mut opacity = params.get("opacity").and_then(Value::as_f64).unwrap_or(50.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Opacity:"));
+                            if ui.add(DragValue::new(&mut opacity).speed(1.0).range(0.0..=100.0)).changed() {
+                                params["opacity"] = json!(opacity);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        let mut blur = params.get("blur").and_then(Value::as_f64).unwrap_or(0.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Blur:"));
+                            if ui.add(DragValue::new(&mut blur).speed(0.1).range(0.0..=250.0)).changed() {
+                                params["blur"] = json!(blur);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::Highlight => {
+                        let color_str = params.get("color").and_then(Value::as_str).unwrap_or("#ffffff").to_string();
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Color:"));
+                            let mut rgb = parse_hex(&color_str).unwrap_or([255, 255, 255]);
+                            if ui.color_edit_button_srgb(&mut rgb).changed() {
+                                params["color"] = json!(hex(rgb));
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        let mut opacity = params.get("opacity").and_then(Value::as_f64).unwrap_or(50.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Opacity:"));
+                            if ui.add(DragValue::new(&mut opacity).speed(1.0).range(0.0..=100.0)).changed() {
+                                params["opacity"] = json!(opacity);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        let mut blur = params.get("blur").and_then(Value::as_f64).unwrap_or(0.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Blur:"));
+                            if ui.add(DragValue::new(&mut blur).speed(0.1).range(0.0..=250.0)).changed() {
+                                params["blur"] = json!(blur);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::Gradient => {
+                        let mut gtype = params.get("type").and_then(Value::as_str).unwrap_or("linear").to_string();
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Type:"));
+                            let type_label = if gtype == "radial" { tl!("Radial") } else { tl!("Linear") };
+                            egui::ComboBox::from_id_salt(("fx_grad_type", i)).selected_text(type_label).show_ui(ui, |ui| {
+                                ui.selectable_value(&mut gtype, "linear".to_string(), tl!("Linear"));
+                                ui.selectable_value(&mut gtype, "radial".to_string(), tl!("Radial"));
+                            });
+                            if gtype != params.get("type").and_then(Value::as_str).unwrap_or("linear") {
+                                params["type"] = json!(gtype);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        let color0_str = params.get("color0").and_then(Value::as_str).unwrap_or("#000000").to_string();
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Color 0:"));
+                            let mut rgb = parse_hex(&color0_str).unwrap_or([0, 0, 0]);
+                            if ui.color_edit_button_srgb(&mut rgb).changed() {
+                                params["color0"] = json!(hex(rgb));
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        let color1_str = params.get("color1").and_then(Value::as_str).unwrap_or("#ffffff").to_string();
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Color 1:"));
+                            let mut rgb = parse_hex(&color1_str).unwrap_or([255, 255, 255]);
+                            if ui.color_edit_button_srgb(&mut rgb).changed() {
+                                params["color1"] = json!(hex(rgb));
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::Bloom => {
+                        let mut threshold = params.get("threshold").and_then(Value::as_f64).unwrap_or(75.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Threshold:"));
+                            if ui.add(DragValue::new(&mut threshold).speed(1.0).range(0.0..=100.0)).changed() {
+                                params["threshold"] = json!(threshold);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        let mut radius = params.get("radius").and_then(Value::as_f64).unwrap_or(10.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Radius:"));
+                            if ui.add(DragValue::new(&mut radius).speed(0.1).range(0.0..=250.0)).changed() {
+                                params["radius"] = json!(radius);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        let mut amount = params.get("amount").and_then(Value::as_f64).unwrap_or(50.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Amount:"));
+                            if ui.add(DragValue::new(&mut amount).speed(1.0).range(0.0..=100.0)).changed() {
+                                params["amount"] = json!(amount);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
+                    FxKind::MotionBlur => {
+                        let mut amount = params.get("amount").and_then(Value::as_f64).unwrap_or(50.0);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Amount:"));
+                            if ui.add(DragValue::new(&mut amount).speed(1.0).range(0.0..=100.0)).changed() {
+                                params["amount"] = json!(amount);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                        let mut samples = params.get("samples").and_then(Value::as_u64).unwrap_or(8);
+                        ui.horizontal(|ui| {
+                            ui.label(tl!("Samples:"));
+                            if ui.add(DragValue::new(&mut samples).range(2..=32)).changed() {
+                                params["samples"] = json!(samples);
+                                acts.push(Act::Key { index: i, params: params.clone() });
+                            }
+                        });
+                    }
                 });
             }
         }
@@ -750,6 +933,13 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
             Act::SetPart { index, part } => {
                 run(app, "fx.set", json!({"index": index, "part": part}));
+            }
+            Act::SetMatte { index, matte } => {
+                let m = match matte {
+                    Some(id) => json!(id),
+                    None => Value::Null,
+                };
+                run(app, "fx.set", json!({"index": index, "matte": m}));
             }
         }
     }
@@ -864,6 +1054,11 @@ mod tests {
             "radial",
             "radialZoom",
             "chromaKey",
+            "tone",
+            "highlight",
+            "gradient",
+            "bloom",
+            "motionBlur",
         ];
         let mut app = anim_doc();
         for kind in all_kinds {
@@ -872,6 +1067,6 @@ mod tests {
         let ctx = ctx();
         frame(&mut app, &ctx);
         let list = app.session.execute("fx.list", &json!({})).unwrap();
-        assert_eq!(list["effects"].as_array().unwrap().len(), 19);
+        assert_eq!(list["effects"].as_array().unwrap().len(), 24);
     }
 }

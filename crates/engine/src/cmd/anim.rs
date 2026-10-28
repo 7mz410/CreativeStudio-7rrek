@@ -303,8 +303,9 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
         }
     }
     let posed = pose(&mut d, frame, &mut ghosts);
-    let (cut, mattes) = super::cutter::apply(&mut d);
-    let row_fx = super::row_fx::apply(&mut d, frame);
+    let (cut, mut mattes) = super::cutter::apply(&mut d);
+    // Effects with a matte hide their matte row (into `mattes`) and may add locked copies (into `ghosts`).
+    let row_fx = super::row_fx::apply(&mut d, frame, &mut ghosts, &mut mattes);
     // The light table fades the other rows on the canvas only (exports don't take `onion`).
     let mut lit = Vec::new();
     if let Some(lt) = anim.light_table.filter(|_| onion) {
