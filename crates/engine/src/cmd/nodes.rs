@@ -49,7 +49,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Lock Node Cache",
             [],
             None,
-            "{node: row, effect or cutter id, on?: bool (default true)} cache-locks that node's row: while the row comes out of a frame unchanged the renderer reuses its effects → {row, on}",
+            "{node: row/effect/cutter node id, on?: bool (default true)} cache-locks that node's row: while the row comes out of a frame unchanged the renderer reuses its effects → {row, on}",
             has_doc,
             lock_cmd
         ),
