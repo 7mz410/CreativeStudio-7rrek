@@ -22,7 +22,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Node Graph",
             [],
             None,
-            "{} → {nodes: [{id, kind: \"row\"|\"peg\"|\"cutter\"|\"effect\"|\"composite\", name?, inverted?, fx?}], edges: [{from, to, port: \"image\"|\"matte\"|\"transform\"}]}",
+            "{} → {nodes: [{id, kind: \"row\"|\"peg\"|\"cutter\"|\"effect\"|\"composite\", name?, inverted?, fx?, ports: {in, out}}], edges: [{from, to, port: \"image\"|\"matte\"|\"transform\"}], groups: [{id, name, members, collapsed}]}",
             has_doc,
             graph
         ),
@@ -50,10 +50,19 @@ pub fn specs() -> Vec<CommandSpec> {
 fn graph(s: &mut Session, _: &Value) -> Result<Value> {
     let d = &s.doc()?.doc;
     let (pegs, cuts, fx) = (Pegs::of(d), Cutters::of(d), RowFxList::of(d));
+    let groups = super::node_groups::NodeGroups::of(d);
     let (mut nodes, mut edges) = (Vec::new(), Vec::new());
     let edge = |from: String, to: String, port: &str| json!({"from": from, "to": to, "port": port});
     for (i, p) in pegs.pegs.iter().enumerate() {
-        nodes.push(json!({"id": format!("peg:{i}"), "kind": "peg", "name": p.name}));
+        nodes.push(json!({
+            "id": format!("peg:{i}"),
+            "kind": "peg",
+            "name": p.name,
+            "ports": {
+                "in": ["transform"],
+                "out": ["transform"]
+            }
+        }));
         if let Some(q) = p.parent {
             edges.push(edge(format!("peg:{q}"), format!("peg:{i}"), "transform"));
         }
@@ -62,14 +71,37 @@ fn graph(s: &mut Session, _: &Value) -> Result<Value> {
         }
     }
     for l in &d.layers {
-        nodes.push(json!({"id": format!("row:{}", l.id.0), "kind": "row", "name": l.name}));
+        nodes.push(json!({
+            "id": format!("row:{}", l.id.0),
+            "kind": "row",
+            "name": l.name,
+            "ports": {
+                "in": ["transform", "matte"],
+                "out": ["image"]
+            }
+        }));
     }
     for c in &cuts.cutters {
-        nodes.push(json!({"id": format!("cut:{}", c.row), "kind": "cutter", "inverted": c.inverted}));
+        nodes.push(json!({
+            "id": format!("cut:{}", c.row),
+            "kind": "cutter",
+            "inverted": c.inverted,
+            "ports": {
+                "in": ["image", "matte"],
+                "out": ["image"]
+            }
+        }));
         edges.push(edge(format!("row:{}", c.row), format!("cut:{}", c.row), "image"));
         edges.push(edge(format!("row:{}", c.matte), format!("cut:{}", c.row), "matte"));
     }
-    nodes.push(json!({"id": "comp", "kind": "composite"}));
+    nodes.push(json!({
+        "id": "comp",
+        "kind": "composite",
+        "ports": {
+            "in": ["image"],
+            "out": ["image"]
+        }
+    }));
     let unplugged = Anim::of(d).unplugged;
     let mut order = 0;
     for l in &d.layers {
@@ -81,7 +113,15 @@ fn graph(s: &mut Session, _: &Value) -> Result<Value> {
         let mut last = if cuts.cutters.iter().any(|c| c.row == r) { format!("cut:{r}") } else { format!("row:{r}") };
         for (i, e) in fx.rows.iter().filter(|f| f.row == r).flat_map(|f| &f.effects).enumerate() {
             let id = format!("fx:{r}:{i}");
-            nodes.push(json!({"id": id, "kind": "effect", "fx": e.kind.as_str()}));
+            nodes.push(json!({
+                "id": id,
+                "kind": "effect",
+                "fx": e.kind.as_str(),
+                "ports": {
+                    "in": ["image"],
+                    "out": ["image"]
+                }
+            }));
             edges.push(edge(last, id.clone(), "image"));
             last = id;
         }
@@ -90,7 +130,19 @@ fn graph(s: &mut Session, _: &Value) -> Result<Value> {
             order += 1;
         }
     }
-    Ok(json!({"nodes": nodes, "edges": edges}))
+    let groups_json: Vec<Value> = groups
+        .groups
+        .iter()
+        .map(|g| {
+            json!({
+                "id": g.id,
+                "name": g.name,
+                "members": g.members,
+                "collapsed": g.collapsed,
+            })
+        })
+        .collect();
+    Ok(json!({"nodes": nodes, "edges": edges, "groups": groups_json}))
 }
 
 /// A node id's kind and number (`fx` ids aren't wired by hand).

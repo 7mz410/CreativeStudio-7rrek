@@ -64,6 +64,7 @@ pub mod mesh;
 pub mod mesh_cmd;
 pub(crate) mod newart;
 pub mod newdoc;
+pub mod node_groups;
 pub mod nodes;
 mod object;
 pub(crate) mod objects_on_path;
@@ -342,6 +343,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(peg_cmd::specs());
         v.extend(row_fx_cmd::specs());
         v.extend(nodes::specs());
+        v.extend(node_groups::specs());
         v.extend(action_tpl::specs());
         v.extend(texture::specs());
         v.extend(art_layers::specs());

@@ -1,7 +1,10 @@
 //! Node view panel: the scene's wiring (rows, pegs, cutters, row effects into the composite) as
 //! a graph, read from `nodes.graph`; dragging a cable runs `nodes.connect` / `nodes.disconnect`.
+//! Groups are simple visual groups: a collapsed group renders as one node with all incoming/outgoing
+//! cables attached to it; double-clicking toggles collapse. Multi-selection right-click offers Group,
+//! and right-clicking a group offers Ungroup and Rename.
 
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 
 use egui::{Align2, Color32, CornerRadius, FontId, Key, PointerButton, Pos2, Rect, Sense, Shape, Stroke, StrokeKind, Ui, pos2, vec2};
 use serde_json::{Value, json};
@@ -28,6 +31,8 @@ struct GraphNode {
     name: String,
     inverted: bool,
     fx: String,
+    ports_in: Vec<String>,
+    ports_out: Vec<String>,
 }
 
 impl GraphNode {
@@ -62,6 +67,13 @@ impl GraphNode {
                 _ => self.fx.clone(),
             },
             "composite" => tl!("Composite").to_string(),
+            "group" => {
+                if !self.name.is_empty() {
+                    self.name.clone()
+                } else {
+                    tl!("Group").to_string()
+                }
+            }
             _ => self.id.clone(),
         }
     }
@@ -73,9 +85,19 @@ impl GraphNode {
             "cutter" => "CUT",
             "effect" => "FX",
             "composite" => "COMP",
+            "group" => "GRP",
             _ => "",
         }
     }
+}
+
+/// Parsed group representation from `nodes.graph`.
+#[derive(Clone, Debug)]
+struct GraphGroup {
+    id: u64,
+    name: String,
+    members: Vec<String>,
+    collapsed: bool,
 }
 
 /// Parsed edge from `nodes.graph`.
@@ -103,6 +125,20 @@ enum Act {
         target: String,
         place: &'static str,
     },
+    Group {
+        members: Vec<String>,
+    },
+    Ungroup {
+        id: u64,
+    },
+    Collapse {
+        id: u64,
+        collapsed: bool,
+    },
+    RenameGroup {
+        id: u64,
+        name: String,
+    },
 }
 
 /// Where a row dropped on `target` lands: above it in the upper half, below it otherwise.
@@ -110,9 +146,10 @@ fn place_for_drop(pointer_y: f32, target: Rect) -> &'static str {
     if pointer_y < target.center().y { "above" } else { "below" }
 }
 
-fn parse_graph(val: &Value) -> (Vec<GraphNode>, Vec<GraphEdge>) {
+fn parse_graph(val: &Value) -> (Vec<GraphNode>, Vec<GraphEdge>, Vec<GraphGroup>) {
     let mut nodes = Vec::new();
     let mut edges = Vec::new();
+    let mut groups = Vec::new();
 
     if let Some(nodes_arr) = val.get("nodes").and_then(Value::as_array) {
         for n in nodes_arr {
@@ -125,7 +162,31 @@ fn parse_graph(val: &Value) -> (Vec<GraphNode>, Vec<GraphEdge>) {
             let inverted = n.get("inverted").and_then(Value::as_bool).unwrap_or(false);
             let fx = n.get("fx").and_then(Value::as_str).unwrap_or("").to_string();
 
-            nodes.push(GraphNode { id, kind, name, inverted, fx });
+            let (ports_in, ports_out) = match n.get("ports") {
+                Some(p) => {
+                    let ins = p
+                        .get("in")
+                        .and_then(Value::as_array)
+                        .map(|a| a.iter().filter_map(Value::as_str).map(String::from).collect())
+                        .unwrap_or_default();
+                    let outs = p
+                        .get("out")
+                        .and_then(Value::as_array)
+                        .map(|a| a.iter().filter_map(Value::as_str).map(String::from).collect())
+                        .unwrap_or_default();
+                    (ins, outs)
+                }
+                None => match kind.as_str() {
+                    "row" => (vec!["transform".into(), "matte".into()], vec!["image".into()]),
+                    "peg" => (vec!["transform".into()], vec!["transform".into()]),
+                    "cutter" => (vec!["image".into(), "matte".into()], vec!["image".into()]),
+                    "effect" => (vec!["image".into()], vec!["image".into()]),
+                    "composite" => (vec!["image".into()], vec!["image".into()]),
+                    _ => (vec!["image".into()], vec!["image".into()]),
+                },
+            };
+
+            nodes.push(GraphNode { id, kind, name, inverted, fx, ports_in, ports_out });
         }
     }
 
@@ -140,7 +201,21 @@ fn parse_graph(val: &Value) -> (Vec<GraphNode>, Vec<GraphEdge>) {
         }
     }
 
-    (nodes, edges)
+    if let Some(groups_arr) = val.get("groups").and_then(Value::as_array) {
+        for g in groups_arr {
+            let id = g.get("id").and_then(Value::as_u64).unwrap_or(0);
+            let name = g.get("name").and_then(Value::as_str).unwrap_or("").to_string();
+            let collapsed = g.get("collapsed").and_then(Value::as_bool).unwrap_or(false);
+            let members = g
+                .get("members")
+                .and_then(Value::as_array)
+                .map(|arr| arr.iter().filter_map(Value::as_str).map(|s| s.to_string()).collect())
+                .unwrap_or_default();
+            groups.push(GraphGroup { id, name, members, collapsed });
+        }
+    }
+
+    (nodes, edges, groups)
 }
 
 fn bezier_points(p0: Pos2, p1: Pos2, p2: Pos2, p3: Pos2) -> Vec<Pos2> {
@@ -218,6 +293,14 @@ struct InputPort {
     pos: Pos2,
 }
 
+fn port_color(port: &str, t: &Tokens) -> Color32 {
+    match port {
+        "transform" => t.axis_y,
+        "matte" => t.warning,
+        _ => t.selection,
+    }
+}
+
 pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     if app.session.active().is_none() {
         widgets::dim_label(ui, tl!("No document"));
@@ -232,7 +315,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
     };
 
-    let (nodes, edges) = parse_graph(&graph_val);
+    let (nodes, edges, groups) = parse_graph(&graph_val);
     let has_rows = nodes.iter().any(|n| n.kind == "row");
     if !has_rows {
         widgets::dim_label(ui, tl!("No rows in document"));
@@ -309,6 +392,54 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         rects.insert(n.id.clone(), Rect::from_min_size(pos2(x, y), vec2(NODE_W, NODE_H)));
     }
 
+    // Mapping of node id -> collapsed group id
+    let mut member_to_collapsed: HashMap<String, u64> = HashMap::new();
+    let mut collapsed_groups: HashMap<u64, &GraphGroup> = HashMap::new();
+    for g in &groups {
+        if g.collapsed {
+            collapsed_groups.insert(g.id, g);
+            for m in &g.members {
+                member_to_collapsed.insert(m.clone(), g.id);
+            }
+        }
+    }
+
+    // Replace collapsed members with one group node
+    let mut group_rects: HashMap<String, Rect> = HashMap::new();
+    for (&gid, g) in &collapsed_groups {
+        let member_positions: Vec<Rect> = g.members.iter().filter_map(|m| rects.get(m).copied()).collect();
+        let group_rect = if let Some(first) = member_positions.first() {
+            let min_x = member_positions.iter().map(|r| r.min.x).fold(first.min.x, f32::min);
+            let min_y = member_positions.iter().map(|r| r.min.y).fold(first.min.y, f32::min);
+            Rect::from_min_size(pos2(min_x, min_y), vec2(NODE_W, NODE_H))
+        } else {
+            let x = col_x(next_col);
+            next_col += 1;
+            Rect::from_min_size(pos2(x, row_y), vec2(NODE_W, NODE_H))
+        };
+        group_rects.insert(format!("group:{gid}"), group_rect);
+    }
+
+    for m in member_to_collapsed.keys() {
+        rects.remove(m);
+    }
+    for (gid_str, r) in group_rects {
+        rects.insert(gid_str, r);
+    }
+
+    let mut display_nodes: Vec<GraphNode> = nodes.iter().filter(|n| !member_to_collapsed.contains_key(&n.id)).cloned().collect();
+    for (&gid, g) in &collapsed_groups {
+        display_nodes.push(GraphNode {
+            id: format!("group:{gid}"),
+            kind: "group".into(),
+            name: g.name.clone(),
+            inverted: false,
+            fx: String::new(),
+            ports_in: vec!["image".into()],
+            ports_out: vec!["image".into()],
+        });
+    }
+
     let max_y = rects.values().map(|r| r.bottom()).fold(row_y + NODE_H, f32::max);
     let comp_y = max_y + GAP_Y;
     let actual_total_cols = row_nodes.len().max(peg_nodes.len()).max(next_col).max(1);
@@ -319,39 +450,46 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let mut input_ports: Vec<InputPort> = Vec::new();
     let mut output_ports: HashMap<String, Pos2> = HashMap::new();
 
-    for n in &nodes {
-        let Some(rect) = rects.get(&n.id) else { continue };
+    for n in &display_nodes {
+        let Some(&rect) = rects.get(&n.id) else { continue };
 
-        if n.kind != "composite" {
+        if !n.ports_out.is_empty() && n.kind != "composite" {
             output_ports.insert(n.id.clone(), pos2(rect.center().x, rect.bottom()));
         }
 
-        match n.kind.as_str() {
-            "peg" => {
-                input_ports.push(InputPort { node_id: n.id.clone(), port: "transform".into(), pos: pos2(rect.center().x, rect.top()) });
+        let n_in = n.ports_in.len();
+        if n_in == 1 {
+            if let Some(p_name) = n.ports_in.first() {
+                input_ports.push(InputPort { node_id: n.id.clone(), port: p_name.clone(), pos: pos2(rect.center().x, rect.top()) });
             }
-            "row" => {
-                input_ports.push(InputPort {
-                    node_id: n.id.clone(),
-                    port: "transform".into(),
-                    pos: pos2(rect.left() + rect.width() * 0.3, rect.top()),
-                });
-                input_ports.push(InputPort { node_id: n.id.clone(), port: "matte".into(), pos: pos2(rect.left() + rect.width() * 0.7, rect.top()) });
-            }
-            "cutter" => {
-                input_ports.push(InputPort { node_id: n.id.clone(), port: "image".into(), pos: pos2(rect.left() + rect.width() * 0.3, rect.top()) });
-                input_ports.push(InputPort { node_id: n.id.clone(), port: "matte".into(), pos: pos2(rect.left() + rect.width() * 0.7, rect.top()) });
-            }
-            _ => {
-                input_ports.push(InputPort { node_id: n.id.clone(), port: "image".into(), pos: pos2(rect.center().x, rect.top()) });
+        } else if n_in > 1 {
+            for (idx, p_name) in n.ports_in.iter().enumerate() {
+                let frac = (idx + 1) as f32 / (n_in + 1) as f32;
+                input_ports.push(InputPort { node_id: n.id.clone(), port: p_name.clone(), pos: pos2(rect.left() + rect.width() * frac, rect.top()) });
             }
         }
+    }
+
+    let mut display_edges: Vec<GraphEdge> = Vec::new();
+    for edge in edges {
+        let from_v = if let Some(gid) = member_to_collapsed.get(&edge.from) { format!("group:{gid}") } else { edge.from.clone() };
+        let to_v = if let Some(gid) = member_to_collapsed.get(&edge.to) { format!("group:{gid}") } else { edge.to.clone() };
+        if from_v == to_v {
+            continue;
+        }
+        display_edges.push(GraphEdge { from: from_v, to: to_v, port: edge.port });
     }
 
     let drag_id = ui.id().with("node_view_drag");
     let mut drag_from = ui.data_mut(|d| d.get_temp::<String>(drag_id));
     let sel_id = ui.id().with("node_view_selected_edge");
     let mut selected_edge = ui.data_mut(|d| d.get_temp::<(String, String, String)>(sel_id));
+    let sel_nodes_id = ui.id().with("node_view_selected_nodes");
+    let mut selected_nodes: BTreeSet<String> = ui.data_mut(|d| d.get_temp::<BTreeSet<String>>(sel_nodes_id).unwrap_or_default());
+    let menu_id = ui.id().with("node_view_menu");
+    let mut menu_state: Option<(Pos2, String)> = ui.data_mut(|d| d.get_temp(menu_id));
+    let rename_id = ui.id().with("node_view_rename");
+    let mut rename_state: Option<(u64, String)> = ui.data_mut(|d| d.get_temp(rename_id));
 
     let diagram_size = vec2(total_width + MARGIN_X * 2.0, comp_y + NODE_H + MARGIN_Y);
 
@@ -370,6 +508,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         let primary_down = ui.input(|i| i.pointer.primary_down());
         let primary_released = ui.input(|i| i.pointer.primary_released());
         let secondary_clicked = ui.input(|i| i.pointer.button_clicked(PointerButton::Secondary));
+        let double_clicked = ui.input(|i| i.pointer.button_double_clicked(PointerButton::Primary));
         // Only over the graph, so Delete elsewhere never cuts a selected cable.
         let delete_pressed = ui.rect_contains_pointer(canvas_rect) && ui.input(|i| i.key_pressed(Key::Delete) || i.key_pressed(Key::Backspace));
 
@@ -387,11 +526,35 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             gx += step;
         }
 
+        // Expanded group backdrops
+        for g in &groups {
+            if g.collapsed {
+                continue;
+            }
+            let member_rects: Vec<Rect> = g.members.iter().filter_map(|m| rects.get(m).copied()).collect();
+            if let Some(first) = member_rects.first() {
+                let mut union_r = *first;
+                for r in &member_rects {
+                    union_r = union_r.union(*r);
+                }
+                let frame_r = union_r.expand2(vec2(10.0, 16.0));
+                painter.rect_stroke(frame_r, CornerRadius::same(6), Stroke::new(1.0, t.divider), StrokeKind::Inside);
+                let header_r = Rect::from_min_size(frame_r.min, vec2(frame_r.width(), 18.0));
+                painter.rect_filled(header_r, CornerRadius { nw: 6, ne: 6, sw: 0, se: 0 }, t.panel_darker);
+                painter.text(pos2(header_r.left() + 6.0, header_r.center().y), Align2::LEFT_CENTER, &g.name, FontId::proportional(11.0), t.text_dim);
+                painter.text(pos2(header_r.right() - 8.0, header_r.center().y), Align2::RIGHT_CENTER, "−", FontId::proportional(13.0), t.text_dim);
+
+                if double_clicked && ptr_pos.is_some_and(|p| header_r.contains(p)) {
+                    acts.push(Act::Collapse { id: g.id, collapsed: true });
+                }
+            }
+        }
+
         // Cables computation and hover testing
         let mut hovered_edge_idx: Option<usize> = None;
-        let mut edge_curves: Vec<Vec<Pos2>> = Vec::with_capacity(edges.len());
+        let mut edge_curves: Vec<Vec<Pos2>> = Vec::with_capacity(display_edges.len());
 
-        for (i, edge) in edges.iter().enumerate() {
+        for (i, edge) in display_edges.iter().enumerate() {
             let p0 = output_ports
                 .get(&edge.from)
                 .copied()
@@ -418,7 +581,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         // Check edge selection / right-click disconnect
         if drag_from.is_none() {
             if let Some(h_idx) = hovered_edge_idx {
-                if let Some(edge) = edges.get(h_idx) {
+                if let Some(edge) = display_edges.get(h_idx) {
                     if secondary_clicked {
                         acts.push(Act::Disconnect { from: edge.from.clone(), to: edge.to.clone(), port: edge.port.clone() });
                         selected_edge = None;
@@ -440,14 +603,51 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
         }
 
+        // Node selection and click detection
+        if let Some(p) = ptr_pos.filter(|_| drag_from.is_none()) {
+            let hit_node = display_nodes.iter().find(|n| rects.get(&n.id).is_some_and(|r| r.contains(p)));
+            if let Some(n) = hit_node {
+                if double_clicked {
+                    if n.kind == "group" {
+                        if let Some(gid) = n.id.strip_prefix("group:").and_then(|s| s.parse::<u64>().ok()) {
+                            acts.push(Act::Collapse { id: gid, collapsed: false });
+                        }
+                    } else if let Some(g) = groups.iter().find(|g| g.members.contains(&n.id)) {
+                        acts.push(Act::Collapse { id: g.id, collapsed: true });
+                    }
+                } else if secondary_clicked {
+                    if !selected_nodes.contains(&n.id) {
+                        selected_nodes.clear();
+                        selected_nodes.insert(n.id.clone());
+                    }
+                    menu_state = Some((p, n.id.clone()));
+                } else if primary_pressed && !output_ports.values().any(|&out_pos| p.distance(out_pos) <= PORT_R + 5.0) {
+                    let shift = ui.input(|i| i.modifiers.shift || i.modifiers.command || i.modifiers.ctrl);
+                    if shift {
+                        if selected_nodes.contains(&n.id) {
+                            selected_nodes.remove(&n.id);
+                        } else {
+                            selected_nodes.insert(n.id.clone());
+                        }
+                    } else {
+                        selected_nodes.clear();
+                        selected_nodes.insert(n.id.clone());
+                    }
+                }
+            } else if primary_pressed && !output_ports.values().any(|&out_pos| p.distance(out_pos) <= PORT_R + 5.0) {
+                selected_nodes.clear();
+                menu_state = None;
+            }
+        }
+
         // Draw cables
-        for (i, edge) in edges.iter().enumerate() {
+        for (i, edge) in display_edges.iter().enumerate() {
             let Some(pts) = edge_curves.get(i) else { continue };
             let is_hovered = hovered_edge_idx == Some(i);
             let is_selected = selected_edge.as_ref().is_some_and(|(from, to, port)| from == &edge.from && to == &edge.to && port == &edge.port);
 
             let (base_color, base_width, is_dashed) = match edge.port.as_str() {
-                "transform" => (t.accent, 2.0, false),
+                "transform" => (t.axis_y, 2.0, false),
                 "matte" => (t.warning, 2.0, true),
                 _ => (t.selection, 2.0, false),
             };
@@ -486,7 +686,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 let p1 = Pos2::new(p0.x, p0.y + dy);
                 let p2 = Pos2::new(p.x, p.y - dy);
                 let pts = bezier_points(p0, p1, p2, p);
-                painter.add(Shape::line(pts, Stroke::new(2.5, t.accent_strong)));
+                painter.add(Shape::line(pts, Stroke::new(2.5, t.selection)));
             }
 
             for inp in &input_ports {
@@ -506,7 +706,6 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 if let Some(inp) = port_hit {
                     acts.push(Act::Connect { from: from_id.clone(), to: inp.node_id.clone(), port: inp.port.clone() });
                 } else if from_is_row {
-                    // A row dropped on another row's body moves into that row's slot in the composite.
                     let hit = row_nodes.iter().find_map(|r| {
                         let rect = rects.get(&r.id)?;
                         (r.id != from_id && rect.contains(p)).then(|| (r.id.clone(), *rect))
@@ -519,7 +718,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
 
         // Draw Nodes
-        for n in &nodes {
+        for n in &display_nodes {
             let Some(&rect) = rects.get(&n.id) else { continue };
 
             let bg_color = t.button;
@@ -528,11 +727,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             painter.rect_stroke(rect, CornerRadius::same(5), Stroke::new(1.0, border_color), StrokeKind::Inside);
 
             let stripe_color = match n.kind.as_str() {
-                "peg" => t.accent,
+                "peg" => t.axis_y,
                 "row" => t.selection,
                 "cutter" => t.warning,
                 "effect" => t.axis_x,
-                "composite" => t.axis_z,
+                "composite" => t.selection,
+                "group" => t.accent,
                 _ => t.text_dim,
             };
             let stripe_rect = Rect::from_min_max(pos2(rect.left(), rect.top()), pos2(rect.left() + 4.0, rect.bottom()));
@@ -545,6 +745,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             if !badge.is_empty() {
                 painter.text(pos2(rect.left() + 10.0, rect.top() + 25.0), Align2::LEFT_CENTER, badge, FontId::proportional(9.0), t.text_dim);
             }
+
+            if selected_nodes.contains(&n.id) {
+                painter.rect_stroke(rect, CornerRadius::same(5), Stroke::new(2.0, t.highlight), StrokeKind::Inside);
+            }
         }
 
         // Draw Ports
@@ -552,16 +756,11 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             let is_hot = hovered_input_port.is_some_and(|h| h.node_id == inp.node_id && h.port == inp.port)
                 || (drag_from.is_none() && ptr_pos.is_some_and(|p| p.distance(inp.pos) <= PORT_R + 3.0));
 
-            let port_color = match inp.port.as_str() {
-                "transform" => t.accent,
-                "matte" => t.warning,
-                _ => t.selection,
-            };
-
+            let p_color = port_color(&inp.port, &t);
             let radius = if is_hot { PORT_R + 1.5 } else { PORT_R };
-            let fill = if is_hot { port_color } else { t.panel_darker };
+            let fill = if is_hot { p_color } else { t.panel_darker };
             painter.circle_filled(inp.pos, radius, fill);
-            painter.circle_stroke(inp.pos, radius, Stroke::new(1.5, port_color));
+            painter.circle_stroke(inp.pos, radius, Stroke::new(1.5, p_color));
 
             if is_hot {
                 painter.text(pos2(inp.pos.x, inp.pos.y - 8.0), Align2::CENTER_BOTTOM, &inp.port, FontId::proportional(10.0), t.text_strong);
@@ -571,14 +770,86 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         for (from_id, &out_pos) in &output_ports {
             let is_hot = drag_from.as_ref() == Some(from_id) || (drag_from.is_none() && ptr_pos.is_some_and(|p| p.distance(out_pos) <= PORT_R + 3.0));
 
-            let node_kind = nodes.iter().find(|n| &n.id == from_id).map(|n| n.kind.as_str()).unwrap_or("");
-            let out_color = if node_kind == "peg" { t.accent } else { t.selection };
+            let node_kind = display_nodes.iter().find(|n| &n.id == from_id).map(|n| n.kind.as_str()).unwrap_or("");
+            let out_color = if node_kind == "peg" { t.axis_y } else { t.selection };
 
             let radius = if is_hot { PORT_R + 1.5 } else { PORT_R };
             let fill = if is_hot { out_color } else { t.panel_darker };
             painter.circle_filled(out_pos, radius, fill);
             painter.circle_stroke(out_pos, radius, Stroke::new(1.5, out_color));
         }
+
+        // Context Menu
+        let mut close_menu = false;
+        if let Some((menu_pos, ref target_id)) = menu_state {
+            egui::Area::new(ui.id().with("node_view_ctx_area")).fixed_pos(menu_pos).order(egui::Order::Foreground).show(ui.ctx(), |ui| {
+                egui::Frame::menu(ui.style()).show(ui, |ui| {
+                    if selected_nodes.len() > 1 && selected_nodes.contains(target_id) && ui.button(tl!("Group")).clicked() {
+                        acts.push(Act::Group { members: selected_nodes.iter().cloned().collect() });
+                        close_menu = true;
+                    }
+                    let gid_opt = if let Some(gid_str) = target_id.strip_prefix("group:") {
+                        gid_str.parse::<u64>().ok()
+                    } else {
+                        groups.iter().find(|g| g.members.contains(target_id)).map(|g| g.id)
+                    };
+                    if let Some(gid) = gid_opt {
+                        if ui.button(tl!("Ungroup")).clicked() {
+                            acts.push(Act::Ungroup { id: gid });
+                            close_menu = true;
+                        }
+                        if ui.button(tl!("Rename")).clicked() {
+                            let cur_name = groups.iter().find(|g| g.id == gid).map(|g| g.name.clone()).unwrap_or_default();
+                            rename_state = Some((gid, cur_name));
+                            close_menu = true;
+                        }
+                    }
+                });
+            });
+        }
+        if close_menu {
+            menu_state = None;
+        }
+    });
+
+    // Rename dialog
+    if let Some((gid, mut name)) = rename_state {
+        let mut close_rename = false;
+        let mut commit_name = false;
+        egui::Window::new(tl!("Rename Group")).collapsible(false).resizable(false).anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0)).show(
+            ui.ctx(),
+            |ui| {
+                ui.horizontal(|ui| {
+                    ui.label(tl!("Name:"));
+                    let resp = ui.text_edit_singleline(&mut name);
+                    if resp.lost_focus() && ui.input(|i| i.key_pressed(Key::Enter)) {
+                        commit_name = true;
+                    }
+                });
+                ui.horizontal(|ui| {
+                    if ui.button(tl!("OK")).clicked() {
+                        commit_name = true;
+                    }
+                    if ui.button(tl!("Cancel")).clicked() {
+                        close_rename = true;
+                    }
+                });
+            },
+        );
+        if commit_name {
+            acts.push(Act::RenameGroup { id: gid, name: name.clone() });
+            close_rename = true;
+        }
+        if close_rename {
+            ui.data_mut(|d| d.remove_temp::<(u64, String)>(rename_id));
+        } else {
+            ui.data_mut(|d| d.insert_temp(rename_id, (gid, name)));
+        }
+    }
+
+    ui.data_mut(|d| {
+        d.insert_temp(sel_nodes_id, selected_nodes);
+        d.insert_temp(menu_id, menu_state);
     });
 
     for act in acts {
@@ -595,6 +866,26 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
             Act::Reorder { from, target, place } => {
                 if let Err(e) = app.run("nodes.connect", json!({"from": from, "to": "comp", "port": "image", (place): target})) {
+                    app.status(e);
+                }
+            }
+            Act::Group { members } => {
+                if let Err(e) = app.run("nodes.group", json!({"members": members})) {
+                    app.status(e);
+                }
+            }
+            Act::Ungroup { id } => {
+                if let Err(e) = app.run("nodes.ungroup", json!({"id": id})) {
+                    app.status(e);
+                }
+            }
+            Act::Collapse { id, collapsed } => {
+                if let Err(e) = app.run("nodes.collapse", json!({"id": id, "collapsed": collapsed})) {
+                    app.status(e);
+                }
+            }
+            Act::RenameGroup { id, name } => {
+                if let Err(e) = app.run("nodes.renameGroup", json!({"id": id, "name": name})) {
                     app.status(e);
                 }
             }
@@ -667,6 +958,32 @@ mod tests {
     fn no_document_renders_the_empty_state() {
         let mut app = app();
         let ctx = egui::Context::default();
+        frame(&mut app, &ctx);
+    }
+
+    #[test]
+    fn collapsed_group_renders_without_panic() {
+        let mut app = scene_with_two_rows_and_cutter();
+        let r0 = app.session.doc().unwrap().doc.layers[0].id.0;
+        let r1 = app.session.doc().unwrap().doc.layers[1].id.0;
+        let r = app.session.execute("nodes.group", &json!({"members": [format!("row:{r0}"), format!("row:{r1}")]})).unwrap();
+        let gid = r["id"].as_u64().unwrap();
+        app.session.execute("nodes.collapse", &json!({"id": gid, "collapsed": true})).unwrap();
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        crate::theme::apply(&ctx, Default::default());
+        frame(&mut app, &ctx);
+    }
+
+    #[test]
+    fn expanded_group_renders_without_panic() {
+        let mut app = scene_with_two_rows_and_cutter();
+        let r0 = app.session.doc().unwrap().doc.layers[0].id.0;
+        let r1 = app.session.doc().unwrap().doc.layers[1].id.0;
+        app.session.execute("nodes.group", &json!({"members": [format!("row:{r0}"), format!("row:{r1}")]})).unwrap();
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        crate::theme::apply(&ctx, Default::default());
         frame(&mut app, &ctx);
     }
 }
