@@ -617,7 +617,8 @@ pub(crate) fn apply(d: &mut Document, frame: u32, ghosts: &mut Vec<u64>, mattes:
     let mut applied = BTreeMap::new();
     for r in all.rows {
         let row_id = NodeId(r.row);
-        let mut copies_count = 0;
+        // The row's art before any effect: each matte copy starts from it, not from an earlier copy.
+        let base = d.node(row_id).cloned();
         for fx in &r.effects {
             let mut live = fx.to_live_effect(frame);
             if fx.kind == FxKind::MotionBlur {
@@ -662,20 +663,17 @@ pub(crate) fn apply(d: &mut Document, frame: u32, ghosts: &mut Vec<u64>, mattes:
                 }
                 let mask = OpacityMask::new(art, true);
 
-                if let Some(row_node) = d.node(row_id).cloned() {
-                    let mut copy = d.reid(&row_node);
+                if let Some(row_node) = base.as_ref() {
+                    let mut copy = d.reid(row_node);
                     copy.locked = true;
                     copy.isolate = true;
                     copy.extras_mut().mask = Some(Box::new(mask));
 
-                    if let Some(path) = d.index_path(row_id)
-                        && let Some(&idx) = path.last()
+                    // Inside the row, on top of its art: the copy isn't a row of its own (timeline, layers, node view).
+                    let top = d.node(row_id).and_then(|n| n.children()).map_or(0, |c| c.len());
                     {
-                        let parent = d.parent_of(row_id);
-                        let insert_idx = idx + 1 + copies_count;
-                        if let Ok(copy_id) = d.insert(parent, insert_idx, copy) {
+                        if let Ok(copy_id) = d.insert(Some(row_id), top, copy) {
                             ghosts.push(copy_id.0);
-                            copies_count += 1;
 
                             for id in super::selector::targets(d, copy_id, fx.part) {
                                 if let Some(n) = d.node_mut(id) {
