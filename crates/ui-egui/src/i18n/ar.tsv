@@ -5801,3 +5801,9 @@ font-technology	Variable	متغير
 	Samples:	العينات:
 	Color 0:	اللون 0:
 	Color 1:	اللون 1:
+	Write	الكتابة
+	Lock Cache	قفل الذاكرة المؤقتة
+	Lock Node Cache	قفل ذاكرة العقدة
+	Unlock Node Cache	فك قفل ذاكرة العقدة
+	Display Node	عقدة العرض
+	Write Node	عقدة الكتابة

@@ -22,6 +22,18 @@ const GAP_Y: f32 = 48.0;
 const MARGIN_X: f32 = 32.0;
 const MARGIN_Y: f32 = 32.0;
 const PORT_R: f32 = 4.0;
+/// Egui memory key (per panel) for the Fit toggle.
+const FIT_KEY: &str = "node_view_fit";
+/// Egui temp key (per panel) for this frame's layout: diagram size, Write rect, scale.
+const LAYOUT_KEY: &str = "node_view_layout";
+
+/// Scale that fits a graph `diagram_w` wide into `avail_w`, kept within 0.5..=1.0.
+fn fit_scale(avail_w: f32, diagram_w: f32) -> f32 {
+    if !(avail_w.is_finite() && diagram_w.is_finite() && diagram_w > 0.0) {
+        return 1.0;
+    }
+    (avail_w / diagram_w).clamp(0.5, 1.0)
+}
 
 /// Parsed node representation from `nodes.graph`.
 #[derive(Clone, Debug)]
@@ -67,6 +79,8 @@ impl GraphNode {
                 _ => self.fx.clone(),
             },
             "composite" => tl!("Composite").to_string(),
+            "display" => tl!("Display").to_string(),
+            "write" => tl!("Write").to_string(),
             "group" => {
                 if !self.name.is_empty() {
                     self.name.clone()
@@ -128,6 +142,10 @@ enum Act {
     Group {
         members: Vec<String>,
     },
+    /// Toggles the cache lock of the node's row.
+    Lock {
+        node: String,
+    },
     Ungroup {
         id: u64,
     },
@@ -139,11 +157,38 @@ enum Act {
         id: u64,
         name: String,
     },
+    /// Sets the Display or Write node (`cmd`) to `node`; None clears it (Reset).
+    Branch {
+        cmd: &'static str,
+        node: Option<String>,
+    },
 }
 
 /// Where a row dropped on `target` lands: above it in the upper half, below it otherwise.
 fn place_for_drop(pointer_y: f32, target: Rect) -> &'static str {
     if pointer_y < target.center().y { "above" } else { "below" }
+}
+
+/// The command that sets a fixed node (Display or Write), None for any other node.
+fn branch_cmd(id: &str) -> Option<&'static str> {
+    match id {
+        "display" => Some("nodes.display"),
+        "write" => Some("nodes.write"),
+        _ => None,
+    }
+}
+
+/// A fixed node (Display or Write): one input, no output, placed beside the composite.
+fn fixed_node(id: &str) -> GraphNode {
+    GraphNode {
+        id: id.into(),
+        kind: id.into(),
+        name: String::new(),
+        inverted: false,
+        fx: String::new(),
+        ports_in: vec!["image".into()],
+        ports_out: Vec::new(),
+    }
 }
 
 fn parse_graph(val: &Value) -> (Vec<GraphNode>, Vec<GraphEdge>, Vec<GraphGroup>) {
@@ -439,6 +484,8 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             ports_out: vec!["image".into()],
         });
     }
+    display_nodes.push(fixed_node("display"));
+    display_nodes.push(fixed_node("write"));
 
     let max_y = rects.values().map(|r| r.bottom()).fold(row_y + NODE_H, f32::max);
     let comp_y = max_y + GAP_Y;
@@ -446,6 +493,13 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let total_width = col_x(actual_total_cols.saturating_sub(1)) + NODE_W - MARGIN_X;
     let comp_x = MARGIN_X + (total_width - NODE_W).max(0.0) * 0.5;
     rects.insert("comp".to_string(), Rect::from_min_size(pos2(comp_x, comp_y), vec2(NODE_W, NODE_H)));
+
+    // Display and Write sit beside the composite, one after the other.
+    let display_x = comp_x + NODE_W + GAP_X;
+    let write_x = display_x + NODE_W + GAP_X;
+    rects.insert("display".to_string(), Rect::from_min_size(pos2(display_x, comp_y), vec2(NODE_W, NODE_H)));
+    rects.insert("write".to_string(), Rect::from_min_size(pos2(write_x, comp_y), vec2(NODE_W, NODE_H)));
+    let fixed_right = write_x + NODE_W + MARGIN_X;
 
     let mut input_ports: Vec<InputPort> = Vec::new();
     let mut output_ports: HashMap<String, Pos2> = HashMap::new();
@@ -491,17 +545,38 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let rename_id = ui.id().with("node_view_rename");
     let mut rename_state: Option<(u64, String)> = ui.data_mut(|d| d.get_temp(rename_id));
 
-    let diagram_size = vec2(total_width + MARGIN_X * 2.0, comp_y + NODE_H + MARGIN_Y);
+    let diagram_size = vec2((total_width + MARGIN_X * 2.0).max(fixed_right), comp_y + NODE_H + MARGIN_Y);
+    // The sources of the Display and Write cables: a node id, or None for the composite.
+    let fixed_src = |key: &str| graph_val.get(key).and_then(Value::as_str).map(String::from);
+    let (display_src, write_src) = (fixed_src("display"), fixed_src("write"));
+
+    // Top bar: Fit scales the graph to the panel width (0.5..=1.0). The choice stays in egui memory.
+    let fit_id = ui.id().with(FIT_KEY);
+    let mut fit = ui.data_mut(|d| d.get_persisted::<bool>(fit_id).unwrap_or(false));
+    let avail_w = ui.available_width();
+    ui.horizontal(|ui| {
+        if ui.selectable_label(fit, tl!("Fit")).clicked() {
+            fit = !fit;
+            ui.data_mut(|d| d.insert_persisted(fit_id, fit));
+        }
+    });
+    let s = if fit { fit_scale(avail_w, diagram_size.x) } else { 1.0 };
+    // Read by the layout tests: the content size, the Write node's rect and the scale in use.
+    let write_rect = rects.get("write").copied();
+    ui.data_mut(|d| d.insert_temp(ui.id().with(LAYOUT_KEY), (diagram_size, write_rect, s)));
 
     egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
-        let (canvas_rect, resp) = ui.allocate_exact_size(diagram_size, Sense::click_and_drag());
+        let (canvas_rect, resp) = ui.allocate_exact_size(diagram_size * s, Sense::click_and_drag());
         resp.on_hover_text(tl!("Drag a row's output dot onto another row to move it above or below that row").to_string());
         let painter = ui.painter_at(canvas_rect);
-        // The layout above is in diagram space; place it where the canvas landed.
+        // The layout above is in diagram units; draw and hit-test it at scale `s` where the canvas landed.
         let off = canvas_rect.min.to_vec2();
-        let rects: HashMap<String, Rect> = rects.iter().map(|(k, r)| (k.clone(), r.translate(off))).collect();
-        let input_ports: Vec<InputPort> = input_ports.iter().map(|p| InputPort { pos: p.pos + off, ..p.clone() }).collect();
-        let output_ports: HashMap<String, Pos2> = output_ports.iter().map(|(k, p)| (k.clone(), *p + off)).collect();
+        let at = |p: Pos2| (p.to_vec2() * s + off).to_pos2();
+        let port_r = PORT_R * s;
+        let font = |px: f32| FontId::proportional(px * s);
+        let rects: HashMap<String, Rect> = rects.iter().map(|(k, r)| (k.clone(), Rect::from_min_max(at(r.min), at(r.max)))).collect();
+        let input_ports: Vec<InputPort> = input_ports.iter().map(|p| InputPort { pos: at(p.pos), ..p.clone() }).collect();
+        let output_ports: HashMap<String, Pos2> = output_ports.iter().map(|(k, p)| (k.clone(), at(*p))).collect();
 
         let ptr_pos = ui.input(|i| i.pointer.hover_pos());
         let primary_pressed = ui.input(|i| i.pointer.primary_pressed());
@@ -513,7 +588,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         let delete_pressed = ui.rect_contains_pointer(canvas_rect) && ui.input(|i| i.key_pressed(Key::Delete) || i.key_pressed(Key::Backspace));
 
         // Background subtle dot grid
-        let step = 28.0;
+        let step = 28.0 * s;
         let start_x = (canvas_rect.left() / step).floor() * step;
         let start_y = (canvas_rect.top() / step).floor() * step;
         let mut gx = start_x;
@@ -537,12 +612,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 for r in &member_rects {
                     union_r = union_r.union(*r);
                 }
-                let frame_r = union_r.expand2(vec2(10.0, 16.0));
+                let frame_r = union_r.expand2(vec2(10.0, 16.0) * s);
                 painter.rect_stroke(frame_r, CornerRadius::same(6), Stroke::new(1.0, t.divider), StrokeKind::Inside);
-                let header_r = Rect::from_min_size(frame_r.min, vec2(frame_r.width(), 18.0));
+                let header_r = Rect::from_min_size(frame_r.min, vec2(frame_r.width(), 18.0 * s));
                 painter.rect_filled(header_r, CornerRadius { nw: 6, ne: 6, sw: 0, se: 0 }, t.panel_darker);
-                painter.text(pos2(header_r.left() + 6.0, header_r.center().y), Align2::LEFT_CENTER, &g.name, FontId::proportional(11.0), t.text_dim);
-                painter.text(pos2(header_r.right() - 8.0, header_r.center().y), Align2::RIGHT_CENTER, "−", FontId::proportional(13.0), t.text_dim);
+                painter.text(pos2(header_r.left() + 6.0 * s, header_r.center().y), Align2::LEFT_CENTER, &g.name, font(11.0), t.text_dim);
+                painter.text(pos2(header_r.right() - 8.0 * s, header_r.center().y), Align2::RIGHT_CENTER, "−", font(13.0), t.text_dim);
 
                 if double_clicked && ptr_pos.is_some_and(|p| header_r.contains(p)) {
                     acts.push(Act::Collapse { id: g.id, collapsed: true });
@@ -591,7 +666,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                         ui.data_mut(|d| d.insert_temp(sel_id, selected_edge.clone()));
                     }
                 }
-            } else if primary_pressed && !output_ports.values().any(|&pos| ptr_pos.is_some_and(|p| p.distance(pos) <= PORT_R + 5.0)) {
+            } else if primary_pressed && !output_ports.values().any(|&pos| ptr_pos.is_some_and(|p| p.distance(pos) <= port_r + 5.0)) {
                 selected_edge = None;
                 ui.data_mut(|d| d.remove_temp::<(String, String, String)>(sel_id));
             }
@@ -621,7 +696,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                         selected_nodes.insert(n.id.clone());
                     }
                     menu_state = Some((p, n.id.clone()));
-                } else if primary_pressed && !output_ports.values().any(|&out_pos| p.distance(out_pos) <= PORT_R + 5.0) {
+                } else if primary_pressed && !output_ports.values().any(|&out_pos| p.distance(out_pos) <= port_r + 5.0) {
                     let shift = ui.input(|i| i.modifiers.shift || i.modifiers.command || i.modifiers.ctrl);
                     if shift {
                         if selected_nodes.contains(&n.id) {
@@ -634,7 +709,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                         selected_nodes.insert(n.id.clone());
                     }
                 }
-            } else if primary_pressed && !output_ports.values().any(|&out_pos| p.distance(out_pos) <= PORT_R + 5.0) {
+            } else if primary_pressed && !output_ports.values().any(|&out_pos| p.distance(out_pos) <= port_r + 5.0) {
                 selected_nodes.clear();
                 menu_state = None;
             }
@@ -667,10 +742,22 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
         }
 
+        // Display and Write cables: from the node they point at, or from the composite when none.
+        for (node_id, src) in [("display", display_src.as_deref()), ("write", write_src.as_deref())] {
+            let src = src.unwrap_or("comp");
+            let p0 = output_ports.get(src).copied().or_else(|| rects.get(src).map(|r| pos2(r.center().x, r.bottom())));
+            let p3 = rects.get(node_id).map(|r| pos2(r.center().x, r.top()));
+            if let (Some(p0), Some(p3)) = (p0, p3) {
+                let dy = ((p3.y - p0.y).abs() * 0.5).max(25.0);
+                let pts = bezier_points(p0, Pos2::new(p0.x, p0.y + dy), Pos2::new(p3.x, p3.y - dy), p3);
+                painter.add(Shape::line(pts, Stroke::new(2.0, t.accent)));
+            }
+        }
+
         // Port dragging interaction
         if let Some(p) = ptr_pos.filter(|_| primary_pressed) {
             for (from_id, &out_pos) in &output_ports {
-                if p.distance(out_pos) <= PORT_R + 5.0 {
+                if p.distance(out_pos) <= port_r + 5.0 {
                     drag_from = Some(from_id.clone());
                     ui.data_mut(|d| d.insert_temp(drag_id, from_id.clone()));
                     break;
@@ -690,7 +777,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
 
             for inp in &input_ports {
-                if p.distance(inp.pos) <= PORT_R + 6.0 && &inp.node_id != from_id {
+                if p.distance(inp.pos) <= port_r + 6.0 && &inp.node_id != from_id {
                     hovered_input_port = Some(inp);
                     break;
                 }
@@ -702,9 +789,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             ui.data_mut(|d| d.remove_temp::<String>(drag_id));
             if let Some(p) = ptr_pos {
                 let from_is_row = row_nodes.iter().any(|r| r.id == from_id);
-                let port_hit = input_ports.iter().find(|inp| p.distance(inp.pos) <= PORT_R + 8.0 && inp.node_id != from_id);
+                let port_hit = input_ports.iter().find(|inp| p.distance(inp.pos) <= port_r + 8.0 && inp.node_id != from_id);
                 if let Some(inp) = port_hit {
-                    acts.push(Act::Connect { from: from_id.clone(), to: inp.node_id.clone(), port: inp.port.clone() });
+                    match branch_cmd(&inp.node_id) {
+                        Some(cmd) => acts.push(Act::Branch { cmd, node: Some(from_id.clone()) }),
+                        None => acts.push(Act::Connect { from: from_id.clone(), to: inp.node_id.clone(), port: inp.port.clone() }),
+                    }
                 } else if from_is_row {
                     let hit = row_nodes.iter().find_map(|r| {
                         let rect = rects.get(&r.id)?;
@@ -732,18 +822,18 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 "cutter" => t.warning,
                 "effect" => t.axis_x,
                 "composite" => t.selection,
-                "group" => t.accent,
+                "group" | "display" | "write" => t.accent,
                 _ => t.text_dim,
             };
             let stripe_rect = Rect::from_min_max(pos2(rect.left(), rect.top()), pos2(rect.left() + 4.0, rect.bottom()));
             painter.rect_filled(stripe_rect, CornerRadius { nw: 5, sw: 5, ne: 0, se: 0 }, stripe_color);
 
             let title = n.title();
-            painter.text(pos2(rect.left() + 10.0, rect.top() + 12.0), Align2::LEFT_CENTER, title, FontId::proportional(12.0), t.text);
+            painter.text(pos2(rect.left() + 10.0 * s, rect.top() + 12.0 * s), Align2::LEFT_CENTER, title, font(12.0), t.text);
 
             let badge = n.kind_badge();
             if !badge.is_empty() {
-                painter.text(pos2(rect.left() + 10.0, rect.top() + 25.0), Align2::LEFT_CENTER, badge, FontId::proportional(9.0), t.text_dim);
+                painter.text(pos2(rect.left() + 10.0 * s, rect.top() + 25.0 * s), Align2::LEFT_CENTER, badge, font(9.0), t.text_dim);
             }
 
             if selected_nodes.contains(&n.id) {
@@ -754,26 +844,26 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         // Draw Ports
         for inp in &input_ports {
             let is_hot = hovered_input_port.is_some_and(|h| h.node_id == inp.node_id && h.port == inp.port)
-                || (drag_from.is_none() && ptr_pos.is_some_and(|p| p.distance(inp.pos) <= PORT_R + 3.0));
+                || (drag_from.is_none() && ptr_pos.is_some_and(|p| p.distance(inp.pos) <= port_r + 3.0));
 
             let p_color = port_color(&inp.port, &t);
-            let radius = if is_hot { PORT_R + 1.5 } else { PORT_R };
+            let radius = if is_hot { port_r + 1.5 } else { port_r };
             let fill = if is_hot { p_color } else { t.panel_darker };
             painter.circle_filled(inp.pos, radius, fill);
             painter.circle_stroke(inp.pos, radius, Stroke::new(1.5, p_color));
 
             if is_hot {
-                painter.text(pos2(inp.pos.x, inp.pos.y - 8.0), Align2::CENTER_BOTTOM, &inp.port, FontId::proportional(10.0), t.text_strong);
+                painter.text(pos2(inp.pos.x, inp.pos.y - 8.0 * s), Align2::CENTER_BOTTOM, &inp.port, font(10.0), t.text_strong);
             }
         }
 
         for (from_id, &out_pos) in &output_ports {
-            let is_hot = drag_from.as_ref() == Some(from_id) || (drag_from.is_none() && ptr_pos.is_some_and(|p| p.distance(out_pos) <= PORT_R + 3.0));
+            let is_hot = drag_from.as_ref() == Some(from_id) || (drag_from.is_none() && ptr_pos.is_some_and(|p| p.distance(out_pos) <= port_r + 3.0));
 
             let node_kind = display_nodes.iter().find(|n| &n.id == from_id).map(|n| n.kind.as_str()).unwrap_or("");
             let out_color = if node_kind == "peg" { t.axis_y } else { t.selection };
 
-            let radius = if is_hot { PORT_R + 1.5 } else { PORT_R };
+            let radius = if is_hot { port_r + 1.5 } else { port_r };
             let fill = if is_hot { out_color } else { t.panel_darker };
             painter.circle_filled(out_pos, radius, fill);
             painter.circle_stroke(out_pos, radius, Stroke::new(1.5, out_color));
@@ -784,6 +874,17 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         if let Some((menu_pos, ref target_id)) = menu_state {
             egui::Area::new(ui.id().with("node_view_ctx_area")).fixed_pos(menu_pos).order(egui::Order::Foreground).show(ui.ctx(), |ui| {
                 egui::Frame::menu(ui.style()).show(ui, |ui| {
+                    if let Some(cmd) = branch_cmd(target_id) {
+                        if ui.button(tl!("Reset")).clicked() {
+                            acts.push(Act::Branch { cmd, node: None });
+                            close_menu = true;
+                        }
+                        return;
+                    }
+                    if ["row:", "fx:", "cut:"].iter().any(|p| target_id.starts_with(p)) && ui.button(tl!("Lock Cache")).clicked() {
+                        acts.push(Act::Lock { node: target_id.clone() });
+                        close_menu = true;
+                    }
                     if selected_nodes.len() > 1 && selected_nodes.contains(target_id) && ui.button(tl!("Group")).clicked() {
                         acts.push(Act::Group { members: selected_nodes.iter().cloned().collect() });
                         close_menu = true;
@@ -869,6 +970,20 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     app.status(e);
                 }
             }
+            Act::Lock { node } => {
+                // The row is locked when `nodes.graph` lists it: then this unlocks it.
+                let row = node.split(':').nth(1).and_then(|r| r.parse::<u64>().ok());
+                let locked = app
+                    .session
+                    .execute("nodes.graph", &json!({}))
+                    .ok()
+                    .and_then(|g| g.get("locked").and_then(|l| l.as_array()).cloned())
+                    .unwrap_or_default();
+                let on = !row.is_some_and(|r| locked.iter().any(|v| v.as_u64() == Some(r)));
+                if let Err(e) = app.run("nodes.lock", json!({"node": node, "on": on})) {
+                    app.status(e);
+                }
+            }
             Act::Group { members } => {
                 if let Err(e) = app.run("nodes.group", json!({"members": members})) {
                     app.status(e);
@@ -886,6 +1001,11 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
             Act::RenameGroup { id, name } => {
                 if let Err(e) = app.run("nodes.renameGroup", json!({"id": id, "name": name})) {
+                    app.status(e);
+                }
+            }
+            Act::Branch { cmd, node } => {
+                if let Err(e) = app.run(cmd, json!({"node": node})) {
                     app.status(e);
                 }
             }
@@ -985,5 +1105,96 @@ mod tests {
         crate::theme::install_fonts(&ctx);
         crate::theme::apply(&ctx, Default::default());
         frame(&mut app, &ctx);
+    }
+
+    #[test]
+    fn display_and_write_nodes_render_and_show_what_they_point_at() {
+        let mut app = scene_with_two_rows_and_cutter();
+        let r0 = app.session.doc().unwrap().doc.layers[0].id.0;
+        app.session.execute("nodes.display", &json!({"node": format!("row:{r0}")})).unwrap();
+        app.session.execute("nodes.write", &json!({"node": "comp"})).unwrap();
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        crate::theme::apply(&ctx, Default::default());
+        frame(&mut app, &ctx);
+        let g = app.session.execute("nodes.graph", &json!({})).unwrap();
+        assert_eq!(g["display"], format!("row:{r0}"));
+        assert_eq!(g["write"], "comp");
+    }
+
+    #[test]
+    fn fixed_nodes_map_to_their_commands() {
+        assert_eq!(branch_cmd("display"), Some("nodes.display"));
+        assert_eq!(branch_cmd("write"), Some("nodes.write"));
+        assert_eq!(branch_cmd(&format!("row:{}", 1)), None);
+    }
+
+    /// A file with six rows (one from `file.new`, five from `layer.new`).
+    fn six_row_scene() -> VectorcraftApp {
+        let mut app = app();
+        let s = &mut app.session;
+        s.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        for _ in 0..5 {
+            s.execute("layer.new", &json!({})).unwrap();
+        }
+        app
+    }
+
+    /// One frame in a `width`-wide panel with Fit set as given: (diagram size, Write rect, scale).
+    fn layout_in_panel(app: &mut VectorcraftApp, width: f32, fit: bool) -> (egui::Vec2, Option<Rect>, f32) {
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        crate::theme::apply(&ctx, Default::default());
+        let input = egui::RawInput { screen_rect: Some(Rect::from_min_size(Pos2::ZERO, vec2(width, 400.0))), ..Default::default() };
+        let mut layout = None;
+        ctx.run_ui(input, |ui| {
+            if fit {
+                ui.data_mut(|d| d.insert_persisted(ui.id().with(FIT_KEY), true));
+            }
+            show(app, ui);
+            layout = ui.data_mut(|d| d.get_temp::<(egui::Vec2, Option<Rect>, f32)>(ui.id().with(LAYOUT_KEY)));
+        })
+        .textures_delta
+        .clear();
+        layout.expect("the panel stores its layout every frame")
+    }
+
+    #[test]
+    fn fit_scale_stays_between_half_and_full() {
+        assert_eq!(fit_scale(4000.0, 948.0), 1.0);
+        assert_eq!(fit_scale(200.0, 948.0), 0.5);
+        assert_eq!(fit_scale(300.0, 0.0), 1.0);
+        assert_eq!(fit_scale(f32::NAN, 948.0), 1.0);
+    }
+
+    #[test]
+    fn write_node_is_inside_the_scroll_content_in_a_narrow_panel() {
+        let mut app = six_row_scene();
+        let (size, write, scale) = layout_in_panel(&mut app, 200.0, false);
+        assert_eq!(scale, 1.0);
+        assert!(Rect::from_min_size(Pos2::ZERO, size).contains_rect(write.expect("write node laid out")));
+    }
+
+    #[test]
+    fn fit_scales_the_whole_graph_into_the_panel_width() {
+        let mut app = six_row_scene();
+        let (size, write, scale) = layout_in_panel(&mut app, 700.0, true);
+        assert!(scale > 0.5 && scale < 1.0, "scale {scale}");
+        let content = Rect::from_min_size(Pos2::ZERO, size * scale);
+        assert!(content.width() <= 700.0 + 0.5, "content width {}", content.width());
+        let w = write.expect("write node laid out");
+        let w = Rect::from_min_max((w.min.to_vec2() * scale).to_pos2(), (w.max.to_vec2() * scale).to_pos2());
+        assert!(content.contains_rect(w));
+    }
+
+    #[test]
+    fn fit_in_a_200px_panel_stops_at_the_half_scale_floor_and_the_write_node_is_still_reachable() {
+        let mut app = six_row_scene();
+        let (size, write, scale) = layout_in_panel(&mut app, 200.0, true);
+        assert_eq!(scale, 0.5);
+        let content = Rect::from_min_size(Pos2::ZERO, size * scale);
+        let w = write.expect("write node laid out");
+        let w = Rect::from_min_max((w.min.to_vec2() * scale).to_pos2(), (w.max.to_vec2() * scale).to_pos2());
+        assert!(content.contains_rect(w));
     }
 }
