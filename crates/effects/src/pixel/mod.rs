@@ -44,7 +44,7 @@ pub use sketch::{HALFTONE_TYPES, HalftonePattern};
 pub use texture::{GRAIN_TYPES, Grain, LIGHT_DIRECTIONS, Light, TEXTURES, TEXTURES_LOADED, Texture};
 
 /// The Photoshop-style effect ids (all raster effects, see [`crate::is_raster`]).
-pub const PIXEL_EFFECTS: [&str; 63] = [
+pub const PIXEL_EFFECTS: [&str; 68] = [
     "artistic.coloredPencil",
     "artistic.cutout",
     "artistic.dryBrush",
@@ -77,6 +77,11 @@ pub const PIXEL_EFFECTS: [&str; 63] = [
     "distort.glass",
     "distort.oceanRipple",
     "key.chroma",
+    "filter.bloom",
+    "blur.motion",
+    "generator.gradient",
+    "combine.tone",
+    "combine.highlight",
     "pixelate.colorHalftone",
     "pixelate.crystallize",
     "pixelate.mezzotint",
@@ -307,6 +312,16 @@ pub enum PixelFx {
     Transparency { amount: f64 },
     /// Key › Chroma Key: makes pixels near `color` in Cb/Cr transparent by `threshold` (0..100), fades them in over `softness`, pulls green spill down by `spill` (0..100).
     ChromaKey { color: [u8; 3], threshold: f64, softness: f64, spill: f64 },
+    /// Filter › Bloom: softens and blurs pixels brighter than `threshold` by `radius`, adding light back on top by `amount`.
+    Bloom { threshold: f64, radius: f64, amount: f64 },
+    /// Blur › Motion Blur: blurs along displacement vector `(dx, dy)` with `samples`.
+    MotionBlur { dx: f64, dy: f64, samples: usize },
+    /// Generator › Gradient: linear or radial gradient between `c0` and `c1`, inside row.
+    Gradient { grad_type: String, c0: [u8; 4], c1: [u8; 4], p0: (f64, f64), p1: (f64, f64) },
+    /// Combine › Tone: darkens with `color` at `opacity`.
+    Tone { color: [u8; 3], opacity: f64 },
+    /// Combine › Highlight: brightens with `color` at `opacity`.
+    Highlight { color: [u8; 3], opacity: f64 },
 }
 
 /// What a raster's colour channels hold, for the filters that treat them apart (Color Halftone
@@ -640,6 +655,41 @@ pub(crate) fn parse(id: &str, p: &Value) -> Option<PixelFx> {
                 spill: num(p, "spill", 50.0).clamp(0.0, 100.0),
             }
         }
+        "filter.bloom" => PixelFx::Bloom {
+            threshold: num(p, "threshold", 75.0).clamp(0.0, 100.0),
+            radius: num(p, "radius", 10.0).clamp(0.0, 250.0),
+            amount: num(p, "amount", 50.0).clamp(0.0, 100.0),
+        },
+        "blur.motion" => {
+            let dx_val = p.get("dx").and_then(Value::as_f64).unwrap_or(0.0);
+            let dy_val = num(p, "dy", 0.0);
+            let (dx, dy) = if dx_val.hypot(dy_val) > 1e-4 {
+                (dx_val, dy_val)
+            } else if let Some(r) = p.get("radius").and_then(Value::as_f64).filter(|r| *r > 0.0) {
+                (r, 0.0)
+            } else {
+                (0.0, 0.0)
+            };
+            PixelFx::MotionBlur { dx, dy, samples: num(p, "samples", 8.0).clamp(2.0, 32.0).round() as usize }
+        }
+        "generator.gradient" => {
+            let grad_type = text(p, "type", "linear").to_string();
+            let c0_rgb = hex_rgb(text(p, "color0", "#000000")).unwrap_or([0, 0, 0]);
+            let c1_rgb = hex_rgb(text(p, "color1", "#ffffff")).unwrap_or([255, 255, 255]);
+            let c0 = [c0_rgb[0], c0_rgb[1], c0_rgb[2], 255];
+            let c1 = [c1_rgb[0], c1_rgb[1], c1_rgb[2], 255];
+            let p0 = (num(p, "x0", 0.0).clamp(0.0, 1.0), num(p, "y0", 0.5).clamp(0.0, 1.0));
+            let p1 = (num(p, "x1", 1.0).clamp(0.0, 1.0), num(p, "y1", 0.5).clamp(0.0, 1.0));
+            PixelFx::Gradient { grad_type, c0, c1, p0, p1 }
+        }
+        "combine.tone" => {
+            let color = hex_rgb(text(p, "color", "#000000")).unwrap_or([0, 0, 0]);
+            PixelFx::Tone { color, opacity: num(p, "opacity", 50.0).clamp(0.0, 100.0) }
+        }
+        "combine.highlight" => {
+            let color = hex_rgb(text(p, "color", "#ffffff")).unwrap_or([255, 255, 255]);
+            PixelFx::Highlight { color, opacity: num(p, "opacity", 50.0).clamp(0.0, 100.0) }
+        }
         _ => return None,
     })
 }
@@ -656,7 +706,15 @@ impl PixelFx {
             PixelFx::RadialBlur { amount, zoom: true, .. } => far * (blur::zoom_extent(amount).exp() - 1.0),
             PixelFx::BoxBlur { radius } | PixelFx::DirectionalBlur { radius, .. } => radius,
             PixelFx::RadialZoomBlur { amount, .. } => far * (amount / 100.0 * 0.5),
-            PixelFx::Greyscale { .. } | PixelFx::ColourScale { .. } | PixelFx::Transparency { .. } | PixelFx::ChromaKey { .. } => 0.0,
+            PixelFx::Greyscale { .. }
+            | PixelFx::ColourScale { .. }
+            | PixelFx::Transparency { .. }
+            | PixelFx::ChromaKey { .. }
+            | PixelFx::Gradient { .. }
+            | PixelFx::Tone { .. }
+            | PixelFx::Highlight { .. } => 0.0,
+            PixelFx::Bloom { radius, .. } => radius,
+            PixelFx::MotionBlur { dx, dy, .. } => dx.hypot(dy),
             PixelFx::SmartBlur { radius, .. } => radius,
             PixelFx::AccentedEdges { .. } => 0.0,
             // Strokes reach out of the object as far as they reach into it.
@@ -788,7 +846,15 @@ impl PixelFx {
             PixelFx::NtscColors => Some(0.0),
             PixelFx::BoxBlur { radius } | PixelFx::DirectionalBlur { radius, .. } => Some(radius),
             PixelFx::RadialZoomBlur { .. } => None,
-            PixelFx::Greyscale { .. } | PixelFx::ColourScale { .. } | PixelFx::Transparency { .. } | PixelFx::ChromaKey { .. } => Some(0.0),
+            PixelFx::Greyscale { .. }
+            | PixelFx::ColourScale { .. }
+            | PixelFx::Transparency { .. }
+            | PixelFx::ChromaKey { .. }
+            | PixelFx::Gradient { .. }
+            | PixelFx::Tone { .. }
+            | PixelFx::Highlight { .. } => Some(0.0),
+            PixelFx::Bloom { radius, .. } => Some(radius),
+            PixelFx::MotionBlur { dx, dy, .. } => Some(dx.hypot(dy)),
         }
     }
 
@@ -880,6 +946,11 @@ impl PixelFx {
             PixelFx::ColourScale { r, g, b, a } => crate::rowops::colour_scale(px, r, g, b, a),
             PixelFx::Transparency { amount } => crate::rowops::transparency(px, amount),
             PixelFx::ChromaKey { color, threshold, softness, spill } => crate::rowops::chroma_key(px, w, h, color, threshold, softness, spill),
+            PixelFx::Bloom { threshold, radius, amount } => crate::rowops::bloom(px, w, h, threshold, to_px(radius), amount),
+            PixelFx::MotionBlur { dx, dy, samples } => crate::rowops::motion_blur(px, w, h, to_px(dx), to_px(dy), samples),
+            PixelFx::Gradient { ref grad_type, c0, c1, p0, p1 } => crate::rowops::gradient(px, w, h, grad_type, c0, c1, p0, p1),
+            PixelFx::Tone { color, opacity } => crate::rowops::tone(px, color, opacity),
+            PixelFx::Highlight { color, opacity } => crate::rowops::highlight(px, color, opacity),
         }
     }
 }

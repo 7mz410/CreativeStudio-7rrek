@@ -270,6 +270,218 @@ pub fn chroma_key(px: &mut [[u8; 4]], w: usize, h: usize, color: [u8; 3], thresh
     }
 }
 
+/// Bloom: softens and blurs pixels brighter than `threshold` (0..100) by `radius` (0..250),
+/// adding the blurred light back on top by `amount` (0..100).
+pub fn bloom(px: &mut [[u8; 4]], w: usize, h: usize, threshold: f64, radius: f64, amount: f64) {
+    if w == 0 || h == 0 || px.len() < w * h {
+        return;
+    }
+    let amt = (amount / 100.0).clamp(0.0, 1.0) as f32;
+    let r = radius.clamp(0.0, MAX_RADIUS);
+    if amt <= 0.0 || r <= 0.0 {
+        return;
+    }
+
+    let thresh_luma = (threshold / 100.0).clamp(0.0, 1.0) as f32 * 255.0;
+    let mut bright = vec![[0u8; 4]; w * h];
+
+    for (i, p) in px.iter().take(w * h).enumerate() {
+        let a = p[3] as f32;
+        if a <= 0.0 {
+            continue;
+        }
+        let un_a = 255.0 / a;
+        let ur = (p[0] as f32 * un_a).min(255.0);
+        let ug = (p[1] as f32 * un_a).min(255.0);
+        let ub = (p[2] as f32 * un_a).min(255.0);
+        let luma = 0.2126 * ur + 0.7152 * ug + 0.0722 * ub;
+
+        if luma > thresh_luma {
+            let k = (luma - thresh_luma) / (255.0 - thresh_luma).max(1.0);
+            if let Some(out) = bright.get_mut(i) {
+                out[0] = (p[0] as f32 * k).round().clamp(0.0, 255.0) as u8;
+                out[1] = (p[1] as f32 * k).round().clamp(0.0, 255.0) as u8;
+                out[2] = (p[2] as f32 * k).round().clamp(0.0, 255.0) as u8;
+                out[3] = (a * k).round().clamp(0.0, 255.0) as u8;
+            }
+        }
+    }
+
+    box_blur(&mut bright, w, h, r);
+
+    for (i, p) in px.iter_mut().take(w * h).enumerate() {
+        if let Some(b) = bright.get(i)
+            && b[3] > 0
+        {
+            p[0] = (p[0] as f32 + b[0] as f32 * amt).round().clamp(0.0, 255.0) as u8;
+            p[1] = (p[1] as f32 + b[1] as f32 * amt).round().clamp(0.0, 255.0) as u8;
+            p[2] = (p[2] as f32 + b[2] as f32 * amt).round().clamp(0.0, 255.0) as u8;
+            p[3] = (p[3] as f32 + b[3] as f32 * amt).round().clamp(0.0, 255.0) as u8;
+        }
+    }
+}
+
+/// Motion blur: blurs along displacement vector `(dx, dy)` with `samples` (2..32).
+pub fn motion_blur(px: &mut [[u8; 4]], w: usize, h: usize, dx: f64, dy: f64, samples: usize) {
+    if w == 0 || h == 0 || px.len() < w * h {
+        return;
+    }
+    let dist = dx.hypot(dy);
+    if dist <= 1e-4 {
+        return;
+    }
+    let samples = samples.clamp(2, 32);
+    let original = px.to_vec();
+
+    for y in 0..h {
+        for x in 0..w {
+            let mut sum_r = 0.0f32;
+            let mut sum_g = 0.0f32;
+            let mut sum_b = 0.0f32;
+            let mut sum_a = 0.0f32;
+
+            for s in 0..samples {
+                let frac = (s as f64 / (samples - 1) as f64) - 0.5;
+                let sx = (x as f64 + frac * dx).round() as isize;
+                let sy = (y as f64 + frac * dy).round() as isize;
+
+                let sample_px = if sx >= 0 && sx < w as isize && sy >= 0 && sy < h as isize {
+                    original.get((sy as usize) * w + (sx as usize)).copied().unwrap_or([0, 0, 0, 0])
+                } else {
+                    [0, 0, 0, 0]
+                };
+
+                sum_r += sample_px[0] as f32;
+                sum_g += sample_px[1] as f32;
+                sum_b += sample_px[2] as f32;
+                sum_a += sample_px[3] as f32;
+            }
+
+            if let Some(out) = px.get_mut(y * w + x) {
+                out[0] = (sum_r / samples as f32).round().clamp(0.0, 255.0) as u8;
+                out[1] = (sum_g / samples as f32).round().clamp(0.0, 255.0) as u8;
+                out[2] = (sum_b / samples as f32).round().clamp(0.0, 255.0) as u8;
+                out[3] = (sum_a / samples as f32).round().clamp(0.0, 255.0) as u8;
+            }
+        }
+    }
+}
+
+/// Darkens the pixels with `color` at `opacity` (0..100).
+pub fn tone(px: &mut [[u8; 4]], color: [u8; 3], opacity: f64) {
+    if px.is_empty() {
+        return;
+    }
+    let op = (opacity / 100.0).clamp(0.0, 1.0);
+    if op <= 0.0 {
+        return;
+    }
+
+    for p in px.iter_mut() {
+        let a = p[3] as f64;
+        if a <= 0.0 {
+            continue;
+        }
+        let un_a = 255.0 / a;
+        let ur = (p[0] as f64 * un_a).min(255.0);
+        let ug = (p[1] as f64 * un_a).min(255.0);
+        let ub = (p[2] as f64 * un_a).min(255.0);
+
+        let tr = ur * (color[0] as f64 / 255.0);
+        let tg = ug * (color[1] as f64 / 255.0);
+        let tb = ub * (color[2] as f64 / 255.0);
+
+        let new_r = ur + (tr - ur) * op;
+        let new_g = ug + (tg - ug) * op;
+        let new_b = ub + (tb - ub) * op;
+
+        p[0] = (new_r * a / 255.0).round().clamp(0.0, 255.0) as u8;
+        p[1] = (new_g * a / 255.0).round().clamp(0.0, 255.0) as u8;
+        p[2] = (new_b * a / 255.0).round().clamp(0.0, 255.0) as u8;
+    }
+}
+
+/// Brightens the pixels with `color` at `opacity` (0..100).
+pub fn highlight(px: &mut [[u8; 4]], color: [u8; 3], opacity: f64) {
+    if px.is_empty() {
+        return;
+    }
+    let op = (opacity / 100.0).clamp(0.0, 1.0);
+    if op <= 0.0 {
+        return;
+    }
+
+    for p in px.iter_mut() {
+        let a = p[3] as f64;
+        if a <= 0.0 {
+            continue;
+        }
+        let un_a = 255.0 / a;
+        let ur = (p[0] as f64 * un_a).min(255.0);
+        let ug = (p[1] as f64 * un_a).min(255.0);
+        let ub = (p[2] as f64 * un_a).min(255.0);
+
+        let tr = 255.0 - (255.0 - ur) * (255.0 - color[0] as f64) / 255.0;
+        let tg = 255.0 - (255.0 - ug) * (255.0 - color[1] as f64) / 255.0;
+        let tb = 255.0 - (255.0 - ub) * (255.0 - color[2] as f64) / 255.0;
+
+        let new_r = ur + (tr - ur) * op;
+        let new_g = ug + (tg - ug) * op;
+        let new_b = ub + (tb - ub) * op;
+
+        p[0] = (new_r * a / 255.0).round().clamp(0.0, 255.0) as u8;
+        p[1] = (new_g * a / 255.0).round().clamp(0.0, 255.0) as u8;
+        p[2] = (new_b * a / 255.0).round().clamp(0.0, 255.0) as u8;
+    }
+}
+
+/// Fills with linear or radial gradient between `c0` and `c1`.
+#[allow(clippy::too_many_arguments)]
+pub fn gradient(px: &mut [[u8; 4]], w: usize, h: usize, grad_type: &str, c0: [u8; 4], c1: [u8; 4], p0: (f64, f64), p1: (f64, f64)) {
+    if w == 0 || h == 0 || px.len() < w * h {
+        return;
+    }
+    let is_radial = grad_type.eq_ignore_ascii_case("radial");
+
+    let dx = p1.0 - p0.0;
+    let dy = p1.1 - p0.1;
+    let len2 = dx * dx + dy * dy;
+
+    for y in 0..h {
+        for x in 0..w {
+            let idx = y * w + x;
+            let Some(p) = px.get_mut(idx) else { continue };
+            let alpha = p[3] as f64 / 255.0;
+            if alpha <= 0.0 {
+                continue;
+            }
+
+            let nx = x as f64 / w.saturating_sub(1).max(1) as f64;
+            let ny = y as f64 / h.saturating_sub(1).max(1) as f64;
+
+            let t = if is_radial {
+                let r = len2.sqrt().max(1e-6);
+                let d = (nx - p0.0).hypot(ny - p0.1);
+                (d / r).clamp(0.0, 1.0)
+            } else if len2 <= 1e-6 {
+                0.0
+            } else {
+                (((nx - p0.0) * dx + (ny - p0.1) * dy) / len2).clamp(0.0, 1.0)
+            };
+
+            let r = c0[0] as f64 + (c1[0] as f64 - c0[0] as f64) * t;
+            let g = c0[1] as f64 + (c1[1] as f64 - c0[1] as f64) * t;
+            let b = c0[2] as f64 + (c1[2] as f64 - c0[2] as f64) * t;
+            let target_a = (c0[3] as f64 + (c1[3] as f64 - c0[3] as f64) * t) * alpha;
+
+            p[0] = (r * target_a / 255.0).round().clamp(0.0, 255.0) as u8;
+            p[1] = (g * target_a / 255.0).round().clamp(0.0, 255.0) as u8;
+            p[2] = (b * target_a / 255.0).round().clamp(0.0, 255.0) as u8;
+            p[3] = target_a.round().clamp(0.0, 255.0) as u8;
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -390,5 +602,66 @@ mod tests {
         let mut px = vec![[200, 100, 50, 200]];
         transparency(&mut px, 50.0);
         assert_eq!(px[0], [100, 50, 25, 100]);
+    }
+
+    #[test]
+    fn bloom_brightens_around_white_dot_and_keeps_distant_grey_unchanged() {
+        let w = 21;
+        let h = 21;
+        let mut px = vec![[60, 60, 60, 255]; w * h];
+        px[10 * w + 10] = [255, 255, 255, 255];
+
+        bloom(&mut px, w, h, 50.0, 4.0, 80.0);
+
+        // Distant corner must be completely untouched
+        assert_eq!(px[0], [60, 60, 60, 255], "distant grey must not change");
+        // Adjacent pixel should have brightened from light spread
+        assert!(px[10 * w + 11][0] > 60, "adjacent pixel should brighten from bloom spread");
+    }
+
+    #[test]
+    fn motion_blur_horizontal_streak() {
+        let w = 21;
+        let h = 21;
+        let mut px = vec![[0, 0, 0, 0]; w * h];
+        px[10 * w + 10] = [255, 255, 255, 255];
+
+        motion_blur(&mut px, w, h, 10.0, 0.0, 8);
+
+        // Vertical spread must be 0
+        for y in 0..h {
+            if y != 10 {
+                for x in 0..w {
+                    assert_eq!(px[y * w + x][3], 0, "no vertical energy spread for horizontal motion blur");
+                }
+            }
+        }
+        // Horizontal spread must exist
+        let nonzeros = (0..w).filter(|&x| px[10 * w + x][3] > 0).count();
+        assert!(nonzeros > 1, "horizontal streak must exist");
+    }
+
+    #[test]
+    fn gradient_linear_midpoint() {
+        let w = 101;
+        let h = 1;
+        let mut px = vec![[255, 255, 255, 255]; w * h];
+        gradient(&mut px, w, h, "linear", [0, 0, 0, 255], [255, 255, 255, 255], (0.0, 0.5), (1.0, 0.5));
+        let mid = px[50][0] as i32;
+        assert!((120..=135).contains(&mid), "midpoint pixel should be between 120 and 135, got {mid}");
+    }
+
+    #[test]
+    fn tone_darkens_pixels_by_opacity() {
+        let mut px = vec![[200, 200, 200, 255]];
+        tone(&mut px, [0, 0, 0], 50.0);
+        assert_eq!(px[0], [100, 100, 100, 255]);
+    }
+
+    #[test]
+    fn highlight_brightens_pixels_by_opacity() {
+        let mut px = vec![[100, 100, 100, 255]];
+        highlight(&mut px, [255, 255, 255], 50.0);
+        assert!(px[0][0] > 100);
     }
 }

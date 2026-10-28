@@ -6,8 +6,13 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
-use vectorcraft_doc::{Document, Effect, NodeId};
+use vectorcraft_color::{Color, Paint};
+use vectorcraft_doc::recolor::{ColorVisitor, Reach, recolor_node};
+use vectorcraft_doc::{Document, Effect, ImageBlob, Node, NodeId, OpacityMask};
+use vectorcraft_geom::{Affine, Point};
 
+use super::anim::Anim;
+use super::peg::Pegs;
 use super::selector::Part;
 
 pub const KEY: &str = "rowFx";
@@ -42,6 +47,12 @@ pub enum FxKind {
     RadialZoomBlur,
     // C4 Mattes:
     ChromaKey,
+    // C5 Light & Shadow:
+    Tone,
+    Highlight,
+    Gradient,
+    Bloom,
+    MotionBlur,
 }
 
 impl FxKind {
@@ -66,6 +77,11 @@ impl FxKind {
             "radial" => Some(Self::RadialBlur),
             "radialZoom" => Some(Self::RadialZoomBlur),
             "chromaKey" => Some(Self::ChromaKey),
+            "tone" => Some(Self::Tone),
+            "highlight" => Some(Self::Highlight),
+            "gradient" => Some(Self::Gradient),
+            "bloom" => Some(Self::Bloom),
+            "motionBlur" | "motion" => Some(Self::MotionBlur),
             _ => None,
         }
     }
@@ -91,6 +107,11 @@ impl FxKind {
             Self::RadialBlur => "radial",
             Self::RadialZoomBlur => "radialZoom",
             Self::ChromaKey => "chromaKey",
+            Self::Tone => "tone",
+            Self::Highlight => "highlight",
+            Self::Gradient => "gradient",
+            Self::Bloom => "bloom",
+            Self::MotionBlur => "motionBlur",
         }
     }
 
@@ -115,6 +136,11 @@ impl FxKind {
             Self::RadialBlur => json!({"radius": 5.0}),
             Self::RadialZoomBlur => json!({"amount": 10.0, "cx": 0.5, "cy": 0.5}),
             Self::ChromaKey => json!({"color": "#00ff00", "threshold": 20.0, "softness": 10.0, "spill": 50.0}),
+            Self::Tone => json!({"color": "#000000", "opacity": 50.0, "blur": 0.0}),
+            Self::Highlight => json!({"color": "#ffffff", "opacity": 50.0, "blur": 0.0}),
+            Self::Gradient => json!({"type": "linear", "color0": "#000000", "color1": "#ffffff", "x0": 0.0, "y0": 0.5, "x1": 1.0, "y1": 0.5}),
+            Self::Bloom => json!({"threshold": 75.0, "radius": 10.0, "amount": 50.0}),
+            Self::MotionBlur => json!({"amount": 50.0, "samples": 8}),
         }
     }
 
@@ -139,6 +165,11 @@ impl FxKind {
             Self::RadialBlur => "blur.radial",
             Self::RadialZoomBlur => "blur.radialZoom",
             Self::ChromaKey => "key.chroma",
+            Self::Tone => "combine.tone",
+            Self::Highlight => "combine.highlight",
+            Self::Gradient => "generator.gradient",
+            Self::Bloom => "filter.bloom",
+            Self::MotionBlur => "blur.motion",
         }
     }
 }
@@ -242,6 +273,9 @@ pub struct RowEffect {
     /// Which part of each drawing the effect takes (drawing selector; default all of the row).
     #[serde(default, skip_serializing_if = "is_all")]
     pub part: Part,
+    /// Which layer acts as a matte for this effect.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub matte: Option<u64>,
 }
 
 fn is_all(p: &Part) -> bool {
@@ -250,7 +284,7 @@ fn is_all(p: &Part) -> bool {
 
 impl RowEffect {
     pub fn new(kind: FxKind) -> Self {
-        Self { kind, keys: BTreeMap::new(), part: Part::All }
+        Self { kind, keys: BTreeMap::new(), part: Part::All, matte: None }
     }
 
     /// Evaluates parameters at `frame`: straight interpolation between keys, held before and after.
@@ -352,6 +386,52 @@ impl RowEffect {
                     }
                 }
             }
+            FxKind::Tone => {
+                if let Some(o) = params.as_object_mut() {
+                    let op = o.get("opacity").and_then(Value::as_f64).unwrap_or(50.0).clamp(0.0, 100.0);
+                    let blur = o.get("blur").and_then(Value::as_f64).unwrap_or(0.0).clamp(0.0, 250.0);
+                    o.insert("opacity".into(), json!(op));
+                    o.insert("blur".into(), json!(blur));
+                }
+            }
+            FxKind::Highlight => {
+                if let Some(o) = params.as_object_mut() {
+                    let op = o.get("opacity").and_then(Value::as_f64).unwrap_or(50.0).clamp(0.0, 100.0);
+                    let blur = o.get("blur").and_then(Value::as_f64).unwrap_or(0.0).clamp(0.0, 250.0);
+                    o.insert("opacity".into(), json!(op));
+                    o.insert("blur".into(), json!(blur));
+                }
+            }
+            FxKind::Gradient => {
+                if let Some(o) = params.as_object_mut() {
+                    let x0 = o.get("x0").and_then(Value::as_f64).unwrap_or(0.0).clamp(0.0, 1.0);
+                    let y0 = o.get("y0").and_then(Value::as_f64).unwrap_or(0.5).clamp(0.0, 1.0);
+                    let x1 = o.get("x1").and_then(Value::as_f64).unwrap_or(1.0).clamp(0.0, 1.0);
+                    let y1 = o.get("y1").and_then(Value::as_f64).unwrap_or(0.5).clamp(0.0, 1.0);
+                    o.insert("x0".into(), json!(x0));
+                    o.insert("y0".into(), json!(y0));
+                    o.insert("x1".into(), json!(x1));
+                    o.insert("y1".into(), json!(y1));
+                }
+            }
+            FxKind::Bloom => {
+                if let Some(o) = params.as_object_mut() {
+                    let thresh = o.get("threshold").and_then(Value::as_f64).unwrap_or(75.0).clamp(0.0, 100.0);
+                    let rad = o.get("radius").and_then(Value::as_f64).unwrap_or(10.0).clamp(0.0, 250.0);
+                    let amt = o.get("amount").and_then(Value::as_f64).unwrap_or(50.0).clamp(0.0, 100.0);
+                    o.insert("threshold".into(), json!(thresh));
+                    o.insert("radius".into(), json!(rad));
+                    o.insert("amount".into(), json!(amt));
+                }
+            }
+            FxKind::MotionBlur => {
+                if let Some(o) = params.as_object_mut() {
+                    let amt = o.get("amount").and_then(Value::as_f64).unwrap_or(50.0).clamp(0.0, 100.0);
+                    let samples = o.get("samples").and_then(Value::as_u64).unwrap_or(8).clamp(2, 32);
+                    o.insert("amount".into(), json!(amt));
+                    o.insert("samples".into(), json!(samples));
+                }
+            }
         }
         let is_zero = match self.kind {
             FxKind::Blur | FxKind::BoxBlur | FxKind::DirectionalBlur => params.get("radius").and_then(Value::as_f64).is_some_and(|r| r <= 0.0),
@@ -394,11 +474,19 @@ impl RowEffect {
                 params.get("threshold").and_then(Value::as_f64).is_some_and(|t| t <= 0.0)
                     && params.get("softness").and_then(Value::as_f64).is_some_and(|s| s <= 0.0)
             }
+            FxKind::Tone | FxKind::Highlight => params.get("opacity").and_then(Value::as_f64).is_some_and(|o| o <= 0.0),
+            FxKind::Bloom => {
+                params.get("amount").and_then(Value::as_f64).is_some_and(|a| a <= 0.0)
+                    || params.get("radius").and_then(Value::as_f64).is_some_and(|r| r <= 0.0)
+            }
+            FxKind::MotionBlur => params.get("amount").and_then(Value::as_f64).is_some_and(|a| a <= 0.0),
+            FxKind::Gradient => false,
         };
         if let Some(o) = params.as_object_mut() {
             o.insert(MARK.into(), json!(true));
         }
-        Effect { id: self.kind.live_effect_id().to_string(), params, visible: !is_zero }
+        let live_id = self.kind.live_effect_id().to_string();
+        Effect { id: live_id, params, visible: !is_zero }
     }
 }
 
@@ -431,19 +519,177 @@ impl RowFxList {
     }
 }
 
+/// The per-frame movement vector (dx, dy) of `row_id` at `frame`, computed from peg transforms,
+/// camera translation, and row keyframe drawings.
+pub(crate) fn row_movement(d: &Document, row_id: u64, frame: u32) -> (f64, f64) {
+    let anim = Anim::of(d);
+    let pegs = Pegs::of(d);
+
+    let (f0, f1) = if frame <= 1 {
+        (1, 2)
+    } else if frame >= anim.frames && anim.frames > 1 {
+        (anim.frames - 1, anim.frames)
+    } else {
+        (frame - 1, frame + 1)
+    };
+    let dt = (f1 - f0) as f64;
+    if dt <= 0.0 {
+        return (0.0, 0.0);
+    }
+
+    // 1. Peg transformation difference
+    let p0 = pegs.row_matrix(row_id, f0).unwrap_or(Affine::IDENTITY);
+    let p1 = pegs.row_matrix(row_id, f1).unwrap_or(Affine::IDENTITY);
+    let pt0 = p0 * Point::ORIGIN;
+    let pt1 = p1 * Point::ORIGIN;
+    let mut dx = pt1.x - pt0.x;
+    let mut dy = pt1.y - pt0.y;
+
+    // 2. Camera movement difference
+    let cam0 = anim.camera_at(f0);
+    let cam1 = anim.camera_at(f1);
+    if let (Some(c0), Some(c1)) = (cam0, cam1) {
+        dx -= (c1.x - c0.x) * c1.zoom;
+        dy -= (c1.y - c0.y) * c1.zoom;
+    }
+
+    // 3. Row drawing / keyframe difference
+    if let Some(row_node) = d.node(NodeId(row_id)) {
+        let keys = anim.row_frames(row_node);
+        let id0 = keys.iter().rfind(|(f, _)| *f <= f0).map(|(_, id)| *id);
+        let id1 = keys.iter().rfind(|(f, _)| *f <= f1).map(|(_, id)| *id);
+        if let (Some(k0), Some(k1)) = (id0, id1)
+            && k0 != k1
+            && let (Some(b0), Some(b1)) = (d.bounds_of(&[k0], false), d.bounds_of(&[k1], false))
+        {
+            dx += b1.center().x - b0.center().x;
+            dy += b1.center().y - b0.center().y;
+        }
+    }
+
+    (dx / dt, dy / dt)
+}
+
+/// Turns every colour one colour: a matte cuts by its shape, not its colours. An image keeps its
+/// alpha and takes the colour on every pixel; the copies it makes are kept in `new`.
+struct Flat<'a> {
+    color: Color,
+    doc: &'a Document,
+    new: Vec<(String, ImageBlob)>,
+}
+
+impl ColorVisitor for Flat<'_> {
+    fn paint(&mut self, p: &mut Paint) -> bool {
+        let c = self.color;
+        vectorcraft_doc::recolor::map_paint(p, &|_| c)
+    }
+    fn color(&mut self, _: Color) -> Color {
+        self.color
+    }
+    fn image(&mut self, key: &str) -> Option<String> {
+        let [r, g, b, _] = self.color.to_rgba8(1.0);
+        let blob = self.doc.images.get(key)?.map_rgb(|_| [r, g, b])?;
+        let k = blob.content_key();
+        self.new.push((k.clone(), blob));
+        Some(k)
+    }
+}
+
+/// The visible art of matte row `id` as one group, every colour `paint` if given (else its own);
+/// image copies it makes go in `new`.
+fn matte_art(d: &Document, id: NodeId, paint: Option<Color>, new: &mut Vec<(String, ImageBlob)>) -> Option<Node> {
+    let m = d.layers.iter().find(|l| l.id == id)?;
+    let mut art = Node::group(NodeId(0), m.children().into_iter().flatten().filter(|c| c.visible).cloned().collect());
+    art.opacity = m.opacity;
+    if let Some(color) = paint {
+        let mut flat = Flat { color, doc: d, new: Vec::new() };
+        recolor_node(&mut art, Reach::ALL, &mut flat);
+        new.extend(flat.new);
+    }
+    Some(art)
+}
+
 /// Applies every row's effects for `frame` onto the document layers.
 /// Returns a map of `node id -> count of effects added` (the row, or the parts a selector picks) so `unposed` can revert them.
-pub(crate) fn apply(d: &mut Document, frame: u32) -> BTreeMap<u64, usize> {
+/// A matte row it hides goes in `mattes` and a copy it adds in `ghosts`: `unposed` undoes both.
+pub(crate) fn apply(d: &mut Document, frame: u32, ghosts: &mut Vec<u64>, mattes: &mut Vec<u64>) -> BTreeMap<u64, usize> {
     let all = RowFxList::of(d);
     let mut applied = BTreeMap::new();
     for r in all.rows {
         let row_id = NodeId(r.row);
+        // The row's art before any effect: each matte copy starts from it, not from an earlier copy.
+        let base = d.node(row_id).cloned();
         for fx in &r.effects {
-            let live = fx.to_live_effect(frame);
-            for id in super::selector::targets(d, row_id, fx.part) {
-                if let Some(n) = d.node_mut(id) {
-                    n.appearance.effects.push(live.clone());
-                    *applied.entry(id.0).or_insert(0) += 1;
+            let mut live = fx.to_live_effect(frame);
+            if fx.kind == FxKind::MotionBlur {
+                let has_dx = live.params.get("dx").is_some();
+                let has_dy = live.params.get("dy").is_some();
+                if !has_dx && !has_dy {
+                    let (vx, vy) = row_movement(d, r.row, frame);
+                    let amt = live.params.get("amount").and_then(Value::as_f64).unwrap_or(50.0) / 100.0;
+                    let dx = vx * amt;
+                    let dy = vy * amt;
+                    if dx.hypot(dy) <= 1e-4 {
+                        live.visible = false;
+                    }
+                    if let Some(o) = live.params.as_object_mut() {
+                        o.insert("dx".into(), json!(dx));
+                        o.insert("dy".into(), json!(dy));
+                    }
+                }
+            }
+
+            if let Some(m_id) = fx.matte {
+                if m_id == r.row || !d.layers.iter().any(|l| l.id.0 == m_id) {
+                    continue;
+                }
+                if let Some(m) = d.node_mut(NodeId(m_id))
+                    && m.visible
+                {
+                    m.visible = false;
+                    mattes.push(m_id);
+                }
+
+                let blur = if fx.kind == FxKind::Tone || fx.kind == FxKind::Highlight {
+                    live.params.get("blur").and_then(Value::as_f64).unwrap_or(0.0).clamp(0.0, 250.0)
+                } else {
+                    0.0
+                };
+                let mut new_images = Vec::new();
+                let Some(mut art) = matte_art(d, NodeId(m_id), Some(Color::WHITE), &mut new_images) else { continue };
+                d.images.extend(new_images);
+                if blur > 0.0 {
+                    art.appearance.effects.push(Effect { id: "blur.gaussian".to_string(), params: json!({"radius": blur}), visible: true });
+                }
+                let mask = OpacityMask::new(art, true);
+
+                if let Some(row_node) = base.as_ref() {
+                    let mut copy = d.reid(row_node);
+                    copy.locked = true;
+                    copy.isolate = true;
+                    copy.extras_mut().mask = Some(Box::new(mask));
+
+                    // Inside the row, on top of its art: the copy isn't a row of its own (timeline, layers, node view).
+                    let top = d.node(row_id).and_then(|n| n.children()).map_or(0, |c| c.len());
+                    {
+                        if let Ok(copy_id) = d.insert(Some(row_id), top, copy) {
+                            ghosts.push(copy_id.0);
+
+                            for id in super::selector::targets(d, copy_id, fx.part) {
+                                if let Some(n) = d.node_mut(id) {
+                                    n.appearance.effects.push(live.clone());
+                                    *applied.entry(id.0).or_insert(0) += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                for id in super::selector::targets(d, row_id, fx.part) {
+                    if let Some(n) = d.node_mut(id) {
+                        n.appearance.effects.push(live.clone());
+                        *applied.entry(id.0).or_insert(0) += 1;
+                    }
                 }
             }
         }
