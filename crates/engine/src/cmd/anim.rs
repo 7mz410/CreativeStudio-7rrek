@@ -1096,6 +1096,63 @@ mod tests {
         assert!(!Arc::ptr_eq(&row(&x, locked), &row(&y, locked)));
     }
 
+    /// Cache lock timing: a locked heavy row (blur 60 on a 400×400 shape) is not blurred again
+    /// when an unrelated row moves, so the render is at least twice as fast as unlocked.
+    #[test]
+    #[ignore = "timing: run on an idle machine (`cargo test --release -- --ignored cache_lock`)"]
+    fn cache_lock_skips_the_heavy_row_when_another_row_changes() {
+        use std::time::{Duration, Instant};
+        fn median(mut v: Vec<Duration>) -> Duration {
+            v.sort();
+            v[1]
+        }
+        let area = Rect::new(0.0, 0.0, 400.0, 400.0);
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 400, "height": 400})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 400, "height": 400})).unwrap();
+        s.execute("fx.add", &json!({"kind": "blur"})).unwrap();
+        s.execute("fx.key", &json!({"index": 0, "frame": 1, "params": {"radius": 60.0}})).unwrap();
+        let heavy = s.doc().unwrap().doc.layers[0].id.0;
+        let other = s.execute("layer.new", &json!({})).unwrap()["id"].as_u64().unwrap();
+        s.execute("layer.setCurrent", &json!({"id": other})).unwrap();
+        let small = s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 20, "height": 20})).unwrap()["id"].as_u64().unwrap();
+
+        let mut r = vectorcraft_render::Renderer::new();
+        let render = |s: &Session, r: &mut vectorcraft_render::Renderer| -> Duration {
+            let d = at_frame(&s.doc().unwrap().doc, 1);
+            let t = Instant::now();
+            std::hint::black_box(r.render_region(&d, area, 1.0, true));
+            t.elapsed()
+        };
+        let nudge = |s: &mut Session| {
+            s.execute("object.move", &json!({"ids": [small], "dx": 1, "dy": 0})).unwrap();
+        };
+
+        render(&s, &mut r);
+        let unlocked = median(
+            (0..3)
+                .map(|_| {
+                    nudge(&mut s);
+                    render(&s, &mut r)
+                })
+                .collect(),
+        );
+
+        s.execute("nodes.lock", &json!({"node": format!("row:{heavy}")})).unwrap();
+        render(&s, &mut r);
+        let locked = median(
+            (0..3)
+                .map(|_| {
+                    nudge(&mut s);
+                    render(&s, &mut r)
+                })
+                .collect(),
+        );
+
+        eprintln!("cache lock: unlocked {unlocked:?}, locked {locked:?}");
+        assert!(locked < unlocked / 2, "locked {locked:?} is not under half of unlocked {unlocked:?}");
+    }
+
     fn session() -> Session {
         let mut s = Session::new();
         s.execute("file.new", &json!({})).unwrap();
