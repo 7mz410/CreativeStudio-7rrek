@@ -34,7 +34,11 @@ fn playback_id() -> egui::Id {
 pub fn height(app: &VectorcraftApp) -> f32 {
     let layers = app.session.active().map_or(1, |st| st.doc.layers.len().max(1));
     // The camera, sound and bones rows under the layers count too.
-    let rows = layers + crate::timeline_av::rows(app) + crate::timeline_rig::rows(app) + crate::timeline_peg::rows(app);
+    let rows = layers
+        + crate::timeline_av::rows(app)
+        + crate::timeline_rig::rows(app)
+        + crate::timeline_peg::rows(app)
+        + crate::panels::timeline_timing::rows(app);
     BAR_H + RULER_H + rows.clamp(1, MAX_ROWS_SHOWN) as f32 * ROW_H + 6.0
 }
 
@@ -404,7 +408,8 @@ fn run_reporting(app: &mut VectorcraftApp, id: &str) {
 
 fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], current: u32, frames: u32) {
     let width = NAME_W + frames as f32 * CELL_W + 8.0;
-    let extra = crate::timeline_av::rows(app) + crate::timeline_rig::rows(app) + crate::timeline_peg::rows(app);
+    let extra =
+        crate::timeline_av::rows(app) + crate::timeline_rig::rows(app) + crate::timeline_peg::rows(app) + crate::panels::timeline_timing::rows(app);
     let height = RULER_H + (rows.len().max(1) + extra) as f32 * ROW_H;
     let (area, resp) = ui.allocate_exact_size(vec2(width, height), Sense::click_and_drag());
     let p = ui.painter_at(area);
@@ -462,6 +467,9 @@ fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], curre
     // The pegs' rows, under the bones.
     let top = top + crate::timeline_rig::rows(app) as f32 * ROW_H;
     crate::timeline_peg::paint(app, &p, t, crate::timeline_av::Geom { top, ..g });
+    // The timing chart of the current row's keys, under the pegs.
+    let top = top + crate::timeline_peg::rows(app) as f32 * ROW_H;
+    crate::panels::timeline_timing::paint(app, &p, t, crate::timeline_av::Geom { top, ..g });
 
     // The playhead.
     let x = mx(col(current) + CELL_W / 2.0);

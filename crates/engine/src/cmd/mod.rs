@@ -65,6 +65,7 @@ pub(crate) mod maskedit;
 pub(crate) mod menucmds;
 pub mod mesh;
 pub mod mesh_cmd;
+pub mod motion_path;
 pub(crate) mod newart;
 pub mod newdoc;
 pub mod node_groups;
@@ -353,6 +354,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(node_groups::specs());
         v.extend(action_tpl::specs());
         v.extend(texture::specs());
+        v.extend(motion_path::specs());
         v.extend(art_layers::specs());
         v.extend(halftone::specs());
         v.extend(perspgrid::specs());

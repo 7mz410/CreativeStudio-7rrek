@@ -315,7 +315,8 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
             ghosts.push(g.0);
         }
     }
-    let posed = pose(&mut d, frame, &mut ghosts);
+    let mut posed = pose(&mut d, frame, &mut ghosts);
+    super::motion_path::apply(&mut d, frame, &mut ghosts, &mut posed); // 7rrek: motion paths carry rows along paths
     let (cut, mut mattes) = super::cutter::apply(&mut d);
     // Effects with a matte hide their matte row (into `mattes`) and may add locked copies (into `ghosts`).
     let row_fx = super::row_fx::apply(&mut d, frame, &mut ghosts, &mut mattes);
