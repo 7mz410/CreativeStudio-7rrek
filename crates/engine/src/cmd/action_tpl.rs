@@ -85,10 +85,89 @@ pub struct Tracks {
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+pub struct PartKey {
+    #[serde(default, alias = "rotation", alias = "angle", skip_serializing_if = "Option::is_none")]
+    pub rot: Option<f64>,
+    #[serde(default, alias = "x", skip_serializing_if = "Option::is_none")]
+    pub dx: Option<f64>,
+    #[serde(default, alias = "y", skip_serializing_if = "Option::is_none")]
+    pub dy: Option<f64>,
+    #[serde(default, alias = "exposure", skip_serializing_if = "Option::is_none")]
+    pub drawing: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ease: Option<[f64; 4]>,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Serialize)]
+#[serde(transparent)]
+pub struct PartTrack {
+    pub keys: BTreeMap<u32, PartKey>,
+}
+
+impl PartTrack {
+    pub fn new(keys: BTreeMap<u32, PartKey>) -> Self {
+        Self { keys }
+    }
+
+    pub fn keys(&self) -> &BTreeMap<u32, PartKey> {
+        &self.keys
+    }
+
+    pub fn keys_mut(&mut self) -> &mut BTreeMap<u32, PartKey> {
+        &mut self.keys
+    }
+}
+
+impl<'de> Deserialize<'de> for PartTrack {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        struct PartTrackVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for PartTrackVisitor {
+            type Value = PartTrack;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                formatter.write_str("a map of frame keys or an object with a 'keys' map")
+            }
+
+            fn visit_map<M>(self, mut access: M) -> std::result::Result<Self::Value, M::Error>
+            where
+                M: serde::de::MapAccess<'de>,
+            {
+                let mut keys = BTreeMap::new();
+                while let Some(raw_key) = access.next_key::<String>()? {
+                    if raw_key == "keys" {
+                        let inner: BTreeMap<String, PartKey> = access.next_value()?;
+                        for (k_str, v) in inner {
+                            if let Ok(f) = k_str.parse::<u32>() {
+                                keys.insert(f, v);
+                            }
+                        }
+                    } else if let Ok(f) = raw_key.parse::<u32>() {
+                        let v: PartKey = access.next_value()?;
+                        keys.insert(f, v);
+                    } else {
+                        let _ = access.next_value::<serde_json::Value>()?;
+                    }
+                }
+                Ok(PartTrack { keys })
+            }
+        }
+
+        deserializer.deserialize_map(PartTrackVisitor)
+    }
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
 pub struct Action {
     pub name: String,
     pub length: u32,
+    #[serde(default)]
     pub tracks: Tracks,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub parts: BTreeMap<String, PartTrack>,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
@@ -113,6 +192,7 @@ impl Action {
             && t.row_fx.iter().all(|r| r.keys.keys().all(ok))
             && t.tweens.iter().all(ok)
             && t.eases.keys().all(ok)
+            && self.parts.values().all(|pt| pt.keys().keys().all(ok))
     }
 }
 
@@ -159,6 +239,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{row?: layer id (default: current layer), name: text, at?: whole number >= 1 (default: current frame)} pastes an action template onto a row, matching by names and order → {row, at, skipped: [text]}",
             has_doc,
             paste
+        ),
+        cmd!(
+            "action.apply",
+            "Apply Action",
+            [],
+            None,
+            "{character: text, action: text, at?: whole number >= 1 (default: current frame)} applies an action template onto a character matching contract parts → {character, action, at, skipped: [text]}",
+            has_doc,
+            apply
         ),
         cmd!("action.remove", "Remove Action", [], None, "{name: text} removes an action template by name → {name}", has_doc, remove),
         cmd!(
@@ -332,10 +421,26 @@ fn save(s: &mut Session, p: &Value) -> Result<Value> {
         }
     }
 
+    let mut parts: BTreeMap<String, PartTrack> = BTreeMap::new();
+    for (joint_name, joint_keys) in &bones {
+        for (&rel_f, &angle) in joint_keys {
+            let k = parts.entry(joint_name.clone()).or_default().keys_mut().entry(rel_f).or_default();
+            k.rot = Some(angle);
+            if let Some(ease) = bone_eases.get(&rel_f) {
+                k.ease = Some(*ease);
+            }
+        }
+    }
+    for (&rel_f, draw_name) in &exposures {
+        let (part_name, sub) = if let Some((p, d)) = draw_name.split_once('.') { (p, d) } else { (draw_name.as_str(), draw_name.as_str()) };
+        parts.entry(part_name.to_string()).or_default().keys_mut().entry(rel_f).or_default().drawing = Some(sub.to_string());
+    }
+
     let action = Action {
         name: name.clone(),
         length,
         tracks: Tracks { exposures, bones, bone_eases, peg: peg_keys, meshes: mesh_tracks, curves: curve_tracks, row_fx: fx_tracks, tweens, eases },
+        parts,
     };
 
     let track_counts = json!({
@@ -373,7 +478,17 @@ fn save(s: &mut Session, p: &Value) -> Result<Value> {
 }
 
 fn list(s: &mut Session, _p: &Value) -> Result<Value> {
-    let actions: Vec<Value> = Actions::of(&s.doc()?.doc).actions.iter().map(|a| json!({ "name": a.name, "length": a.length })).collect();
+    let mut actions: Vec<Value> = Vec::new();
+    let mut seen = BTreeSet::new();
+    for a in super::actions_builtin::builtin_actions() {
+        seen.insert(a.name.clone());
+        actions.push(json!({ "name": a.name, "length": a.length }));
+    }
+    for a in Actions::of(&s.doc()?.doc).actions {
+        if seen.insert(a.name.clone()) {
+            actions.push(json!({ "name": a.name, "length": a.length }));
+        }
+    }
     Ok(json!({ "actions": actions }))
 }
 
@@ -392,7 +507,29 @@ fn paste(s: &mut Session, p: &Value) -> Result<Value> {
             .ok_or_else(|| bad(C, format!("`at` must be a whole number 1..{MAX_LENGTH}")))?,
     };
     let actions = Actions::of(doc);
-    let action = actions.actions.iter().find(|a| a.name == name).cloned().ok_or_else(|| bad(C, format!("action `{name}` not found")))?;
+    let mut action = actions
+        .actions
+        .iter()
+        .find(|a| a.name == name)
+        .cloned()
+        .or_else(|| super::actions_builtin::builtin_action(name))
+        .ok_or_else(|| bad(C, format!("action `{name}` not found")))?;
+
+    if action.tracks.bones.is_empty() && !action.parts.is_empty() {
+        for (part_name, part_track) in &action.parts {
+            for (&rel_f, key) in part_track.keys() {
+                if let Some(rot) = key.rot {
+                    action.tracks.bones.entry(part_name.clone()).or_default().insert(rel_f, rot);
+                    if let Some(ease) = key.ease {
+                        action.tracks.bone_eases.insert(rel_f, ease);
+                    }
+                }
+                if let Some(drw) = &key.drawing {
+                    action.tracks.exposures.insert(rel_f, drw.clone());
+                }
+            }
+        }
+    }
 
     let mut skipped = Vec::new();
     s.edit("Paste Action", |d, _| {
@@ -564,6 +701,211 @@ fn paste(s: &mut Session, p: &Value) -> Result<Value> {
     show(s, current)?;
     Ok(json!({
         "row": row.0,
+        "at": at,
+        "skipped": skipped,
+    }))
+}
+
+fn apply(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "action.apply";
+    let char_param = str_param(p, "character").map(str::trim).filter(|s| !s.is_empty()).ok_or_else(|| bad(C, "`character` is required"))?;
+    let action_param = str_param(p, "action")
+        .or_else(|| str_param(p, "name"))
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .ok_or_else(|| bad(C, "`action` is required"))?;
+
+    let doc = &s.doc()?.doc;
+    let anim = Anim::of(doc);
+    let at = match p.get("at") {
+        None | Some(Value::Null) => anim.current.clamp(1, MAX_LENGTH),
+        Some(v) => v
+            .as_u64()
+            .filter(|f| (1..=MAX_LENGTH as u64).contains(f))
+            .map(|f| f as u32)
+            .ok_or_else(|| bad(C, format!("`at` must be a whole number 1..{MAX_LENGTH}")))?,
+    };
+
+    let actions = Actions::of(doc);
+    let mut action = actions
+        .actions
+        .iter()
+        .find(|a| a.name == action_param)
+        .cloned()
+        .or_else(|| super::actions_builtin::builtin_action(action_param))
+        .ok_or_else(|| bad(C, format!("action `{action_param}` not found")))?;
+
+    if action.parts.is_empty() {
+        for (bone_name, bone_keys) in &action.tracks.bones {
+            let pt = action.parts.entry(bone_name.clone()).or_default();
+            for (&rel_f, &angle) in bone_keys {
+                let k = pt.keys_mut().entry(rel_f).or_default();
+                k.rot = Some(angle);
+                if let Some(ease) = action.tracks.bone_eases.get(&rel_f) {
+                    k.ease = Some(*ease);
+                }
+            }
+        }
+        for (&rel_f, draw_name) in &action.tracks.exposures {
+            let (part_name, sub) = if let Some((p, d)) = draw_name.split_once('.') { (p, d) } else { (draw_name.as_str(), draw_name.as_str()) };
+            action.parts.entry(part_name.to_string()).or_default().keys_mut().entry(rel_f).or_default().drawing = Some(sub.to_string());
+        }
+    }
+
+    let (char_row_id, char_node_id) = {
+        if let Some(layer) = doc.layers.iter().find(|l| l.name.as_deref() == Some(char_param) || format!("{}", l.id.0) == char_param) {
+            (layer.id.0, layer.id)
+        } else {
+            let mut found = None;
+            for layer in &doc.layers {
+                layer.walk(&mut |n| {
+                    if found.is_none() && (n.name.as_deref() == Some(char_param) || format!("{}", n.id.0) == char_param) {
+                        found = Some((layer.id.0, n.id));
+                    }
+                });
+                if found.is_some() {
+                    break;
+                }
+            }
+            found.ok_or_else(|| bad(C, format!("character `{char_param}` not found")))?
+        }
+    };
+
+    let mut skipped = Vec::new();
+
+    s.edit("Apply Action", |d, _| {
+        let mut anim = Anim::of(d);
+        let mut rig = Rig::of(d);
+        let mut pegs = Pegs::of(d);
+
+        let char_node = d.node(char_node_id).ok_or_else(|| bad(C, "no such character node"))?;
+
+        let mut joint_indices: HashMap<String, usize> = HashMap::new();
+        if let Some(sk) = rig.skeletons.get(&char_row_id) {
+            for (idx, j) in sk.joints.iter().enumerate() {
+                joint_indices.insert(j.name.clone(), idx);
+            }
+        }
+
+        let mut part_nodes: HashMap<String, NodeId> = HashMap::new();
+        let mut drawing_nodes: HashMap<(String, String), NodeId> = HashMap::new();
+
+        char_node.walk(&mut |n| {
+            if let Some(name) = n.name.as_deref().map(str::trim).filter(|s| !s.is_empty()) {
+                part_nodes.entry(name.to_string()).or_insert(n.id);
+                if let Some((part, drw)) = name.split_once('.') {
+                    drawing_nodes.insert((part.to_string(), drw.to_string()), n.id);
+                }
+            }
+        });
+
+        for l in &d.layers {
+            if let Some(name) = l.name.as_deref().map(str::trim).filter(|s| !s.is_empty()) {
+                part_nodes.entry(name.to_string()).or_insert(l.id);
+            }
+        }
+
+        for (part_name, part_track) in &action.parts {
+            let has_joint = joint_indices.contains_key(part_name);
+            let has_node = part_nodes.contains_key(part_name);
+            let has_part = has_joint || has_node;
+
+            if !has_part {
+                skipped.push(part_name.clone());
+                continue;
+            }
+
+            for (&rel_f, key) in part_track.keys() {
+                let target_frame = at + rel_f;
+
+                if let (Some(sk), Some(&j_idx)) = (rig.skeletons.get_mut(&char_row_id), joint_indices.get(part_name)) {
+                    let mut angles = sk.pose_at(target_frame).unwrap_or_else(|| vec![0.0; sk.joints.len()]);
+                    if angles.len() < sk.joints.len() {
+                        angles.resize(sk.joints.len(), 0.0);
+                    }
+                    if let (Some(rot), Some(slot)) = (key.rot, angles.get_mut(j_idx)) {
+                        *slot = rot;
+                    }
+                    let ease = key.ease.or_else(|| sk.keys.get(&target_frame).and_then(|p| p.ease));
+                    sk.keys.insert(target_frame, Pose { angles, ease });
+                }
+
+                if key.dx.is_some() || key.dy.is_some() || (!has_joint && key.rot.is_some()) {
+                    let part_id = part_nodes.get(part_name).copied();
+                    let peg_opt = pegs.pegs.iter_mut().find(|p| part_id.is_some_and(|pid| p.rows.contains(&pid.0)) || p.rows.contains(&char_row_id));
+                    if let Some(peg) = peg_opt {
+                        let pkey = peg.keys.entry(target_frame).or_default();
+                        if let Some(dx) = key.dx {
+                            pkey.x = dx;
+                        }
+                        if let Some(dy) = key.dy {
+                            pkey.y = dy;
+                        }
+                        if let Some(rot) = key.rot.filter(|_| !has_joint) {
+                            pkey.angle = rot;
+                        }
+                        if let Some(ease) = key.ease {
+                            pkey.ease = Some(ease);
+                        }
+                    }
+                }
+
+                if let Some(drw) = &key.drawing {
+                    let drw_id = drawing_nodes
+                        .get(&(part_name.clone(), drw.clone()))
+                        .copied()
+                        .or_else(|| {
+                            part_nodes.get(part_name).and_then(|&pid| {
+                                d.node(pid).and_then(|n| {
+                                    n.children()
+                                        .into_iter()
+                                        .flatten()
+                                        .find(|c| c.name.as_deref() == Some(drw) || c.name.as_deref() == Some(&format!("{part_name}.{drw}")))
+                                        .map(|c| c.id)
+                                })
+                            })
+                        })
+                        .or_else(|| {
+                            d.node(NodeId(char_row_id)).and_then(|r| {
+                                r.children()
+                                    .into_iter()
+                                    .flatten()
+                                    .find(|c| c.name.as_deref() == Some(drw) || c.name.as_deref() == Some(&format!("{part_name}.{drw}")))
+                                    .map(|c| c.id)
+                            })
+                        });
+
+                    if let Some(did) = drw_id {
+                        anim.exposures.entry(char_row_id).or_default().insert(target_frame, did.0);
+                        if let Some(&pid) = part_nodes.get(part_name).filter(|&pid| d.layers.iter().any(|l| l.id == *pid)) {
+                            anim.exposures.entry(pid.0).or_default().insert(target_frame, did.0);
+                        }
+                    } else {
+                        let s_item = format!("drawing:{part_name}.{drw}");
+                        if !skipped.contains(&s_item) {
+                            skipped.push(s_item);
+                        }
+                    }
+                }
+            }
+        }
+
+        if at + action.length > anim.frames {
+            anim.frames = (at + action.length).clamp(1, MAX_LENGTH);
+        }
+
+        rig.store(d);
+        pegs.store(d);
+        anim.store(d);
+        Ok(())
+    })?;
+
+    let current = Anim::of(&s.doc()?.doc).current;
+    show(s, current)?;
+
+    Ok(json!({
+        "character": char_param,
+        "action": action.name,
         "at": at,
         "skipped": skipped,
     }))

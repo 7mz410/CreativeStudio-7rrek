@@ -5836,3 +5836,9 @@ font-technology	Variable	متغير
 	Rig Character from File	تجهيز شخصية من ملف
 	Rig Character	تجهيز شخصية
 	Export Frames…	تصدير الإطارات…
+	Apply Action	تطبيق الحركة
+	walk	مشي
+	blink	رمش
+	turn_head	التفات الرأس
+	point	إشارة
+	idle	سكون
