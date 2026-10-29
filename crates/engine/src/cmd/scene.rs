@@ -7,14 +7,9 @@ use serde_json::{Value, json};
 use vectorcraft_doc::Document;
 use vectorcraft_geom::Rect;
 
-use super::anim::Anim;
+use super::anim::{Anim, MAX_FPS, MAX_FRAMES};
 use super::*;
 use crate::EngineError;
-
-// anim.rs's MAX_FPS and MAX_FRAMES (private there); the tests keep these equal to anim.setFps's
-// and anim.setFrames's limits.
-const MAX_FPS: u64 = 60;
-const MAX_FRAMES: u64 = 10_000;
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![
@@ -95,8 +90,8 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
         let was = a.rect;
         let width = size_param(p, "width", was.width())?;
         let height = size_param(p, "height", was.height())?;
-        let fps = whole_param(p, "fps", anim.fps, 1, MAX_FPS)?;
-        let frames = whole_param(p, "frames", anim.frames, 1, MAX_FRAMES)?;
+        let fps = whole_param(p, "fps", anim.fps, 1, MAX_FPS as u64)?;
+        let frames = whole_param(p, "frames", anim.frames, 1, MAX_FRAMES as u64)?;
         let safe = switch_or(p, "safeAreas", a.show_video_safe_areas, "scene.setup")?;
         (was, width, height, fps, frames, safe, a.locked)
     };

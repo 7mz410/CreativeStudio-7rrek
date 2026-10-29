@@ -24,8 +24,8 @@ use crate::EngineError;
 
 const KEY: &str = "animation";
 /// Longest timeline (frames) and fastest frame rate a command accepts.
-const MAX_FRAMES: u32 = 10_000;
-const MAX_FPS: u32 = 60;
+pub(crate) const MAX_FRAMES: u32 = 10_000;
+pub(crate) const MAX_FPS: u32 = 60;
 /// Most keyframes the onion skin shows on each side.
 const MAX_ONION: u32 = 5;
 /// Largest export, in pixels per frame (width × height) and frames.
