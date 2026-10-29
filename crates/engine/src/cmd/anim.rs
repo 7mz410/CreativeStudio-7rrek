@@ -691,7 +691,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Export Animated GIF…",
             [],
             None,
-            "{path, scale?: (default 1), artboard?: index (default 0), from?, to?} every frame of the artboard as an animated GIF at the frame rate → {path, frames, width, height}",
+            "{path, scale?: (default 1), artboard?: index (default 0), from?, to?, step?: 1–4 (default 1; 2 holds each picture two frames, animation on twos)} every frame of the artboard as an animated GIF at the frame rate → {path, frames, width, height}",
             has_doc,
             export_gif
         ),
@@ -700,7 +700,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Export Video…",
             [],
             None,
-            "{path, format?: \"webm\" (default) | \"mp4\", fps?: 1–60 (default: the timeline's), scale?: (default 1), artboard?: index (default 0), from?, to?} the artboard's frames as a VP9 WebM or H.264 MP4 movie, transparency on white, with the timeline's sounds (Opus in WebM, AAC in MP4) → {path, frames, width, height, fps, sound}",
+            "{path, format?: \"webm\" (default) | \"mp4\", fps?: 1–60 (default: the timeline's), scale?: (default 1), artboard?: index (default 0), from?, to?, step?: 1–4 (default 1; 2 = on twos)} the artboard's frames as a VP9 WebM or H.264 MP4 movie, transparency on white, with the timeline's sounds (Opus in WebM, AAC in MP4) → {path, frames, width, height, fps, sound}",
             has_doc,
             export_video
         ),
@@ -709,7 +709,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Export Frames…",
             [],
             None,
-            "{dir, from?, to?, scale?: (default 1), artboard?: index (default 0), alpha?: bool (default true; false puts the frames on white)} one PNG per frame, frame_0001.png…, in dir (created if missing) → {dir, frames, width, height, files}",
+            "{dir, from?, to?, step?: 1–4 (default 1; 2 = on twos), scale?: (default 1), artboard?: index (default 0), alpha?: bool (default true; false puts the frames on white)} one PNG per frame, frame_0001.png…, in dir (created if missing) → {dir, frames, width, height, files}",
             has_doc,
             export_frames
         ),
@@ -962,12 +962,21 @@ fn export_gif(s: &mut Session, p: &Value) -> Result<Value> {
 
 /// What a movie export renders: the artboard, scale, pixel size and frame range from `p`.
 struct Range {
+    /// Each picture is held this many frames (2: animation on twos).
+    step: u32,
     rect: Rect,
     scale: f64,
     w: u32,
     h: u32,
     from: u32,
     to: u32,
+}
+
+impl Range {
+    /// The frame whose picture shows at `f`: on twos, frames 1 and 2 both show frame 1.
+    fn shown(&self, f: u32) -> u32 {
+        self.from + (f - self.from) / self.step * self.step
+    }
 }
 
 fn range(doc: &Document, anim: &Anim, p: &Value, c: &str) -> Result<Range> {
@@ -983,7 +992,11 @@ fn range(doc: &Document, anim: &Anim, p: &Value, c: &str) -> Result<Range> {
     }
     let from = p.get("from").and_then(Value::as_u64).map(|f| f as u32).unwrap_or(1).clamp(1, anim.frames);
     let to = p.get("to").and_then(Value::as_u64).map(|f| f as u32).unwrap_or(anim.frames).clamp(from, anim.frames);
-    Ok(Range { rect, scale, w, h, from, to })
+    let step = match p.get("step") {
+        None | Some(Value::Null) => 1,
+        Some(v) => v.as_u64().filter(|n| (1..=4).contains(n)).ok_or_else(|| bad(c, "step must be a whole number from 1 to 4"))? as u32,
+    };
+    Ok(Range { step, rect, scale, w, h, from, to })
 }
 
 fn export_video(s: &mut Session, p: &Value) -> Result<Value> {
@@ -1009,7 +1022,8 @@ pub fn encode_video(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
         "mp4" => true,
         f => return Err(bad(C, format!("format {f:?} isn't supported (webm, mp4)"))),
     };
-    let Range { rect, scale, w, h, from, to } = range(doc, &anim, p, C)?;
+    let r_ = range(doc, &anim, p, C)?;
+    let Range { rect, scale, w, h, from, to, .. } = r_;
     enum Enc {
         Webm(Box<vectorcraft_video::WebmWriter>),
         Mp4(Box<vectorcraft_video::Mp4Writer>),
@@ -1023,7 +1037,7 @@ pub fn encode_video(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
         (false, None) => Enc::Webm(Box::new(vectorcraft_video::WebmWriter::new(w, h, fps).map_err(|e| bad(C, e))?)),
     };
     let mut r = vectorcraft_render::Renderer::new();
-    for f in from..=to {
+    for f in (from..=to).map(|f| r_.shown(f)) {
         let img = r.render_region(&through_camera(at_frame(doc, f), anim.camera_at(f), rect), rect, scale, true);
         let mut rgba = img.to_straight();
         // Video has no alpha: put the frame on white.
@@ -1054,14 +1068,15 @@ pub fn encode_gif(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
     use image::{Delay, Frame, RgbaImage};
     const C: &str = "anim.exportGif";
     let anim = Anim::of(doc);
-    let Range { rect, scale, w, h, from, to } = range(doc, &anim, p, C)?;
+    let r_ = range(doc, &anim, p, C)?;
+    let Range { rect, scale, w, h, from, to, .. } = r_;
     let delay = Delay::from_numer_denom_ms(1000, anim.fps.max(1));
     let mut out = Vec::new();
     {
         let mut enc = GifEncoder::new_with_speed(&mut out, 10);
         enc.set_repeat(Repeat::Infinite).map_err(|e| EngineError::Other(format!("GIF: {e}")))?;
         let mut r = vectorcraft_render::Renderer::new();
-        for f in from..=to {
+        for f in (from..=to).map(|f| r_.shown(f)) {
             let frame_doc = through_camera(at_frame(doc, f), anim.camera_at(f), rect);
             let img = r.render_region(&frame_doc, rect, scale, true);
             let rgba = RgbaImage::from_raw(img.width, img.height, img.to_straight()).ok_or_else(|| bad(C, "a frame didn't render"))?;
@@ -1102,15 +1117,17 @@ pub fn encode_frames(doc: &Document, p: &Value) -> Result<Vec<(String, Vec<u8>)>
         None | Some(Value::Null) => true,
         Some(v) => v.as_bool().ok_or_else(|| bad(C, "alpha must be true or false"))?,
     };
-    let Range { rect, scale, from, to, .. } = range(doc, &anim, p, C)?;
+    let r_ = range(doc, &anim, p, C)?;
+    let Range { rect, scale, from, to, .. } = r_;
     if to - from + 1 > MAX_FRAME_FILES {
         return Err(bad(C, format!("{} frames is more than one export writes (at most {MAX_FRAME_FILES})", to - from + 1)));
     }
     let mut out = Vec::with_capacity((to - from + 1) as usize);
     let mut r = vectorcraft_render::Renderer::new();
     for f in from..=to {
+        let g = r_.shown(f);
         // With alpha off the renderer lays the frame on opaque white, as the video export does.
-        let img = r.render_region(&through_camera(at_frame(doc, f), anim.camera_at(f), rect), rect, scale, !alpha);
+        let img = r.render_region(&through_camera(at_frame(doc, g), anim.camera_at(g), rect), rect, scale, !alpha);
         let rgba = img.to_straight();
         let buf = RgbaImage::from_raw(img.width, img.height, rgba).ok_or_else(|| bad(C, "a frame didn't render"))?;
         let mut png = Vec::new();
@@ -1595,6 +1612,26 @@ mod tests {
         let img = image::open(dir.join("frame_0001.png")).unwrap().to_rgba8();
         assert_eq!(img.get_pixel(0, 0).0, [255, 255, 255, 255], "alpha false is opaque white");
         std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn on_twos_holds_each_picture_two_frames() {
+        let mut s = session();
+        s.execute("anim.setFrames", &json!({"frames": 4})).unwrap();
+        for f in 1..=4 {
+            s.execute("anim.blankKeyframe", &json!({"frame": f})).unwrap();
+            rect(&mut s, 10.0 * f as f64);
+        }
+        let png = |s: &Session, step: u64| -> Vec<Vec<u8>> {
+            encode_frames(&s.doc().unwrap().doc, &json!({"scale": 0.25, "step": step})).unwrap().into_iter().map(|(_, b)| b).collect()
+        };
+        let ones = png(&s, 1);
+        let twos = png(&s, 2);
+        assert_ne!(ones[0], ones[1]);
+        assert_eq!(twos[0], twos[1]);
+        assert_eq!(twos[1], ones[0]);
+        assert_eq!(twos[2], ones[2]);
+        assert!(encode_frames(&s.doc().unwrap().doc, &json!({"step": 9})).is_err());
     }
 
     #[test]
