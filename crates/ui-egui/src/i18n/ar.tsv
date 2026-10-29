@@ -5801,3 +5801,29 @@ font-technology	Variable	متغير
 	Samples:	العينات:
 	Color 0:	اللون 0:
 	Color 1:	اللون 1:
+	hips	الورك
+	torso	الجذع
+	neck	الرقبة
+	head	الرأس
+	eye_L	العين اليسرى
+	eye_R	العين اليمنى
+	brow_L	الحاجب الأيسر
+	brow_R	الحاجب الأيمن
+	ear_L	الأذن اليسرى
+	ear_R	الأذن اليمنى
+	nose	الأنف
+	mouth	الفم
+	hair_front	الشعر الأمامي
+	hair_back	الشعر الخلفي
+	arm_upper_L	الذراع العليا اليسرى
+	arm_upper_R	الذراع العليا اليمنى
+	arm_lower_L	الساعد الأيسر
+	arm_lower_R	الساعد الأيمن
+	hand_L	اليد اليسرى
+	hand_R	اليد اليمنى
+	leg_upper_L	الفخذ الأيسر
+	leg_upper_R	الفخذ الأيمن
+	leg_lower_L	الساق اليسرى
+	leg_lower_R	الساق اليمنى
+	foot_L	القدم اليسرى
+	foot_R	القدم اليمنى
