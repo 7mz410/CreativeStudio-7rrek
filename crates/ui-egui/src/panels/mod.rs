@@ -49,6 +49,7 @@ pub mod symbols;
 pub mod tabs;
 pub mod text_styles;
 pub mod textures;
+pub mod timeline_timing;
 pub mod topview;
 pub mod transform;
 pub mod transparency;
