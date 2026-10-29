@@ -100,6 +100,7 @@ pub mod rig_cmd;
 pub mod row_fx;
 pub mod row_fx_cmd;
 pub mod scene;
+pub mod scene_spec;
 pub mod scripts;
 mod select;
 pub mod selector;
@@ -344,6 +345,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(character::specs());
         v.extend(character_rig::specs());
         v.extend(scene::specs());
+        v.extend(scene_spec::specs());
         v.extend(character_contract::specs());
         v.extend(anim_sound::specs());
         v.extend(rig_cmd::specs());
