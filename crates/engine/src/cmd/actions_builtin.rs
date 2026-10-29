@@ -19,10 +19,6 @@ impl RawKey {
         Self { frame, rot: Some(rot), dx: None, dy: None, drawing: None }
     }
 
-    pub const fn rot_dy(frame: u32, rot: f64, dy: f64) -> Self {
-        Self { frame, rot: Some(rot), dx: None, dy: Some(dy), drawing: None }
-    }
-
     pub const fn dy(frame: u32, dy: f64) -> Self {
         Self { frame, rot: None, dx: None, dy: Some(dy), drawing: None }
     }
@@ -43,162 +39,179 @@ pub struct RawAction {
     pub parts: &'static [RawPart],
 }
 
-// 1. walk: 24 frames cycle (right and left step)
+// 1. walk: a 24-frame cycle for a character facing right in the side view, two steps of 12
+// frames, each keyed at contact, down, passing and up. Angles are degrees from the rest pose; a
+// positive turn is clockwise on screen, so a leg or arm swings forward with a negative one. Knees
+// bend with a positive shin turn, the hips drop on the down pose and rise on the up pose.
+// Checked by eye on a traced character (plans/refs/char1.rsm, side view).
 const WALK_PARTS: &[RawPart] = &[
-    RawPart {
-        part: "arm_upper_L",
-        keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, 25.0),
-            RawKey::rot(6, 25.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, -25.0),
-            RawKey::rot(18, -25.0),
-            RawKey::rot(23, 0.0),
-        ],
-    },
-    RawPart {
-        part: "arm_lower_L",
-        keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, 15.0),
-            RawKey::rot(6, 15.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, 5.0),
-            RawKey::rot(18, 5.0),
-            RawKey::rot(23, 0.0),
-        ],
-    },
-    RawPart {
-        part: "arm_upper_R",
-        keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, -25.0),
-            RawKey::rot(6, -25.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, 25.0),
-            RawKey::rot(18, 25.0),
-            RawKey::rot(23, 0.0),
-        ],
-    },
-    RawPart {
-        part: "arm_lower_R",
-        keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, 5.0),
-            RawKey::rot(6, 5.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, 15.0),
-            RawKey::rot(18, 15.0),
-            RawKey::rot(23, 0.0),
-        ],
-    },
     RawPart {
         part: "leg_upper_L",
         keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, -25.0),
-            RawKey::rot(6, -25.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, 25.0),
-            RawKey::rot(18, 25.0),
-            RawKey::rot(23, 0.0),
+            RawKey::rot(0, -22.0),
+            RawKey::rot(3, -15.0),
+            RawKey::rot(6, -2.0),
+            RawKey::rot(9, 10.0),
+            RawKey::rot(12, 18.0),
+            RawKey::rot(15, 18.0),
+            RawKey::rot(18, -10.0),
+            RawKey::rot(21, -22.0),
         ],
     },
     RawPart {
         part: "leg_lower_L",
         keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, 15.0),
-            RawKey::rot(6, 15.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, 0.0),
-            RawKey::rot(18, 0.0),
-            RawKey::rot(23, 0.0),
+            RawKey::rot(0, 4.0),
+            RawKey::rot(3, 12.0),
+            RawKey::rot(6, 4.0),
+            RawKey::rot(9, 2.0),
+            RawKey::rot(12, 8.0),
+            RawKey::rot(15, 22.0),
+            RawKey::rot(18, 40.0),
+            RawKey::rot(21, 18.0),
         ],
     },
     RawPart {
         part: "foot_L",
         keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, -10.0),
-            RawKey::rot(6, -10.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, 10.0),
-            RawKey::rot(18, 10.0),
-            RawKey::rot(23, 0.0),
+            RawKey::rot(0, -8.0),
+            RawKey::rot(3, 0.0),
+            RawKey::rot(6, 0.0),
+            RawKey::rot(9, 6.0),
+            RawKey::rot(12, 10.0),
+            RawKey::rot(15, 14.0),
+            RawKey::rot(18, 8.0),
+            RawKey::rot(21, -4.0),
         ],
     },
     RawPart {
         part: "leg_upper_R",
         keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, 25.0),
-            RawKey::rot(6, 25.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, -25.0),
-            RawKey::rot(18, -25.0),
-            RawKey::rot(23, 0.0),
+            RawKey::rot(0, 18.0),
+            RawKey::rot(3, 18.0),
+            RawKey::rot(6, -10.0),
+            RawKey::rot(9, -22.0),
+            RawKey::rot(12, -22.0),
+            RawKey::rot(15, -15.0),
+            RawKey::rot(18, -2.0),
+            RawKey::rot(21, 10.0),
         ],
     },
     RawPart {
         part: "leg_lower_R",
         keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, 0.0),
-            RawKey::rot(6, 0.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, 15.0),
-            RawKey::rot(18, 15.0),
-            RawKey::rot(23, 0.0),
+            RawKey::rot(0, 8.0),
+            RawKey::rot(3, 22.0),
+            RawKey::rot(6, 40.0),
+            RawKey::rot(9, 18.0),
+            RawKey::rot(12, 4.0),
+            RawKey::rot(15, 12.0),
+            RawKey::rot(18, 4.0),
+            RawKey::rot(21, 2.0),
         ],
     },
     RawPart {
         part: "foot_R",
         keys: &[
-            RawKey::rot(0, 0.0),
-            RawKey::rot(5, 10.0),
-            RawKey::rot(6, 10.0),
-            RawKey::rot(11, 0.0),
-            RawKey::rot(12, 0.0),
-            RawKey::rot(17, -10.0),
+            RawKey::rot(0, 10.0),
+            RawKey::rot(3, 14.0),
+            RawKey::rot(6, 8.0),
+            RawKey::rot(9, -4.0),
+            RawKey::rot(12, -8.0),
+            RawKey::rot(15, 0.0),
+            RawKey::rot(18, 0.0),
+            RawKey::rot(21, 6.0),
+        ],
+    },
+    RawPart {
+        part: "arm_upper_L",
+        keys: &[
+            RawKey::rot(0, 16.0),
+            RawKey::rot(3, 10.0),
+            RawKey::rot(6, 0.0),
+            RawKey::rot(9, -10.0),
+            RawKey::rot(12, -16.0),
+            RawKey::rot(15, -10.0),
+            RawKey::rot(18, 0.0),
+            RawKey::rot(21, 10.0),
+        ],
+    },
+    RawPart {
+        part: "arm_lower_L",
+        keys: &[
+            RawKey::rot(0, -5.0),
+            RawKey::rot(3, -6.0),
+            RawKey::rot(6, -10.0),
+            RawKey::rot(9, -14.0),
+            RawKey::rot(12, -18.0),
+            RawKey::rot(15, -14.0),
             RawKey::rot(18, -10.0),
-            RawKey::rot(23, 0.0),
+            RawKey::rot(21, -6.0),
+        ],
+    },
+    RawPart {
+        part: "arm_upper_R",
+        keys: &[
+            RawKey::rot(0, -16.0),
+            RawKey::rot(3, -10.0),
+            RawKey::rot(6, 0.0),
+            RawKey::rot(9, 10.0),
+            RawKey::rot(12, 16.0),
+            RawKey::rot(15, 10.0),
+            RawKey::rot(18, 0.0),
+            RawKey::rot(21, -10.0),
+        ],
+    },
+    RawPart {
+        part: "arm_lower_R",
+        keys: &[
+            RawKey::rot(0, -18.0),
+            RawKey::rot(3, -14.0),
+            RawKey::rot(6, -10.0),
+            RawKey::rot(9, -6.0),
+            RawKey::rot(12, -5.0),
+            RawKey::rot(15, -6.0),
+            RawKey::rot(18, -10.0),
+            RawKey::rot(21, -14.0),
+        ],
+    },
+    RawPart {
+        part: "torso",
+        keys: &[
+            RawKey::rot(0, 3.0),
+            RawKey::rot(3, 3.0),
+            RawKey::rot(6, 4.0),
+            RawKey::rot(9, 3.0),
+            RawKey::rot(12, 3.0),
+            RawKey::rot(15, 3.0),
+            RawKey::rot(18, 4.0),
+            RawKey::rot(21, 3.0),
+        ],
+    },
+    RawPart {
+        part: "head",
+        keys: &[
+            RawKey::rot(0, -2.0),
+            RawKey::rot(3, -2.0),
+            RawKey::rot(6, -3.0),
+            RawKey::rot(9, -2.0),
+            RawKey::rot(12, -2.0),
+            RawKey::rot(15, -2.0),
+            RawKey::rot(18, -3.0),
+            RawKey::rot(21, -2.0),
         ],
     },
     RawPart {
         part: "hips",
         keys: &[
             RawKey::dy(0, 0.0),
-            RawKey::dy(5, -2.0),
-            RawKey::dy(6, -2.0),
-            RawKey::dy(11, 0.0),
+            RawKey::dy(3, 6.0),
+            RawKey::dy(6, 0.0),
+            RawKey::dy(9, -4.0),
             RawKey::dy(12, 0.0),
-            RawKey::dy(17, -2.0),
-            RawKey::dy(18, -2.0),
-            RawKey::dy(23, 0.0),
-        ],
-    },
-    RawPart {
-        part: "torso",
-        keys: &[
-            RawKey::rot_dy(0, 0.0, 0.0),
-            RawKey::rot_dy(5, -1.0, -2.0),
-            RawKey::rot_dy(6, -1.0, -2.0),
-            RawKey::rot_dy(11, 0.0, 0.0),
-            RawKey::rot_dy(12, 0.0, 0.0),
-            RawKey::rot_dy(17, 1.0, -2.0),
-            RawKey::rot_dy(18, 1.0, -2.0),
-            RawKey::rot_dy(23, 0.0, 0.0),
+            RawKey::dy(15, 6.0),
+            RawKey::dy(18, 0.0),
+            RawKey::dy(21, -4.0),
         ],
     },
 ];
@@ -239,24 +252,24 @@ const POINT_PARTS: &[RawPart] = &[
     RawPart { part: "hand_R", keys: &[RawKey::drawing(0, "open"), RawKey::drawing(6, "point"), RawKey::drawing(11, "point")] },
 ];
 
-// 5. idle: subtle breath on torso
-const IDLE_PARTS: &[RawPart] = &[RawPart {
-    part: "torso",
-    keys: &[
-        RawKey::rot_dy(0, 0.0, 0.0),
-        RawKey::rot_dy(6, 1.5, -1.5),
-        RawKey::rot_dy(12, 0.0, 0.0),
-        RawKey::rot_dy(18, -1.5, 1.5),
-        RawKey::rot_dy(23, 0.0, 0.0),
-    ],
-}];
+// 5. idle: a slow breath over 48 frames: the hips settle, the torso and head sway a little, the
+// arms hang and drift.
+const IDLE_PARTS: &[RawPart] = &[
+    RawPart { part: "hips", keys: &[RawKey::dy(0, 0.0), RawKey::dy(24, 2.0), RawKey::dy(47, 0.0)] },
+    RawPart { part: "torso", keys: &[RawKey::rot(0, 0.0), RawKey::rot(24, 1.5), RawKey::rot(47, 0.0)] },
+    RawPart { part: "head", keys: &[RawKey::rot(0, 0.0), RawKey::rot(18, -2.0), RawKey::rot(36, 1.0), RawKey::rot(47, 0.0)] },
+    RawPart { part: "arm_upper_L", keys: &[RawKey::rot(0, 0.0), RawKey::rot(24, 2.0), RawKey::rot(47, 0.0)] },
+    RawPart { part: "arm_upper_R", keys: &[RawKey::rot(0, 0.0), RawKey::rot(24, -2.0), RawKey::rot(47, 0.0)] },
+    RawPart { part: "arm_lower_L", keys: &[RawKey::rot(0, 0.0), RawKey::rot(24, -3.0), RawKey::rot(47, 0.0)] },
+    RawPart { part: "arm_lower_R", keys: &[RawKey::rot(0, 0.0), RawKey::rot(24, -3.0), RawKey::rot(47, 0.0)] },
+];
 
 pub const BUILTIN_ACTIONS: &[RawAction] = &[
     RawAction { name: "walk", length: 24, parts: WALK_PARTS },
     RawAction { name: "blink", length: 6, parts: BLINK_PARTS },
     RawAction { name: "turn_head", length: 12, parts: TURN_HEAD_PARTS },
     RawAction { name: "point", length: 12, parts: POINT_PARTS },
-    RawAction { name: "idle", length: 24, parts: IDLE_PARTS },
+    RawAction { name: "idle", length: 48, parts: IDLE_PARTS },
 ];
 
 pub fn build_action(raw: &RawAction) -> Action {

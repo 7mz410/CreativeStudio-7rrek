@@ -393,7 +393,8 @@ mod tests {
         let pegs = Pegs::of(&s.doc().unwrap().doc);
         for name in ["ana", "bob"] {
             let arm = pegs.pegs.iter().find(|p| p.name == format!("{name}/arm_upper_L")).unwrap();
-            assert_eq!(arm.keys.get(&6).map(|k| k.angle), Some(25.0), "{name}");
+            // Contact pose: the left arm swings back as the left leg leads.
+            assert_eq!(arm.keys.get(&1).map(|k| k.angle), Some(16.0), "{name}");
         }
         let video = std::env::temp_dir().join(format!("rig-p3-{}.webm", std::process::id()));
         let r = s.execute("anim.exportVideo", &json!({"path": video, "scale": 0.25})).unwrap();

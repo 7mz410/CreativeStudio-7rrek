@@ -309,7 +309,8 @@ fn starter_actions_blink_turnhead_point_idle() {
     let rig = Rig::of(doc);
     let sk = rig.skeletons.get(&row).unwrap();
     let torso_idx = sk.joints.iter().position(|j| j.name == "torso").unwrap();
-    let torso_pose = sk.pose_at(7).unwrap();
+    // The breath peaks half way through the 48-frame idle.
+    let torso_pose = sk.pose_at(25).unwrap();
     assert!(torso_pose[torso_idx].abs() > 0.01, "torso should move during idle breath");
 
     // 4. blink (6 frames with eye_*.closed)
