@@ -949,11 +949,14 @@ fn apply_to_pegs(s: &mut Session, character: &str, action: &Action, at: u32) -> 
                     }
                 }
                 if let Some(drawing) = &key.drawing {
+                    let cv = super::character_rig::CharacterViews::of(d);
+                    let target_drawing = cv.view_at(character, frame).map(|v| format!("{v}.{drawing}")).unwrap_or_else(|| drawing.clone());
                     let found = row.and_then(|r| d.node(NodeId(r))).and_then(|r| {
                         r.children()
                             .into_iter()
                             .flatten()
-                            .find(|c| c.is_layer() && c.name.as_deref() == Some(drawing.as_str()))
+                            .find(|c| c.is_layer() && c.name.as_deref() == Some(target_drawing.as_str()))
+                            .or_else(|| r.children().into_iter().flatten().find(|c| c.is_layer() && c.name.as_deref() == Some(drawing.as_str())))
                             .map(|c| (r.id.0, c.id.0))
                     });
                     match found {

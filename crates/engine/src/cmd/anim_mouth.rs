@@ -154,6 +154,80 @@ fn lip_sync(s: &mut Session, p: &Value) -> Result<Value> {
     };
     let sound = anim.sounds.get(index).ok_or_else(|| bad(C, "no such sound clip: import a sound first"))?;
     let shapes = mouths(&sound_pcm(d, sound)?, anim.fps);
+
+    let char_name: Option<String> = d.node(row).and_then(|n| n.name.as_deref()).and_then(|n| n.split_once('/')).map(|(c, _)| c.to_string());
+    let cv = super::character_rig::CharacterViews::of(d);
+    let has_cv = char_name.as_ref().is_some_and(|c| cv.views.contains_key(c));
+
+    if has_cv {
+        let char_name = char_name.unwrap_or_default();
+        let row_keys = d.node(row).map(|n| anim.row_keys(n)).unwrap_or_default();
+        let mut view_shape_drawing: std::collections::HashMap<(String, char), u64> = std::collections::HashMap::new();
+        for (_, k) in &row_keys {
+            if let Some(n) = d.node(*k).and_then(|node| node.name.as_deref())
+                && let Some((v, sh)) = n.split_once('.')
+            {
+                let sh_trim = sh.trim();
+                if sh_trim.len() == 1
+                    && let Some(ch) = sh_trim.chars().next()
+                {
+                    let up = ch.to_ascii_uppercase();
+                    if MOUTHS.contains(&up) {
+                        view_shape_drawing.insert((v.to_string(), up), k.0);
+                    }
+                }
+            }
+        }
+        if view_shape_drawing.is_empty() {
+            return Err(bad(C, "this layer has no mouth drawings: name its drawings A–H and X, or set them in the mouth chart"));
+        }
+
+        let mut keys: Vec<(u32, char)> = Vec::new();
+        for (i, m) in shapes.iter().enumerate() {
+            let frame = sound.start.saturating_add(i as u32);
+            if frame > anim.frames {
+                break;
+            }
+            if keys.last().is_none_or(|(_, last)| last != m) {
+                keys.push((frame, *m));
+            }
+        }
+        let end = sound.start.saturating_add(shapes.len() as u32);
+        let mut missing: Vec<String> = keys
+            .iter()
+            .filter(|(f, m)| {
+                let view = cv.view_at(&char_name, *f).unwrap_or("front");
+                !view_shape_drawing.contains_key(&(view.to_string(), *m))
+            })
+            .map(|(_, m)| m.to_string())
+            .collect();
+        missing.sort();
+        missing.dedup();
+        let start = sound.start;
+
+        let to_expose: Vec<(u32, u64)> = keys
+            .iter()
+            .filter_map(|(f, m)| {
+                let view = cv.view_at(&char_name, *f).unwrap_or("front");
+                view_shape_drawing.get(&(view.to_string(), *m)).copied().map(|id| (*f, id))
+            })
+            .collect();
+
+        s.edit("Lip Sync from Sound", |d, _| {
+            let mut a = Anim::of(d);
+            let e = a.exposures.entry(row.0).or_default();
+            e.retain(|f, _| !(start..end).contains(f));
+            e.extend(to_expose);
+            a.exposures.retain(|_, e| !e.is_empty());
+            a.store(d);
+            Ok(())
+        })?;
+        let current = Anim::of(&s.doc()?.doc).current;
+        show(s, current)?;
+        let keys_json: Vec<Value> = keys.iter().map(|(f, m)| json!({"frame": f, "shape": m.to_string()})).collect();
+        return Ok(json!({"keys": keys_json, "missing": missing}));
+    }
+
     let chart = chart(d, &anim, row);
     if chart.is_empty() {
         return Err(bad(C, "this layer has no mouth drawings: name its drawings A–H and X, or set them in the mouth chart"));

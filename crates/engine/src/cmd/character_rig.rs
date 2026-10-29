@@ -7,25 +7,67 @@
 
 use std::collections::{BTreeMap, HashMap};
 
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use vectorcraft_doc::{Document, LayerColor, Node, NodeId};
 use vectorcraft_geom::{Affine, Rect, Vec2};
 
-use super::anim::Anim;
+use super::anim::{Anim, frame_param, show};
 use super::character_contract::{PARTS, REQUIRED_VIEWS, check_doc, part_spec};
 use super::peg::{MAX_PEGS, Peg, Pegs};
 use super::*;
 
+pub const CHARACTER_VIEWS_KEY: &str = "characterViews";
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+pub struct CharacterViews {
+    pub views: BTreeMap<String, BTreeMap<u32, String>>,
+}
+
+impl CharacterViews {
+    pub fn of(doc: &Document) -> Self {
+        doc.unknown
+            .get(CHARACTER_VIEWS_KEY)
+            .and_then(|v| serde_json::from_value(v.clone()).ok())
+            .map(|views| CharacterViews { views })
+            .unwrap_or_default()
+    }
+
+    pub fn store(&self, doc: &mut Document) {
+        if self.views.is_empty() {
+            doc.unknown.remove(CHARACTER_VIEWS_KEY);
+        } else if let Ok(v) = serde_json::to_value(&self.views) {
+            doc.unknown.insert(CHARACTER_VIEWS_KEY.into(), v);
+        }
+    }
+
+    pub fn view_at(&self, name: &str, frame: u32) -> Option<&str> {
+        let map = self.views.get(name)?;
+        map.range(..=frame).next_back().or_else(|| map.iter().next()).map(|(_, v)| v.as_str())
+    }
+}
+
 pub fn specs() -> Vec<CommandSpec> {
-    vec![cmd!(
-        "character.fromRsm",
-        "Rig Character from File",
-        [],
-        None,
-        "{path: a file that follows the character contract (.rsm), name?: the character's name (default: the file's name), view?: \"front\" | \"3q\" | \"side\" (default front)} adds one row and one peg per part, both named `<name>/<part>` so action.apply {character: name} finds them (pegs hang as in the contract's tree, pivots from each part's `pivot` object or the contract's default), and each part's `<part>.<drawing>` alternatives as its drawings, the default one exposed → {character, peg: the whole character's peg (named after it, every part hangs from it), rows: {part: layer id}, pegs: {part: peg index}, warnings}",
-        has_doc,
-        from_rsm
-    )]
+    vec![
+        cmd!(
+            "character.fromRsm",
+            "Rig Character from File",
+            [],
+            None,
+            "{path: a file that follows the character contract (.rsm), name?: the character's name (default: the file's name), view?: \"front\" | \"3q\" | \"side\" (default front), views?: [\"front\", \"3q\", \"side\"]} adds one row and one peg per part, both named `<name>/<part>` so action.apply {character: name} finds them (pegs hang as in the contract's tree, pivots from each part's `pivot` object or the contract's default), and each part's `<part>.<drawing>` alternatives as its drawings, the default one exposed → {character, peg: the whole character's peg (named after it, every part hangs from it), rows: {part: layer id}, pegs: {part: peg index}, warnings}",
+            has_doc,
+            from_rsm
+        ),
+        cmd!(
+            "character.view",
+            "Set Character View",
+            [],
+            None,
+            "{character: name of character, frame?: frame number (default: current frame), view: \"front\" | \"3q\" | \"side\"} records the view at frame and exposes the matching drawing on every row of the character → {character, frame, view}",
+            has_doc,
+            character_view
+        ),
+    ]
 }
 
 /// A part read off the view layer: its group and where it turns.
@@ -40,10 +82,6 @@ struct Part<'a> {
 fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "character.fromRsm";
     let path = str_param(p, "path").filter(|x| !x.trim().is_empty()).ok_or_else(|| bad(C, "path is required"))?.to_string();
-    let view = str_param(p, "view").unwrap_or("front");
-    if !REQUIRED_VIEWS.contains(&view) {
-        return Err(bad(C, format!("view {view:?} isn't one of front, 3q, side")));
-    }
     let name = match str_param(p, "name").map(str::trim).filter(|n| !n.is_empty()) {
         Some(n) => n.to_string(),
         None => std::path::Path::new(&path).file_stem().and_then(|n| n.to_str()).unwrap_or("character").to_string(),
@@ -54,6 +92,121 @@ fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
     let bytes = super::fileio::read_file(&path)?;
     let t = vectorcraft_format::load(&bytes).map_err(|e| bad(C, format!("cannot parse file '{path}': {e}")))?;
     let report = check_doc(&t)?;
+    let warnings = report["warnings"].clone();
+
+    let views_param = match p.get("views") {
+        Some(v) => {
+            let arr = v.as_array().ok_or_else(|| bad(C, "`views` must be an array of view names"))?;
+            let mut list = Vec::new();
+            for item in arr {
+                let s = item.as_str().ok_or_else(|| bad(C, "each view in `views` must be text"))?;
+                if !REQUIRED_VIEWS.contains(&s) {
+                    return Err(bad(C, format!("view {s:?} isn't one of front, 3q, side")));
+                }
+                if !list.contains(&s.to_string()) {
+                    list.push(s.to_string());
+                }
+            }
+            if list.is_empty() {
+                return Err(bad(C, "`views` cannot be empty"));
+            }
+            Some(list)
+        }
+        None => None,
+    };
+
+    if let Some(views) = views_param {
+        let view = str_param(p, "view").or_else(|| views.first().map(|s| s.as_str())).unwrap_or("front");
+        if !REQUIRED_VIEWS.contains(&view) {
+            return Err(bad(C, format!("view {view:?} isn't one of front, 3q, side")));
+        }
+        for v in &views {
+            let missing = report["missing"][v.as_str()].as_array().map(Vec::len).unwrap_or(0);
+            if missing > 0 {
+                return Err(bad(C, format!("view {v} lacks required parts: {}", report["missing"][v.as_str()])));
+            }
+        }
+        for v in &views {
+            if !t.layers.iter().any(|l| l.name.as_deref() == Some(v.as_str())) {
+                return Err(bad(C, format!("the file has no {v} layer")));
+            }
+        }
+
+        let front_layer = t.layers.iter().find(|l| l.name.as_deref() == Some("front"));
+        let mut view_parts: HashMap<String, Vec<Part>> = HashMap::new();
+        for v in &views {
+            let layer =
+                t.layers.iter().find(|l| l.name.as_deref() == Some(v.as_str())).ok_or_else(|| bad(C, format!("the file has no {v} layer")))?;
+            let mut parts = read_parts(&t, layer);
+            if v != "front"
+                && let Some(front) = front_layer
+            {
+                borrow_alternatives(&t, front, &mut parts);
+            }
+            view_parts.insert(v.clone(), parts);
+        }
+
+        // shortcut: pivot comes from first view, update if per-view pivots needed
+        let mut all_part_names: Vec<String> = Vec::new();
+        let mut pivots: HashMap<String, [f64; 2]> = HashMap::new();
+        for v in &views {
+            if let Some(parts_v) = view_parts.get(v) {
+                for pt in parts_v {
+                    if !all_part_names.contains(&pt.name.to_string()) {
+                        all_part_names.push(pt.name.to_string());
+                        pivots.insert(pt.name.to_string(), pt.pivot);
+                    }
+                }
+            }
+        }
+
+        let (rows, pegs, peg) = s.edit("Rig Character", |d, _| {
+            let mut pegs = Pegs::of(d);
+            if pegs.pegs.len() + all_part_names.len() + 1 > MAX_PEGS {
+                return Err(bad(C, "the document has too many pegs for this character"));
+            }
+            let mut anim = Anim::of(d);
+            let mut rows: BTreeMap<String, u64> = BTreeMap::new();
+            let mut peg_of: HashMap<&str, usize> = HashMap::new();
+            let whole = pegs.pegs.len();
+            pegs.pegs.push(Peg { name: name.clone(), ..Peg::default() });
+
+            let ctx = MultiViewCtx { views: &views, initial_view: view, view_parts: &view_parts, character: &name };
+            for part_name in &all_part_names {
+                let row = add_row_multiview(d, &t, part_name, &ctx, &mut anim)?;
+                rows.insert(part_name.clone(), row.0);
+                peg_of.insert(part_name.as_str(), pegs.pegs.len());
+                let pivot = pivots.get(part_name).copied().unwrap_or([0.0, 0.0]);
+                pegs.pegs.push(Peg { name: part_name.clone(), parent: None, pivot, rows: vec![row.0], keys: BTreeMap::new() });
+            }
+
+            let base = whole + 1;
+            order_pegs(&mut pegs, &mut peg_of, base);
+            let root_pivot = pegs.pegs.get(base).map(|p| p.pivot).unwrap_or_default();
+            for peg in pegs.pegs.iter_mut().skip(base) {
+                peg.name = format!("{name}/{}", peg.name);
+                peg.parent = peg.parent.or(Some(whole));
+            }
+            if let Some(w) = pegs.pegs.get_mut(whole) {
+                w.pivot = root_pivot;
+            }
+
+            let mut cv = CharacterViews::of(d);
+            cv.views.entry(name.clone()).or_default().insert(1, view.to_string());
+            cv.store(d);
+
+            anim.store(d);
+            pegs.store(d);
+            let pegs_json: BTreeMap<String, usize> = peg_of.iter().map(|(k, v)| (k.to_string(), *v)).collect();
+            Ok((rows, pegs_json, whole))
+        })?;
+        return Ok(json!({"character": name, "peg": peg, "rows": rows, "pegs": pegs, "warnings": warnings}));
+    }
+
+    let view = str_param(p, "view").unwrap_or("front");
+    if !REQUIRED_VIEWS.contains(&view) {
+        return Err(bad(C, format!("view {view:?} isn't one of front, 3q, side")));
+    }
     let missing = report["missing"][view].as_array().map(Vec::len).unwrap_or(0);
     if missing > 0 {
         return Err(bad(C, format!("view {view} lacks required parts: {}", report["missing"][view])));
@@ -104,6 +257,94 @@ fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
         Ok((rows, pegs_json, whole))
     })?;
     Ok(json!({"character": name, "peg": peg, "rows": rows, "pegs": pegs, "warnings": warnings}))
+}
+
+fn character_view(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "character.view";
+    let character = str_param(p, "character").map(str::trim).filter(|x| !x.is_empty()).ok_or_else(|| bad(C, "`character` is required"))?;
+    let view = str_param(p, "view").map(str::trim).filter(|x| !x.is_empty()).ok_or_else(|| bad(C, "`view` is required"))?;
+    if !REQUIRED_VIEWS.contains(&view) {
+        return Err(bad(C, format!("view {view:?} isn't one of front, 3q, side")));
+    }
+    let d = &s.doc()?.doc;
+    let anim = Anim::of(d);
+    let frame = frame_param(p, &anim, C)?;
+
+    let prefix = format!("{character}/");
+    let has_character = d.layers.iter().any(|l| l.name.as_deref().is_some_and(|n| n.starts_with(&prefix)));
+    if !has_character {
+        return Err(bad(C, format!("character '{character}' not found")));
+    }
+
+    s.edit("Set Character View", |d, _| {
+        let mut cv = CharacterViews::of(d);
+        cv.views.entry(character.to_string()).or_default().insert(frame, view.to_string());
+        cv.store(d);
+
+        let mut a = Anim::of(d);
+        let row_ids: Vec<NodeId> = d.layers.iter().filter(|l| l.name.as_deref().is_some_and(|n| n.starts_with(&prefix))).map(|l| l.id).collect();
+
+        for row_id in row_ids {
+            let Some(row_node) = d.node(row_id) else { continue };
+            let part_name = row_node.name.as_deref().and_then(|n| n.strip_prefix(&prefix)).unwrap_or("");
+            let default_alt = part_spec(part_name).and_then(|s| s.default_drawing);
+
+            let active_sublayer_id = a.row_frames(row_node).into_iter().rfind(|(f, _)| *f <= frame).map(|(_, id)| id);
+            let active_name = active_sublayer_id.and_then(|id| d.node(id)).and_then(|n| n.name.as_deref()).map(str::trim);
+
+            let sublayers: Vec<(String, NodeId)> = row_node
+                .children()
+                .into_iter()
+                .flatten()
+                .filter(|c| c.is_layer())
+                .filter_map(|c| c.name.as_deref().map(|n| (n.to_string(), c.id)))
+                .collect();
+
+            let target_id = if let Some(alt_name) = active_name.and_then(|n| n.split_once('.')).map(|(_, x)| x) {
+                let candidate = format!("{view}.{alt_name}");
+                sublayers
+                    .iter()
+                    .find(|(n, _)| n == &candidate)
+                    .map(|(_, id)| *id)
+                    .or_else(|| sublayers.iter().find(|(n, _)| n == view).map(|(_, id)| *id))
+                    .or_else(|| {
+                        default_alt.and_then(|def| {
+                            let def_cand = format!("{view}.{def}");
+                            sublayers.iter().find(|(n, _)| n == &def_cand).map(|(_, id)| *id)
+                        })
+                    })
+                    .or_else(|| {
+                        let pfx = format!("{view}.");
+                        sublayers.iter().find(|(n, _)| n.starts_with(&pfx)).map(|(_, id)| *id)
+                    })
+            } else {
+                sublayers
+                    .iter()
+                    .find(|(n, _)| n == view)
+                    .map(|(_, id)| *id)
+                    .or_else(|| {
+                        default_alt.and_then(|def| {
+                            let def_cand = format!("{view}.{def}");
+                            sublayers.iter().find(|(n, _)| n == &def_cand).map(|(_, id)| *id)
+                        })
+                    })
+                    .or_else(|| {
+                        let pfx = format!("{view}.");
+                        sublayers.iter().find(|(n, _)| n.starts_with(&pfx)).map(|(_, id)| *id)
+                    })
+            };
+
+            if let Some(tid) = target_id {
+                a.exposures.entry(row_id.0).or_default().insert(frame, tid.0);
+            }
+        }
+        a.store(d);
+        Ok(())
+    })?;
+
+    let current = Anim::of(&s.doc()?.doc).current;
+    show(s, current)?;
+    Ok(json!({"character": character, "frame": frame, "view": view}))
 }
 
 /// The nearest ancestor in the contract tree that this character has a peg for.
@@ -192,6 +433,112 @@ fn add_row(d: &mut Document, t: &Document, part: &Part, character: &str, anim: &
     if let Some(shown) = chosen.or(first) {
         anim.exposures.entry(row.0).or_default().insert(1, shown.0);
     }
+    Ok(row)
+}
+
+struct MultiViewCtx<'a> {
+    views: &'a [String],
+    initial_view: &'a str,
+    view_parts: &'a HashMap<String, Vec<Part<'a>>>,
+    character: &'a str,
+}
+
+/// Copies one part for all requested views into a single row. For each view:
+/// - if the view has alternative drawings (`part.<alt>`), each becomes a sublayer named `<view>.<alt>`
+/// - if the view has a single drawing, it becomes a sublayer named `<view>`
+/// - if the part is missing in that view, it gets an empty sublayer named `<view>`
+fn add_row_multiview(d: &mut Document, t: &Document, part_name: &str, ctx: &MultiViewCtx, anim: &mut Anim) -> Result<NodeId> {
+    let id = d.alloc_id();
+    let row = d
+        .insert(None, d.layers.len(), Node::layer(id, &format!("{}/{part_name}", ctx.character), LayerColor::Preset((d.layers.len() % 8) as u8)))
+        .map_err(|e| EngineError::Other(e.to_string()))?;
+    let prefix = format!("{part_name}.");
+    let default = part_spec(part_name).and_then(|s| s.default_drawing);
+
+    let mut initial_sublayer = None;
+
+    for v in ctx.views {
+        let part_opt = ctx.view_parts.get(v).and_then(|ps| ps.iter().find(|p| p.name == part_name));
+        match part_opt {
+            None => {
+                let sub = d.alloc_id();
+                let sub =
+                    d.insert(Some(row), usize::MAX, Node::layer(sub, v, LayerColor::Preset(0))).map_err(|e| EngineError::Other(e.to_string()))?;
+                anim.keys.insert(sub.0, 1);
+                if v == ctx.initial_view && initial_sublayer.is_none() {
+                    initial_sublayer = Some(sub);
+                }
+            }
+            Some(part) => {
+                let source = part.borrow.map(|(n, _)| n).unwrap_or(part.node);
+                let has_alternatives = source.children().into_iter().flatten().any(|k| k.name.as_deref().is_some_and(|n| n.starts_with(&prefix)));
+
+                if has_alternatives {
+                    let mut first_sub = None;
+                    let mut default_sub = None;
+                    for kid in source.children().into_iter().flatten() {
+                        let name = kid.name.as_deref().unwrap_or("");
+                        if name == "pivot" || (part.borrow.is_some() && !name.starts_with(&prefix)) {
+                            continue;
+                        }
+                        if let Some(drawing) = name.strip_prefix(&prefix).filter(|n| !n.is_empty()) {
+                            let mut copy = d.reid(kid);
+                            super::character::bring_images(&mut copy, t, d);
+                            if let Some((_, shift)) = part.borrow {
+                                copy.transform(shift, false);
+                            }
+                            let sub_name = format!("{v}.{drawing}");
+                            let sub = d.alloc_id();
+                            let sub = d
+                                .insert(Some(row), usize::MAX, Node::layer(sub, &sub_name, LayerColor::Preset(0)))
+                                .map_err(|e| EngineError::Other(e.to_string()))?;
+                            copy.visible = true;
+                            d.insert(Some(sub), 0, copy).map_err(|e| EngineError::Other(e.to_string()))?;
+                            anim.keys.insert(sub.0, 1);
+
+                            if v == ctx.initial_view {
+                                first_sub.get_or_insert(sub);
+                                if Some(drawing) == default {
+                                    default_sub = Some(sub);
+                                }
+                            }
+                        }
+                    }
+                    if v == ctx.initial_view {
+                        initial_sublayer = default_sub.or(first_sub);
+                    }
+                } else {
+                    let sub = d.alloc_id();
+                    let sub =
+                        d.insert(Some(row), usize::MAX, Node::layer(sub, v, LayerColor::Preset(0))).map_err(|e| EngineError::Other(e.to_string()))?;
+                    anim.keys.insert(sub.0, 1);
+
+                    for kid in source.children().into_iter().flatten() {
+                        let name = kid.name.as_deref().unwrap_or("");
+                        if name == "pivot" {
+                            continue;
+                        }
+                        let mut copy = d.reid(kid);
+                        super::character::bring_images(&mut copy, t, d);
+                        if let Some((_, shift)) = part.borrow {
+                            copy.transform(shift, false);
+                        }
+                        copy.visible = true;
+                        d.insert(Some(sub), usize::MAX, copy).map_err(|e| EngineError::Other(e.to_string()))?;
+                    }
+
+                    if v == ctx.initial_view {
+                        initial_sublayer = Some(sub);
+                    }
+                }
+            }
+        }
+    }
+
+    if let Some(shown) = initial_sublayer {
+        anim.exposures.entry(row.0).or_default().insert(1, shown.0);
+    }
+
     Ok(row)
 }
 
