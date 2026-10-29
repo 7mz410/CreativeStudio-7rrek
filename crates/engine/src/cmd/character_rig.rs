@@ -22,7 +22,7 @@ pub fn specs() -> Vec<CommandSpec> {
         "Rig Character from File",
         [],
         None,
-        "{path: a file that follows the character contract (.rsm), view?: \"front\" | \"3q\" | \"side\" (default front)} adds one row and one peg per part (pegs hang as in the contract's tree, pivots from each part's `pivot` object or the contract's default), and each part's `<part>.<drawing>` alternatives as its drawings, the default one exposed → {rows: {part: layer id}, pegs: {part: peg index}, warnings}",
+        "{path: a file that follows the character contract (.rsm), name?: the character's name (default: the file's name), view?: \"front\" | \"3q\" | \"side\" (default front)} adds one row and one peg per part, both named `<name>/<part>` so action.apply {character: name} finds them (pegs hang as in the contract's tree, pivots from each part's `pivot` object or the contract's default), and each part's `<part>.<drawing>` alternatives as its drawings, the default one exposed → {character, rows: {part: layer id}, pegs: {part: peg index}, warnings}",
         has_doc,
         from_rsm
     )]
@@ -41,6 +41,13 @@ fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
     let view = str_param(p, "view").unwrap_or("front");
     if !REQUIRED_VIEWS.contains(&view) {
         return Err(bad(C, format!("view {view:?} isn't one of front, 3q, side")));
+    }
+    let name = match str_param(p, "name").map(str::trim).filter(|n| !n.is_empty()) {
+        Some(n) => n.to_string(),
+        None => std::path::Path::new(&path).file_stem().and_then(|n| n.to_str()).unwrap_or("character").to_string(),
+    };
+    if name.contains('/') {
+        return Err(bad(C, "the character's name can't contain /"));
     }
     let bytes = super::fileio::read_file(&path)?;
     let t = vectorcraft_format::load(&bytes).map_err(|e| bad(C, format!("cannot parse file '{path}': {e}")))?;
@@ -63,7 +70,7 @@ fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
         let mut peg_of: HashMap<&str, usize> = HashMap::new();
         // File order is stacking order: the first group is the bottom row.
         for part in &parts {
-            let row = add_row(d, &t, part, &mut anim)?;
+            let row = add_row(d, &t, part, &name, &mut anim)?;
             rows.insert(part.name.to_string(), row.0);
             peg_of.insert(part.name, pegs.pegs.len());
             pegs.pegs.push(Peg { name: part.name.to_string(), parent: None, pivot: part.pivot, rows: vec![row.0], keys: BTreeMap::new() });
@@ -72,12 +79,15 @@ fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
         // stacking order, before the parent links are set.
         let base = pegs.pegs.len() - parts.len();
         order_pegs(&mut pegs, &mut peg_of, base);
+        for peg in pegs.pegs.iter_mut().skip(base) {
+            peg.name = format!("{name}/{}", peg.name);
+        }
         anim.store(d);
         pegs.store(d);
         let pegs_json: BTreeMap<String, usize> = peg_of.iter().map(|(k, v)| (k.to_string(), *v)).collect();
         Ok((rows, pegs_json))
     })?;
-    Ok(json!({"rows": rows, "pegs": pegs, "warnings": warnings}))
+    Ok(json!({"character": name, "rows": rows, "pegs": pegs, "warnings": warnings}))
 }
 
 /// The nearest ancestor in the contract tree that this character has a peg for.
@@ -122,10 +132,10 @@ fn order_pegs(pegs: &mut Pegs, peg_of: &mut HashMap<&str, usize>, base: usize) {
 /// Copies one part into a new top-level row. Alternatives become keyframe sublayers named after
 /// the drawing, all keyed at frame 1 with the default exposed there, so the others wait to be
 /// exposed; any other art shows on every frame. The `pivot` marker is left out.
-fn add_row(d: &mut Document, t: &Document, part: &Part, anim: &mut Anim) -> Result<NodeId> {
+fn add_row(d: &mut Document, t: &Document, part: &Part, character: &str, anim: &mut Anim) -> Result<NodeId> {
     let id = d.alloc_id();
     let row = d
-        .insert(None, d.layers.len(), Node::layer(id, part.name, LayerColor::Preset((d.layers.len() % 8) as u8)))
+        .insert(None, d.layers.len(), Node::layer(id, &format!("{character}/{}", part.name), LayerColor::Preset((d.layers.len() % 8) as u8)))
         .map_err(|e| EngineError::Other(e.to_string()))?;
     let prefix = format!("{}.", part.name);
     let default = part_spec(part.name).and_then(|s| s.default_drawing);
@@ -317,11 +327,38 @@ mod tests {
     }
 
     #[test]
+    fn one_walk_runs_on_two_rigged_characters() {
+        let path = std::env::temp_dir().join(format!("rig-p3-{}.rsm", std::process::id()));
+        contract_file(&path);
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 800.0, "height": 800.0})).unwrap();
+        for name in ["ana", "bob"] {
+            let r = s.execute("character.fromRsm", &json!({"path": path, "name": name})).unwrap();
+            assert_eq!(r["character"], name);
+        }
+        let _ = std::fs::remove_file(&path);
+        for name in ["ana", "bob"] {
+            let r = s.execute("action.apply", &json!({"character": name, "action": "walk", "at": 1})).unwrap();
+            assert_eq!(r["skipped"], json!([]), "{r}");
+        }
+        let pegs = Pegs::of(&s.doc().unwrap().doc);
+        for name in ["ana", "bob"] {
+            let arm = pegs.pegs.iter().find(|p| p.name == format!("{name}/arm_upper_L")).unwrap();
+            assert_eq!(arm.keys.get(&6).map(|k| k.angle), Some(25.0), "{name}");
+        }
+        let video = std::env::temp_dir().join(format!("rig-p3-{}.webm", std::process::id()));
+        let r = s.execute("anim.exportVideo", &json!({"path": video, "scale": 0.25})).unwrap();
+        let _ = std::fs::remove_file(&video);
+        assert!(r["frames"].as_u64().unwrap() >= 24, "{r}");
+    }
+
+    #[test]
     fn bad_input_is_an_error() {
         let mut s = Session::new();
         s.execute("file.new", &json!({})).unwrap();
         assert!(s.execute("character.fromRsm", &json!({})).is_err());
         assert!(s.execute("character.fromRsm", &json!({"path": "/nonexistent/x.rsm"})).is_err());
         assert!(s.execute("character.fromRsm", &json!({"path": "/nonexistent/x.rsm", "view": "back"})).is_err());
+        assert!(s.execute("character.fromRsm", &json!({"path": "/nonexistent/x.rsm", "name": "a/b"})).is_err());
     }
 }

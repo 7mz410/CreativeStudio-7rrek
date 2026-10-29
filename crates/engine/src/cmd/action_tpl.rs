@@ -752,6 +752,12 @@ fn apply(s: &mut Session, p: &Value) -> Result<Value> {
         }
     }
 
+    // A character rigged by character.fromRsm: one peg and one row per part, named `<name>/<part>`.
+    let prefix = format!("{char_param}/");
+    if Pegs::of(doc).pegs.iter().any(|p| p.name.starts_with(&prefix)) {
+        return apply_to_pegs(s, char_param, &action, at);
+    }
+
     let (char_row_id, char_node_id) = {
         if let Some(layer) = doc.layers.iter().find(|l| l.name.as_deref() == Some(char_param) || format!("{}", l.id.0) == char_param) {
             (layer.id.0, layer.id)
@@ -909,6 +915,69 @@ fn apply(s: &mut Session, p: &Value) -> Result<Value> {
         "at": at,
         "skipped": skipped,
     }))
+}
+
+/// `action.apply` on a peg rig: a part's turn and move key its peg (relative to rest, as peg keys
+/// are), its drawing is exposed on its row by name. Parts the character lacks are skipped.
+fn apply_to_pegs(s: &mut Session, character: &str, action: &Action, at: u32) -> Result<Value> {
+    let mut skipped = Vec::new();
+    s.edit("Apply Action", |d, _| {
+        let mut anim = Anim::of(d);
+        let mut pegs = Pegs::of(d);
+        for (part, track) in &action.parts {
+            let full = format!("{character}/{part}");
+            let Some(peg) = pegs.pegs.iter_mut().find(|p| p.name == full) else {
+                skipped.push(part.clone());
+                continue;
+            };
+            let row = peg.rows.first().copied();
+            for (&rel, key) in track.keys() {
+                let frame = at.saturating_add(rel);
+                if key.rot.is_some() || key.dx.is_some() || key.dy.is_some() {
+                    let k = peg.keys.entry(frame).or_default();
+                    if let Some(v) = key.rot {
+                        k.angle = v;
+                    }
+                    if let Some(v) = key.dx {
+                        k.x = v;
+                    }
+                    if let Some(v) = key.dy {
+                        k.y = v;
+                    }
+                    if key.ease.is_some() {
+                        k.ease = key.ease;
+                    }
+                }
+                if let Some(drawing) = &key.drawing {
+                    let found = row.and_then(|r| d.node(NodeId(r))).and_then(|r| {
+                        r.children()
+                            .into_iter()
+                            .flatten()
+                            .find(|c| c.is_layer() && c.name.as_deref() == Some(drawing.as_str()))
+                            .map(|c| (r.id.0, c.id.0))
+                    });
+                    match found {
+                        Some((r, id)) => {
+                            anim.exposures.entry(r).or_default().insert(frame, id);
+                        }
+                        None => {
+                            let item = format!("drawing:{part}.{drawing}");
+                            if !skipped.contains(&item) {
+                                skipped.push(item);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        anim.frames = anim.frames.max(at.saturating_add(action.length).min(MAX_LENGTH));
+        pegs.store(d);
+        anim.store(d);
+        Ok(())
+    })?;
+    let current = Anim::of(&s.doc()?.doc).current;
+    show(s, current)?;
+    Ok(json!({"character": character, "action": action.name, "at": at, "skipped": skipped}))
 }
 
 fn remove(s: &mut Session, p: &Value) -> Result<Value> {
