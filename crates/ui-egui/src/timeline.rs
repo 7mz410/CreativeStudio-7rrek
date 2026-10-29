@@ -32,7 +32,13 @@ fn playback_id() -> egui::Id {
 
 /// The Timeline's height for the active document (its rows, up to [`MAX_ROWS_SHOWN`]).
 pub fn height(app: &VectorcraftApp) -> f32 {
-    let rows = app.session.active().map_or(1, |st| st.doc.layers.len());
+    let layers = app.session.active().map_or(1, |st| st.doc.layers.len().max(1));
+    // The camera, sound and bones rows under the layers count too.
+    let rows = layers
+        + crate::timeline_av::rows(app)
+        + crate::timeline_rig::rows(app)
+        + crate::timeline_peg::rows(app)
+        + crate::panels::timeline_timing::rows(app);
     BAR_H + RULER_H + rows.clamp(1, MAX_ROWS_SHOWN) as f32 * ROW_H + 6.0
 }
 
@@ -47,6 +53,7 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     let current = info["current"].as_u64().unwrap_or(1) as u32;
     let fps = info["fps"].as_u64().unwrap_or(12).max(1) as u32;
     let onion = info["onion"].as_bool().unwrap_or(false);
+    let light = info["lightTable"].as_bool().unwrap_or(false);
 
     tick(app, ui, fps);
 
@@ -59,7 +66,7 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.scope_builder(egui::UiBuilder::new().max_rect(bar), |ui| {
         egui::ScrollArea::horizontal().id_salt("timeline-bar").show(ui, |ui| {
             ui.set_min_height(BAR_H);
-            ui.with_layout(flow, |ui| controls(app, ui, &t, current, frames, fps, onion));
+            ui.with_layout(flow, |ui| controls(app, ui, &t, current, frames, fps, onion, light));
         });
     });
     let below = Rect::from_min_max(pos2(full.min.x, bar.max.y), full.max);
@@ -86,7 +93,7 @@ fn info_of(doc: &vectorcraft_doc::Document) -> Value {
             json!({"id": r.id.0, "name": r.name.clone().unwrap_or_default(), "keys": keys})
         })
         .collect();
-    json!({"fps": a.fps, "frames": a.frames, "current": a.current, "rows": rows, "onion": a.onion_before + a.onion_after > 0})
+    json!({"fps": a.fps, "frames": a.frames, "current": a.current, "rows": rows, "onion": a.onion_before + a.onion_after > 0, "lightTable": a.light_table.is_some()})
 }
 
 /// Step the playhead while playing.
@@ -116,7 +123,8 @@ fn set_playing(ui: &Ui, on: bool) {
     ui.ctx().data_mut(|d| d.insert_temp(playback_id(), Playback { playing: on, acc: 0.0 }));
 }
 
-fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32, onion: bool) {
+#[allow(clippy::too_many_arguments)]
+fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32, onion: bool, light: bool) {
     let playing = ui.ctx().data(|d| d.get_temp::<Playback>(playback_id())).is_some_and(|p| p.playing);
     {
         ui.add_space(8.0);
@@ -190,14 +198,28 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         if ui.button(tl!("Camera Key")).on_hover_text(tl!("Keep what the camera sees at this frame")).clicked() {
             run_reporting(app, "anim.cameraKey");
         }
+        if ui.button(tl!("Add Peg")).on_hover_text(tl!("Hang the current layer from a new peg")).clicked() {
+            run_reporting(app, "peg.add");
+        }
+        if ui.button(tl!("Peg Key")).on_hover_text(tl!("Key the current layer's peg at this frame")).clicked() {
+            run_reporting(app, "peg.key");
+        }
+        cutter_menu(app, ui);
+        blend_menu(app, ui);
         if ui.button(tl!("Import Sound…")).on_hover_text(tl!("Add a WAV, MP3 or Ogg sound at this frame")).clicked() {
             run_reporting(app, "anim.soundImportAs");
+        }
+        if ui.button(tl!("Lip Sync")).on_hover_text(tl!("Pick the current layer's mouth drawings from the first sound")).clicked() {
+            run_reporting(app, "anim.lipSync");
         }
         ui.add_space(8.0);
         // Onion skin: one keyframe on each side, faint.
         if ui.selectable_label(onion, tl!("Onion Skin")).on_hover_text(tl!("Show the keyframes before and after faintly")).clicked() {
             let n = if onion { 0 } else { 1 };
             let _ = app.run("anim.onion", json!({"before": n, "after": n}));
+        }
+        if ui.selectable_label(light, tl!("Light Table")).on_hover_text(tl!("Show the other rows faded while drawing on this one")).clicked() {
+            run_reporting(app, "anim.lightTable");
         }
         ui.add_space(8.0);
         if ui.button(tl!("Export GIF…")).on_hover_text(tl!("Export Animated GIF")).clicked() {
@@ -249,6 +271,135 @@ pub fn import_sound(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -
     app.run("anim.soundImport", p)
 }
 
+/// `character.saveAs`: the current layer's row (or `row`) as a character template at `path`, else a
+/// picked file (the web downloads it).
+pub fn save_character(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> Result<Value, String> {
+    use vectorcraft_engine::cmd::{anim::row_of, character};
+    let st = app.session.active().ok_or("no document")?;
+    let row = match p.get("row").and_then(Value::as_u64) {
+        Some(r) => vectorcraft_doc::NodeId(r),
+        None => st.current_layer().and_then(|l| row_of(&st.doc, l)).ok_or("no current layer")?,
+    };
+    let bytes = character::template_bytes(&st.doc, row).ok_or("no such layer")?;
+    let path = crate::io::target_path(app, path, character::EXTENSION)?;
+    crate::io::write_to(&mut app.services, &path, &bytes)?;
+    Ok(json!({"path": path, "bytes": bytes.len()}))
+}
+
+/// `character.loadAs`: `character.load` for `path`, else a picked template.
+pub fn load_character(app: &mut VectorcraftApp, path: Option<String>) -> Result<Value, String> {
+    use vectorcraft_engine::cmd::character::EXTENSION;
+    let path = match path {
+        Some(p) => p,
+        None => {
+            let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Character Templates", &[EXTENSION])], ..Default::default() };
+            crate::picks::open(app, &pick).ok_or("cancelled")?
+        }
+    };
+    app.run("character.load", json!({"path": path}))
+}
+
+/// The Cutter menu: cut the current layer's row by another row's shape, keep only the overlap
+/// instead, or stop cutting it.
+fn cutter_menu(app: &mut VectorcraftApp, ui: &mut egui::Ui) {
+    let Some(st) = app.session.active() else { return };
+    let row = st.current_layer().and_then(|l| vectorcraft_engine::cmd::anim::row_of(&st.doc, l));
+    let others: Vec<(u64, String)> = st.doc.layers.iter().rev().filter(|l| Some(l.id) != row).map(|l| (l.id.0, l.display_name())).collect();
+    let list = app.session.execute("cutter.list", &json!({})).unwrap_or(Value::Null);
+    let mine = list["cutters"].as_array().into_iter().flatten().find(|c| c["row"].as_u64() == row.map(|r| r.0)).cloned();
+    // The cutter's fields as they are now. Every change re-sends all of them, so none is lost.
+    let matte = mine.as_ref().map_or(Value::Null, |c| c["matte"].clone());
+    let inverted = mine.as_ref().and_then(|c| c["inverted"].as_bool()).unwrap_or(false);
+    let by = mine.as_ref().and_then(|c| c["by"].as_str()).unwrap_or("shape").to_string();
+    let also: Vec<u64> = mine.as_ref().and_then(|c| c["also"].as_array()).into_iter().flatten().filter_map(Value::as_u64).collect();
+    let op = mine.as_ref().and_then(|c| c["op"].as_str()).unwrap_or("add").to_string();
+    let mut act: Option<(&str, Value)> = None;
+    ui.menu_button(tl!("Cutter"), |ui| {
+        ui.label(tl!("Cut This Layer By"));
+        for (id, name) in &others {
+            let on = mine.as_ref().is_some_and(|c| c["matte"].as_u64() == Some(*id));
+            if ui.selectable_label(on, name).clicked() {
+                // The new matte leaves the also-list: it can't be both.
+                let rest: Vec<u64> = also.iter().copied().filter(|a| a != id).collect();
+                act = Some(("cutter.add", cutter_args(json!(id), inverted, &by, &rest, &op)));
+                ui.close();
+            }
+        }
+        if mine.is_some() {
+            ui.separator();
+            let next = if by == "brightness" { "shape" } else { "brightness" };
+            if ui.selectable_label(by == "brightness", tl!("By Brightness")).clicked() {
+                act = Some(("cutter.add", cutter_args(matte.clone(), inverted, next, &also, &op)));
+                ui.close();
+            }
+            ui.menu_button(tl!("Also Cut By"), |ui| {
+                for (id, name) in others.iter().filter(|(id, _)| Some(*id) != matte.as_u64()) {
+                    let on = also.contains(id);
+                    if ui.selectable_label(on, name).clicked() {
+                        let next: Vec<u64> =
+                            if on { also.iter().copied().filter(|a| a != id).collect() } else { also.iter().copied().chain([*id]).collect() };
+                        act = Some(("cutter.add", cutter_args(matte.clone(), inverted, &by, &next, &op)));
+                    }
+                }
+            });
+            if !also.is_empty() {
+                ui.label(tl!("Combine"));
+                ui.horizontal(|ui| {
+                    for (key, label) in [("add", tl!("Add")), ("subtract", tl!("Subtract")), ("intersect", tl!("Intersect"))] {
+                        if ui.selectable_label(op == key, label).clicked() {
+                            act = Some(("cutter.add", cutter_args(matte.clone(), inverted, &by, &also, key)));
+                            ui.close();
+                        }
+                    }
+                });
+            }
+            if ui.selectable_label(inverted, tl!("Inverted (Keep Only the Overlap)")).clicked() {
+                act = Some(("cutter.add", cutter_args(matte.clone(), !inverted, &by, &also, &op)));
+                ui.close();
+            }
+            if ui.button(tl!("Remove Cutter")).clicked() {
+                act = Some(("cutter.remove", json!({})));
+                ui.close();
+            }
+        }
+    })
+    .response
+    .on_hover_text(tl!("Hide this layer where another layer's shape covers it"));
+    if let Some((id, p)) = act
+        && let Err(e) = app.run(id, p)
+    {
+        app.status(e);
+    }
+}
+
+/// The `cutter.add` params for a whole cutter.
+fn cutter_args(matte: Value, inverted: bool, by: &str, also: &[u64], op: &str) -> Value {
+    json!({"matte": matte, "inverted": inverted, "by": by, "also": also, "op": op})
+}
+
+/// The Blend menu: how the current layer's row mixes with the rows beneath it (its blend mode).
+fn blend_menu(app: &mut VectorcraftApp, ui: &mut egui::Ui) {
+    let Some(st) = app.session.active() else { return };
+    let Some(row) = st.current_layer().and_then(|l| vectorcraft_engine::cmd::anim::row_of(&st.doc, l)) else { return };
+    let current = st.doc.node(row).map_or(vectorcraft_color::BlendMode::Normal, |n| n.blend);
+    let mut pick = None;
+    ui.menu_button(tl!("Blend"), |ui| {
+        for mode in vectorcraft_color::BlendMode::ALL {
+            if ui.selectable_label(mode == current, tl!(mode.label())).clicked() {
+                pick = Some(mode);
+                ui.close();
+            }
+        }
+    })
+    .response
+    .on_hover_text(tl!("How this layer's art mixes with the layers beneath it"));
+    if let Some(mode) = pick
+        && let Err(e) = app.run("object.setProps", json!({"id": row.0, "blend": mode.label()}))
+    {
+        app.status(e);
+    }
+}
+
 fn run_reporting(app: &mut VectorcraftApp, id: &str) {
     if let Err(e) = app.run(id, json!({})) {
         app.status(e);
@@ -257,7 +408,8 @@ fn run_reporting(app: &mut VectorcraftApp, id: &str) {
 
 fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], current: u32, frames: u32) {
     let width = NAME_W + frames as f32 * CELL_W + 8.0;
-    let extra = crate::timeline_av::rows(app);
+    let extra =
+        crate::timeline_av::rows(app) + crate::timeline_rig::rows(app) + crate::timeline_peg::rows(app) + crate::panels::timeline_timing::rows(app);
     let height = RULER_H + (rows.len().max(1) + extra) as f32 * ROW_H;
     let (area, resp) = ui.allocate_exact_size(vec2(width, height), Sense::click_and_drag());
     let p = ui.painter_at(area);
@@ -307,7 +459,17 @@ fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], curre
 
     // The camera and sound rows, under the layers.
     let top = area.min.y + RULER_H + rows.len().max(1) as f32 * ROW_H;
-    crate::timeline_av::paint(app, &p, t, crate::timeline_av::Geom { area, top, row_h: ROW_H, name_w: NAME_W, x0, cell_w: CELL_W, frames, rtl });
+    let g = crate::timeline_av::Geom { area, top, row_h: ROW_H, name_w: NAME_W, x0, cell_w: CELL_W, frames, rtl };
+    crate::timeline_av::paint(app, &p, t, g);
+    // The bones row, under those.
+    let top = top + crate::timeline_av::rows(app) as f32 * ROW_H;
+    crate::timeline_rig::paint(app, &p, t, crate::timeline_av::Geom { top, ..g });
+    // The pegs' rows, under the bones.
+    let top = top + crate::timeline_rig::rows(app) as f32 * ROW_H;
+    crate::timeline_peg::paint(app, &p, t, crate::timeline_av::Geom { top, ..g });
+    // The timing chart of the current row's keys, under the pegs.
+    let top = top + crate::timeline_peg::rows(app) as f32 * ROW_H;
+    crate::panels::timeline_timing::paint(app, &p, t, crate::timeline_av::Geom { top, ..g });
 
     // The playhead.
     let x = mx(col(current) + CELL_W / 2.0);

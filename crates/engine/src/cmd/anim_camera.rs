@@ -13,7 +13,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Camera Keyframe",
             [],
             None,
-            "{frame?: (default: the current frame), x?, y?: the view's centre (document points), zoom?: 0.01–100 (1: the artboard's size), rotation?: degrees (counter-clockwise), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the camera key at the frame. Missing fields keep the camera there, or with no camera yet, the first artboard's centre at zoom 1 → {frame, x, y, zoom, rotation, ease}",
+            "{frame?: (default: the current frame), x?, y?: the view's centre (document points), zoom?: 0.01–100 (1: the artboard's size), rotation?: degrees the camera turns counter-clockwise (so the picture turns clockwise, as in Harmony), z?: how far the camera moves in toward the stage (document points; multiplane), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the camera key at the frame. Missing fields keep the camera there, or with no camera yet, the first artboard's centre at zoom 1 → {frame, x, y, zoom, rotation, ease}",
             has_doc,
             camera_key
         ),
@@ -40,7 +40,7 @@ pub fn specs() -> Vec<CommandSpec> {
 
 /// A camera as its command fields (`ease` null when it eases linearly).
 fn cam_value(c: &Cam) -> Value {
-    json!({"x": c.x, "y": c.y, "zoom": c.zoom, "rotation": c.rotation, "ease": c.ease})
+    json!({"x": c.x, "y": c.y, "zoom": c.zoom, "rotation": c.rotation, "ease": c.ease, "z": c.z})
 }
 
 fn camera_key(s: &mut Session, p: &Value) -> Result<Value> {
@@ -53,7 +53,7 @@ fn camera_key(s: &mut Session, p: &Value) -> Result<Value> {
         None => {
             let board = st.doc.artboards.first().ok_or_else(|| bad(C, "no artboard to centre the camera on"))?.rect;
             let c = board.center();
-            Cam { x: c.x, y: c.y, zoom: 1.0, rotation: 0.0, ease: None }
+            Cam { x: c.x, y: c.y, zoom: 1.0, rotation: 0.0, ease: None, z: 0.0 }
         }
     };
     // camera_at only eases between keys, so the ease comes from the key before the frame.
@@ -64,9 +64,10 @@ fn camera_key(s: &mut Session, p: &Value) -> Result<Value> {
         zoom: number_or(p, "zoom", base.zoom, C)?,
         rotation: number_or(p, "rotation", base.rotation, C)?,
         ease: ease_param(p, C)?.unwrap_or(kept_ease),
+        z: number_or(p, "z", base.z, C)?,
     };
     if !cam.valid() {
-        return Err(bad(C, "zoom must be from 0.01 to 100, and x, y and rotation must be finite"));
+        return Err(bad(C, "zoom must be from 0.01 to 100, and x, y, z and rotation must be finite"));
     }
     s.edit("Camera Keyframe", |d, _| {
         let mut a = Anim::of(d);

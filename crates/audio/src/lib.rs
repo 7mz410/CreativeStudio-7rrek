@@ -3,6 +3,9 @@
 //!
 //! [`decode`] reads WAV, MP3 and Ogg Vorbis through symphonia. [`mix`] sums [`Clip`]s at their
 //! start times, and [`peaks`] reduces a clip to per-bucket maxima for a waveform.
+//! [`mouths`] guesses a lip-sync mouth shape for each animation frame.
+
+mod mouth;
 
 use std::io::Cursor;
 
@@ -13,6 +16,8 @@ use symphonia::core::formats::FormatOptions;
 use symphonia::core::io::MediaSourceStream;
 use symphonia::core::meta::MetadataOptions;
 use symphonia::core::probe::Hint;
+
+pub use mouth::{MOUTHS, mouths};
 
 /// Output sample rate in Hz.
 pub const RATE: u32 = 48_000;

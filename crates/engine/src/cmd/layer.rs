@@ -485,8 +485,13 @@ fn add_layer(s: &mut Session, p: &Value, cmd: &str, label: &str, place: impl FnO
 
 fn new_layer(s: &mut Session, p: &Value) -> Result<Value> {
     let st = s.doc()?;
-    // Above the current layer, at its level; on top of everything with `top`.
-    let cur = st.current_layer().filter(|_| !bool_or(p, "top", false));
+    // Above the current layer, at its level; on top of everything with `top`. A keyframe (7rrek's
+    // drawings live in keyframe sublayers) stands for its timeline row: a new layer is a new row.
+    let keys = super::anim::Anim::of(&st.doc).keys;
+    let cur = st
+        .current_layer()
+        .map(|c| if keys.contains_key(&c.0) { super::anim::row_of(&st.doc, c).unwrap_or(c) } else { c })
+        .filter(|_| !bool_or(p, "top", false));
     add_layer(s, p, "layer.new", "New Layer", |d| match cur.and_then(|c| d.position(c)) {
         Some((parent, i, _)) => Ok((parent, i + 1)),
         None => Ok((None, usize::MAX)),
@@ -542,10 +547,40 @@ fn duplicate_rows(s: &mut Session, p: &Value) -> Result<Value> {
                 c.name = Some(format!("{} copy", n.display_name()));
                 d.copy_layer_guides(n, c);
             }
+            copy_anim(d, n, c);
         })
     })?;
     s.doc_mut()?.layer_rows = copies.clone();
     Ok(json!({ "ids": copies.iter().map(|i| i.0).collect::<Vec<_>>() }))
+}
+
+/// A copied row keeps its keyframes: each copied node takes its source's entry, found by a parallel
+/// walk of the two trees (as `character::insert` maps ids). Exposures and depth follow the row.
+/// Tweens and eases are not copied: `anim.keyframe` duplicates the source key, and a new key must
+/// not inherit its tween.
+fn copy_anim(d: &mut Document, n: &Node, c: &Node) {
+    let mut map = std::collections::HashMap::new();
+    super::character::pair_ids(n, c, &mut map);
+    let id = |old: &u64| map.get(old).copied();
+    let before = super::anim::Anim::of(d);
+    // A copied keyframe would be a second key on the same frame of the same row.
+    if before.keys.contains_key(&n.id.0) {
+        return;
+    }
+    let mut a = before.clone();
+    a.keys.extend(before.keys.iter().filter_map(|(k, f)| Some((id(k)?, *f))));
+    a.tweens.extend(before.tweens.iter().filter_map(id));
+    a.eases.extend(before.eases.iter().filter_map(|(k, e)| Some((id(k)?, *e))));
+    for (r, e) in &before.exposures {
+        let Some(r) = id(r) else { continue };
+        a.exposures.insert(r, e.iter().filter_map(|(f, drawing)| Some((*f, id(drawing)?))).collect());
+    }
+    if let Some(z) = before.depth.get(&n.id.0) {
+        a.depth.insert(c.id.0, *z);
+    }
+    if a != before {
+        a.store(d);
+    }
 }
 
 fn set_current(s: &mut Session, p: &Value) -> Result<Value> {

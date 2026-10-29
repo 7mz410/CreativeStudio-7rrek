@@ -61,6 +61,7 @@
 	Add Anchor Point	إضافة نقطة ربط
 	Add Anchor Point Tool	أداة إضافة نقطة ربط
 	Add Anchor Points	إضافة نقاط ربط
+	Add Curve Deformer	إضافة مشوِّه منحنى
 	Add Effect	إضافة تأثير
 	Add Freeform Line	إضافة خط حر
 	Add Freeform Point	إضافة نقطة حرة
@@ -538,6 +539,8 @@
 	Current Symbol	الرمز الحالي
 	Curvature	الانحناء
 	Curvature Tool	أداة الانحناء
+	Curve Deformer	مشوِّه المنحنى
+	Curve Key	مفتاح المنحنى
 	Curves…	المنحنيات…
 	Custom	مخصص
 	Customize…	تخصيص…
@@ -841,6 +844,7 @@
 	Exclude	استبعاد
 	Exclusion	الاستبعاد
 	Exit Isolation Mode	الخروج من وضع العزل
+	Collapse	طيّ
 	Expand	توسيع
 	Expand Appearance	توسيع المظهر
 	Expand applies to compound shapes (Alt-click a shape mode) — on the roadmap	التوسيع ينطبق على الأشكال المركّبة (Alt+نقر على وضع شكل) — ضمن خطة العمل
@@ -2368,6 +2372,7 @@
 	Serif / Mincho	Serif / Mincho
 	Server-side (.map)	من جهة الخادم (.map)
 	Set 1	المجموعة 1
+	Set Curve Deformer	ضبط مشوِّه المنحنى
 	Set Anchors	ضبط نقاط الربط
 	Set base color	تعيين اللون الأساسي
 	Set base color to the current color	تعيين اللون الأساسي إلى اللون الحالي
@@ -5624,6 +5629,81 @@ font-technology	Variable	متغير
 	Import Sound…	استيراد صوت…
 	Add a WAV, MP3 or Ogg sound at this frame	أضف صوت WAV أو MP3 أو Ogg عند هذا الإطار
 	Camera Keyframe	إطار رئيسي للكاميرا
+	Paint Colour Art	تلوين طبقة اللون
+	Colour Art	طبقة اللون
+	Bones	العظام
+	Add Peg	إضافة وتد
+	Attach to Peg	ربط بوتد
+	Detach from Peg	فك من الوتد
+	Peg Key	مفتاح وتد
+	Remove Peg Key	حذف مفتاح الوتد
+	Remove Peg	حذف الوتد
+	Pegs	الأوتاد
+	Move Peg	تحريك الوتد
+	Parent Peg	تعيين أب للوتد
+	Unparent Peg	إزالة أب الوتد
+	Drawings	الرسومات
+	Xsheet	ورقة التعريض
+	Palettes	الباليتات
+	Top View	المنظر العلوي
+	Camera Preview	معاينة الكاميرا
+	No artboard	لا توجد لوحة رسم
+	No camera keys: showing the artboard	لا توجد مفاتيح كاميرا: تُعرض لوحة الرسم كما هي
+	Stage	المسرح
+	Fields	حقول
+	Maintain Size	الحفاظ على الحجم
+	(+{n} fields from pegs)	(+{n} حقل من الأوتاد)
+	Cutter	القاطع
+	Cut This Layer By	اقطع هذه الطبقة بـ
+	Inverted (Keep Only the Overlap)	معكوس (أبقِ التداخل فقط)
+	Remove Cutter	إزالة القاطع
+	Add Cutter	إضافة قاطع
+	Cutters	القواطع
+	Rewire Cutter	إعادة توصيل القاطع
+	Hide this layer where another layer's shape covers it	أخفِ هذه الطبقة حيث يغطيها شكل طبقة أخرى
+	New Palette	باليتة جديدة
+	Scene	المشهد
+	Show in Scene	أظهرها في المشهد
+	Show on This Layer	أظهرها على هذه الطبقة
+	Make a swatch Global to recolour it with palettes	اجعل العينة عامة لتلوينها بالباليتات
+	No palettes yet: New Palette clones the global swatches	لا توجد باليتات بعد: «باليتة جديدة» تنسخ العينات العامة
+	No drawings yet: add keyframes on the timeline	لا توجد رسومات بعد: أضف إطارات مفتاحية على الخط الزمني
+	Increase Exposure	زيادة التعريض
+	Decrease Exposure	تقليل التعريض
+	No drawings: add keyframes to this layer	لا توجد رسومات: أضف مفاتيح إطارات إلى هذه الطبقة
+	frames: {frames}	الإطارات: {frames}
+	Lip Sync	مزامنة الشفاه
+	Light Table	طاولة الإضاءة
+	Show the other rows faded while drawing on this one	إظهار الصفوف الأخرى باهتة أثناء الرسم على هذا الصف
+	Pick the current layer's mouth drawings from the first sound	اختر رسومات فم الطبقة الحالية من الصوت الأول
+	Mouth Shape	شكل الفم
+	Mouth Chart	جدول الأفواه
+	Set Mouth	تعيين الفم
+	Set Mouth Shape Drawing	تعيين رسمة شكل الفم
+	Lip Sync from Sound	مزامنة الشفاه من الصوت
+	Add Mesh	إضافة شبكة
+	Pin Mesh Vertex	تثبيت رأس الشبكة
+	Unpin Mesh Vertex	فك تثبيت رأس الشبكة
+	Mesh Key	مفتاح الشبكة
+	Remove Curve Deformer	إزالة مشوِّه المنحنى
+	Remove Curve Key	إزالة مفتاح المنحنى
+	Remove Mesh Key	حذف مفتاح الشبكة
+	Remove Mesh	حذف الشبكة
+	Pin Mesh	تثبيت الشبكة
+	Unpin Mesh	فك تثبيت الشبكة
+	Hang the current layer from a new peg	علّق الطبقة الحالية على وتد جديد
+	Key the current layer's peg at this frame	ضع مفتاحًا لوتد الطبقة الحالية عند هذا الإطار
+	Bone Tool	أداة العظام
+	Mesh Deform Tool	أداة تشويه الشبكة
+	Curve Deform Tool	أداة تشويه المنحنى
+	Save Character	حفظ الشخصية
+	Load Character	تحميل شخصية
+	Save Character…	حفظ الشخصية…
+	Load Character…	تحميل شخصية…
+	Character Templates	قوالب الشخصيات
+	Pose Joint	تحريك مفصل
+	Reach	الوصول
+	Move Joint	نقل مفصل
 	Easing	التسهيل
 	How the tween speeds up and slows down	كيف تتسارع الحركة وتتباطأ
 	Export the frames as a WebM video	تصدير الإطارات كفيديو WebM
@@ -5634,3 +5714,141 @@ font-technology	Variable	متغير
 	Move the keyframe's art toward the next keyframe	حرّك رسم الإطار الرئيسي نحو الإطار الرئيسي التالي
 	Show the keyframes before and after faintly	اعرض الإطارات الرئيسية السابقة واللاحقة بشفافية
 	Export Animated GIF	تصدير GIF متحرك
+	Add Row Effect	إضافة تأثير للصف
+	Key Row Effect	وضع مفتاح لتأثير الصف
+	Remove Row Effect Key	إزالة مفتاح تأثير الصف
+	Remove Row Effect	إزالة تأثير الصف
+	Row Effects	تأثيرات الصف
+	Node View	عرض العقد
+	Node Graph	مخطط العقد
+	Connect Nodes	توصيل العقد
+	Disconnect Nodes	قطع اتصال العقد
+	Cutter (Inv)	قاطع (معكوس)
+	No rows in document	لا توجد صفوف في المستند
+	Action Templates	قوالب الحركة
+	No action templates	لا توجد قوالب حركة
+	Save Action	حفظ الحركة
+	Paste Action	لصق الحركة
+	Remove Action	حذف الحركة
+	Export Action	تصدير الحركة
+	Import Action	استيراد الحركة
+	List Actions	قائمة الحركات
+	From:	من:
+	To:	إلى:
+	Paint	تلوين
+	Glow	توهج
+	Color Adjust	ضبط الألوان
+	Key at this frame	مفتاح عند هذا الإطار
+	Remove Key	إزالة المفتاح
+	No effects on this row	لا توجد تأثيرات على هذا الصف
+	X Offset:	الإزاحة الأفقية:
+	Y Offset:	الإزاحة الرأسية:
+	Blur:	الضبابية:
+	Contrast:	التباين:
+	Protected	محمي
+	Recover Missing Swatches	استعادة العينات المفقودة
+	Unpaint	إلغاء التلوين
+	Repaint	إعادة التلوين
+	Textures	ملمسات
+	No textures	لا توجد ملمسات
+	Chalk	طبشور
+	Density:	الكثافة:
+	Seed:	البذرة:
+	Apply Texture	تطبيق الملمس
+	Remove Texture	إزالة الملمس
+	Delete Texture	حذف الملمس
+	Add Texture	إضافة ملمس
+	By Brightness	حسب السطوع
+	Also Cut By	اقطع أيضاً بـ
+	Combine	الدمج
+	How this layer's art mixes with the layers beneath it	كيف يمتزج رسم هذه الطبقة مع الطبقات التي تحتها
+	Drag a row's output dot onto another row to move it above or below that row	اسحب نقطة خرج الصف فوق صف آخر لنقله أعلى ذلك الصف أو أسفله
+	Box Blur	تمويه مربّع
+	Directional Blur	تمويه اتجاهي
+	Radial Zoom Blur	تمويه تكبير شعاعي
+	Greyscale	تدرج رمادي
+	Hue / Saturation	تدرّج اللون / التشبّع
+	Colour Scale	مقياس الألوان
+	Curves	المنحنيات
+	Colour Fade	تلاشي اللون
+	In Black:	الأسود المدخل:
+	In White:	الأبيض المدخل:
+	Out Black:	الأسود المخرج:
+	Out White:	الأبيض المخرج:
+	Gamma:	غاما:
+	Hue:	تدرّج اللون:
+	Saturation:	التشبّع:
+	Lightness:	الإضاءة:
+	R:	R:
+	G:	G:
+	B:	B:
+	A:	A:
+	Center X:	المركز X:
+	Center Y:	المركز Y:
+	Chroma Key	مفتاح لوني
+	Applies To:	يُطبَّق على:
+	Threshold:	العتبة:
+	Softness:	النعومة:
+	Spill:	إزالة الانسكاب:
+	Chroma Key…	مفتاح لوني…
+	Set Row Effect Part	تحديد جزء تأثير الصف
+	Rename Group	إعادة تسمية المجموعة
+	GROUP	مجموعة
+	Tone	تظليل
+	Highlight	إضاءة
+	Bloom	توهج إشعاعي
+	Motion Blur	تمويه الحركة
+	Samples:	العينات:
+	Color 0:	اللون 0:
+	Color 1:	اللون 1:
+	Write	الكتابة
+	Lock Cache	قفل الذاكرة المؤقتة
+	Lock Node Cache	قفل ذاكرة العقدة
+	Unlock Node Cache	فك قفل ذاكرة العقدة
+	Display Node	عقدة العرض
+	Write Node	عقدة الكتابة
+	hips	الورك
+	torso	الجذع
+	neck	الرقبة
+	head	الرأس
+	eye_L	العين اليسرى
+	eye_R	العين اليمنى
+	brow_L	الحاجب الأيسر
+	brow_R	الحاجب الأيمن
+	ear_L	الأذن اليسرى
+	ear_R	الأذن اليمنى
+	nose	الأنف
+	mouth	الفم
+	hair_front	الشعر الأمامي
+	hair_back	الشعر الخلفي
+	arm_upper_L	الذراع العليا اليسرى
+	arm_upper_R	الذراع العليا اليمنى
+	arm_lower_L	الساعد الأيسر
+	arm_lower_R	الساعد الأيمن
+	hand_L	اليد اليسرى
+	hand_R	اليد اليمنى
+	leg_upper_L	الفخذ الأيسر
+	leg_upper_R	الفخذ الأيمن
+	leg_lower_L	الساق اليسرى
+	leg_lower_R	الساق اليمنى
+	foot_L	القدم اليسرى
+	foot_R	القدم اليمنى
+	Rig Character from File	تجهيز شخصية من ملف
+	Rig Character	تجهيز شخصية
+	Export Frames…	تصدير الإطارات…
+	Apply Action	تطبيق الحركة
+	walk	مشي
+	blink	رمش
+	turn_head	التفات الرأس
+	point	إشارة
+	idle	سكون
+	Scene Setup	إعداد المشهد
+	Scene Info	معلومات المشهد
+	Build Scene	بناء المشهد
+	Scene Spec Schema	بنية وصف المشهد
+	Set Motion Path	تعيين مسار الحركة
+	Remove Motion Path	إزالة مسار الحركة
+	Motion Path Info	معلومات مسار الحركة
+	Timing Chart	مخطط التوقيت
+	Motion Path	مسار الحركة
+	Set Character View	تعيين مظهر الشخصية
