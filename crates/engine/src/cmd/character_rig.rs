@@ -395,6 +395,9 @@ mod tests {
             let arm = pegs.pegs.iter().find(|p| p.name == format!("{name}/arm_upper_L")).unwrap();
             // Contact pose: the left arm swings back as the left leg leads.
             assert_eq!(arm.keys.get(&1).map(|k| k.angle), Some(16.0), "{name}");
+            // Down pose (frame 4): the torso squashes.
+            let torso = pegs.pegs.iter().find(|p| p.name == format!("{name}/torso")).unwrap();
+            assert_eq!(torso.keys.get(&4).map(|k| (k.sx, k.sy)), Some((1.04, 0.96)), "{name}");
         }
         let video = std::env::temp_dir().join(format!("rig-p3-{}.webm", std::process::id()));
         let r = s.execute("anim.exportVideo", &json!({"path": video, "scale": 0.25})).unwrap();

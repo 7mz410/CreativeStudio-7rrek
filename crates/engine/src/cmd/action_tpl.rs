@@ -92,6 +92,11 @@ pub struct PartKey {
     pub dx: Option<f64>,
     #[serde(default, alias = "y", skip_serializing_if = "Option::is_none")]
     pub dy: Option<f64>,
+    /// Squash and stretch: the part's peg scales about its pivot (1 is unchanged).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sx: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sy: Option<f64>,
     #[serde(default, alias = "exposure", skip_serializing_if = "Option::is_none")]
     pub drawing: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -933,7 +938,7 @@ fn apply_to_pegs(s: &mut Session, character: &str, action: &Action, at: u32) -> 
             let row = peg.rows.first().copied();
             for (&rel, key) in track.keys() {
                 let frame = at.saturating_add(rel);
-                if key.rot.is_some() || key.dx.is_some() || key.dy.is_some() {
+                if key.rot.is_some() || key.dx.is_some() || key.dy.is_some() || key.sx.is_some() || key.sy.is_some() {
                     let k = peg.keys.entry(frame).or_default();
                     if let Some(v) = key.rot {
                         k.angle = v;
@@ -943,6 +948,12 @@ fn apply_to_pegs(s: &mut Session, character: &str, action: &Action, at: u32) -> 
                     }
                     if let Some(v) = key.dy {
                         k.y = v;
+                    }
+                    if let Some(v) = key.sx.filter(|v| v.is_finite() && *v > 0.0) {
+                        k.sx = v;
+                    }
+                    if let Some(v) = key.sy.filter(|v| v.is_finite() && *v > 0.0) {
+                        k.sy = v;
                     }
                     if key.ease.is_some() {
                         k.ease = key.ease;

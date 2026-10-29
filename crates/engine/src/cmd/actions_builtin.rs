@@ -3,7 +3,7 @@
 
 use std::collections::BTreeMap;
 
-use super::action_tpl::{Action, PartKey, PartTrack, Tracks};
+use super::action_tpl::{Action, PartTrack, Tracks};
 
 #[derive(Clone, Copy)]
 pub struct RawKey {
@@ -12,19 +12,25 @@ pub struct RawKey {
     pub dx: Option<f64>,
     pub dy: Option<f64>,
     pub drawing: Option<&'static str>,
+    pub scale: Option<(f64, f64)>,
 }
 
 impl RawKey {
     pub const fn rot(frame: u32, rot: f64) -> Self {
-        Self { frame, rot: Some(rot), dx: None, dy: None, drawing: None }
+        Self { frame, rot: Some(rot), dx: None, dy: None, drawing: None, scale: None }
     }
 
     pub const fn dy(frame: u32, dy: f64) -> Self {
-        Self { frame, rot: None, dx: None, dy: Some(dy), drawing: None }
+        Self { frame, rot: None, dx: None, dy: Some(dy), drawing: None, scale: None }
+    }
+
+    /// Squash (sx > 1, sy < 1) or stretch (sx < 1, sy > 1).
+    pub const fn scale(frame: u32, sx: f64, sy: f64) -> Self {
+        Self { frame, rot: None, dx: None, dy: None, drawing: None, scale: Some((sx, sy)) }
     }
 
     pub const fn drawing(frame: u32, drawing: &'static str) -> Self {
-        Self { frame, rot: None, dx: None, dy: None, drawing: Some(drawing) }
+        Self { frame, rot: None, dx: None, dy: None, drawing: Some(drawing), scale: None }
     }
 }
 
@@ -202,6 +208,19 @@ const WALK_PARTS: &[RawPart] = &[
         ],
     },
     RawPart {
+        part: "torso",
+        keys: &[
+            RawKey::scale(0, 1.0, 1.0),
+            RawKey::scale(3, 1.04, 0.96),
+            RawKey::scale(6, 1.0, 1.0),
+            RawKey::scale(9, 0.98, 1.03),
+            RawKey::scale(12, 1.0, 1.0),
+            RawKey::scale(15, 1.04, 0.96),
+            RawKey::scale(18, 1.0, 1.0),
+            RawKey::scale(21, 0.98, 1.03),
+        ],
+    },
+    RawPart {
         part: "hips",
         keys: &[
             RawKey::dy(0, 0.0),
@@ -273,13 +292,19 @@ pub const BUILTIN_ACTIONS: &[RawAction] = &[
 ];
 
 pub fn build_action(raw: &RawAction) -> Action {
-    let mut parts = BTreeMap::new();
+    // A part may be listed more than once (its turns, then its squash): keys at one frame merge.
+    let mut parts: BTreeMap<String, PartTrack> = BTreeMap::new();
     for p in raw.parts {
-        let mut keys = BTreeMap::new();
+        let track = parts.entry(p.part.to_string()).or_default();
         for k in p.keys {
-            keys.insert(k.frame, PartKey { rot: k.rot, dx: k.dx, dy: k.dy, drawing: k.drawing.map(str::to_string), ease: None });
+            let key = track.keys_mut().entry(k.frame).or_default();
+            key.rot = k.rot.or(key.rot);
+            key.dx = k.dx.or(key.dx);
+            key.dy = k.dy.or(key.dy);
+            key.sx = k.scale.map(|s| s.0).or(key.sx);
+            key.sy = k.scale.map(|s| s.1).or(key.sy);
+            key.drawing = k.drawing.map(str::to_string).or(key.drawing.take());
         }
-        parts.insert(p.part.to_string(), PartTrack::new(keys));
     }
     Action { name: raw.name.to_string(), length: raw.length, tracks: Tracks::default(), parts }
 }
