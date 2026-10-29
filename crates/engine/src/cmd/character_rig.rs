@@ -22,7 +22,7 @@ pub fn specs() -> Vec<CommandSpec> {
         "Rig Character from File",
         [],
         None,
-        "{path: a file that follows the character contract (.rsm), name?: the character's name (default: the file's name), view?: \"front\" | \"3q\" | \"side\" (default front)} adds one row and one peg per part, both named `<name>/<part>` so action.apply {character: name} finds them (pegs hang as in the contract's tree, pivots from each part's `pivot` object or the contract's default), and each part's `<part>.<drawing>` alternatives as its drawings, the default one exposed → {character, rows: {part: layer id}, pegs: {part: peg index}, warnings}",
+        "{path: a file that follows the character contract (.rsm), name?: the character's name (default: the file's name), view?: \"front\" | \"3q\" | \"side\" (default front)} adds one row and one peg per part, both named `<name>/<part>` so action.apply {character: name} finds them (pegs hang as in the contract's tree, pivots from each part's `pivot` object or the contract's default), and each part's `<part>.<drawing>` alternatives as its drawings, the default one exposed → {character, peg: the whole character's peg (named after it, every part hangs from it), rows: {part: layer id}, pegs: {part: peg index}, warnings}",
         has_doc,
         from_rsm
     )]
@@ -60,14 +60,18 @@ fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
     let parts = read_parts(&t, layer);
     let warnings = report["warnings"].clone();
 
-    let (rows, pegs) = s.edit("Rig Character", |d, _| {
+    let (rows, pegs, peg) = s.edit("Rig Character", |d, _| {
         let mut pegs = Pegs::of(d);
-        if pegs.pegs.len() + parts.len() > MAX_PEGS {
+        if pegs.pegs.len() + parts.len() + 1 > MAX_PEGS {
             return Err(bad(C, "the document has too many pegs for this character"));
         }
         let mut anim = Anim::of(d);
         let mut rows: BTreeMap<String, u64> = BTreeMap::new();
         let mut peg_of: HashMap<&str, usize> = HashMap::new();
+        // The whole character's peg, above every part: it places and moves the character, so the
+        // parts' own keys (a walk's bounce on the hips) never fight with where it stands.
+        let whole = pegs.pegs.len();
+        pegs.pegs.push(Peg { name: name.clone(), ..Peg::default() });
         // File order is stacking order: the first group is the bottom row.
         for part in &parts {
             let row = add_row(d, &t, part, &name, &mut anim)?;
@@ -77,17 +81,22 @@ fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
         }
         // Parents must come before children, so pegs are ordered by the contract tree, not by
         // stacking order, before the parent links are set.
-        let base = pegs.pegs.len() - parts.len();
+        let base = whole + 1;
         order_pegs(&mut pegs, &mut peg_of, base);
+        let root_pivot = pegs.pegs.get(base).map(|p| p.pivot).unwrap_or_default();
         for peg in pegs.pegs.iter_mut().skip(base) {
             peg.name = format!("{name}/{}", peg.name);
+            peg.parent = peg.parent.or(Some(whole));
+        }
+        if let Some(w) = pegs.pegs.get_mut(whole) {
+            w.pivot = root_pivot;
         }
         anim.store(d);
         pegs.store(d);
         let pegs_json: BTreeMap<String, usize> = peg_of.iter().map(|(k, v)| (k.to_string(), *v)).collect();
-        Ok((rows, pegs_json))
+        Ok((rows, pegs_json, whole))
     })?;
-    Ok(json!({"character": name, "rows": rows, "pegs": pegs, "warnings": warnings}))
+    Ok(json!({"character": name, "peg": peg, "rows": rows, "pegs": pegs, "warnings": warnings}))
 }
 
 /// The nearest ancestor in the contract tree that this character has a peg for.
