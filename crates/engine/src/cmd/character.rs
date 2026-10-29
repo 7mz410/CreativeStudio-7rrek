@@ -161,7 +161,7 @@ pub(crate) fn pair_ids(old: &Node, new: &Node, map: &mut HashMap<u64, u64>) {
 
 /// Points each image under `n` at pixels in `doc`: the template's blob under its key when `doc`
 /// has no such key or holds the same bytes there, else under the blob's content key.
-fn bring_images(n: &mut Node, t: &Document, doc: &mut Document) {
+pub(crate) fn bring_images(n: &mut Node, t: &Document, doc: &mut Document) {
     if let NodeKind::Image(im) = &mut n.kind
         && let Some(blob) = t.images.get(&im.key)
     {
