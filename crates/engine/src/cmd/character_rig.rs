@@ -2,6 +2,8 @@
 //! contract (plans/character-contract.md, checked by `character.check`) into timeline rows: one row
 //! per part, one peg per part hanging from its contract parent's peg and turning about the part's
 //! pivot, and the part's alternative drawings (`hand_L.fist`, `mouth.A`…) as the row's drawings.
+//! shortcut: pegs only, no bones or IK chains (contract section 5) and one view per call; add them
+//! when P3/P5 need `rig.reach` or turnarounds.
 
 use std::collections::{BTreeMap, HashMap};
 
