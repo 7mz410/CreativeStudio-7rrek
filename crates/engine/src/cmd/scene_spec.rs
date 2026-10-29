@@ -22,7 +22,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Build Scene",
             [],
             None,
-            "{spec: a scene spec object, or the path of a .json file holding one (see scene.specSchema); files it names are relative to that file} builds the scene in the open document as one undo step; any error undoes it all and names the field (`actions[2].at`) → {characters: {name: peg}, frames, lines: [{character, at, text}] for captions, skipped: [what was left out and why]}",
+            "{spec: a scene spec object or the path of a .json file holding one (see scene.specSchema; the files it names are relative to that file)} builds the scene in the open document as one undo step; any error undoes it all and names the field (`actions[2].at`) → {characters: {name: peg}, frames, lines: [{character, at, text}] for captions, skipped: [what was left out and why]}",
             has_doc,
             build
         ),
