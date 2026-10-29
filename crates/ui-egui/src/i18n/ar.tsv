@@ -5833,3 +5833,9 @@ font-technology	Variable	متغير
 	leg_lower_R	الساق اليمنى
 	foot_L	القدم اليسرى
 	foot_R	القدم اليمنى
+	Apply Action	تطبيق الحركة
+	walk	مشي
+	blink	رمش
+	turn_head	التفات الرأس
+	point	إشارة
+	idle	سكون
