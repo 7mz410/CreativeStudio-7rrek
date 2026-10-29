@@ -9,7 +9,7 @@ use std::collections::{BTreeMap, HashMap};
 
 use serde_json::json;
 use vectorcraft_doc::{Document, LayerColor, Node, NodeId};
-use vectorcraft_geom::Rect;
+use vectorcraft_geom::{Affine, Rect, Vec2};
 
 use super::anim::Anim;
 use super::character_contract::{PARTS, REQUIRED_VIEWS, check_doc, part_spec};
@@ -33,6 +33,8 @@ struct Part<'a> {
     name: &'a str,
     node: &'a Node,
     pivot: [f64; 2],
+    /// Another view's group to take the alternatives from, and the move onto this part.
+    borrow: Option<(&'a Node, Affine)>,
 }
 
 fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
@@ -57,7 +59,12 @@ fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
         return Err(bad(C, format!("view {view} lacks required parts: {}", report["missing"][view])));
     }
     let layer = t.layers.iter().find(|l| l.name.as_deref() == Some(view)).ok_or_else(|| bad(C, format!("the file has no {view} layer")))?;
-    let parts = read_parts(&t, layer);
+    let mut parts = read_parts(&t, layer);
+    if view != "front"
+        && let Some(front) = t.layers.iter().find(|l| l.name.as_deref() == Some("front"))
+    {
+        borrow_alternatives(&t, front, &mut parts);
+    }
     let warnings = report["warnings"].clone();
 
     let (rows, pegs, peg) = s.edit("Rig Character", |d, _| {
@@ -150,19 +157,26 @@ fn add_row(d: &mut Document, t: &Document, part: &Part, character: &str, anim: &
     let default = part_spec(part.name).and_then(|s| s.default_drawing);
     let mut first = None;
     let mut chosen = None;
-    for kid in part.node.children().into_iter().flatten() {
+    let source = part.borrow.map(|(n, _)| n).unwrap_or(part.node);
+    for kid in source.children().into_iter().flatten() {
         let name = kid.name.as_deref().unwrap_or("");
-        if name == "pivot" {
+        // A borrowed group gives only its alternatives; its plain art is the other view's.
+        if name == "pivot" || (part.borrow.is_some() && !name.starts_with(&prefix)) {
             continue;
         }
         let mut copy = d.reid(kid);
         super::character::bring_images(&mut copy, t, d);
+        if let Some((_, shift)) = part.borrow {
+            copy.transform(shift, false);
+        }
         match name.strip_prefix(&prefix).filter(|n| !n.is_empty()) {
             Some(drawing) => {
                 let sub = d.alloc_id();
                 let sub = d
                     .insert(Some(row), usize::MAX, Node::layer(sub, drawing, LayerColor::Preset(0)))
                     .map_err(|e| EngineError::Other(e.to_string()))?;
+                // The file may hide the alternatives it isn't showing; exposure decides now.
+                copy.visible = true;
                 d.insert(Some(sub), 0, copy).map_err(|e| EngineError::Other(e.to_string()))?;
                 anim.keys.insert(sub.0, 1);
                 first.get_or_insert(sub);
@@ -210,9 +224,30 @@ fn read_parts<'a>(t: &Document, layer: &'a Node) -> Vec<Part<'a>> {
             continue;
         }
         let pivot = pivots.get(name).copied().unwrap_or([0.0, 0.0]);
-        out.push(Part { name, node: g, pivot });
+        out.push(Part { name, node: g, pivot, borrow: None });
     }
     out
+}
+
+/// Views other than front often have no alternatives (mouth shapes, eye and hand states): such a
+/// part takes the front view's, moved so their centre lands on its own art's centre.
+/// shortcut: the front's drawings stand in for the view's own (a side-view mouth is drawn as the
+/// front one); draw per-view alternatives when the contract asks for them.
+fn borrow_alternatives<'a>(t: &Document, front: &'a Node, parts: &mut [Part<'a>]) {
+    for part in parts.iter_mut() {
+        let prefix = format!("{}.", part.name);
+        let has = |n: &Node| n.children().into_iter().flatten().any(|k| k.name.as_deref().is_some_and(|x| x.starts_with(&prefix)));
+        if part_spec(part.name).and_then(|s| s.default_drawings).is_none() || has(part.node) {
+            continue;
+        }
+        let Some(g) = front.children().into_iter().flatten().find(|g| g.name.as_deref().map(str::trim) == Some(part.name)) else { continue };
+        if !has(g) {
+            continue;
+        }
+        let (Some(to), Some(from)) = (t.bounds_of(&[part.node.id], false), t.bounds_of(&[g.id], false)) else { continue };
+        let shift = Affine::translate(Vec2::new(to.center().x - from.center().x, to.center().y - from.center().y));
+        part.borrow = Some((g.as_ref(), shift));
+    }
 }
 
 /// The contract's default pivot for `name` on `bounds` (section 2 of the contract).
@@ -247,6 +282,11 @@ mod tests {
 
     /// A contract file: every full part as a stacked box in each view, the arm down the left.
     fn contract_file(path: &std::path::Path) {
+        contract_file_with(path, false);
+    }
+
+    /// `alts_front_only`: the hand's alternatives only in the front view, as files from P4 have them.
+    fn contract_file_with(path: &std::path::Path, alts_front_only: bool) {
         let mut s = Session::new();
         s.execute("file.new", &json!({"width": 800.0, "height": 800.0})).unwrap();
         for v in REQUIRED_VIEWS {
@@ -267,7 +307,7 @@ mod tests {
                         s.execute("shape.ellipse", &json!({"x": 150.0, "y": 100.0, "width": 10.0, "height": 10.0})).unwrap()["id"].as_u64().unwrap(),
                     );
                 }
-                if spec.name == "hand_L" {
+                if spec.name == "hand_L" && (!alts_front_only || *v == "front") {
                     for alt in ["hand_L.open", "hand_L.fist"] {
                         let a = s.execute("shape.ellipse", &json!({"x": x, "y": y, "width": w, "height": h})).unwrap()["id"].as_u64().unwrap();
                         s.execute("object.setProps", &json!({"id": a, "name": alt})).unwrap();
@@ -359,6 +399,25 @@ mod tests {
         let r = s.execute("anim.exportVideo", &json!({"path": video, "scale": 0.25})).unwrap();
         let _ = std::fs::remove_file(&video);
         assert!(r["frames"].as_u64().unwrap() >= 24, "{r}");
+    }
+
+    #[test]
+    fn side_view_borrows_the_front_alternatives() {
+        let path = std::env::temp_dir().join(format!("rig-p2-borrow-{}.rsm", std::process::id()));
+        contract_file_with(&path, true);
+        let mut s = Session::new();
+        s.execute("file.new", &json!({})).unwrap();
+        let r = s.execute("character.fromRsm", &json!({"path": path, "view": "side"})).unwrap();
+        let _ = std::fs::remove_file(&path);
+        let row = r["rows"]["hand_L"].as_u64().unwrap();
+        let d = s.execute("anim.drawings", &json!({"row": row})).unwrap();
+        assert_eq!(d["drawings"].as_array().unwrap().len(), 2, "{d}");
+        let doc = &s.doc().unwrap().doc;
+        // Only the borrowed drawings, no leftover plain art, and they sit on the part.
+        let kids = doc.node(NodeId(row)).unwrap().children().unwrap();
+        assert!(kids.iter().all(|k| k.is_layer()));
+        let b = doc.bounds_of(&[NodeId(row)], false).unwrap();
+        assert!((b.center().x - 110.0).abs() < 1.0 && (b.center().y - 315.0).abs() < 1.0, "{b:?}");
     }
 
     #[test]
