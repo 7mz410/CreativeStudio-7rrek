@@ -152,7 +152,7 @@ fn add_row(d: &mut Document, t: &Document, part: &Part, anim: &mut Anim) -> Resu
                 }
             }
             None => {
-                d.insert(Some(row), 0, copy).map_err(|e| EngineError::Other(e.to_string()))?;
+                d.insert(Some(row), usize::MAX, copy).map_err(|e| EngineError::Other(e.to_string()))?;
             }
         }
     }
@@ -242,6 +242,12 @@ mod tests {
                     _ => (300.0, 300.0, 20.0, 20.0),
                 };
                 let mut ids = vec![s.execute("shape.rectangle", &json!({"x": x, "y": y, "width": w, "height": h})).unwrap()["id"].as_u64().unwrap()];
+                if spec.name == "torso" {
+                    // A second shape drawn on top, to check stacking order survives.
+                    ids.push(
+                        s.execute("shape.ellipse", &json!({"x": 150.0, "y": 100.0, "width": 10.0, "height": 10.0})).unwrap()["id"].as_u64().unwrap(),
+                    );
+                }
                 if spec.name == "hand_L" {
                     for alt in ["hand_L.open", "hand_L.fist"] {
                         let a = s.execute("shape.ellipse", &json!({"x": x, "y": y, "width": w, "height": h})).unwrap()["id"].as_u64().unwrap();
@@ -296,6 +302,11 @@ mod tests {
         s.execute("file.new", &json!({})).unwrap();
         let r = s.execute("character.fromRsm", &json!({"path": path, "view": "side"})).unwrap();
         let _ = std::fs::remove_file(&path);
+        let torso = r["rows"]["torso"].as_u64().unwrap();
+        let doc = &s.doc().unwrap().doc;
+        let kids = doc.node(NodeId(torso)).unwrap().children().unwrap();
+        let widths: Vec<f64> = kids.iter().map(|k| k.geometric_bounds().unwrap().width().round()).collect();
+        assert_eq!(widths, vec![100.0, 10.0], "the shape drawn last stays on top");
         let row = r["rows"]["hand_L"].as_u64().unwrap();
         let d = s.execute("anim.drawings", &json!({"row": row})).unwrap();
         let names: Vec<&str> = d["drawings"].as_array().unwrap().iter().map(|x| x["name"].as_str().unwrap()).collect();
