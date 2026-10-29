@@ -42,6 +42,8 @@ struct Spec {
     #[serde(default)]
     actions: Vec<ActionUse>,
     #[serde(default)]
+    turns: Vec<Turn>,
+    #[serde(default)]
     moves: Vec<Move>,
     #[serde(default)]
     dialogue: Vec<Line>,
@@ -56,9 +58,19 @@ struct Character {
     file: String,
     view: Option<String>,
     #[serde(default)]
+    views: Vec<String>,
+    #[serde(default)]
     x: f64,
     #[serde(default)]
     y: f64,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Turn {
+    character: String,
+    frame: u32,
+    view: String,
 }
 
 #[derive(Deserialize)]
@@ -103,8 +115,9 @@ fn schema(_: &mut Session, _: &Value) -> Result<Value> {
         "height": "number (optional)",
         "fps": "1–60 (optional)",
         "frames": "the scene's length in frames (optional; at least what the actions need)",
-        "characters": [{"name": "text, no /", "file": "a .rsm that passes character.check", "view": "front | 3q | side (default front; walking needs side)", "x": "where it stands, points from where it was drawn", "y": "number"}],
+        "characters": [{"name": "text, no /", "file": "a .rsm that passes character.check", "view": "front | 3q | side (default front; walking needs side)", "views": "[\"front\", \"3q\", \"side\"] (optional)", "x": "where it stands, points from where it was drawn", "y": "number"}],
         "actions": [{"character": "a name above", "action": "walk | blink | turn_head | point | idle | a saved action", "at": "first frame", "times": "repeats back to back (default 1)"}],
+        "turns": [{"character": "a name above", "frame": "frame from 1", "view": "front | 3q | side"}],
         "moves": [{"character": "name", "from": "frame", "to": "frame", "dx": "points travelled", "dy": "number"}],
         "dialogue": [{"character": "name", "sound": "WAV, MP3 or Ogg file", "at": "frame it starts", "text": "what is said (kept for captions)"}],
         "camera": [{"frame": "frame", "x": "centre", "y": "centre", "zoom": "1 = the stage", "rotation": "degrees", "ease": "linear | easeIn | easeOut | easeInOut"}]
@@ -146,7 +159,7 @@ fn check(spec: &Spec, base: Option<&Path>) -> Result<Plan> {
         Some(b) if Path::new(f).is_relative() => b.join(f),
         _ => PathBuf::from(f),
     };
-    let lens = [spec.characters.len(), spec.actions.len(), spec.moves.len(), spec.dialogue.len(), spec.camera.len()];
+    let lens = [spec.characters.len(), spec.actions.len(), spec.turns.len(), spec.moves.len(), spec.dialogue.len(), spec.camera.len()];
     if lens.iter().any(|n| *n > MAX_ITEMS) {
         return Err(bad(C, format!("a spec holds at most {MAX_ITEMS} items of each kind")));
     }
@@ -162,6 +175,11 @@ fn check(spec: &Spec, base: Option<&Path>) -> Result<Plan> {
         }
         if c.view.as_deref().is_some_and(|v| !["front", "3q", "side"].contains(&v)) {
             return Err(err(format!("{at}.view"), "front, 3q or side"));
+        }
+        for v in &c.views {
+            if !["front", "3q", "side"].contains(&v.as_str()) {
+                return Err(err(format!("{at}.views"), "front, 3q or side"));
+            }
         }
         if !c.x.is_finite() || !c.y.is_finite() {
             return Err(err(at, "x and y must be numbers"));
@@ -184,6 +202,17 @@ fn check(spec: &Spec, base: Option<&Path>) -> Result<Plan> {
         }
         end = end.max(a.at.saturating_add(len.saturating_mul(a.times)));
         lengths.push(len);
+    }
+    for (i, t) in spec.turns.iter().enumerate() {
+        let at = format!("turns[{i}]");
+        known(&t.character, format!("{at}.character"))?;
+        if t.frame < 1 {
+            return Err(err(format!("{at}.frame"), "a frame from 1"));
+        }
+        if !["front", "3q", "side"].contains(&t.view.as_str()) {
+            return Err(err(format!("{at}.view"), "front, 3q or side"));
+        }
+        end = end.max(t.frame);
     }
     for (i, m) in spec.moves.iter().enumerate() {
         let at = format!("moves[{i}]");
@@ -230,9 +259,14 @@ fn run(s: &mut Session, spec: &Spec, plan: &Plan) -> Result<Value> {
     // Where each character's whole peg stands, as moves add up.
     let mut place: HashMap<String, (f64, f64)> = HashMap::new();
     for (i, (c, file)) in spec.characters.iter().zip(&plan.files).enumerate() {
-        let r = s
-            .execute("character.fromRsm", &json!({"path": file, "name": c.name, "view": c.view.as_deref().unwrap_or("front")}))
-            .map_err(at(format!("characters[{i}]")))?;
+        let mut rsm_params = json!({"path": file, "name": c.name});
+        if let Some(v) = &c.view {
+            rsm_params["view"] = json!(v);
+        }
+        if !c.views.is_empty() {
+            rsm_params["views"] = json!(c.views);
+        }
+        let r = s.execute("character.fromRsm", &rsm_params).map_err(at(format!("characters[{i}]")))?;
         let peg = r["peg"].as_u64().unwrap_or(0);
         if let Some(m) = r["rows"]["mouth"].as_u64() {
             mouths.insert(c.name.clone(), m);
@@ -240,6 +274,11 @@ fn run(s: &mut Session, spec: &Spec, plan: &Plan) -> Result<Value> {
         s.execute("peg.key", &json!({"peg": peg, "frame": 1, "x": c.x, "y": c.y})).map_err(at(format!("characters[{i}]")))?;
         pegs.insert(c.name.clone(), peg);
         place.insert(c.name.clone(), (c.x, c.y));
+    }
+
+    // Turns go before actions so a blink after a turn picks that view's drawing.
+    for (i, t) in spec.turns.iter().enumerate() {
+        s.execute("character.view", &json!({"character": t.character, "frame": t.frame, "view": t.view})).map_err(at(format!("turns[{i}]")))?;
     }
 
     let mut skipped: Vec<String> = Vec::new();
