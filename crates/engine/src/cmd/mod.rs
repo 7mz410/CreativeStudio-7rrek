@@ -15,6 +15,7 @@ mod attributes;
 mod brushsym;
 mod buildcmds;
 pub mod character;
+pub mod character_contract;
 pub mod clipboard;
 mod colorcmds;
 pub mod colormgmt;
@@ -338,6 +339,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(mesh_cmd::specs());
         v.extend(curve_cmd::specs());
         v.extend(character::specs());
+        v.extend(character_contract::specs());
         v.extend(anim_sound::specs());
         v.extend(rig_cmd::specs());
         v.extend(peg_cmd::specs());
