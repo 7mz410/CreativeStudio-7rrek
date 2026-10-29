@@ -703,6 +703,15 @@ pub fn specs() -> Vec<CommandSpec> {
             has_doc,
             export_video
         ),
+        cmd!(
+            query "anim.exportFrames",
+            "Export Frames…",
+            [],
+            None,
+            "{dir, from?, to?, scale?: (default 1), artboard?: index (default 0), alpha?: bool (default true; false puts the frames on white)} one PNG per frame, frame_0001.png…, in dir (created if missing) → {dir, frames, width, height, files}",
+            has_doc,
+            export_frames
+        ),
     ]
 }
 
@@ -1059,6 +1068,55 @@ pub fn encode_gif(doc: &Document, p: &Value) -> Result<(Vec<u8>, Value)> {
         }
     }
     Ok((out, json!({"frames": to - from + 1, "width": w, "height": h})))
+}
+
+/// Most frames one export writes (a file each).
+const MAX_FRAME_FILES: u32 = 10_000;
+
+fn export_frames(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "anim.exportFrames";
+    let dir = str_param(p, "dir").ok_or_else(|| bad(C, "dir is required"))?.to_string();
+    let doc = s.doc()?.doc.clone();
+    let anim = Anim::of(&doc);
+    let Range { w, h, from, to, .. } = range(&doc, &anim, p, C)?;
+    let files = encode_frames(&doc, p)?;
+    std::fs::create_dir_all(&dir).map_err(|e| EngineError::Other(format!("{dir}: {e}")))?;
+    let mut names = Vec::with_capacity(files.len());
+    for (name, bytes) in &files {
+        let path = std::path::Path::new(&dir).join(name).to_string_lossy().into_owned();
+        super::fileio::write_file(&path, bytes)?;
+        names.push(name.clone());
+    }
+    Ok(json!({"dir": dir, "frames": to - from + 1, "width": w, "height": h, "files": names}))
+}
+
+/// `doc`'s frames as PNG files `frame_0001.png`… (`anim.exportFrames`'s options in `p`, `dir` aside) → (file name,
+/// bytes) per frame. Transparent areas stay transparent unless `alpha` is false, then they come out white.
+pub fn encode_frames(doc: &Document, p: &Value) -> Result<Vec<(String, Vec<u8>)>> {
+    use image::{ImageFormat, RgbaImage};
+    use std::io::Cursor;
+    const C: &str = "anim.exportFrames";
+    let anim = Anim::of(doc);
+    let alpha = match p.get("alpha") {
+        None | Some(Value::Null) => true,
+        Some(v) => v.as_bool().ok_or_else(|| bad(C, "alpha must be true or false"))?,
+    };
+    let Range { rect, scale, from, to, .. } = range(doc, &anim, p, C)?;
+    if to - from + 1 > MAX_FRAME_FILES {
+        return Err(bad(C, format!("{} frames is more than one export writes (at most {MAX_FRAME_FILES})", to - from + 1)));
+    }
+    let mut out = Vec::with_capacity((to - from + 1) as usize);
+    let mut r = vectorcraft_render::Renderer::new();
+    for f in from..=to {
+        // With alpha off the renderer lays the frame on opaque white, as the video export does.
+        let img = r.render_region(&through_camera(at_frame(doc, f), anim.camera_at(f), rect), rect, scale, !alpha);
+        let rgba = img.to_straight();
+        let buf = RgbaImage::from_raw(img.width, img.height, rgba).ok_or_else(|| bad(C, "a frame didn't render"))?;
+        let mut png = Vec::new();
+        buf.write_to(&mut Cursor::new(&mut png), ImageFormat::Png).map_err(|e| bad(C, format!("PNG: {e}")))?;
+        out.push((format!("frame_{f:04}.png"), png));
+    }
+    Ok(out)
 }
 
 #[cfg(test)]
@@ -1510,6 +1568,38 @@ mod tests {
         s.execute("anim.exportVideo", &json!({"path": path.to_string_lossy(), "scale": 0.25, "format": "mp4"})).unwrap();
         assert_eq!(std::fs::read(&path).unwrap().get(4..8), Some(&b"ftyp"[..]));
         std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    #[test]
+    fn exports_one_png_per_frame() {
+        let mut s = session();
+        s.execute("anim.setFrames", &json!({"frames": 3})).unwrap();
+        s.execute("anim.keyframe", &json!({"frame": 1})).unwrap();
+        rect(&mut s, 10.0);
+        s.execute("anim.blankKeyframe", &json!({"frame": 2})).unwrap();
+        rect(&mut s, 60.0);
+        let dir = std::env::temp_dir().join(format!("7rrek-frames-{}", std::process::id()));
+        let dir_str = dir.to_string_lossy().into_owned();
+        let r = s.execute("anim.exportFrames", &json!({"dir": dir_str, "scale": 0.25})).unwrap();
+        assert_eq!(r["frames"], 3);
+        assert_eq!(r["files"], json!(["frame_0001.png", "frame_0002.png", "frame_0003.png"]));
+        for name in ["frame_0001.png", "frame_0002.png", "frame_0003.png"] {
+            assert!(dir.join(name).exists(), "{name} written");
+        }
+        let img = image::open(dir.join("frame_0001.png")).unwrap().to_rgba8();
+        assert_eq!(img.get_pixel(0, 0)[3], 0, "the empty corner is transparent");
+        let r = s.execute("anim.exportFrames", &json!({"dir": dir_str, "scale": 0.25, "alpha": false})).unwrap();
+        assert_eq!(r["frames"], 3);
+        let img = image::open(dir.join("frame_0001.png")).unwrap().to_rgba8();
+        assert_eq!(img.get_pixel(0, 0).0, [255, 255, 255, 255], "alpha false is opaque white");
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn export_frames_needs_a_dir() {
+        let mut s = session();
+        assert!(s.execute("anim.exportFrames", &json!({"scale": 0.25})).is_err());
     }
 
     #[test]
