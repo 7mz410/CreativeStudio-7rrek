@@ -65,3 +65,30 @@ python3 studio/rebrand.py      # re-apply the branding
   Clear Keyframe, a row per top-level layer with keyframe dots, hold bands and the playhead;
   clicking a frame goes there and to that row's layer. Labels of the new commands in every
   complete catalog (`studio/i18n/*.tsv`).
+- Video export (`crates/video`, `anim.exportVideo`): WebM (VP9, Opus sound) and MP4 (H.264, AAC
+  sound, through filmcraft's encoder and muxer), and PNG sequences with alpha (`anim.exportFrames`).
+  Exports take a step of 1–4, so an animation can run on twos.
+- Tweens: motion tweens that move, turn and scale about the centre and mix fill, stroke and
+  opacity; shape tweens that morph unlike shapes; easing per tween (linear, ease in/out, CSS
+  cubic-bezier).
+- Camera keys (centre, zoom, rotation, eased) applied to exports; the camera turns as in Harmony.
+- Sound (`crates/audio`): WAV, MP3 and Ogg clips embedded in the document, mixed into exports and
+  played with the timeline on desktop, with waveforms on the timeline. Lip sync guesses a mouth
+  shape (Preston Blair A–H and X) per frame from a sound.
+- Rigging: bones with linear blend skinning and IK (two-bone and FABRIK), pegs with keyed
+  transforms that nest, mesh deformers (ARAP) for images, and curve and envelope deformers, each
+  with its tool and canvas overlay (Bone, Mesh Deform, Curve Deform).
+- Drawing substitution and an Xsheet panel; palettes per scene and per row; cutters and mattes;
+  multiplane depth with a Top View and Camera Preview; row effects (blur, glow, drop shadow, colour
+  ops, chroma key, matte-driven effects, motion blur); a Node View for the composite with Display
+  and Write nodes, groups and cache lock.
+- Drawing aids: pen pressure as line width, Colour Art fill and gap-closing paint, textured lines,
+  palette tints and protected colours, and a light table.
+- Characters: templates (`.7rrekch`, Save/Load Character…), a character contract
+  (`character.check`) and auto-rig from an rsm file (`character.fromRsm`), views (front, 3/4, side)
+  the character turns between, action templates by contract part (`action.apply`, a walk cycle and
+  an idle) with squash and stretch, motion paths and timing charts.
+- Scenes: `scene.setup` (stage size, frame rate, length, safe areas) and `scene.build`, which turns
+  a scene spec into a shot.
+- The timeline mirrors right to left in Arabic, and the new commands, panels and rows have Arabic
+  labels.
