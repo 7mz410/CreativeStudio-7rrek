@@ -76,9 +76,10 @@ fn walk_plants_the_foot_on_the_ground_and_travels_by_its_stride() {
 
     for f in 1..57 {
         let (now, next) = (points(f), points(f + 1));
-        let i = lowest(&now);
-        assert!((now[i].y - 515.0).abs() < 0.5, "frame {f}: the lowest foot point is off the floor at y {}", now[i].y);
-        let slide = (next[i].x - now[i].x).abs();
+        let low = now[lowest(&now)].y;
+        assert!((low - 515.0).abs() < 0.5, "frame {f}: the lowest foot point is off the floor at y {low}");
+        // Some point on the floor (within 2.5 pt) stays put into the next frame.
+        let slide = (0..now.len()).filter(|&i| now[i].y > 515.0 - 2.5).map(|i| (next[i].x - now[i].x).abs()).fold(f64::INFINITY, f64::min);
         assert!(slide <= 1.0, "frame {f}→{}: the planted foot slid {slide:.2} pt", f + 1);
     }
     let travel = pegs.pegs[peg("boy")].key_at(48).x;

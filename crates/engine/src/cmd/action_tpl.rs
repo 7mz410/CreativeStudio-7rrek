@@ -1059,7 +1059,19 @@ fn plant_feet(d: &Document, pegs: &mut Pegs, anim: &Anim, character: &str, at: u
             set(pegs, key);
             pts = world(pegs, f);
         }
+        // The foot on the ground keeps the lock until the other foot comes down more than 2 pt
+        // below it, so near ties (both feet down at contact) don't swap feet back and forth.
+        let foot_low = |foot: usize| {
+            pts.iter()
+                .enumerate()
+                .filter(|(i, _)| points.get(*i).is_some_and(|(f, _)| *f == foot))
+                .fold((usize::MAX, f64::NEG_INFINITY), |acc, (i, p)| if p.y > acc.1 { (i, p.y) } else { acc })
+        };
         let (i, _) = lowest(&pts);
+        let i = match lock.and_then(|(j, _)| points.get(j)).map(|(foot, _)| foot_low(*foot)) {
+            Some((j, low)) if j != usize::MAX && pts.get(i).is_some_and(|p| p.y <= low + 2.0) => j,
+            _ => i,
+        };
         lock = pts.get(i).map(|p| (i, *p));
         (x, y) = (key.x, key.y);
     }
