@@ -1,6 +1,6 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-//! D5: the walk plants its feet. Two walk cycles in a row on a side-view character: the foot on
+//! D5: the walk plants its feet. Two walk cycles and a stop on a side-view character: the foot on
 //! the ground never slides more than 1 pt from one frame to the next, it stays on the floor, and
 //! the character travels by what the stride gives.
 
@@ -59,6 +59,7 @@ fn walk_plants_the_foot_on_the_ground_and_travels_by_its_stride() {
         let r = s.execute("action.apply", &json!({"character": "boy", "action": "walk", "at": at})).unwrap();
         assert_eq!(r["skipped"], json!([]), "{r}");
     }
+    s.execute("action.apply", &json!({"character": "boy", "action": "stop", "at": 49})).unwrap();
 
     let pegs = Pegs::of(&s.doc().unwrap().doc);
     let peg = |name: &str| pegs.pegs.iter().position(|p| p.name == name).unwrap();
@@ -70,7 +71,7 @@ fn walk_plants_the_foot_on_the_ground_and_travels_by_its_stride() {
     };
     let lowest = |pts: &[Point]| (0..pts.len()).max_by(|&a, &b| pts[a].y.total_cmp(&pts[b].y)).unwrap();
 
-    for f in 1..48 {
+    for f in 1..57 {
         let (now, next) = (points(f), points(f + 1));
         let i = lowest(&now);
         assert!((now[i].y - 515.0).abs() < 0.5, "frame {f}: the lowest foot point is off the floor at y {}", now[i].y);

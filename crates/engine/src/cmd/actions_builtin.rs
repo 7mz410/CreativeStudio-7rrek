@@ -1,4 +1,4 @@
-//! 7rrek (Creative Studio): starter action templates as pure data (`walk`, `blink`, `turn_head`, `point`, `idle`).
+//! 7rrek (Creative Studio): starter action templates as pure data (`walk`, `blink`, `turn_head`, `point`, `idle`, `stop`).
 //! Keys are keyed by contract part names relative to rest pose.
 
 use std::collections::BTreeMap;
@@ -297,12 +297,30 @@ const IDLE_PARTS: &[RawPart] = &[
     RawPart { part: "arm_lower_R", keys: &[RawKey::rot(0, 0.0), RawKey::rot(24, -3.0), RawKey::rot(47, 0.0)] },
 ];
 
+// 6. stop: 8 frames from the walk's contact pose (its frame 0 and 24) back to standing. The front
+// foot stays planted while the back leg lifts and comes in; apply it where the walk ends.
+const STOP_PARTS: &[RawPart] = &[
+    RawPart { part: "leg_upper_L", keys: &[RawKey::rot(0, -22.0), RawKey::rot(4, -8.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "leg_lower_L", keys: &[RawKey::rot(0, 4.0), RawKey::rot(4, 6.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "foot_L", keys: &[RawKey::rot(0, -8.0), RawKey::rot(4, 0.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "leg_upper_R", keys: &[RawKey::rot(0, 18.0), RawKey::rot(4, -4.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "leg_lower_R", keys: &[RawKey::rot(0, 8.0), RawKey::rot(4, 30.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "foot_R", keys: &[RawKey::rot(0, 10.0), RawKey::rot(4, 4.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "arm_upper_L", keys: &[RawKey::rot(0, 16.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "arm_lower_L", keys: &[RawKey::rot(0, -5.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "arm_upper_R", keys: &[RawKey::rot(0, -16.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "arm_lower_R", keys: &[RawKey::rot(0, -18.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "torso", keys: &[RawKey::rot(0, 3.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "head", keys: &[RawKey::rot(0, -2.0), RawKey::rot(8, 0.0)] },
+];
+
 pub const BUILTIN_ACTIONS: &[RawAction] = &[
     RawAction { name: "walk", length: 24, parts: WALK_PARTS },
     RawAction { name: "blink", length: 6, parts: BLINK_PARTS },
     RawAction { name: "turn_head", length: 12, parts: TURN_HEAD_PARTS },
     RawAction { name: "point", length: 12, parts: POINT_PARTS },
     RawAction { name: "idle", length: 48, parts: IDLE_PARTS },
+    RawAction { name: "stop", length: 8, parts: STOP_PARTS },
 ];
 
 pub fn build_action(raw: &RawAction) -> Action {

@@ -1025,14 +1025,19 @@ fn plant_feet(d: &Document, pegs: &mut Pegs, anim: &Anim, character: &str, at: u
     };
     let lowest = |pts: &[Point]| pts.iter().enumerate().fold((0, f64::NEG_INFINITY), |acc, (i, p)| if p.y > acc.1 { (i, p.y) } else { acc });
     let base = peg.key_at(at);
-    // The floor: where the feet stand at rest, placed by the character's own peg alone.
-    let place = pegs.matrices(at).get(whole).copied().unwrap_or(Affine::IDENTITY);
-    let floor = points.iter().map(|(_, p)| (place * *p).y).fold(f64::NEG_INFINITY, f64::max);
     // A stepping action keyed just before: start from its last frame so the locked foot carries over.
     let start = if at > 1 && peg.keys.contains_key(&(at - 1)) { at - 1 } else { at };
+    // The floor: where the feet stand at rest, placed by the character's own peg alone, or where
+    // the action before left them.
+    let floor = if start < at {
+        lowest(&world(pegs, start)).1
+    } else {
+        let place = pegs.matrices(at).get(whole).copied().unwrap_or(Affine::IDENTITY);
+        points.iter().map(|(_, p)| (place * *p).y).fold(f64::NEG_INFINITY, f64::max)
+    };
     let end = at.saturating_add(length).min(MAX_LENGTH) + 1;
     let mut lock: Option<(usize, Point)> = None;
-    let mut x = base.x;
+    let (mut x, mut y) = (base.x, base.y);
     for f in start..end {
         let mut key = pegs.pegs.get(whole).map(|p| p.key_at(f)).unwrap_or(base);
         let mut pts = world(pegs, f);
@@ -1042,7 +1047,7 @@ fn plant_feet(d: &Document, pegs: &mut Pegs, anim: &Anim, character: &str, at: u
                     p.keys.insert(f, key);
                 }
             };
-            key = PegKey { x, y: base.y, ease: None, ..key };
+            key = PegKey { x, y, ease: None, ..key };
             set(pegs, key);
             pts = world(pegs, f);
             if let Some((i, before)) = lock {
@@ -1050,13 +1055,13 @@ fn plant_feet(d: &Document, pegs: &mut Pegs, anim: &Anim, character: &str, at: u
             }
             let (_, low) = lowest(&pts);
             key.x = x;
-            key.y = base.y + if low.is_finite() { floor - low } else { 0.0 };
+            key.y = y + if low.is_finite() { floor - low } else { 0.0 };
             set(pegs, key);
             pts = world(pegs, f);
         }
         let (i, _) = lowest(&pts);
         lock = pts.get(i).map(|p| (i, *p));
-        x = key.x;
+        (x, y) = (key.x, key.y);
     }
 }
 
