@@ -285,8 +285,11 @@ pub fn at_frame_with(doc: &Document, frame: u32, onion: bool) -> Document {
     for row in &doc.layers {
         let keys = anim.row_frames(row);
         let Some(shown) = keys.iter().rposition(|(f, _)| *f <= frame).or((!keys.is_empty()).then_some(usize::MAX)) else { continue };
-        for (_, id) in &keys {
-            if let Some(n) = d.node_mut(*id) {
+        // Every drawing of the row hides, not only those keyed by frame: drawings keyed on the same
+        // frame (a rigged part's views and alternatives) would otherwise all show.
+        let drawings = row.children().into_iter().flatten().filter(|c| c.is_layer() && anim.keys.contains_key(&c.id.0)).map(|c| c.id);
+        for id in keys.iter().map(|(_, id)| *id).chain(drawings) {
+            if let Some(n) = d.node_mut(id) {
                 (n.visible, n.locked, n.opacity) = (false, false, 1.0);
             }
         }
