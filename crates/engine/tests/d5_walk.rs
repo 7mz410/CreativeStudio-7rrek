@@ -9,8 +9,11 @@ use vectorcraft_engine::Session;
 use vectorcraft_engine::cmd::peg::Pegs;
 use vectorcraft_geom::Point;
 
-/// (part, x, y, width, height, pivot): a character facing right, legs 200 pt long.
-const PARTS: &[(&str, f64, f64, f64, f64, (f64, f64))] = &[
+/// (part, x, y, width, height, pivot).
+type Part = (&'static str, f64, f64, f64, f64, (f64, f64));
+
+/// A character facing right, legs 200 pt long.
+const PARTS: &[Part] = &[
     ("hips", 180.0, 280.0, 40.0, 40.0, (200.0, 300.0)),
     ("torso", 170.0, 150.0, 60.0, 140.0, (200.0, 290.0)),
     ("head", 165.0, 80.0, 70.0, 70.0, (200.0, 150.0)),

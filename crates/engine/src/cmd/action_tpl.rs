@@ -1042,7 +1042,7 @@ fn plant_feet(d: &Document, pegs: &mut Pegs, anim: &Anim, character: &str, at: u
         let mut key = pegs.pegs.get(whole).map(|p| p.key_at(f)).unwrap_or(base);
         let mut pts = world(pegs, f);
         if f > start || start == at {
-            let mut set = |pegs: &mut Pegs, key: PegKey| {
+            let set = |pegs: &mut Pegs, key: PegKey| {
                 if let Some(p) = pegs.pegs.get_mut(whole) {
                     p.keys.insert(f, key);
                 }
