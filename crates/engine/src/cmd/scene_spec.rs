@@ -190,9 +190,9 @@ fn build_stage(
         s.execute("paint.setStroke", &json!({"ids": [rect], "none": true}))?;
         s.execute(
             "paint.editGradient",
-            &json!({"ids": [rect], "kind": "linear", "stops": [{"offset": 0, "color": top}, {"offset": 1, "color": bottom}]}),
+            &json!({"ids": [rect], "stroke": false, "kind": "linear", "stops": [{"offset": 0, "color": top}, {"offset": 1, "color": bottom}]}),
         )?;
-        s.execute("paint.setGradientGeom", &json!({"ids": [rect], "start": [x0 + w / 2.0, y0], "end": [x0 + w / 2.0, y0 + h]}))?;
+        s.execute("paint.setGradientGeom", &json!({"ids": [rect], "stroke": false, "start": [x0 + w / 2.0, y0], "end": [x0 + w / 2.0, y0 + h]}))?;
         to_bottom(s, layer)?;
     }
     Ok(skipped)
@@ -554,6 +554,9 @@ mod tests {
         let r = s.execute("scene.build", &json!({"spec": sp})).unwrap();
         let d = &s.doc().unwrap().doc;
         assert_eq!(d.layers[0].name.as_deref(), Some("background"), "{r}");
+        let bg = s.execute("document.node", &json!({"id": d.layers[0].children().unwrap()[0].id.0, "summary": true})).unwrap();
+        assert_eq!(bg["fill"], "Linear gradient", "the gradient fills the background: {bg}");
+        let d = &s.doc().unwrap().doc;
         let shadow = d.layers.iter().find(|l| l.name.as_deref() == Some("ana/shadow")).expect("shadow row").id.0;
         let pegs = super::super::peg::Pegs::of(d);
         let ch = &pegs.pegs[r["characters"]["ana"].as_u64().unwrap() as usize];
