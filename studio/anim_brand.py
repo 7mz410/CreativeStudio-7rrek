@@ -100,6 +100,12 @@ TARGETED = {
     'apps/vectorcraft/src/mac_save_format.rs': [
         ('Some(&["rsm"][..])', 'Some(&["7rrek"][..])'),
     ],
+    # Windows VERSIONINFO: the name Task Manager, Open With and the file's properties show.
+    'apps/vectorcraft/build.rs': [
+        ('.set("ProductName", "VectorCraft")', '.set("ProductName", "7rrek")'),
+        ('.set("FileDescription", "VectorCraft vector illustration editor")', '.set("FileDescription", "7rrek animation")'),
+        ('.set("OriginalFilename", "vectorcraft.exe")', '.set("OriginalFilename", "7rrek.exe")'),
+    ],
     'packaging/macos/Info.plist.in': [
         ('<string>rsm Document</string>', '<string>7rrek Document</string>'),
         ('<array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>',
