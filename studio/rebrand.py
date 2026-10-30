@@ -364,7 +364,8 @@ def main():
             changed.append(p)
     web = ROOT / 'apps/vectorcraft-web/index.html'
     html = web.read_text(encoding='utf-8')
-    branded = html.replace('<title>VectorCraft</title>', f'<title>{NAME}</title>').replace('Loading VectorCraft&hellip;', f'Loading {NAME}&hellip;')
+    branded = html.replace('<title>VectorCraft</title>', f'<title>{NAME}</title>').replace('Loading VectorCraft&hellip;', f'Loading {NAME}&hellip;')\
+        .replace('apple-mobile-web-app-title" content="VectorCraft"', f'apple-mobile-web-app-title" content="{NAME}"')
     if branded != html:
         web.write_text(branded, encoding='utf-8')
         changed.append(web)
