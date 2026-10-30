@@ -45,10 +45,22 @@ struct Spec {
     turns: Vec<Turn>,
     #[serde(default)]
     moves: Vec<Move>,
+    stage: Option<Stage>,
     #[serde(default)]
     dialogue: Vec<Line>,
     #[serde(default)]
     camera: Vec<Value>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields, rename_all = "camelCase")]
+struct Stage {
+    /// Top and bottom colours of a linear gradient filling the artboard.
+    background: Option<[String; 2]>,
+    #[serde(default)]
+    shadows: bool,
+    #[serde(default)]
+    safe_areas: bool,
 }
 
 #[derive(Deserialize)]
@@ -109,6 +121,92 @@ fn one() -> u32 {
     1
 }
 
+fn is_hex_colour(c: &str) -> bool {
+    c.strip_prefix('#').is_some_and(|h| h.len() == 6 && h.chars().all(|ch| ch.is_ascii_hexdigit()))
+}
+
+/// The stage: safe areas, each character's contact shadow, then the background at the very bottom.
+/// Returns what was left out.
+fn build_stage(
+    s: &mut Session,
+    spec: &Spec,
+    stage: &Stage,
+    frames: u32,
+    pegs: &HashMap<String, u64>,
+    feet: &HashMap<String, Vec<u64>>,
+) -> Result<Vec<String>> {
+    let mut skipped = Vec::new();
+    if stage.safe_areas {
+        s.execute("scene.setup", &json!({"safeAreas": true}))?;
+    }
+    if stage.shadows {
+        for c in &spec.characters {
+            let Some(&peg) = pegs.get(&c.name) else { continue };
+            let doc = super::peg::Pegs::of(&s.doc()?.doc);
+            let Some(cp) = doc.pegs.get(peg as usize) else { continue };
+            // Measure the feet at rest, falling back to the whole character when it has no feet rows.
+            let ids: Vec<NodeId> = match feet.get(&c.name) {
+                Some(f) if !f.is_empty() => f.iter().map(|r| NodeId(*r)).collect(),
+                _ => cp.rows.iter().map(|r| NodeId(*r)).collect(),
+            };
+            let Some(b) = s.doc()?.doc.bounds_of(&ids, true) else {
+                skipped.push(format!("{}: nothing to measure, no shadow", c.name));
+                continue;
+            };
+            let w = b.width() * 1.3;
+            let h = w * 0.18;
+            if !(w.is_finite() && w > 0.0) {
+                skipped.push(format!("{}: feet have no width, no shadow", c.name));
+                continue;
+            }
+            let (cx, feet_y) = ((b.x0 + b.x1) / 2.0, b.y1);
+            let layer = s.execute("layer.new", &json!({"name": format!("{}/shadow", c.name)}))?["id"]
+                .as_u64()
+                .ok_or_else(|| bad("scene.build", "no layer id"))?;
+            s.execute("layer.setCurrent", &json!({"id": layer}))?;
+            let shape = s.execute("shape.ellipse", &json!({"x": cx - w / 2.0, "y": feet_y - h / 2.0, "width": w, "height": h}))?["id"]
+                .as_u64()
+                .ok_or_else(|| bad("scene.build", "no shape id"))?;
+            s.execute("paint.setFill", &json!({"ids": [shape], "color": "#000000"}))?;
+            s.execute("paint.setStroke", &json!({"ids": [shape], "none": true}))?;
+            s.execute("transparency.set", &json!({"ids": [shape], "opacity": 22}))?;
+            to_bottom(s, layer)?;
+            // Own peg: follows the character's x every frame, keeps its y from frame 1.
+            let shadow = s.execute("peg.add", &json!({"rows": [layer]}))?["index"].as_u64().ok_or_else(|| bad("scene.build", "no peg"))?;
+            let rest_y = cp.key_at(1).y;
+            for f in 1..=frames {
+                s.execute("peg.key", &json!({"peg": shadow, "frame": f, "x": cp.key_at(f).x, "y": rest_y}))?;
+            }
+        }
+    }
+    if let Some([top, bottom]) = &stage.background {
+        let r = s.doc()?.doc.artboards.first().ok_or_else(|| bad("scene.build", "no artboard"))?.rect;
+        let (x0, y0, w, h) = (r.x0, r.y0, r.width(), r.height());
+        let layer = s.execute("layer.new", &json!({"name": "background"}))?["id"].as_u64().ok_or_else(|| bad("scene.build", "no layer id"))?;
+        s.execute("layer.setCurrent", &json!({"id": layer}))?;
+        let rect = s.execute("shape.rectangle", &json!({"x": x0, "y": y0, "width": w, "height": h}))?["id"]
+            .as_u64()
+            .ok_or_else(|| bad("scene.build", "no shape id"))?;
+        s.execute("paint.setStroke", &json!({"ids": [rect], "none": true}))?;
+        s.execute(
+            "paint.editGradient",
+            &json!({"ids": [rect], "kind": "linear", "stops": [{"offset": 0, "color": top}, {"offset": 1, "color": bottom}]}),
+        )?;
+        s.execute("paint.setGradientGeom", &json!({"ids": [rect], "start": [x0 + w / 2.0, y0], "end": [x0 + w / 2.0, y0 + h]}))?;
+        to_bottom(s, layer)?;
+    }
+    Ok(skipped)
+}
+
+/// Moves a layer below the bottom one.
+fn to_bottom(s: &mut Session, id: u64) -> Result<()> {
+    let Some(bottom) = s.doc()?.doc.layers.first().map(|l| l.id.0) else { return Ok(()) };
+    if bottom != id {
+        s.execute("layer.move", &json!({"id": id, "target": bottom, "place": "below"}))?;
+    }
+    Ok(())
+}
+
 fn schema(_: &mut Session, _: &Value) -> Result<Value> {
     Ok(json!({"schema": {
         "width": "number, stage width in points (optional)",
@@ -119,6 +217,7 @@ fn schema(_: &mut Session, _: &Value) -> Result<Value> {
         "actions": [{"character": "a name above", "action": "walk | blink | turn_head | point | idle | a saved action", "at": "first frame", "times": "repeats back to back (default 1)"}],
         "turns": [{"character": "a name above", "frame": "frame from 1", "view": "front | 3q | side"}],
         "moves": [{"character": "name", "from": "frame", "to": "frame", "dx": "points travelled", "dy": "number"}],
+        "stage": {"background": "[\"#top\", \"#bottom\"] (optional; a linear gradient, top to bottom, behind everything)", "shadows": "bool (default false): a soft contact shadow under each character's feet, following its x", "safeAreas": "bool (default false): show the safe areas"},
         "dialogue": [{"character": "name", "sound": "WAV, MP3 or Ogg file", "at": "frame it starts", "text": "what is said (kept for captions)"}],
         "camera": [{"frame": "frame", "x": "centre", "y": "centre", "zoom": "1 = the stage", "rotation": "degrees", "ease": "linear | easeIn | easeOut | easeInOut"}]
     }}))
@@ -222,6 +321,13 @@ fn check(spec: &Spec, base: Option<&Path>) -> Result<Plan> {
         }
         end = end.max(m.to);
     }
+    if let Some([top, bottom]) = spec.stage.as_ref().and_then(|st| st.background.as_ref()) {
+        for c in [top, bottom] {
+            if !is_hex_colour(c) {
+                return Err(err("stage.background".into(), "two colours, each #rrggbb"));
+            }
+        }
+    }
     let mut sounds = Vec::new();
     for (i, l) in spec.dialogue.iter().enumerate() {
         let at = format!("dialogue[{i}]");
@@ -258,6 +364,8 @@ fn run(s: &mut Session, spec: &Spec, plan: &Plan) -> Result<Value> {
     let mut mouths: HashMap<String, u64> = HashMap::new();
     // Where each character's whole peg stands, as moves add up.
     let mut place: HashMap<String, (f64, f64)> = HashMap::new();
+    // Each character's foot rows, for the shadow's width.
+    let mut feet: HashMap<String, Vec<u64>> = HashMap::new();
     for (i, (c, file)) in spec.characters.iter().zip(&plan.files).enumerate() {
         let mut rsm_params = json!({"path": file, "name": c.name});
         if let Some(v) = &c.view {
@@ -271,6 +379,7 @@ fn run(s: &mut Session, spec: &Spec, plan: &Plan) -> Result<Value> {
         if let Some(m) = r["rows"]["mouth"].as_u64() {
             mouths.insert(c.name.clone(), m);
         }
+        feet.insert(c.name.clone(), ["foot_L", "foot_R"].iter().filter_map(|p| r["rows"][*p].as_u64()).collect());
         s.execute("peg.key", &json!({"peg": peg, "frame": 1, "x": c.x, "y": c.y})).map_err(at(format!("characters[{i}]")))?;
         pegs.insert(c.name.clone(), peg);
         place.insert(c.name.clone(), (c.x, c.y));
@@ -313,6 +422,11 @@ fn run(s: &mut Session, spec: &Spec, plan: &Plan) -> Result<Value> {
         let to = (x + m.dx, y + m.dy);
         s.execute("peg.key", &json!({"peg": peg, "frame": m.to, "x": to.0, "y": to.1})).map_err(at(format!("moves[{i}]")))?;
         place.insert(m.character.clone(), to);
+    }
+
+    if let Some(stage) = &spec.stage {
+        let more = build_stage(s, spec, stage, plan.frames, &pegs, &feet).map_err(at("stage".into()))?;
+        skipped.extend(more);
     }
 
     for (i, (l, file)) in spec.dialogue.iter().zip(&plan.sounds).enumerate() {
@@ -421,6 +535,34 @@ mod tests {
         // One undo takes the whole scene back.
         s.execute("edit.undo", &json!({})).unwrap();
         assert!(s.doc().unwrap().doc.layers.iter().all(|l| !l.name.as_deref().unwrap_or("").starts_with("ana/")));
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn stage_puts_the_background_at_the_bottom_and_shadows_follow_the_peg() {
+        let dir = std::env::temp_dir().join(format!("scene-p5-stage-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        contract_file(&dir.join("c.rsm"));
+        let mut s = Session::new();
+        s.execute("file.new", &json!({})).unwrap();
+        let mut sp = spec(&dir);
+        sp["actions"] = json!([{"character": "ana", "action": "walk", "at": 1, "times": 1}]);
+        sp["dialogue"] = json!([]);
+        sp["camera"] = json!([]);
+        sp["moves"] = json!([{"character": "ana", "from": 1, "to": 12, "dx": 100}]);
+        sp["stage"] = json!({"background": ["#ffffff", "#336699"], "shadows": true, "safeAreas": true});
+        let r = s.execute("scene.build", &json!({"spec": sp})).unwrap();
+        let d = &s.doc().unwrap().doc;
+        assert_eq!(d.layers[0].name.as_deref(), Some("background"), "{r}");
+        let shadow = d.layers.iter().find(|l| l.name.as_deref() == Some("ana/shadow")).expect("shadow row").id.0;
+        let pegs = super::super::peg::Pegs::of(d);
+        let ch = &pegs.pegs[r["characters"]["ana"].as_u64().unwrap() as usize];
+        let sh = pegs.pegs.iter().find(|p| p.rows.contains(&shadow)).expect("shadow peg");
+        for f in [1, 12] {
+            assert!((sh.key_at(f).x - ch.key_at(f).x).abs() < 0.01, "frame {f}: {} vs {}", sh.key_at(f).x, ch.key_at(f).x);
+        }
+        assert!((sh.key_at(1).y - sh.key_at(12).y).abs() < 0.01, "shadow y stays constant");
+        assert!((sh.key_at(1).y - ch.key_at(1).y).abs() < 0.01, "shadow y is the peg's frame-1 y");
         let _ = std::fs::remove_dir_all(&dir);
     }
 
