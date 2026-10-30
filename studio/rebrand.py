@@ -8,6 +8,7 @@ upstream, resolve any conflicts in favour of upstream and run it again.
     python3 studio/rebrand.py
 """
 import re
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -391,6 +392,9 @@ def main():
             changed.append(path)
     for p in changed:
         print('rebranded', p.relative_to(ROOT))
+    # Shorter names can let rustfmt join lines; keep `cargo fmt --check` green.
+    if any(p.suffix == '.rs' for p in changed):
+        subprocess.run(['cargo', 'fmt', '--all'], cwd=ROOT, check=True)
 
 
 if __name__ == '__main__':

@@ -1107,9 +1107,7 @@ fn main() -> std::process::ExitCode {
                         } else {
                             ""
                         };
-                        app.status(format!(
-                            "The graphics processor tried first couldn't show the window, so rsm started again on {summary}{hint}"
-                        ));
+                        app.status(format!("The graphics processor tried first couldn't show the window, so rsm started again on {summary}{hint}"));
                     } else if let Some(crash) = &crash {
                         app.status(match crash {
                             gpu::Crash::Adapter { name, .. } => format!(
