@@ -300,12 +300,24 @@ const IDLE_PARTS: &[RawPart] = &[
 // 6. stop: 8 frames from the walk's contact pose (its frame 0 and 24) back to standing. The front
 // foot stays planted while the back leg lifts and comes in; apply it where the walk ends.
 const STOP_PARTS: &[RawPart] = &[
-    RawPart { part: "leg_upper_L", keys: &[RawKey::rot(0, -22.0), RawKey::rot(4, -8.0), RawKey::rot(8, 0.0)] },
-    RawPart { part: "leg_lower_L", keys: &[RawKey::rot(0, 4.0), RawKey::rot(4, 6.0), RawKey::rot(8, 0.0)] },
-    RawPart { part: "foot_L", keys: &[RawKey::rot(0, -8.0), RawKey::rot(4, 0.0), RawKey::rot(8, 0.0)] },
-    RawPart { part: "leg_upper_R", keys: &[RawKey::rot(0, 18.0), RawKey::rot(4, -4.0), RawKey::rot(8, 0.0)] },
-    RawPart { part: "leg_lower_R", keys: &[RawKey::rot(0, 8.0), RawKey::rot(4, 30.0), RawKey::rot(8, 0.0)] },
-    RawPart { part: "foot_R", keys: &[RawKey::rot(0, -10.0), RawKey::rot(4, -6.0), RawKey::rot(8, 0.0)] },
+    RawPart {
+        part: "leg_upper_L",
+        keys: &[RawKey::rot(0, -22.0), RawKey::rot(2, -16.0), RawKey::rot(4, -8.0), RawKey::rot(6, -3.0), RawKey::rot(8, 0.0)],
+    },
+    RawPart { part: "leg_lower_L", keys: &[RawKey::rot(0, 4.0), RawKey::rot(2, 4.0), RawKey::rot(4, 4.0), RawKey::rot(6, 2.0), RawKey::rot(8, 0.0)] },
+    RawPart { part: "foot_L", keys: &[RawKey::rot(0, -8.0), RawKey::rot(2, -4.0), RawKey::rot(4, 2.0), RawKey::rot(6, 1.0), RawKey::rot(8, 0.0)] },
+    RawPart {
+        part: "leg_upper_R",
+        keys: &[RawKey::rot(0, 18.0), RawKey::rot(2, 14.0), RawKey::rot(4, 0.0), RawKey::rot(6, -2.0), RawKey::rot(8, 0.0)],
+    },
+    RawPart {
+        part: "leg_lower_R",
+        keys: &[RawKey::rot(0, 8.0), RawKey::rot(2, 30.0), RawKey::rot(4, 46.0), RawKey::rot(6, 30.0), RawKey::rot(8, 0.0)],
+    },
+    RawPart {
+        part: "foot_R",
+        keys: &[RawKey::rot(0, -10.0), RawKey::rot(2, -14.0), RawKey::rot(4, -24.0), RawKey::rot(6, -18.0), RawKey::rot(8, 0.0)],
+    },
     RawPart { part: "arm_upper_L", keys: &[RawKey::rot(0, 16.0), RawKey::rot(8, 0.0)] },
     RawPart { part: "arm_lower_L", keys: &[RawKey::rot(0, -5.0), RawKey::rot(8, 0.0)] },
     RawPart { part: "arm_upper_R", keys: &[RawKey::rot(0, -16.0), RawKey::rot(8, 0.0)] },
