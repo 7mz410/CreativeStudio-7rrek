@@ -157,6 +157,7 @@ EXT_FILES = {
     ],
     'packaging/macos/Info.plist.in': [
         ('<string>VectorCraft Document</string>', '<string>rsm Document</string>'),
+        ('<string>VectorCraft Template</string>', '<string>rsm Template</string>'),
         # Our own document type: a type shared with other VectorCraft builds lets Finder show their icon.
         ('ai.storyteller.vectorcraft.document', 'ps.creative.studio.rsm.document'),
         ('<key>UTTypeIconFile</key>\n      <string>VectorCraft</string>', '<key>UTTypeIconFile</key>\n      <string>rsm-document</string>'),

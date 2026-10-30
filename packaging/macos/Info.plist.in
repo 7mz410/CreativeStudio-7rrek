@@ -89,7 +89,7 @@
       <key>LSHandlerRank</key><string>Owner</string>
     </dict>
     <dict>
-      <key>CFBundleTypeName</key><string>VectorCraft Template</string>
+      <key>CFBundleTypeName</key><string>rsm Template</string>
       <key>CFBundleTypeExtensions</key><array><string>vctemplate</string></array>
       <key>CFBundleTypeRole</key><string>Editor</string>
       <key>LSHandlerRank</key><string>Owner</string>
