@@ -623,7 +623,7 @@ const SKIPPED: &[(&str, &str)] = &[
 
 /// The note for a `/ForeignObject` (non-native art, the content of a placed PDF, which the editor
 /// shows but doesn't edit) whose PDF can't be read.
-pub const NON_NATIVE_ART_UNREAD: &str = "non-native art (a placed PDF's content) that VectorCraft can't read is left out";
+pub const NON_NATIVE_ART_UNREAD: &str = "non-native art (a placed PDF's content) that rsm can't read is left out";
 /// The name of the group a `/ForeignObject`'s art comes in as.
 pub const NON_NATIVE_ART: &str = "Non-native art";
 
@@ -2204,12 +2204,12 @@ impl<'a> Reader<'a> {
     fn image_from(&mut self, vals: Vec<V>, data: &[u8]) -> Result<(), String> {
         let space = self.raster.as_ref().and_then(|r| r.space.clone()).unwrap_or_default();
         let Some(m) = vals.iter().find_map(|v| if let V::Arr(a) = v { Some(Self::nums(a)) } else { None }) else {
-            self.warn("an image VectorCraft can't read was left out");
+            self.warn("an image rsm can't read was left out");
             return Ok(());
         };
         let n = Self::nums(&vals);
         let [_, _, _, _, w, h, bits, kind, alpha, _, binary, ..] = n.as_slice() else {
-            self.warn("an image VectorCraft can't read was left out");
+            self.warn("an image rsm can't read was left out");
             return Ok(());
         };
         let (w, h) = (*w as u64, *h as u64);
@@ -2218,7 +2218,7 @@ impl<'a> Reader<'a> {
             return Ok(());
         }
         if w == 0 || h == 0 || ![1.0, 8.0].contains(bits) {
-            self.warn("an image VectorCraft can't read was left out");
+            self.warn("an image rsm can't read was left out");
             return Ok(());
         }
         let channels: usize = match space.as_str() {
@@ -2282,12 +2282,12 @@ impl<'a> Reader<'a> {
             }
         }
         let Some(img) = image::RgbaImage::from_raw(w as u32, h as u32, rgba) else {
-            self.warn("an image VectorCraft can't read was left out");
+            self.warn("an image rsm can't read was left out");
             return Ok(());
         };
         let mut png = vec![];
         if img.write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).is_err() {
-            self.warn("an image VectorCraft can't read was left out");
+            self.warn("an image rsm can't read was left out");
             return Ok(());
         }
         self.add_raster(ImageBlob::new("image/png", png), None, &m, (w as u32, h as u32))
@@ -2301,13 +2301,13 @@ impl<'a> Reader<'a> {
         // downwards, (u, -v): pixels → (u, -v) → art space. Flipping the matrix's result instead
         // gives the same place only when the image isn't rotated (b = c = 0).
         let [a, b, c, d, tx, ty] = m else {
-            self.warn("an image VectorCraft can't read was left out");
+            self.warn("an image rsm can't read was left out");
             return Ok(());
         };
         let to_doc = self.space();
         let xf = to_doc * Affine::new([*a, *b, *c, *d, *tx, *ty]) * FLIP;
         if !xf.as_coeffs().iter().all(|v| v.is_finite()) || xf.determinant().abs() < 1e-12 {
-            self.warn("an image VectorCraft can't read was left out");
+            self.warn("an image rsm can't read was left out");
             return Ok(());
         }
         let mask = alpha.and_then(|a| self.alpha_mask(a, w, h, xf));
@@ -2437,11 +2437,11 @@ impl<'a> Reader<'a> {
     fn finish(mut self) -> Result<Structure, String> {
         if !self.unknown.is_empty() {
             let ops: Vec<String> = self.unknown.iter().map(|o| format!("`{o}`")).collect();
-            self.unsupported.insert(format!("operators VectorCraft doesn't know ({})", ops.join(", ")));
+            self.unsupported.insert(format!("operators rsm doesn't know ({})", ops.join(", ")));
         }
         if !self.unsupported.is_empty() {
             let list: Vec<&str> = self.unsupported.iter().map(String::as_str).collect();
-            return Err(format!("it has {}, which VectorCraft doesn't read from it yet", join_and(&list)));
+            return Err(format!("it has {}, which rsm doesn't read from it yet", join_and(&list)));
         }
         if self.doc.layers.is_empty() {
             return Err("it has no layers".into());

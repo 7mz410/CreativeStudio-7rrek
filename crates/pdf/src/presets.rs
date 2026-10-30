@@ -58,7 +58,7 @@ pub fn builtin_presets() -> Vec<PdfPreset> {
     vec![
         preset(
             DEFAULT_PRESET,
-            "Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.",
+            "Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.",
             PdfSettings { preserve_editing: true, ..Default::default() },
         ),
         preset("High Quality Print", "For desktop printers and proofs: images stay at print resolution.", print(ImageCodec::Auto, false)),

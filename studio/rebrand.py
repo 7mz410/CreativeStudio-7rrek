@@ -15,7 +15,29 @@ NAME = 'rsm'
 REPO = 'https://github.com/7mz410/CreativeStudio-rsm'
 SITE = 'https://studio.creative.ps'
 # Persisted names that saved preferences and files refer to; renaming them would break those.
-KEEP = ('VectorCraft Default',)
+KEEP = ('VectorCraft Default', 'VectorCraft Templates', 'VectorCraft Generic CMYK', '%VectorCraft_',
+        'VectorCraft_Legacy', 'VectorCraft editing data', 'VectorCraft.portable', 'VectorCraftData',
+        'the VectorCraft authors')
+# Messages users see outside the UI crate (errors, warnings, command and MCP descriptions): every
+# literal is renamed, KEEP aside. Files holding metadata or persisted names get EXT_FILES pairs instead.
+VISIBLE = [
+    'crates/mcp/src/backend.rs', 'crates/mcp/src/tools.rs',
+    'apps/vectorcraft-cli/src/main.rs',
+    'apps/vectorcraft/build.rs', 'apps/vectorcraft/src/gpu.rs', 'apps/vectorcraft/src/portal_save.rs',
+    'apps/vectorcraft/src/mac_save_format.rs',
+    'apps/vectorcraft-web/src/api.rs', 'apps/vectorcraft-web/src/web.rs',
+    'crates/metafile/src/import.rs', 'crates/svg/src/import/files.rs', 'crates/color/src/palette_io.rs',
+    'crates/affinity/src/overlay.rs', 'crates/effects/src/lib.rs', 'crates/pdf/src/presets.rs',
+    # Tests that expect those messages.
+    'crates/engine/src/tests_placed_document.rs', 'crates/engine/src/tests_rasterfilters.rs',
+    'crates/engine/src/tests_textimport.rs', 'crates/eps/src/import/ai/tests.rs',
+    'crates/eps/src/import/tests_generators.rs', 'crates/metafile/src/tests_import.rs',
+]
+VISIBLE_DIRS = ['crates/engine/src/cmd', 'crates/eps/src/import']
+# interp.rs answers PostScript's `product` with the upstream name.
+NOT_VISIBLE = {'crates/eps/src/import/interp.rs'}
+# The CLI's own name in its help and messages.
+CLI = 'apps/vectorcraft-cli/src/main.rs'
 
 # Exact replacements, applied before the general rename.
 SPECIFIC = {
@@ -124,6 +146,11 @@ EXT_FILES = {
          'pub const STUDIO_EXTENSION: &str = "rsm";\n'),
         ('    ext.eq_ignore_ascii_case(EXTENSION) || ext.eq_ignore_ascii_case(LEGACY_EXTENSION)',
          '    ext.eq_ignore_ascii_case(STUDIO_EXTENSION) || ext.eq_ignore_ascii_case(EXTENSION) || ext.eq_ignore_ascii_case(LEGACY_EXTENSION)'),
+        # The document's generator field stays; the errors are renamed.
+        ('"not a VectorCraft file: {0}"', f'"not a {NAME} file: {{0}}"'),
+        ('newer than this VectorCraft supports', f'newer than this {NAME} supports'),
+        (': VectorCraft writes versions', f': {NAME} writes versions'),
+        ('unpacks to more than VectorCraft reads', f'unpacks to more than {NAME} reads'),
     ],
     'crates/engine/src/cmd/package.rs': [
         ('format!("{stem}.{}", vectorcraft_format::EXTENSION)', 'format!("{stem}.{}", vectorcraft_format::STUDIO_EXTENSION)'),
@@ -147,6 +174,20 @@ EXT_FILES = {
     'apps/vectorcraft/src/mac_save_format.rs': [
         ('&["vectorcraft"][..]', '&["rsm"][..]'),
     ],
+    'apps/vectorcraft-cli/src/perf.rs': [
+        ('outln!("VectorCraft performance budgets', f'outln!("{NAME} performance budgets'),
+    ],
+    'apps/vectorcraft-cli/tests/it/fileio.rs': [
+        ('out.contains("vectorcraft-cli perf [--paths N]', f'out.contains("{NAME}-cli perf [--paths N]'),
+    ],
+    'apps/vectorcraft-cli/tests/it/cli.rs': [
+        ('err.contains("vectorcraft-cli: step 0 (-h):")', f'err.contains("{NAME}-cli: step 0 (-h):")'),
+    ],
+    # serverInfo's name and the tool prefix stay "vectorcraft".
+    'crates/mcp/src/server.rs': [
+        ('const INSTRUCTIONS: &str = "VectorCraft is', f'const INSTRUCTIONS: &str = "{NAME} is'),
+        ('"title": "VectorCraft"', f'"title": "{NAME}"'),
+    ],
     'Cargo.toml': [
         ('[patch.crates-io]\n',
          '[patch.crates-io]\n# Creative Studio: egui with a right-to-left switch for the Arabic interface (studio/RTL.md).\negui = { path = "vendor/egui" }\n'),
@@ -156,6 +197,12 @@ EXT_FILES = {
          'mod printing;\nmod studio_agents;\n'),
         ('                if let Some(port) = control_port {\n                    let rx = control_server::start(port, cc.egui_ctx.clone());\n                    app = app.with_control(rx);\n                }\n',
          '                if let Some(port) = control_port {\n                    let rx = control_server::start(port, cc.egui_ctx.clone());\n                    app = app.with_control(rx);\n                }\n                // Creative Studio: Help › AI Agents; allowed agents connect from the start.\n                let mut agents = studio_agents::Agents::new(prefs_path().and_then(|p| Some(p.parent()?.to_path_buf())), cc.egui_ctx.clone());\n                if control_port.is_some() {\n                    // `--control` already serves agents on its own port.\n                    agents.mark_started();\n                } else if let Some(rx) = agents.start_if_enabled() {\n                    app = app.with_control(rx);\n                }\n                app.services.agents = Some(Box::new(agents));\n'),
+        # The prefs folder and eframe's app id keep "VectorCraft"; the window title and messages don't.
+        ('restart VectorCraft"', f'restart {NAME}"'),
+        ('so VectorCraft started again', f'so {NAME} started again'),
+        ('The last start of VectorCraft ended', f'The last start of {NAME} ended'),
+        ('.with_title("VectorCraft")', f'.with_title("{NAME}")'),
+        ('Opens the VectorCraft desktop app', f'Opens the {NAME} desktop app'),
     ],
     'crates/engine/src/cmd/fileio/tests.rs': [
         ('        exts,\n        [\n            "vectorcraft",', '        exts,\n        [\n            "rsm",'),
@@ -173,6 +220,18 @@ EXT_FILES = {
          'sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/VectorCraft"\n'),
         ('VectorCraft.app', 'rsm.app'),
         ('-volname "VectorCraft"', '-volname "rsm"'),
+    ],
+    # The DMG window: DS_Store finds the background through the volume name, so generate.py must
+    # match package.sh's -volname. Rerun packaging/macos/dmg/generate.py after a change here.
+    'packaging/macos/dmg/generate.py': [
+        ('VOLUME = "VectorCraft"', f'VOLUME = "{NAME}"'),
+        ('ICONS = {"VectorCraft.app":', f'ICONS = {{"{NAME}.app":'),
+    ],
+    'packaging/macos/dmg/background.svg': [
+        ('fill="#0b0b0c">VectorCraft</text>', f'fill="#0b0b0c">{NAME}</text>'),
+        # The upstream cover crop is made for its dragon; ours is the whole icon on the navy panel.
+        ('<rect width="232" height="400" fill="#e8573f"/><g transform="translate(-62.5,-31.0) scale(1.05)">',
+         '<rect width="232" height="400" fill="#0d2d3f"/><g transform="translate(36,120) scale(0.3125)">'),
     ],
     'packaging/linux/ai.storyteller.vectorcraft.desktop': [
         ('Name=VectorCraft\n', 'Name=rsm\n'),
@@ -211,6 +270,8 @@ DROPPED_ROWS = {'ArtCraft website'}
 CREDIT = 'Based on VectorCraft by the ArtCraft team'
 
 STRING = re.compile(r'"(?:[^"\\\n]|\\.)*"')
+# String constants that run over several lines (STRING stops at the line's end).
+CONST_STRING = re.compile(r'(?m)^ *(?:pub(?:\([a-z]+\))? )?const [A-Z_]+: &str = "(?:[^"\\]|\\[\s\S])*"')
 
 
 def rename(text: str) -> str:
@@ -227,7 +288,9 @@ def rebrand_rust(path: Path) -> bool:
     for a, b in SPECIFIC.get(path.relative_to(ROOT).as_posix(), []):
         if not b or b not in out:  # some replacements contain what they replace
             out = out.replace(a, b)
-    out = STRING.sub(lambda m: rename(m.group(0)), out)
+    lit = (lambda t: rename(t).replace('vectorcraft-cli', f'{NAME}-cli')) if path == ROOT / CLI else rename
+    out = CONST_STRING.sub(lambda m: lit(m.group(0)), out)
+    out = STRING.sub(lambda m: lit(m.group(0)), out)
     if out != src:
         path.write_text(out, encoding='utf-8')
     return out != src
@@ -236,7 +299,7 @@ def rebrand_rust(path: Path) -> bool:
 def source_strings() -> set:
     """Every string literal in the rebranded sources, without quotes."""
     found = set()
-    for p in RUST_FILES():
+    for p in RUST_FILES() + [ROOT / r for r in EXT_FILES if r.endswith('.rs') and 'test' not in r]:
         found.update(m.group(0)[1:-1] for m in STRING.finditer(p.read_text(encoding='utf-8')))
     return found
 
@@ -271,7 +334,13 @@ def rebrand_plist(path: Path) -> bool:
 
 
 def RUST_FILES():
-    return sorted((ROOT / 'crates/ui-egui/src').rglob('*.rs')) + [ROOT / p for p in SPECIFIC if p.startswith('crates/engine')]
+    visible = {ROOT / p for p in VISIBLE}
+    for d in VISIBLE_DIRS:
+        visible.update(p for p in (ROOT / d).rglob('*.rs')
+                       if 'test' not in p.name and p.relative_to(ROOT).as_posix() not in NOT_VISIBLE)
+    ui = set((ROOT / 'crates/ui-egui/src').rglob('*.rs'))
+    engine = {ROOT / p for p in SPECIFIC if p.startswith('crates/engine')}
+    return sorted(ui) + sorted((engine | visible) - ui)
 
 
 def main():

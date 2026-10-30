@@ -714,11 +714,11 @@ fn images_with_alpha_channels() {
     assert!(art(&r.doc).is_empty() && r.warnings.iter().any(|w| w.contains("cut short")));
 }
 
-/// Editing data `data` opens without its one image and with the warning "an image VectorCraft can't read was left out" once.
+/// Editing data `data` opens without its one image and with the warning "an image rsm can't read was left out" once.
 fn image_left_out_with_a_warning(data: &[u8]) {
     let r = read(data).unwrap();
     assert!(art(&r.doc).is_empty(), "{:#?}", art(&r.doc));
-    let left_out = r.warnings.iter().filter(|w| *w == "an image VectorCraft can't read was left out").count();
+    let left_out = r.warnings.iter().filter(|w| *w == "an image rsm can't read was left out").count();
     assert_eq!(left_out, 1, "{:?}", r.warnings);
 }
 
@@ -1184,7 +1184,7 @@ fn an_undefined_highlight_is_a_gradient_without_one() {
 #[test]
 fn an_undefined_number_anywhere_else_is_still_an_operator_the_reader_doesnt_know() {
     let err = read(stream(&layer(&format!("{RED}-- 5 m\n0 10 L\n10 10 L\nf\n"))).as_bytes()).unwrap_err();
-    assert!(err.contains("operators VectorCraft doesn't know (`--`)"), "{err}");
+    assert!(err.contains("operators rsm doesn't know (`--`)"), "{err}");
 }
 
 #[test]

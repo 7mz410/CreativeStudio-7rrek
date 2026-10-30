@@ -155,7 +155,7 @@
 	Forget Import Matches	Zapomenout přiřazení z importů
 @plural	agrees with {n} default shortcut|agrees with {n} default shortcuts	shoduje se s {n} výchozí zkratkou|shoduje se s {n} výchozími zkratkami|shoduje se s {n} výchozími zkratkami
 @plural	{n} part of the file wasn't read|{n} parts of the file weren't read	{n} část souboru nebyla přečtena|{n} části souboru nebyly přečteny|{n} částí souboru nebylo přečteno
-@msg	This shortcut file is in a form VectorCraft can't read.	Tento soubor klávesových zkratek je ve formátu, který VectorCraft neumí přečíst.
+@msg	This shortcut file is in a form rsm can't read.	Tento soubor klávesových zkratek je ve formátu, který rsm neumí přečíst.
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	nejde o sadu klávesových zkratek: text nezačíná názvem s lomítkem a otevírací složenou závorkou
 	Preferences…	Předvolby…
 	Object	Objekt
@@ -2675,7 +2675,7 @@ lighting	Light	Světlo
 	[PDF/X-3:2002]	[PDF/X-3:2002]
 	PDF/X-4:2010	PDF/X-4:2010
 	[PDF/X-4:2010]	[PDF/X-4:2010]
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	Zachová možnost úprav dokumentu: VectorCraft znovu otevře PDF bez ztráty dat. Pro soubory, které budete znovu upravovat.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	Zachová možnost úprav dokumentu: rsm znovu otevře PDF bez ztráty dat. Pro soubory, které budete znovu upravovat.
 	Compress text and line art	Komprimovat text a perokresbu
 	Compression	Komprese
 	Compression › Color › Above Ppi	Komprese › Barevné › Nad ppi
@@ -2753,7 +2753,7 @@ lighting	Light	Světlo
 	A File…	Soubor…
 	GPL palettes keep solid colours only, as RGB.	Palety GPL uchovávají pouze plné barvy, a to jako RGB.
 	Save Swatch Library	Uložit knihovnu vzorníku
-	VectorCraft Swatches (.vcswatches)	Vzorník VectorCraft (.vcswatches)
+	rsm Swatches (.vcswatches)	Vzorník rsm (.vcswatches)
 	Save To:	Uložit do:
 	Saved to User Defined: {}	Uloženo do uživatelských knihoven: {}
 	Selected Swatches Only	Pouze vybrané položky vzorníku
@@ -4311,7 +4311,7 @@ imageTrace	Outline	Obrys
 @msg	can't encode the document: {0}	dokument nelze zakódovat: {0}
 @msg	can't parse shortcut `{c}`	klávesovou zkratku `{c}` nelze analyzovat
 @msg	can't parse shortcut `{s}` for `{k}`	klávesovou zkratku `{s}` pro `{k}` nelze analyzovat
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	verzi {0} nelze uložit: VectorCraft zapisuje verze {MIN_VERSION} až {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	verzi {0} nelze uložit: rsm zapisuje verze {MIN_VERSION} až {VERSION}
 @msg	can't write .{ext} images	obrázky .{ext} nelze zapisovat
 @msg	cannot distort a zero-size bounding box	ohraničovací rámeček nulové velikosti nelze deformovat
 @msg	cannot read PDF: {0}	PDF nelze přečíst: {0}
@@ -4337,7 +4337,7 @@ imageTrace	Outline	Obrys
 @msg	empty brush stroke	prázdný tah štětcem
 @msg	empty cutter	prázdný řezací objekt
 @msg	empty path	prázdná cesta
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	verze souboru {0} je novější, než tento VectorCraft podporuje ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	verze souboru {0} je novější, než tento rsm podporuje ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	volný bod {i} potřebuje `at` [x, y] a platnou `color`
 @msg	freeform line {i} must be an array of point indices	volná čára {i} musí být pole indexů bodů
 @msg	give both `start` and `end` [x, y] (or neither)	zadejte `start` i `end` [x, y] (nebo ani jedno)
@@ -4358,8 +4358,8 @@ imageTrace	Outline	Obrys
 @msg	invalid PDF setting: {0}	neplatné nastavení PDF: {0}
 @msg	invalid image data for `{0}`	neplatná obrazová data pro `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	neplatné parametry pro `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	není obraz, který VectorCraft umí přečíst
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	používá `{at}`, které čtečka PostScriptu ve VectorCraftu nezná
+@msg	is not an image rsm reads	není obraz, který rsm umí přečíst
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	používá `{at}`, které čtečka PostScriptu ve rsmu nezná
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	používá `{at}`, které čtečka PostScriptu ve VectorCraftu nezná, v {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	místo něj byl otevřen jeho náhled ve formátu Windows metafile, který může kresbu zjednodušit
 @msg	its preview was placed instead, at screen resolution	místo něj byl umístěn jeho náhled v rozlišení obrazovky
@@ -4412,7 +4412,7 @@ imageTrace	Outline	Obrys
 @msg	no file system here	zde není souborový systém
 @msg	no file writer	chybí zápis souborů
 @msg	no files to place	žádné soubory k umístění
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` není dokument VectorCraft, PDF ani soubor .ai kompatibilní s PDF
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` není dokument rsm, PDF ani soubor .ai kompatibilní s PDF
 @msg	no format to export to	žádný formát pro export
 @msg	no free recovery area	žádná volná oblast pro obnovení
 @msg	no gradient stop or freeform point is selected	není vybrána žádná zarážka přechodu ani volný bod
@@ -4472,7 +4472,7 @@ imageTrace	Outline	Obrys
 @msg	no user workspace `{from}`	uživatelský pracovní prostor `{from}` neexistuje
 @msg	node {_1} is not text	uzel {_1} není text
 @msg	not a DXF drawing	nejde o výkres DXF
-@msg	not a VectorCraft file: {0}	nejde o soubor VectorCraft: {0}
+@msg	not a rsm file: {0}	nejde o soubor rsm: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	nejde o sadu klávesových zkratek rsm (chybí `overrides`)
 @msg	not a blend	nejde o prolnutí
 @msg	not a graphic style library (format `{_1}`)	nejde o knihovnu grafických stylů (formát `{_1}`)
@@ -4724,9 +4724,9 @@ imageTrace	Outline	Obrys
 @msg	{_1} files	Soubory {_1}
 @msg	The graphics were lost and have been restarted	Grafika byla ztracena a byla restartována
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Grafický procesor zkoušený jako první nedokázal zobrazit okno, proto se VectorCraft znovu spustil na {summary}
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Poslední spuštění aplikace VectorCraft skončilo na {name} dřív, než se zobrazilo okno, proto se spustila na {summary}. Chcete-li tento grafický procesor zkusit znovu, změňte Předvolby › Výkon › Grafický procesor nebo ji spusťte s nastavenou proměnnou WGPU_BACKEND
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Poslední spuštění aplikace VectorCraft skončilo během zjišťování grafických procesorů, proto se spustila na {summary} jen s OpenGL. Chcete-li znovu zkusit ostatní grafická rozhraní, změňte Předvolby › Výkon › Grafický procesor nebo ji spusťte s nastavenou proměnnou WGPU_BACKEND
-@msg	Loading VectorCraft…	Načítání VectorCraftu…
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Poslední spuštění aplikace rsm skončilo na {name} dřív, než se zobrazilo okno, proto se spustila na {summary}. Chcete-li tento grafický procesor zkusit znovu, změňte Předvolby › Výkon › Grafický procesor nebo ji spusťte s nastavenou proměnnou WGPU_BACKEND
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Poslední spuštění aplikace rsm skončilo během zjišťování grafických procesorů, proto se spustila na {summary} jen s OpenGL. Chcete-li znovu zkusit ostatní grafická rozhraní, změňte Předvolby › Výkon › Grafický procesor nebo ji spusťte s nastavenou proměnnou WGPU_BACKEND
+@msg	Loading rsm…	Načítání rsmu…
 @msg	VectorCraft failed to start: {e}	VectorCraft se nepodařilo spustit: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Je potřeba prohlížeč s WebGPU nebo WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Grafika byla ztracena a nepodařilo se ji restartovat.
@@ -4754,7 +4754,7 @@ imageTrace	Outline	Obrys
 @msg	its section ending with `%{end}` doesn't end	jeho oddíl končící `%{end}` nemá konec
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	objekty s více výplněmi nebo tahy, efekty či štětci byly načteny jako vykreslený vzhled ({_1}): jejich vzhled zatím nelze upravovat
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	přechod „{name}“ není v souboru definován: zastupuje ho plná barva
-@msg	an image VectorCraft can't read was left out	obrázek, který VectorCraft neumí přečíst, byl vynechán
+@msg	an image rsm can't read was left out	obrázek, který rsm neumí přečíst, byl vynechán
 @msg	an image whose data is cut short was left out	obrázek s useknutými daty byl vynechán
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	propojené obrázky se zobrazují jako náhled v nízkém rozlišení uložený v souboru, dokud se nenajdou jejich soubory: znovu je propojte v panelu Propojení
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	text v oblasti v rámcích příliš nízkých pro řádek písma, ve kterém se zde zobrazuje, dostal vyšší rámce ({_1}): jinak by nebyl vidět
@@ -4767,7 +4767,7 @@ imageTrace	Outline	Obrys
 @msg	the search couldn't start: try again in a moment	hledání nelze spustit: zkuste to za chvíli znovu
 @msg	searching a folder isn't available on the web	prohledávání složky není na webu k dispozici
 @msg	every search thread stopped on an internal error (please report this bug)	všechna vlákna hledání se zastavila na vnitřní chybě (nahlaste prosím tuto chybu)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	složka Fonts VectorCraftu zde není nastavena: nastavuje ji desktopová aplikace a vectorcraft-cli
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	složka Fonts rsmu zde není nastavena: nastavuje ji desktopová aplikace a vectorcraft-cli
 @msg	choose the font files to add	vyberte soubory písem, které chcete přidat
 @msg	{n} font file(s) are now in {folder}	soubory písem ({n}) jsou nyní ve složce {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	soubory písem ({n}) jsou nyní ve složce {folder}; nepodařilo se přidat {failed}: {reason}

@@ -3837,15 +3837,15 @@ theme	Appearance	외관
 @msg	its type is to come in as outlines, which only its page has	문자를 윤곽선으로 가져오도록 되어 있으나, 이는 해당 페이지에만 있습니다
 @msg	{_1} files	{_1} 파일
 @msg	A browser with WebGPU or WebGL2 is required.	WebGPU 또는 WebGL2를 지원하는 브라우저가 필요합니다.
-@msg	Loading VectorCraft…	VectorCraft 불러오는 중…
+@msg	Loading rsm…	rsm 불러오는 중…
 @msg	Reload the page to go on (changes not saved yet may be lost).	계속하려면 페이지를 새로 고치세요(아직 저장하지 않은 변경 내용은 사라질 수 있습니다).
 @msg	The graphics were lost and couldn't be restarted.	그래픽을 잃었으며 다시 시작할 수 없습니다.
 @msg	The graphics were lost and have been restarted	그래픽을 잃어 다시 시작했습니다
 @msg	VectorCraft failed to start: {e}	VectorCraft를 시작하지 못했습니다: {e}
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	저장하지 않은 변경 내용은 이 브라우저에 보관되어 있습니다. 페이지를 새로 고치면 복원할 수 있습니다.
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	처음 시도한 그래픽 프로세서가 창을 표시하지 못해 {summary}에서 VectorCraft를 다시 시작했습니다
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	지난번 VectorCraft 시작이 창이 나타나기 전에 {name}에서 끝나서 {summary}에서 시작했습니다. 이 그래픽 프로세서를 다시 시도하려면 환경 설정 › 성능 › 그래픽 프로세서를 변경하거나 WGPU_BACKEND를 설정하고 시작하세요
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	지난번 VectorCraft 시작이 그래픽 프로세서 목록을 가져오는 중에 끝나서 OpenGL만 사용해 {summary}에서 시작했습니다. 다른 그래픽 백엔드를 다시 시도하려면 환경 설정 › 성능 › 그래픽 프로세서를 변경하거나 WGPU_BACKEND를 설정하고 시작하세요
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	지난번 rsm 시작이 창이 나타나기 전에 {name}에서 끝나서 {summary}에서 시작했습니다. 이 그래픽 프로세서를 다시 시도하려면 환경 설정 › 성능 › 그래픽 프로세서를 변경하거나 WGPU_BACKEND를 설정하고 시작하세요
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	지난번 rsm 시작이 그래픽 프로세서 목록을 가져오는 중에 끝나서 OpenGL만 사용해 {summary}에서 시작했습니다. 다른 그래픽 백엔드를 다시 시도하려면 환경 설정 › 성능 › 그래픽 프로세서를 변경하거나 WGPU_BACKEND를 설정하고 시작하세요
 @msg	not a DXF drawing	DXF 도면이 아닙니다
 @msg	scale must be a number from {_1} to {_2}, not {s}	배율은 {_1}에서 {_2} 사이의 숫자여야 합니다: {s}
 @msg	the artboard to fit must be a positive size up to {_1} pt	맞출 아트보드는 최대 {_1} pt까지의 양수 크기여야 합니다
@@ -4147,7 +4147,7 @@ theme	Appearance	외관
 @msg	it has {_1}, which VectorCraft doesn't read from it yet	{_1}이(가) 있으며, VectorCraft는 아직 이를 읽지 못합니다
 @msg	its objects are nested too deeply	개체가 너무 깊게 중첩되어 있습니다
 @msg	its section ending with `%{end}` doesn't end	`%{end}`로 끝나는 구역이 끝나지 않습니다
-@msg	an image VectorCraft can't read was left out	VectorCraft가 읽을 수 없는 이미지는 제외했습니다
+@msg	an image rsm can't read was left out	rsm가 읽을 수 없는 이미지는 제외했습니다
 @msg	an image whose data is cut short was left out	데이터가 잘린 이미지는 제외했습니다
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	연결된 그림은 해당 파일을 찾을 때까지 파일에 저장된 저해상도 미리 보기로 표시됩니다: 링크 패널에서 다시 연결하세요
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	표시되는 글꼴의 한 줄보다 낮은 프레임의 영역 문자는 프레임을 더 높였습니다({_1}). 그렇지 않으면 문자가 표시되지 않습니다
@@ -4183,7 +4183,7 @@ theme	Appearance	외관
 @msg	the program asks for a resource that isn't defined	프로그램이 정의되지 않은 리소스를 요청합니다
 @msg	a calculation has no result, as in a division by zero	0으로 나누기처럼 계산 결과가 없습니다
 @msg	the operator looks for a mark on the stack and finds none	연산자가 스택에서 마크를 찾지 못했습니다
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	`{at}`을(를) 사용하며, VectorCraft의 PostScript 판독기는 이를 알지 못합니다
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	`{at}`을(를) 사용하며, rsm의 PostScript 판독기는 이를 알지 못합니다
 @msg	the file was read up to an error ({why}): what follows it was left out	오류({why})까지 파일을 읽었으며, 그 뒤의 내용은 제외했습니다
 @msg	this file's PostScript couldn't be read ({why}): {what}	이 파일의 PostScript를 읽을 수 없습니다({why}): {what}
 @msg	it has no page	페이지가 없습니다
@@ -4210,10 +4210,10 @@ theme	Appearance	외관
 @msg	the preview image is empty	미리 보기 이미지가 비어 있습니다
 @msg	the thumbnail image is malformed	섬네일 이미지가 올바르지 않습니다
 @msg	can't encode the document: {0}	문서를 인코딩할 수 없습니다: {0}
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	버전 {0}(으)로 저장할 수 없습니다: VectorCraft는 버전 {MIN_VERSION}~{VERSION}을(를) 기록합니다
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	파일 버전 {0}은(는) 이 VectorCraft가 지원하는 버전({VERSION})보다 높습니다
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	버전 {0}(으)로 저장할 수 없습니다: rsm는 버전 {MIN_VERSION}~{VERSION}을(를) 기록합니다
+@msg	file version {0} is newer than this rsm supports ({VERSION})	파일 버전 {0}은(는) 이 rsm가 지원하는 버전({VERSION})보다 높습니다
 @msg	invalid image data for `{0}`	`{0}`의 이미지 데이터가 올바르지 않습니다
-@msg	not a VectorCraft file: {0}	VectorCraft 파일이 아닙니다: {0}
+@msg	not a rsm file: {0}	rsm 파일이 아닙니다: {0}
 @msg	the compressed file unpacks to more than {_1} MB	압축된 파일의 압축을 풀면 {_1}MB를 넘습니다
 @msg	`{key}: {top}` and `options.{key}: {inner}` disagree: give the option once	`{key}: {top}`와(과) `options.{key}: {inner}`이(가) 일치하지 않습니다: 옵션을 한 번만 지정하세요
 @msg	version {0} files can't be compressed: only version {COMPRESSED_SINCE} and later open compressed files	버전 {0} 파일은 압축할 수 없습니다: 버전 {COMPRESSED_SINCE} 이상만 압축 파일을 엽니다
@@ -4262,7 +4262,7 @@ theme	Appearance	외관
 @msg	plug-in output: {0}	플러그인 출력: {0}
 @msg	plug-in parameters: {0}	플러그인 매개변수: {0}
 @msg	plug-in trapped: {0}	플러그인 중단됨: {0}
-@msg	is not an image VectorCraft reads	VectorCraft가 읽는 이미지가 아닙니다
+@msg	is not an image rsm reads	rsm가 읽는 이미지가 아닙니다
 @msg	not found	찾을 수 없습니다
 @msg	SVG parse error: {0}	SVG 구문 분석 오류: {0}
 @msg	decimals must be {_1}–{_2} (got {_3})	소수 자릿수는 {_1}~{_2}이어야 합니다({_3} 입력됨)
@@ -4448,7 +4448,7 @@ theme	Appearance	외관
 @msg	Couldn't place {name}: the document it was dropped on was closed	{name}을(를) 가져올 수 없습니다: 놓은 문서가 닫혔습니다
 @msg	Couldn't place {name}: the document it was placed in was closed	{name}을(를) 가져올 수 없습니다: 가져오던 문서가 닫혔습니다
 @msg	no files to place	가져올 파일이 없습니다
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}`은(는) VectorCraft 문서, PDF 또는 PDF 호환 .ai 파일이 아닙니다
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}`은(는) rsm 문서, PDF 또는 PDF 호환 .ai 파일이 아닙니다
 @msg	paths: give at least one file	paths: 파일을 하나 이상 지정하세요
 @msg	replace: the object to replace was changed or deleted	replace: 바꿀 개체가 변경되었거나 삭제되었습니다
 @msg	Couldn't place {name}: {e}	{name}을(를) 가져올 수 없습니다: {e}
@@ -4469,7 +4469,7 @@ theme	Appearance	외관
 @msg	not a rsm shortcut set (missing `overrides`)	rsm 단축키 세트가 아닙니다(`overrides`가 없음)
 @msg	not a blend	블렌드가 아닙니다
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	단축키 세트가 아닙니다: 텍스트가 슬래시 이름과 여는 중괄호로 시작하지 않습니다
-@msg	This shortcut file is in a form VectorCraft can't read.	이 단축키 파일은 VectorCraft가 읽을 수 없는 형식입니다.
+@msg	This shortcut file is in a form rsm can't read.	이 단축키 파일은 rsm가 읽을 수 없는 형식입니다.
 @msg	shortcut for `{k}` must be a string	`{k}`의 단축키는 문자열이어야 합니다
 @msg	tool shortcuts must be a single key (optionally with Shift)	도구 단축키는 키 하나여야 합니다(Shift 포함 가능)
 @msg	unknown preset (one of {_1})	알 수 없는 프리셋({_1} 중 하나)
@@ -4498,7 +4498,7 @@ theme	Appearance	외관
 @msg	the search couldn't start: try again in a moment	검색을 시작할 수 없습니다: 잠시 후 다시 시도하세요
 @msg	searching a folder isn't available on the web	웹에서는 폴더 검색을 사용할 수 없습니다
 @msg	every search thread stopped on an internal error (please report this bug)	내부 오류로 모든 검색 스레드가 중지되었습니다(이 버그를 신고해 주세요)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	여기에는 VectorCraft의 글꼴 폴더가 설정되어 있지 않습니다: 데스크톱 앱과 vectorcraft-cli가 설정합니다
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	여기에는 rsm의 글꼴 폴더가 설정되어 있지 않습니다: 데스크톱 앱과 vectorcraft-cli가 설정합니다
 @msg	choose the font files to add	추가할 글꼴 파일을 선택하세요
 @msg	{n} font file(s) are now in {folder}	글꼴 파일 {n}개가 이제 {folder}에 있습니다
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	글꼴 파일 {n}개가 이제 {folder}에 있으며, {failed}개는 추가할 수 없었습니다: {reason}

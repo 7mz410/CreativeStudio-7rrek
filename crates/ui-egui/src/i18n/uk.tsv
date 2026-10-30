@@ -3912,7 +3912,7 @@ axis	Both	Обидві
 @msg	Split Into Grid: select paths large enough for the grid	Поділ на сітку: виділіть контури, досить великі для сітки
 @msg	Targa files are RGB: colorModel rgb	Файли Targa є RGB: colorModel rgb
 @msg	Text Wrap: select a wrap object	Обтікання текстом: виділіть об’єкт обтікання
-@msg	This shortcut file is in a form VectorCraft can't read.	Цей файл сполучень клавіш записано у форматі, який VectorCraft не може прочитати.
+@msg	This shortcut file is in a form rsm can't read.	Цей файл сполучень клавіш записано у форматі, який rsm не може прочитати.
 @msg	`aspect` must be a number (%)	`aspect` має бути числом (%)
 @msg	`at` must be [x, y]	`at` має бути [x, y]
 @msg	`color` must be a colour	`color` має бути кольором
@@ -4032,7 +4032,7 @@ axis	Both	Обидві
 @msg	can't encode the document: {0}	не вдалося закодувати документ: {0}
 @msg	can't parse shortcut `{c}`	не вдалося розібрати поєднання `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	не вдалося розібрати поєднання `{s}` для `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	не вдалося зберегти версію {0}: VectorCraft записує версії від {MIN_VERSION} до {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	не вдалося зберегти версію {0}: rsm записує версії від {MIN_VERSION} до {VERSION}
 @msg	can't write .{ext} images	не вдалося записати зображення .{ext}
 @msg	cannot distort a zero-size bounding box	не можна спотворити обмежувальну рамку нульового розміру
 @msg	cannot read PDF: {0}	не вдалося прочитати PDF: {0}
@@ -4058,7 +4058,7 @@ axis	Both	Обидві
 @msg	empty brush stroke	порожній мазок пензля
 @msg	empty cutter	порожній різак
 @msg	empty path	порожній контур
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	версія файлу {0} новіша, ніж підтримує цей VectorCraft ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	версія файлу {0} новіша, ніж підтримує цей rsm ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	довільній точці {i} потрібні `at` [x, y] та допустимий `color`
 @msg	freeform line {i} must be an array of point indices	довільна лінія {i} має бути масивом індексів точок
 @msg	give both `start` and `end` [x, y] (or neither)	вкажіть `start`, `end` [x, y] (або жодного)
@@ -4079,8 +4079,8 @@ axis	Both	Обидві
 @msg	invalid PDF setting: {0}	неприпустимий параметр PDF: {0}
 @msg	invalid image data for `{0}`	неприпустимі дані зображення для `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	неприпустимі параметри для `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	не є зображенням, яке читає VectorCraft
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	використовує `{at}`, яке не знає читач PostScript у VectorCraft
+@msg	is not an image rsm reads	не є зображенням, яке читає rsm
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	використовує `{at}`, яке не знає читач PostScript у rsm
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	використовує `{at}`, яке не знає читач PostScript у VectorCraft, у {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	натомість було відкрито його попереднє подання метафайлу Windows, що може спростити малюнок
 @msg	its preview was placed instead, at screen resolution	замість цього було вміщено його попереднє подання у роздільній здатності екрану
@@ -4133,7 +4133,7 @@ axis	Both	Обидві
 @msg	no file system here	тут немає файлової системи
 @msg	no file writer	немає засобу запису файлів
 @msg	no files to place	немає файлів для розміщення
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` не є документом VectorCraft, PDF або файлом .ai, сумісним із PDF
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` не є документом rsm, PDF або файлом .ai, сумісним із PDF
 @msg	no format to export to	немає формату для експорту
 @msg	no free recovery area	немає вільної області відновлення
 @msg	no gradient stop or freeform point is selected	не виділено ні точку переходу градієнта, ні довільну точку
@@ -4193,7 +4193,7 @@ axis	Both	Обидві
 @msg	no user workspace `{from}`	немає користувача робочого середовища `{from}`
 @msg	node {_1} is not text	вузол {_1} не є текстом
 @msg	not a DXF drawing	не є кресленням DXF
-@msg	not a VectorCraft file: {0}	не є файлом VectorCraft: {0}
+@msg	not a rsm file: {0}	не є файлом rsm: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	не є набором поєднань клавіш rsm (відсутнє `overrides`)
 @msg	not a blend	це не перехід
 @msg	not a graphic style library (format `{_1}`)	не є бібліотекою графічних стилів (формат `{_1}`)
@@ -4447,9 +4447,9 @@ axis	Both	Обидві
 @msg	{_1} files	{_1} файлів
 @msg	The graphics were lost and have been restarted	Графіка була втрачена та перезапущена
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Графічний процесор, обраний першим, не зміг показати вікно, тому VectorCraft запустився знову на {summary}
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Попередній запуск VectorCraft завершився на {name} до появи вікна, тому VectorCraft запустився на {summary}. Щоб знову спробувати цей графічний процесор, змініть Налаштування › Продуктивність › Графічний процесор або запустіть застосунок із заданою змінною WGPU_BACKEND
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Попередній запуск VectorCraft завершився під час переліку графічних процесорів, тому VectorCraft запустився на {summary} лише з OpenGL. Щоб знову спробувати інші графічні інтерфейси, змініть Налаштування › Продуктивність › Графічний процесор або запустіть застосунок із заданою змінною WGPU_BACKEND
-@msg	Loading VectorCraft…	Завантаження VectorCraft…
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Попередній запуск rsm завершився на {name} до появи вікна, тому rsm запустився на {summary}. Щоб знову спробувати цей графічний процесор, змініть Налаштування › Продуктивність › Графічний процесор або запустіть застосунок із заданою змінною WGPU_BACKEND
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Попередній запуск rsm завершився під час переліку графічних процесорів, тому rsm запустився на {summary} лише з OpenGL. Щоб знову спробувати інші графічні інтерфейси, змініть Налаштування › Продуктивність › Графічний процесор або запустіть застосунок із заданою змінною WGPU_BACKEND
+@msg	Loading rsm…	Завантаження rsm…
 @msg	VectorCraft failed to start: {e}	VectorCraft не вдалося запустити: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Потрібен браузер із WebGPU або WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Графіку було втрачено, і її не вдалося перезапустити.
@@ -4477,7 +4477,7 @@ axis	Both	Обидві
 @msg	its section ending with `%{end}` doesn't end	розділ, що закінчується на `%{end}`, не закінчується
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	об’єкти з кількома заливками або обведеннями, ефектами або пензлями імпортовані в намальованому вигляді ({_1}): їх оформлення поки що не можна редагувати
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	градієнт «{name}» не визначено у файлі: замість нього використовується суцільний колір
-@msg	an image VectorCraft can't read was left out	зображення, яке VectorCraft не може прочитати, пропущено
+@msg	an image rsm can't read was left out	зображення, яке rsm не може прочитати, пропущено
 @msg	an image whose data is cut short was left out	зображення з обрізаними даними пропущено
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	пов’язані зображення показуються як збережений у файлі перегляд низької роздільності, доки їхні файли не знайдено: відновіть зв’язки на панелі «Зв’язки»
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	текст в області в рамках, занизьких для рядка шрифту, яким він показується, отримав вищі рамки ({_1}): інакше його не було б видно
@@ -4490,7 +4490,7 @@ axis	Both	Обидві
 @msg	the search couldn't start: try again in a moment	не вдалося почати пошук: спробуйте ще раз за мить
 @msg	searching a folder isn't available on the web	пошук у папці недоступний у веб-версії
 @msg	every search thread stopped on an internal error (please report this bug)	усі потоки пошуку зупинилися через внутрішню помилку (повідомте про цю помилку)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папку Fonts VectorCraft тут не задано: її задають настільна програма та vectorcraft-cli
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папку Fonts rsm тут не задано: її задають настільна програма та vectorcraft-cli
 @msg	choose the font files to add	виберіть файли шрифтів для додавання
 @msg	{n} font file(s) are now in {folder}	Файлів шрифтів тепер у {folder}: {n}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	Файлів шрифтів тепер у {folder}: {n}; не вдалося додати {failed}: {reason}

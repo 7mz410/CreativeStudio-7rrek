@@ -3888,7 +3888,7 @@ axis	Both	Ambos
 @msg	Split Into Grid: select paths large enough for the grid	Dividir en cuadrícula: selecciona trazados lo bastante grandes para la cuadrícula
 @msg	Targa files are RGB: colorModel rgb	los archivos Targa son RGB: colorModel rgb
 @msg	Text Wrap: select a wrap object	Ceñir texto: selecciona un objeto para ceñir
-@msg	This shortcut file is in a form VectorCraft can't read.	Este archivo de métodos abreviados tiene un formato que VectorCraft no puede leer.
+@msg	This shortcut file is in a form rsm can't read.	Este archivo de métodos abreviados tiene un formato que rsm no puede leer.
 @msg	`aspect` must be a number (%)	`aspect` debe ser un número (%)
 @msg	`at` must be [x, y]	`at` debe ser [x, y]
 @msg	`color` must be a colour	`color` debe ser un color
@@ -4008,7 +4008,7 @@ axis	Both	Ambos
 @msg	can't encode the document: {0}	no se puede codificar el documento: {0}
 @msg	can't parse shortcut `{c}`	no se puede interpretar el atajo `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	no se puede interpretar el atajo `{s}` de `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	no se puede guardar la versión {0}: VectorCraft escribe las versiones {MIN_VERSION} a {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	no se puede guardar la versión {0}: rsm escribe las versiones {MIN_VERSION} a {VERSION}
 @msg	can't write .{ext} images	no se pueden escribir imágenes .{ext}
 @msg	cannot distort a zero-size bounding box	no se puede distorsionar un cuadro delimitador de tamaño cero
 @msg	cannot read PDF: {0}	no se puede leer el PDF: {0}
@@ -4034,7 +4034,7 @@ axis	Both	Ambos
 @msg	empty brush stroke	trazo de pincel vacío
 @msg	empty cutter	cortador vacío
 @msg	empty path	trazado vacío
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	la versión de archivo {0} es más reciente de lo que admite este VectorCraft ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	la versión de archivo {0} es más reciente de lo que admite este rsm ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	el punto de forma libre {i} necesita `at` [x, y] y un `color` válido
 @msg	freeform line {i} must be an array of point indices	la línea de forma libre {i} debe ser una lista de índices de puntos
 @msg	give both `start` and `end` [x, y] (or neither)	indica `start` y `end` [x, y] (o ninguno de los dos)
@@ -4055,8 +4055,8 @@ axis	Both	Ambos
 @msg	invalid PDF setting: {0}	ajuste de PDF no válido: {0}
 @msg	invalid image data for `{0}`	datos de imagen no válidos para `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	parámetros no válidos para `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	no es una imagen que VectorCraft pueda leer
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	usa `{at}`, que el lector de PostScript de VectorCraft no conoce
+@msg	is not an image rsm reads	no es una imagen que rsm pueda leer
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	usa `{at}`, que el lector de PostScript de rsm no conoce
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	usa `{at}`, que el lector de PostScript de VectorCraft no conoce, en {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	en su lugar se abrió su previsualización de metarchivo de Windows, que puede simplificar la ilustración
 @msg	its preview was placed instead, at screen resolution	en su lugar se colocó su previsualización, a resolución de pantalla
@@ -4109,7 +4109,7 @@ axis	Both	Ambos
 @msg	no file system here	aquí no hay sistema de archivos
 @msg	no file writer	no hay escritor de archivos
 @msg	no files to place	no hay archivos para colocar
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` no es un documento de VectorCraft, un PDF ni un archivo .ai compatible con PDF
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` no es un documento de rsm, un PDF ni un archivo .ai compatible con PDF
 @msg	no format to export to	no hay formato al que exportar
 @msg	no free recovery area	no hay ningún área de recuperación libre
 @msg	no gradient stop or freeform point is selected	no hay ninguna parada de degradado ni punto de forma libre seleccionado
@@ -4169,7 +4169,7 @@ axis	Both	Ambos
 @msg	no user workspace `{from}`	no existe el espacio de trabajo de usuario `{from}`
 @msg	node {_1} is not text	el nodo {_1} no es texto
 @msg	not a DXF drawing	no es un dibujo DXF
-@msg	not a VectorCraft file: {0}	no es un archivo de VectorCraft: {0}
+@msg	not a rsm file: {0}	no es un archivo de rsm: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	no es un conjunto de atajos de rsm (falta `overrides`)
 @msg	not a blend	no es una fusión
 @msg	not a graphic style library (format `{_1}`)	no es una biblioteca de estilos gráficos (formato `{_1}`)
@@ -4423,9 +4423,9 @@ axis	Both	Ambos
 @msg	{_1} files	{_1} archivos
 @msg	The graphics were lost and have been restarted	Se perdieron los gráficos y se reiniciaron
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	El procesador gráfico probado primero no pudo mostrar la ventana, así que VectorCraft se inició de nuevo con {summary}
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	El último inicio de VectorCraft terminó en {name} antes de que apareciera la ventana, así que se inició con {summary}. Para volver a probar ese procesador gráfico, cambia Preferencias › Rendimiento › Procesador gráfico o inicia con la variable WGPU_BACKEND definida
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	El último inicio de VectorCraft terminó mientras enumeraba los procesadores gráficos, así que se inició solo con OpenGL, en {summary}. Para volver a probar las demás interfaces gráficas, cambia Preferencias › Rendimiento › Procesador gráfico o inicia con la variable WGPU_BACKEND definida
-@msg	Loading VectorCraft…	Cargando VectorCraft…
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	El último inicio de rsm terminó en {name} antes de que apareciera la ventana, así que se inició con {summary}. Para volver a probar ese procesador gráfico, cambia Preferencias › Rendimiento › Procesador gráfico o inicia con la variable WGPU_BACKEND definida
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	El último inicio de rsm terminó mientras enumeraba los procesadores gráficos, así que se inició solo con OpenGL, en {summary}. Para volver a probar las demás interfaces gráficas, cambia Preferencias › Rendimiento › Procesador gráfico o inicia con la variable WGPU_BACKEND definida
+@msg	Loading rsm…	Cargando rsm…
 @msg	VectorCraft failed to start: {e}	VectorCraft no pudo iniciarse: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Se necesita un navegador con WebGPU o WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Se perdieron los gráficos y no se pudieron reiniciar.
@@ -4453,7 +4453,7 @@ axis	Both	Ambos
 @msg	its section ending with `%{end}` doesn't end	su sección que termina con `%{end}` no termina
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	los objetos con varios rellenos o trazos, efectos o pinceles se importaron con su aspecto dibujado ({_1}): su aspecto aún no se puede editar
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	el degradado “{name}” no está definido en el archivo: lo sustituye un color sólido
-@msg	an image VectorCraft can't read was left out	se omitió una imagen que VectorCraft no puede leer
+@msg	an image rsm can't read was left out	se omitió una imagen que rsm no puede leer
 @msg	an image whose data is cut short was left out	se omitió una imagen con datos incompletos
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	las imágenes vinculadas muestran la vista previa de baja resolución guardada en el archivo hasta que se encuentren sus archivos: vuelva a vincularlas en el panel Vínculos
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	el texto de área en marcos demasiado bajos para una línea de la fuente en que se muestra recibió marcos más altos ({_1}): de otro modo no se vería
@@ -4466,7 +4466,7 @@ axis	Both	Ambos
 @msg	the search couldn't start: try again in a moment	no se pudo iniciar la búsqueda: inténtalo de nuevo en un momento
 @msg	searching a folder isn't available on the web	en la web no se puede buscar en una carpeta
 @msg	every search thread stopped on an internal error (please report this bug)	todos los hilos de búsqueda se detuvieron por un error interno (informa de este error)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	La carpeta Fonts de VectorCraft no está configurada aquí: la configuran la aplicación de escritorio y vectorcraft-cli
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	La carpeta Fonts de rsm no está configurada aquí: la configuran la aplicación de escritorio y vectorcraft-cli
 @msg	choose the font files to add	elige los archivos de fuentes que quieres agregar
 @msg	{n} font file(s) are now in {folder}	{n} archivo(s) de fuentes ahora están en {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} archivo(s) de fuentes ahora están en {folder}; no se pudieron agregar {failed}: {reason}
@@ -5079,7 +5079,7 @@ mark-style	Japanese	Japonesas
 	High Fidelity Photo	Foto de alta fidelidad
 	Image Trace (Make and Expand)	Calco de imagen (crear y expandir)
 	Joins:	Uniones:
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	Mantiene el documento editable: VectorCraft vuelve a abrir el PDF sin perder nada. Para archivos que volverás a editar.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	Mantiene el documento editable: rsm vuelve a abrir el PDF sin perder nada. Para archivos que volverás a editar.
 	Lab Spot Colors	Tintas planas Lab
 	Lasso	Lazo
 	Length:	Longitud:
@@ -5121,7 +5121,7 @@ mark-style	Japanese	Japonesas
 	Variation	Variación
 	VectorCraft Default	Predeterminado de VectorCraft
 	VectorCraft Generic CMYK (SWOP-like)	CMYK genérico de VectorCraft (similar a SWOP)
-	VectorCraft Swatches (.vcswatches)	Muestras de VectorCraft (.vcswatches)
+	rsm Swatches (.vcswatches)	Muestras de rsm (.vcswatches)
 	Vertical Area Type	Texto de área vertical
 	Vertical Type	Texto vertical
 	Vertical Type on a Path	Texto vertical en trazado

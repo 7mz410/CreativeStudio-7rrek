@@ -3803,7 +3803,7 @@ axis	Both	И двете
 @msg	Split Into Grid: select paths large enough for the grid	Разделяне на мрежа: изберете пътища, достатъчно големи за мрежата
 @msg	Targa files are RGB: colorModel rgb	Файловете Targa са RGB: colorModel rgb
 @msg	Text Wrap: select a wrap object	Обгръщане на текст: изберете обгръщащ обект
-@msg	This shortcut file is in a form VectorCraft can't read.	 Този файл с преки пътища е във формат, който VectorCraft не може да прочете.
+@msg	This shortcut file is in a form rsm can't read.	 Този файл с преки пътища е във формат, който rsm не може да прочете.
 @msg	`aspect` must be a number (%)	`aspect` трябва да бъде число (%)
 @msg	`at` must be [x, y]	`at` трябва да бъде [x, y]
 @msg	`color` must be a colour	`color` трябва да бъде цвят
@@ -3912,7 +3912,7 @@ axis	Both	И двете
 @msg	can't encode the document: {0}	документът не може да бъде кодиран: {0}
 @msg	can't parse shortcut `{c}`	клавишният бърз път `{c}` не може да бъде разпознат
 @msg	can't parse shortcut `{s}` for `{k}`	клавишният бърз път `{s}` за `{k}` не може да бъде разпознат
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	версия {0} не може да бъде запазена: VectorCraft записва версии от {MIN_VERSION} до {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	версия {0} не може да бъде запазена: rsm записва версии от {MIN_VERSION} до {VERSION}
 @msg	can't write .{ext} images	не могат да се записват .{ext} изображения
 @msg	cannot distort a zero-size bounding box	не може да се деформира ограничителна кутия с нулев размер
 @msg	cannot read PDF: {0}	PDF файлът не може да бъде прочетен: {0}
@@ -3938,7 +3938,7 @@ axis	Both	И двете
 @msg	empty brush stroke	празен щрих с четка
 @msg	empty cutter	празен нож
 @msg	empty path	празен път
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	версия на файла {0} е по-нова от поддържаната от този VectorCraft ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	версия на файла {0} е по-нова от поддържаната от този rsm ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	свободна точка {i} се нуждае от `at` [x, y] и валиден `color`
 @msg	freeform line {i} must be an array of point indices	свободна линия {i} трябва да бъде масив от индекси на точки
 @msg	give both `start` and `end` [x, y] (or neither)	задайте както `start`, така и `end` [x, y] (или нито едното)
@@ -3959,8 +3959,8 @@ axis	Both	И двете
 @msg	invalid PDF setting: {0}	невалидна настройка за PDF: {0}
 @msg	invalid image data for `{0}`	невалидни данни за изображение за `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	невалидни параметри за `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	не е изображение, което VectorCraft разчита
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	използва `{at}`, който четецът на PostScript на VectorCraft не разпознава
+@msg	is not an image rsm reads	не е изображение, което rsm разчита
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	използва `{at}`, който четецът на PostScript на rsm не разпознава
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	използва `{at}`, който четецът на PostScript на VectorCraft не разпознава, в {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	вместо това беше отворен неговият преглед на Windows метафайл, което може да опрости илюстрацията
 @msg	its preview was placed instead, at screen resolution	вместо това беше поставен неговият преглед с разделителна способност за екран
@@ -4072,7 +4072,7 @@ axis	Both	И двете
 @msg	no user workspace `{from}`	няма потребителско работно пространство „{from}“
 @msg	node {_1} is not text	възелът {_1} не е текст
 @msg	not a DXF drawing	не е DXF чертеж
-@msg	not a VectorCraft file: {0}	не е файл на VectorCraft: {0}
+@msg	not a rsm file: {0}	не е файл на rsm: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	не е набор от клавишни комбинации на rsm (липсват `overrides`)
 @msg	not a blend	не е преливане
 @msg	not a graphic style library (format `{_1}`)	не е библиотека със стилове на графики (формат `{_1}`)
@@ -4317,9 +4317,9 @@ axis	Both	И двете
 @msg	{_1} files	{_1} файла
 @msg	The graphics were lost and have been restarted	Графиката беше загубена и рестартирана
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Първият опит на графичния процесор да покаже прозореца не успя, затова VectorCraft стартира отново на {summary}
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Последното стартиране на VectorCraft прекъсна на {name}, преди прозорецът да се появи, затова VectorCraft стартира на {summary}. За да опитате отново с този графичен процесор, променете Настройки › Производителност › Графичен процесор или стартирайте със зададена променлива WGPU_BACKEND
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Последното стартиране на VectorCraft прекъсна, докато се изброяваха графичните процесори, затова VectorCraft стартира на {summary} само с OpenGL. За да опитате отново другите графични интерфейси, променете Настройки › Производителност › Графичен процесор или стартирайте със зададена променлива WGPU_BACKEND
-@msg	Loading VectorCraft…	Зареждане на VectorCraft…
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Последното стартиране на rsm прекъсна на {name}, преди прозорецът да се появи, затова rsm стартира на {summary}. За да опитате отново с този графичен процесор, променете Настройки › Производителност › Графичен процесор или стартирайте със зададена променлива WGPU_BACKEND
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Последното стартиране на rsm прекъсна, докато се изброяваха графичните процесори, затова rsm стартира на {summary} само с OpenGL. За да опитате отново другите графични интерфейси, променете Настройки › Производителност › Графичен процесор или стартирайте със зададена променлива WGPU_BACKEND
+@msg	Loading rsm…	Зареждане на rsm…
 @msg	VectorCraft failed to start: {e}	VectorCraft не успя да стартира: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Изисква се браузър с поддръжка на WebGPU или WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Графиката беше загубена и не можа да бъде рестартирана.
@@ -4347,7 +4347,7 @@ axis	Both	И двете
 @msg	its section ending with `%{end}` doesn't end	разделът му, завършващ на `%{end}`, няма край
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	обектите с множество запълвания или щрихове, ефекти или четки се появиха във вид на изрисувания си изглед ({_1}): тяхната поява все още не подлежи на редактиране
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	градиентът „{name}“ не е дефиниран във файла: заменен е с обикновен цвят
-@msg	an image VectorCraft can't read was left out	изображение, което VectorCraft не може да разчете, беше пропуснато
+@msg	an image rsm can't read was left out	изображение, което rsm не може да разчете, беше пропуснато
 @msg	an image whose data is cut short was left out	изображение с непълни данни беше пропуснато
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	свързаните картини показват записания във файла предварителен преглед с ниска резолюция, докато файловете им бъдат намерени: презакачете ги в панела „Връзки“
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	текстовите рамки за област в редове, твърде къси за шрифта, в който се показват, получиха по-високи рамки ({_1}): текстът им иначе нямаше да се види
@@ -4360,7 +4360,7 @@ axis	Both	И двете
 @msg	the search couldn't start: try again in a moment	търсенето не можа да стартира: опитайте отново след малко
 @msg	searching a folder isn't available on the web	търсенето в папка не е достъпно в уеб версията
 @msg	every search thread stopped on an internal error (please report this bug)	всяка нишка за търсене спря поради вътрешна грешка (моля, докладвайте този бъг)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папката със шрифтове на VectorCraft не е зададена тук: десктоп приложението и vectorcraft-cli я задават
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папката със шрифтове на rsm не е зададена тук: десктоп приложението и vectorcraft-cli я задават
 @msg	choose the font files to add	изберете шрифтовите файлове за добавяне
 @msg	{n} font file(s) are now in {folder}	{n} шрифтов(и) файл(а) вече са в {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} шрифтов(и) файл(а) вече са в {folder}; {failed} не можаха да бъдат добавени: {reason}
@@ -4862,7 +4862,7 @@ lighting	Light	Светлина
 	Inserting, deleting and rotating pages	Вмъкване, изтриване и завъртане на страници
 	Joins:	Съединения:
 	Justify	Двустранно подравняване
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	Запазва документа редактируем: VectorCraft отваря PDF файла отново без загуба на данни. За файлове, които ще редактирате отново.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	Запазва документа редактируем: rsm отваря PDF файла отново без загуба на данни. За файлове, които ще редактирате отново.
 	Keyboard Shortcuts	Клавишни комбинации
 	Kite	Хвърчило
 	LF (macOS, Linux)	LF (macOS, Linux)
@@ -5053,7 +5053,7 @@ lighting	Light	Светлина
 	VectorCraft Default	По подразбиране за VectorCraft
 	VectorCraft Defaults	Стандартни настройки на VectorCraft
 	VectorCraft Generic CMYK (SWOP-like)	Общ CMYK за VectorCraft (подобен на SWOP)
-	VectorCraft Swatches (.vcswatches)	Образци на VectorCraft (.vcswatches)
+	rsm Swatches (.vcswatches)	Образци на rsm (.vcswatches)
 	Vertical Align	Вертикално подравняване
 	Vertical Area Type	Вертикално въвеждане в област
 	Vertical Type	Вертикален текст

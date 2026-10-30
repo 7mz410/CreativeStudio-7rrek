@@ -154,7 +154,7 @@
 	Posterization	Posterisatie
 	Small Gaps	Kleine openingen
 
-@msg	This shortcut file is in a form VectorCraft can't read.	Dit sneltoetsbestand heeft een vorm die VectorCraft niet kan lezen.
+@msg	This shortcut file is in a form rsm can't read.	Dit sneltoetsbestand heeft een vorm die rsm niet kan lezen.
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	geen sneltoetsenset: de tekst begint niet met een slash-naam en een openingsaccolade
 	Preferences…	Voorkeuren…
 	Object	Object
@@ -2488,7 +2488,7 @@ lighting	Light	Licht
 	[PDF/X-3:2002]	[PDF/X-3:2002]
 	PDF/X-4:2010	PDF/X-4:2010
 	[PDF/X-4:2010]	[PDF/X-4:2010]
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	Behoudt de bewerkbaarheid van het document: VectorCraft opent de PDF opnieuw zonder dat er iets verloren gaat. Voor bestanden die je opnieuw gaat bewerken.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	Behoudt de bewerkbaarheid van het document: rsm opent de PDF opnieuw zonder dat er iets verloren gaat. Voor bestanden die je opnieuw gaat bewerken.
 	Compress text and line art	Tekst en lijnwerk comprimeren
 	Compression	Compressie
 	Compression › Color › Above Ppi	Compressie › Kleur › Boven Ppi
@@ -2566,7 +2566,7 @@ lighting	Light	Licht
 	A File…	Een bestand…
 	GPL palettes keep solid colours only, as RGB.	GPL-paletten bevatten alleen effen kleuren, als RGB.
 	Save Swatch Library	Bibliotheek met stalen opslaan
-	VectorCraft Swatches (.vcswatches)	VectorCraft-stalen (.vcswatches)
+	rsm Swatches (.vcswatches)	rsm-stalen (.vcswatches)
 	Save To:	Opslaan in:
 	Saved to User Defined: {}	Opgeslagen in Door gebruiker gedefinieerd: {}
 	Selected Swatches Only	Alleen geselecteerde stalen
@@ -4042,7 +4042,7 @@ imageTrace	Outline	Contour
 @msg	can't encode the document: {0}	kan het document niet coderen: {0}
 @msg	can't parse shortcut `{c}`	kan sneltoets `{c}` niet parseren
 @msg	can't parse shortcut `{s}` for `{k}`	kan sneltoets `{s}` voor `{k}` niet parseren
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	kan versie {0} niet opslaan: VectorCraft schrijft versies {MIN_VERSION} tot {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	kan versie {0} niet opslaan: rsm schrijft versies {MIN_VERSION} tot {VERSION}
 @msg	can't write .{ext} images	kan geen .{ext}-afbeeldingen schrijven
 @msg	cannot distort a zero-size bounding box	kan een omtrekkader met afmetingen nul niet vervormen
 @msg	cannot read PDF: {0}	kan PDF niet lezen: {0}
@@ -4066,7 +4066,7 @@ imageTrace	Outline	Contour
 @msg	empty brush stroke	lege penseelstreek
 @msg	empty cutter	lege snijder
 @msg	empty path	leeg pad
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	bestandsversie {0} is nieuwer dan deze VectorCraft ondersteunt ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	bestandsversie {0} is nieuwer dan deze rsm ondersteunt ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	vrijvormpunt {i} heeft `at` [x, y] en een geldige `color` nodig
 @msg	freeform line {i} must be an array of point indices	vrijvormlijn {i} moet een array van puntindexen zijn
 @msg	give both `start` and `end` [x, y] (or neither)	geef zowel `start` als `end` [x, y] (of geen van beide)
@@ -4085,8 +4085,8 @@ imageTrace	Outline	Contour
 @msg	invalid PDF setting: {0}	ongeldige PDF-instelling: {0}
 @msg	invalid image data for `{0}`	ongeldige afbeeldingsgegevens voor `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	ongeldige parameters voor `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	is geen afbeelding die VectorCraft leest
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	het gebruikt `{at}`, die de PostScript-lezer van VectorCraft niet kent
+@msg	is not an image rsm reads	is geen afbeelding die rsm leest
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	het gebruikt `{at}`, die de PostScript-lezer van rsm niet kent
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	het gebruikt `{at}`, die de PostScript-lezer van VectorCraft niet kent, in {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	zijn Windows-metabestandvoorbeeld is in plaats daarvan geopend, wat het artwork kan vereenvoudigen
 @msg	its preview was placed instead, at screen resolution	zijn voorvertoning is in plaats daarvan geplaatst, op schermresolutie
@@ -4191,7 +4191,7 @@ imageTrace	Outline	Contour
 @msg	no user workspace `{from}`	geen gebruikerswerkruimte `{from}`
 @msg	node {_1} is not text	knooppunt {_1} is geen tekst
 @msg	not a DXF drawing	geen DXF-tekening
-@msg	not a VectorCraft file: {0}	geen VectorCraft-bestand: {0}
+@msg	not a rsm file: {0}	geen rsm-bestand: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	geen rsm-sneltoetsenset (`overrides` ontbreekt)
 @msg	not a graphic style library (format `{_1}`)	geen bibliotheek met grafische stijlen (indeling `{_1}`)
 @msg	not a stored central record	geen opgeslagen centraal record
@@ -4425,7 +4425,7 @@ imageTrace	Outline	Contour
 @msg	{_1} files	{_1}-bestanden
 @msg	The graphics were lost and have been restarted	De grafische weergave is verloren gegaan en opnieuw gestart
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	De grafische processor die eerst werd geprobeerd, kon het venster niet weergeven, dus VectorCraft is opnieuw gestart met {summary}
-@msg	Loading VectorCraft…	VectorCraft laden…
+@msg	Loading rsm…	rsm laden…
 @msg	VectorCraft failed to start: {e}	VectorCraft kon niet starten: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Er is een browser met WebGPU of WebGL2 vereist.
 @msg	The graphics were lost and couldn't be restarted.	De grafische weergave is verloren gegaan en kon niet opnieuw worden gestart.
@@ -4453,7 +4453,7 @@ imageTrace	Outline	Contour
 @msg	its section ending with `%{end}` doesn't end	zijn sectie die op `%{end}` eindigt, eindigt niet
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	objecten met meerdere vullingen of lijnen, effecten of penselen zijn als hun getekende uiterlijk binnengekomen ({_1}): hun vormgeving is nog niet bewerkbaar
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	verloop „{name}” is niet gedefinieerd in het bestand: er is een effen kleur voor gebruikt
-@msg	an image VectorCraft can't read was left out	een afbeelding die VectorCraft niet kan lezen, is weggelaten
+@msg	an image rsm can't read was left out	een afbeelding die rsm niet kan lezen, is weggelaten
 @msg	an image whose data is cut short was left out	een afbeelding waarvan de gegevens zijn afgekapt, is weggelaten
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	gekoppelde afbeeldingen tonen het in het bestand opgeslagen voorbeeld met lage resolutie totdat hun bestanden zijn gevonden: koppel ze opnieuw in het paneel Koppelingen
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	vlaktekst in kaders die te kort zijn voor één regel van het lettertype waarin de tekst wordt weergegeven, heeft hogere kaders gekregen ({_1}): anders zou de tekst niet zichtbaar zijn
@@ -4466,7 +4466,7 @@ imageTrace	Outline	Contour
 @msg	the search couldn't start: try again in a moment	de zoekopdracht kon niet starten: probeer het over een ogenblik opnieuw
 @msg	searching a folder isn't available on the web	een map doorzoeken is niet beschikbaar op het web
 @msg	every search thread stopped on an internal error (please report this bug)	elke zoekthread is gestopt door een interne fout (meld deze bug)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	de map Lettertypen van VectorCraft is hier niet ingesteld: de desktopapp en vectorcraft-cli stellen die in
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	de map Lettertypen van rsm is hier niet ingesteld: de desktopapp en vectorcraft-cli stellen die in
 @msg	choose the font files to add	kies de lettertypebestanden die je wilt toevoegen
 @msg	{n} font file(s) are now in {folder}	er staan nu {n} lettertypebestand(en) in {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	er staan nu {n} lettertypebestand(en) in {folder}; {failed} konden niet worden toegevoegd: {reason}
@@ -4967,8 +4967,8 @@ mark-style	Japanese	Japans
 	Rotate View to Selection	Weergave naar selectie draaien
 @msg	select an Intertwine group	selecteer een verstrengelingsgroep
 @msg	this is a PostScript file (an .ai saved in an older format or without PDF compatibility, or an EPS file), not a PDF: File › Open and File › Place read it as EPS	dit is een PostScript-bestand (een .ai dat in een ouder formaat of zonder PDF-compatibiliteit is opgeslagen, of een EPS-bestand), geen PDF: Bestand › Openen en Bestand › Plaatsen lezen het als EPS
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	De laatste start van VectorCraft eindigde op {name} voordat het venster verscheen, dus het is gestart op {summary}. Om die grafische processor opnieuw te proberen, wijzig Voorkeuren › Prestaties › Grafische processor of start met WGPU_BACKEND ingesteld
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	De laatste start van VectorCraft eindigde tijdens het weergeven van de grafische processors, dus het is gestart op {summary} met alleen OpenGL. Om de andere grafische backends opnieuw te proberen, wijzig Voorkeuren › Prestaties › Grafische processor of start met WGPU_BACKEND ingesteld
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	De laatste start van rsm eindigde op {name} voordat het venster verscheen, dus het is gestart op {summary}. Om die grafische processor opnieuw te proberen, wijzig Voorkeuren › Prestaties › Grafische processor of start met WGPU_BACKEND ingesteld
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	De laatste start van rsm eindigde tijdens het weergeven van de grafische processors, dus het is gestart op {summary} met alleen OpenGL. Om de andere grafische backends opnieuw te proberen, wijzig Voorkeuren › Prestaties › Grafische processor of start met WGPU_BACKEND ingesteld
 	Loaded Texture	Geladen textuur
 	Load Texture…	Textuur laden…
 	Texture Image	Textuurafbeelding

@@ -4133,7 +4133,7 @@ imageTrace	Outline	Kontur
 @msg	can't encode the document: {0}	nie można zakodować dokumentu: {0}
 @msg	can't parse shortcut `{c}`	nie można przeanalizować skrótu `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	nie można przeanalizować skrótu `{s}` dla `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	nie można zapisać wersji {0}: VectorCraft zapisuje wersje od {MIN_VERSION} do {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	nie można zapisać wersji {0}: rsm zapisuje wersje od {MIN_VERSION} do {VERSION}
 @msg	can't write .{ext} images	nie można zapisywać obrazów .{ext}
 @msg	cannot distort a zero-size bounding box	nie można zniekształcić obwiedni o zerowym rozmiarze
 @msg	cannot read PDF: {0}	nie można odczytać PDF: {0}
@@ -4159,7 +4159,7 @@ imageTrace	Outline	Kontur
 @msg	empty brush stroke	puste pociągnięcie pędzla
 @msg	empty cutter	pusty obiekt tnący
 @msg	empty path	pusta ścieżka
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	wersja pliku {0} jest nowsza niż obsługiwana przez tę wersję VectorCraft ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	wersja pliku {0} jest nowsza niż obsługiwana przez tę wersję rsm ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	dowolny punkt {i} wymaga `at` [x, y] i prawidłowego `color`
 @msg	freeform line {i} must be an array of point indices	dowolna linia {i} musi być tablicą indeksów punktów
 @msg	give both `start` and `end` [x, y] (or neither)	podaj zarówno `start`, jak i `end` [x, y] (albo żadnego)
@@ -4180,8 +4180,8 @@ imageTrace	Outline	Kontur
 @msg	invalid PDF setting: {0}	nieprawidłowe ustawienie PDF: {0}
 @msg	invalid image data for `{0}`	nieprawidłowe dane obrazu dla `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	nieprawidłowe parametry dla `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	nie jest obrazem obsługiwanym przez VectorCraft
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	używa `{at}`, czego czytnik PostScript programu VectorCraft nie zna
+@msg	is not an image rsm reads	nie jest obrazem obsługiwanym przez rsm
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	używa `{at}`, czego czytnik PostScript programu rsm nie zna
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	używa `{at}`, czego czytnik PostScript programu VectorCraft nie zna, w {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	zamiast tego otwarto jego podgląd w formacie metapliku Windows, co może uprościć kompozycję
 @msg	its preview was placed instead, at screen resolution	zamiast tego umieszczono jego podgląd w rozdzielczości ekranowej
@@ -4234,7 +4234,7 @@ imageTrace	Outline	Kontur
 @msg	no file system here	brak systemu plików
 @msg	no file writer	brak modułu zapisu plików
 @msg	no files to place	brak plików do umieszczenia
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` nie jest dokumentem VectorCraft, plikiem PDF ani plikiem .ai zgodnym z PDF
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` nie jest dokumentem rsm, plikiem PDF ani plikiem .ai zgodnym z PDF
 @msg	no format to export to	brak formatu eksportu
 @msg	no free recovery area	brak wolnego obszaru odzyskiwania
 @msg	no gradient stop or freeform point is selected	nie zaznaczono punktu koloru gradientu ani dowolnego punktu
@@ -4294,11 +4294,11 @@ imageTrace	Outline	Kontur
 @msg	no user workspace `{from}`	brak obszaru roboczego użytkownika `{from}`
 @msg	node {_1} is not text	węzeł {_1} nie jest tekstem
 @msg	not a DXF drawing	to nie jest rysunek DXF
-@msg	not a VectorCraft file: {0}	to nie jest plik VectorCraft: {0}
+@msg	not a rsm file: {0}	to nie jest plik rsm: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	to nie jest zestaw skrótów rsm (brak `overrides`)
 @msg	not a blend	to nie jest przejście
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	to nie jest zestaw skrótów: tekst nie zaczyna się od nazwy z ukośnikiem i otwierającego nawiasu klamrowego
-@msg	This shortcut file is in a form VectorCraft can't read.	Ten plik skrótów ma postać, której VectorCraft nie potrafi odczytać.
+@msg	This shortcut file is in a form rsm can't read.	Ten plik skrótów ma postać, której rsm nie potrafi odczytać.
 @msg	not a graphic style library (format `{_1}`)	to nie jest biblioteka stylów graficznych (format `{_1}`)
 @msg	not a stored central record	to nie jest zapisany rekord centralny
 @msg	not a valid plug-in module: {0}	nieprawidłowy moduł wtyczki: {0}
@@ -4549,9 +4549,9 @@ imageTrace	Outline	Kontur
 @msg	{_1} files	Pliki {_1}
 @msg	The graphics were lost and have been restarted	Utracono grafikę i uruchomiono ją ponownie
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Pierwszy wypróbowany procesor graficzny nie mógł wyświetlić okna, więc VectorCraft uruchomił się ponownie na {summary}
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Ostatnie uruchomienie VectorCraft zakończyło się na {name}, zanim pojawiło się okno, więc VectorCraft uruchomił się na {summary}. Aby ponownie wypróbować ten procesor graficzny, zmień Preferencje › Wydajność › Procesor graficzny lub uruchom z ustawioną zmienną WGPU_BACKEND
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Ostatnie uruchomienie VectorCraft zakończyło się podczas wyliczania procesorów graficznych, więc VectorCraft uruchomił się na {summary} tylko z OpenGL. Aby ponownie wypróbować pozostałe interfejsy graficzne, zmień Preferencje › Wydajność › Procesor graficzny lub uruchom z ustawioną zmienną WGPU_BACKEND
-@msg	Loading VectorCraft…	Wczytywanie VectorCraft…
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Ostatnie uruchomienie rsm zakończyło się na {name}, zanim pojawiło się okno, więc rsm uruchomił się na {summary}. Aby ponownie wypróbować ten procesor graficzny, zmień Preferencje › Wydajność › Procesor graficzny lub uruchom z ustawioną zmienną WGPU_BACKEND
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Ostatnie uruchomienie rsm zakończyło się podczas wyliczania procesorów graficznych, więc rsm uruchomił się na {summary} tylko z OpenGL. Aby ponownie wypróbować pozostałe interfejsy graficzne, zmień Preferencje › Wydajność › Procesor graficzny lub uruchom z ustawioną zmienną WGPU_BACKEND
+@msg	Loading rsm…	Wczytywanie rsm…
 @msg	VectorCraft failed to start: {e}	Nie udało się uruchomić VectorCraft: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Wymagana jest przeglądarka z obsługą WebGPU lub WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Utracono grafikę i nie udało się jej ponownie uruchomić.
@@ -4579,7 +4579,7 @@ imageTrace	Outline	Kontur
 @msg	its section ending with `%{end}` doesn't end	jego sekcja kończąca się na `%{end}` nie ma końca
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	obiekty z kilkoma wypełnieniami lub obrysami, efektami albo pędzlami wczytano jako ich narysowany wygląd ({_1}): ich wyglądu nie można jeszcze edytować
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	gradient „{name}” nie jest zdefiniowany w pliku: zastąpiono go jednolitym kolorem
-@msg	an image VectorCraft can't read was left out	pominięto obraz, którego VectorCraft nie potrafi odczytać
+@msg	an image rsm can't read was left out	pominięto obraz, którego rsm nie potrafi odczytać
 @msg	an image whose data is cut short was left out	pominięto obraz z uciętymi danymi
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	połączone obrazy pokazują zapisany w pliku podgląd niskiej rozdzielczości, dopóki ich pliki nie zostaną znalezione: połącz je ponownie w panelu Łącza
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	tekst akapitowy w ramkach niższych niż wiersz wyświetlanej czcionki otrzymał wyższe ramki ({_1}): inaczej tekst nie byłby widoczny
@@ -4592,7 +4592,7 @@ imageTrace	Outline	Kontur
 @msg	the search couldn't start: try again in a moment	nie udało się rozpocząć wyszukiwania: spróbuj ponownie za chwilę
 @msg	searching a folder isn't available on the web	przeszukiwanie folderu nie jest dostępne w wersji webowej
 @msg	every search thread stopped on an internal error (please report this bug)	wszystkie wątki wyszukiwania zatrzymały się na błędzie wewnętrznym (zgłoś ten błąd)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	folder czcionek VectorCraft nie jest tu ustawiony: ustawia go aplikacja desktopowa i vectorcraft-cli
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	folder czcionek rsm nie jest tu ustawiony: ustawia go aplikacja desktopowa i vectorcraft-cli
 @msg	choose the font files to add	wybierz pliki czcionek do dodania
 @msg	{n} font file(s) are now in {folder}	pliki czcionek w {folder}: {n}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	pliki czcionek w {folder}: {n}; nie udało się dodać: {failed} ({reason})

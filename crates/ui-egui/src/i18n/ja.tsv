@@ -3905,15 +3905,15 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	its type is to come in as outlines, which only its page has	文字をアウトラインとして読み込む設定ですが、アウトラインはページにしかありません
 @msg	{_1} files	{_1} 個のファイル
 @msg	A browser with WebGPU or WebGL2 is required.	WebGPU または WebGL2 に対応したブラウザーが必要です。
-@msg	Loading VectorCraft…	VectorCraft を読み込んでいます…
+@msg	Loading rsm…	rsm を読み込んでいます…
 @msg	Reload the page to go on (changes not saved yet may be lost).	続けるにはページを再読み込みしてください (未保存の変更は失われる場合があります)。
 @msg	The graphics were lost and couldn't be restarted.	グラフィックス機能が利用できなくなり、再起動できませんでした。
 @msg	The graphics were lost and have been restarted	グラフィックス機能が利用できなくなったため、再起動しました
 @msg	VectorCraft failed to start: {e}	VectorCraft を起動できませんでした: {e}
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	未保存の変更はこのブラウザーに残っています: 復元するにはページを再読み込みしてください。
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	最初に試したグラフィックスプロセッサーではウィンドウを表示できなかったため、{summary} で VectorCraft を再起動しました
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	前回の VectorCraft の起動はウィンドウが表示される前に {name} で終了したため、{summary} で起動しました。このグラフィックプロセッサーをもう一度試すには、「環境設定 › パフォーマンス › グラフィックプロセッサー」を変更するか、WGPU_BACKEND を設定して起動してください
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	前回の VectorCraft の起動はグラフィックプロセッサーの一覧を取得している間に終了したため、OpenGL のみを使って {summary} で起動しました。ほかのグラフィックバックエンドをもう一度試すには、「環境設定 › パフォーマンス › グラフィックプロセッサー」を変更するか、WGPU_BACKEND を設定して起動してください
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	前回の rsm の起動はウィンドウが表示される前に {name} で終了したため、{summary} で起動しました。このグラフィックプロセッサーをもう一度試すには、「環境設定 › パフォーマンス › グラフィックプロセッサー」を変更するか、WGPU_BACKEND を設定して起動してください
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	前回の rsm の起動はグラフィックプロセッサーの一覧を取得している間に終了したため、OpenGL のみを使って {summary} で起動しました。ほかのグラフィックバックエンドをもう一度試すには、「環境設定 › パフォーマンス › グラフィックプロセッサー」を変更するか、WGPU_BACKEND を設定して起動してください
 @msg	not a DXF drawing	DXF 図面ではありません
 @msg	scale must be a number from {_1} to {_2}, not {s}	縮尺は {_1} から {_2} までの数値にしてください ({s} は指定できません)
 @msg	the artboard to fit must be a positive size up to {_1} pt	合わせる先のアートボードのサイズは 0 より大きく {_1} pt 以下にしてください
@@ -4215,7 +4215,7 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	it has {_1}, which VectorCraft doesn't read from it yet	{_1} が含まれていますが、VectorCraft はまだこのファイルからは読み込めません
 @msg	its objects are nested too deeply	オブジェクトの入れ子が深すぎます
 @msg	its section ending with `%{end}` doesn't end	`%{end}` で終わるはずのセクションが終わっていません
-@msg	an image VectorCraft can't read was left out	VectorCraft で読み込めない画像は除外されました
+@msg	an image rsm can't read was left out	rsm で読み込めない画像は除外されました
 @msg	an image whose data is cut short was left out	データが途中で切れている画像は除外されました
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	リンク画像は、元のファイルが見つかるまで、ファイルに保存された低解像度のプレビューで表示されます：リンクパネルで再リンクしてください
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	表示に使われるフォントの 1 行に対して低すぎるフレーム内のエリア内文字は、フレームを高くしました ({_1}): そうしないと文字が表示されません
@@ -4251,7 +4251,7 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	the program asks for a resource that isn't defined	プログラムが定義されていないリソースを要求しています
 @msg	a calculation has no result, as in a division by zero	ゼロによる除算などで、計算の結果が得られません
 @msg	the operator looks for a mark on the stack and finds none	オペレーターがスタック上のマークを探しましたが、見つかりません
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	VectorCraft の PostScript 読み込み機能が対応していない `{at}` を使用しています
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	rsm の PostScript 読み込み機能が対応していない `{at}` を使用しています
 @msg	the file was read up to an error ({why}): what follows it was left out	ファイルはエラーが発生した箇所まで読み込まれました ({why}): それ以降の内容は除外されました
 @msg	this file's PostScript couldn't be read ({why}): {what}	このファイルの PostScript を読み込めませんでした ({why}): {what}
 @msg	it has no page	ページがありません
@@ -4278,10 +4278,10 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	the preview image is empty	プレビュー画像が空です
 @msg	the thumbnail image is malformed	サムネール画像の形式が正しくありません
 @msg	can't encode the document: {0}	ドキュメントをエンコードできません: {0}
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	バージョン {0} では保存できません: VectorCraft で保存できるのはバージョン {MIN_VERSION} から {VERSION} までです
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	ファイルのバージョン {0} は、この VectorCraft が対応するバージョン ({VERSION}) より新しいものです
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	バージョン {0} では保存できません: rsm で保存できるのはバージョン {MIN_VERSION} から {VERSION} までです
+@msg	file version {0} is newer than this rsm supports ({VERSION})	ファイルのバージョン {0} は、この rsm が対応するバージョン ({VERSION}) より新しいものです
 @msg	invalid image data for `{0}`	`{0}` の画像データが正しくありません
-@msg	not a VectorCraft file: {0}	VectorCraft ファイルではありません: {0}
+@msg	not a rsm file: {0}	rsm ファイルではありません: {0}
 @msg	the compressed file unpacks to more than {_1} MB	圧縮ファイルを展開すると {_1} MB を超えます
 @msg	`{key}: {top}` and `options.{key}: {inner}` disagree: give the option once	`{key}: {top}` と `options.{key}: {inner}` が一致しません: オプションは 1 回だけ指定してください
 @msg	version {0} files can't be compressed: only version {COMPRESSED_SINCE} and later open compressed files	バージョン {0} のファイルは圧縮できません: 圧縮ファイルを開けるのはバージョン {COMPRESSED_SINCE} 以降のみです
@@ -4330,7 +4330,7 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	plug-in output: {0}	プラグインの出力に問題があります: {0}
 @msg	plug-in parameters: {0}	プラグインのパラメーターに問題があります: {0}
 @msg	plug-in trapped: {0}	プラグインが異常終了しました: {0}
-@msg	is not an image VectorCraft reads	VectorCraft で読み込める画像ではありません
+@msg	is not an image rsm reads	rsm で読み込める画像ではありません
 @msg	not found	見つかりません
 @msg	SVG parse error: {0}	SVG を解析できませんでした: {0}
 @msg	decimals must be {_1}–{_2} (got {_3})	小数点以下の桁数は {_1} から {_2} までにしてください (指定値: {_3})
@@ -4516,7 +4516,7 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	Couldn't place {name}: the document it was dropped on was closed	{name} を配置できませんでした: ドロップ先のドキュメントは閉じられています
 @msg	Couldn't place {name}: the document it was placed in was closed	{name} を配置できませんでした: 配置先のドキュメントは閉じられています
 @msg	no files to place	配置するファイルがありません
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` は VectorCraft ドキュメント、PDF、PDF 互換の .ai ファイルのいずれでもありません
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` は rsm ドキュメント、PDF、PDF 互換の .ai ファイルのいずれでもありません
 @msg	paths: give at least one file	paths: ファイルを 1 つ以上指定してください
 @msg	replace: the object to replace was changed or deleted	replace: 置き換えるオブジェクトは変更または削除されています
 @msg	Couldn't place {name}: {e}	{name} を配置できませんでした: {e}
@@ -4528,7 +4528,7 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	Discarded {_1} recovered document(s)	復帰用データのドキュメントを {_1} 件破棄しました
 @msg	Restored {_1} recovered document(s): save them to keep them	復帰用データからドキュメントを {_1} 件復元しました: 残すには保存してください
 @msg	Saving recovery data for {_1}	{_1} の復帰用データを保存中
-@msg	This shortcut file is in a form VectorCraft can't read.	このショートカットファイルは VectorCraft で読み込めない形式です。
+@msg	This shortcut file is in a form rsm can't read.	このショートカットファイルは rsm で読み込めない形式です。
 @msg	bad shortcut	ショートカットが正しくありません
 @msg	can't parse shortcut `{c}`	ショートカット `{c}` を解釈できません
 @msg	can't parse shortcut `{s}` for `{k}`	`{k}` のショートカット `{s}` を解釈できません
@@ -4566,7 +4566,7 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	the search couldn't start: try again in a moment	検索を開始できませんでした: しばらくしてからもう一度お試しください
 @msg	searching a folder isn't available on the web	Web 版ではフォルダーを検索できません
 @msg	every search thread stopped on an internal error (please report this bug)	すべての検索スレッドが内部エラーで停止しました (このバグを報告してください)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	この環境では VectorCraft の Fonts フォルダーが設定されていません: デスクトップアプリと vectorcraft-cli が設定します
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	この環境では rsm の Fonts フォルダーが設定されていません: デスクトップアプリと vectorcraft-cli が設定します
 @msg	choose the font files to add	追加するフォントファイルを選択してください
 @msg	{n} font file(s) are now in {folder}	{n} 個のフォントファイルが {folder} に入りました
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} 個のフォントファイルが {folder} に入りましたが、{failed} 個は追加できませんでした: {reason}

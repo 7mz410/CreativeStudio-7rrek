@@ -3651,15 +3651,15 @@ imageTrace	Outline	轮廓
 @msg	its type is to come in as outlines, which only its page has	其文字需要以轮廓导入，而只有其页面中包含这些轮廓
 @msg	{_1} files	{_1} 文件
 @msg	A browser with WebGPU or WebGL2 is required.	需要支持 WebGPU 或 WebGL2 的浏览器。
-@msg	Loading VectorCraft…	正在加载 VectorCraft…
+@msg	Loading rsm…	正在加载 rsm…
 @msg	Reload the page to go on (changes not saved yet may be lost).	请重新加载页面以继续 (尚未保存的更改可能会丢失)。
 @msg	The graphics were lost and couldn't be restarted.	图形已丢失，且无法重新启动。
 @msg	The graphics were lost and have been restarted	图形已丢失，现已重新启动
 @msg	VectorCraft failed to start: {e}	VectorCraft 启动失败：{e}
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	您未保存的更改保留在此浏览器中：重新加载页面即可找回。
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	首先尝试的图形处理器无法显示窗口，因此 VectorCraft 已在 {summary} 上重新启动
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	VectorCraft 上次启动时在其窗口出现之前于 {name} 上终止，因此本次在 {summary} 上启动。要再次尝试该图形处理器，请更改“首选项 › 性能 › 图形处理器”，或在设置 WGPU_BACKEND 后启动
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	VectorCraft 上次启动时在列出图形处理器期间终止，因此本次仅使用 OpenGL 在 {summary} 上启动。要再次尝试其他图形后端，请更改“首选项 › 性能 › 图形处理器”，或在设置 WGPU_BACKEND 后启动
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	rsm 上次启动时在其窗口出现之前于 {name} 上终止，因此本次在 {summary} 上启动。要再次尝试该图形处理器，请更改“首选项 › 性能 › 图形处理器”，或在设置 WGPU_BACKEND 后启动
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	rsm 上次启动时在列出图形处理器期间终止，因此本次仅使用 OpenGL 在 {summary} 上启动。要再次尝试其他图形后端，请更改“首选项 › 性能 › 图形处理器”，或在设置 WGPU_BACKEND 后启动
 @msg	not a DXF drawing	不是 DXF 图纸
 @msg	scale must be a number from {_1} to {_2}, not {s}	比例必须是 {_1} 到 {_2} 之间的数字，而不是 {s}
 @msg	the artboard to fit must be a positive size up to {_1} pt	要适合的画板尺寸必须为正数，且不超过 {_1} pt
@@ -3949,7 +3949,7 @@ imageTrace	Outline	轮廓
 @msg	it has {_1}, which VectorCraft doesn't read from it yet	它包含 {_1}，VectorCraft 尚不能从中读取
 @msg	its objects are nested too deeply	其对象嵌套过深
 @msg	its section ending with `%{end}` doesn't end	其以 `%{end}` 结束的部分没有结束
-@msg	an image VectorCraft can't read was left out	已略去 VectorCraft 无法读取的图像
+@msg	an image rsm can't read was left out	已略去 rsm 无法读取的图像
 @msg	an image whose data is cut short was left out	已略去数据不完整的图像
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	文件中未定义渐变“{name}”：已改用纯色代替
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	带有多个填色或描边、效果或画笔的对象已按其绘制外观导入 ({_1})：其外观尚不可编辑
@@ -3983,7 +3983,7 @@ imageTrace	Outline	轮廓
 @msg	the program asks for a resource that isn't defined	程序请求了未定义的资源
 @msg	a calculation has no result, as in a division by zero	计算没有结果，例如除以零
 @msg	the operator looks for a mark on the stack and finds none	运算符在栈中找不到标记
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	它使用了 `{at}`，VectorCraft 的 PostScript 读取器无法识别
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	它使用了 `{at}`，rsm 的 PostScript 读取器无法识别
 @msg	the file was read up to an error ({why}): what follows it was left out	文件已读取到出错处 ({why})：其后的内容已略去
 @msg	this file's PostScript couldn't be read ({why}): {what}	无法读取此文件的 PostScript ({why})：{what}
 @msg	it has no page	它没有页面
@@ -4010,10 +4010,10 @@ imageTrace	Outline	轮廓
 @msg	the preview image is empty	预览图像为空
 @msg	the thumbnail image is malformed	缩览图格式错误
 @msg	can't encode the document: {0}	无法编码文档：{0}
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	无法保存版本 {0}：VectorCraft 写入的版本为 {MIN_VERSION} 到 {VERSION}
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	文件版本 {0} 比此 VectorCraft 支持的版本 ({VERSION}) 更新
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	无法保存版本 {0}：rsm 写入的版本为 {MIN_VERSION} 到 {VERSION}
+@msg	file version {0} is newer than this rsm supports ({VERSION})	文件版本 {0} 比此 rsm 支持的版本 ({VERSION}) 更新
 @msg	invalid image data for `{0}`	`{0}` 的图像数据无效
-@msg	not a VectorCraft file: {0}	不是 VectorCraft 文件：{0}
+@msg	not a rsm file: {0}	不是 rsm 文件：{0}
 @msg	the compressed file unpacks to more than {_1} MB	压缩文件解压后超过 {_1} MB
 @msg	`{key}: {top}` and `options.{key}: {inner}` disagree: give the option once	`{key}: {top}` 与 `options.{key}: {inner}` 不一致：该选项只能给出一次
 @msg	version {0} files can't be compressed: only version {COMPRESSED_SINCE} and later open compressed files	版本 {0} 的文件不能压缩：只有版本 {COMPRESSED_SINCE} 及更高版本能打开压缩文件
@@ -4062,7 +4062,7 @@ imageTrace	Outline	轮廓
 @msg	plug-in output: {0}	增效工具输出：{0}
 @msg	plug-in parameters: {0}	增效工具参数：{0}
 @msg	plug-in trapped: {0}	增效工具运行时出错 (trap)：{0}
-@msg	is not an image VectorCraft reads	不是 VectorCraft 可读取的图像
+@msg	is not an image rsm reads	不是 rsm 可读取的图像
 @msg	not found	未找到
 @msg	SVG parse error: {0}	SVG 解析错误：{0}
 @msg	decimals must be {_1}–{_2} (got {_3})	小数位数必须为 {_1}–{_2} (实际为 {_3})
@@ -4241,7 +4241,7 @@ imageTrace	Outline	轮廓
 @msg	Couldn't place {name}: the document it was dropped on was closed	无法置入 {name}：将它拖放到的文档已关闭
 @msg	Couldn't place {name}: the document it was placed in was closed	无法置入 {name}：要置入的文档已关闭
 @msg	no files to place	没有要置入的文件
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` 不是 VectorCraft 文档、PDF 或 PDF 兼容的 .ai 文件
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` 不是 rsm 文档、PDF 或 PDF 兼容的 .ai 文件
 @msg	paths: give at least one file	paths：请至少给出一个文件
 @msg	replace: the object to replace was changed or deleted	replace：要替换的对象已被更改或删除
 @msg	Couldn't place {name}: {e}	无法置入 {name}：{e}
@@ -4253,7 +4253,7 @@ imageTrace	Outline	轮廓
 @msg	Discarded {_1} recovered document(s)	已丢弃 {_1} 个恢复的文档
 @msg	Restored {_1} recovered document(s): save them to keep them	已还原 {_1} 个恢复的文档：请保存以保留它们
 @msg	Saving recovery data for {_1}	正在保存 {_1} 的恢复数据
-@msg	This shortcut file is in a form VectorCraft can't read.	此快捷键文件的格式 VectorCraft 无法读取。
+@msg	This shortcut file is in a form rsm can't read.	此快捷键文件的格式 rsm 无法读取。
 @msg	bad shortcut	快捷键无效
 @msg	can't parse shortcut `{c}`	无法解析快捷键 `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	无法解析 `{k}` 的快捷键 `{s}`
@@ -4288,7 +4288,7 @@ imageTrace	Outline	轮廓
 @msg	the search couldn't start: try again in a moment	无法开始搜索：请稍后重试
 @msg	searching a folder isn't available on the web	网页版无法搜索文件夹
 @msg	every search thread stopped on an internal error (please report this bug)	所有搜索线程均因内部错误而停止 (请报告此错误)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	此处未设置 VectorCraft 的字体文件夹：桌面应用和 vectorcraft-cli 会设置该文件夹
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	此处未设置 rsm 的字体文件夹：桌面应用和 vectorcraft-cli 会设置该文件夹
 @msg	choose the font files to add	请选择要添加的字体文件
 @msg	{n} font file(s) are now in {folder}	{n} 个字体文件现已位于 {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} 个字体文件现已位于 {folder}；有 {failed} 个无法添加：{reason}
@@ -4521,7 +4521,7 @@ imageTrace	Outline	轮廓
 	GIF, 128 colours	GIF，128 色
 	Selected Styles Only (0)	仅所选样式 (0)
 	Selected Swatches Only (0)	仅所选色板 (0)
-	VectorCraft Swatches (.vcswatches)	VectorCraft 色板 (.vcswatches)
+	rsm Swatches (.vcswatches)	rsm 色板 (.vcswatches)
 	Social	社交
 	Exact	精确
 	Visible & Printable Layers	可见且可打印的图层
@@ -4529,7 +4529,7 @@ imageTrace	Outline	轮廓
 	Unsorted	不排序
 	Differences from VectorCraft Default:	与 VectorCraft 默认设置的差异：
 	Differences from [Default]:	与 [默认] 的差异：
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	保持文档可编辑：VectorCraft 可无损重新打开该 PDF。适合还会再次编辑的文件。
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	保持文档可编辑：rsm 可无损重新打开该 PDF。适合还会再次编辑的文件。
 	VectorCraft Default	VectorCraft 默认设置
 	PDF 1.7	PDF 1.7
 	[Default]	[默认]

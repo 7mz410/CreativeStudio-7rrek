@@ -4172,7 +4172,7 @@ theme	Appearance	Giao diện
 @msg	action is required	action là bắt buộc
 @msg	add a format to export	thêm định dạng để xuất
 @msg	already editing a pattern	đang chỉnh sửa họa tiết
-@msg	an image VectorCraft can't read was left out	một ảnh VectorCraft không đọc được đã bị bỏ qua
+@msg	an image rsm can't read was left out	một ảnh rsm không đọc được đã bị bỏ qua
 @msg	an image whose data is cut short was left out	một ảnh bị cắt ngắn dữ liệu đã bị bỏ qua
 @msg	an object can't be read	không thể đọc một đối tượng
 @msg	an object in perspective would leave the edited grid	đối tượng trong phối cảnh sẽ rời khỏi lưới đang chỉnh sửa
@@ -4216,7 +4216,7 @@ theme	Appearance	Giao diện
 @msg	can't encode the document: {0}	không thể mã hóa tài liệu: {0}
 @msg	can't parse shortcut `{c}`	không thể phân tích phím tắt `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	không thể phân tích phím tắt `{s}` cho `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	không thể lưu phiên bản {0}: VectorCraft ghi phiên bản {MIN_VERSION} đến {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	không thể lưu phiên bản {0}: rsm ghi phiên bản {MIN_VERSION} đến {VERSION}
 @msg	can't write .{ext} images	không thể ghi ảnh .{ext}
 @msg	cannot distort a zero-size bounding box	không thể làm méo khung giới hạn kích thước bằng không
 @msg	cannot read PDF: {0}	không thể đọc PDF: {0}
@@ -4287,7 +4287,7 @@ theme	Appearance	Giao diện
 @msg	Exporting {_1}	Đang xuất {_1}
 @msg	Packaging {_1}	Đang đóng gói {_1}
 @msg	Placing {_1}	Đang đặt {_1}
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	phiên bản tệp {0} mới hơn VectorCraft hỗ trợ ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	phiên bản tệp {0} mới hơn rsm hỗ trợ ({VERSION})
 @msg	Flatten Transparency: select objects to flatten	Dẹp phẳng độ trong suốt: hãy chọn đối tượng để dẹp phẳng
 @msg	Flatten Transparency: {e}	Dẹp phẳng độ trong suốt: {e}
 @msg	freeform line {i} must be an array of point indices	đường tự do {i} phải là mảng chỉ mục điểm
@@ -4327,7 +4327,7 @@ theme	Appearance	Giao diện
 @msg	invalid parameters for `{cmd}`: {msg}	tham số không hợp lệ cho `{cmd}`: {msg}
 @msg	invalid PDF setting: {0}	cài đặt PDF không hợp lệ: {0}
 @msg	invalid restored panel group	nhóm bảng được phục hồi không hợp lệ
-@msg	is not an image VectorCraft reads	không phải ảnh mà VectorCraft đọc được
+@msg	is not an image rsm reads	không phải ảnh mà rsm đọc được
 @msg	it ends inside a layer	nó kết thúc bên trong một lớp
 @msg	it has art outside its layers	nó có tác phẩm ngoài các lớp
 @msg	it has more than one artboard	nó có nhiều hơn một bảng vẽ
@@ -4338,7 +4338,7 @@ theme	Appearance	Giao diện
 @msg	it has too many values in a row	nó có quá nhiều giá trị liên tiếp
 @msg	it has too much text	nó có quá nhiều văn bản
 @msg	it has {_1}, which VectorCraft doesn't read from it yet	nó có {_1}, VectorCraft chưa đọc được từ đó
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	nó dùng `{at}`, trình đọc PostScript của VectorCraft không hỗ trợ
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	nó dùng `{at}`, trình đọc PostScript của rsm không hỗ trợ
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	nó dùng `{at}`, trình đọc PostScript của VectorCraft không hỗ trợ, trong {procs}
 @msg	its editing data doesn't say where its art is	dữ liệu chỉnh sửa không cho biết vị trí tác phẩm
 @msg	its editing data doesn't say where its artboard is	dữ liệu chỉnh sửa không cho biết vị trí bảng vẽ
@@ -4366,7 +4366,7 @@ theme	Appearance	Giao diện
 @msg	Live Paint takes paths and compound paths: convert type, images and other objects to paths first	Tô trực tiếp nhận đường dẫn và đường dẫn phức: hãy chuyển văn bản, hình ảnh và các đối tượng khác thành đường dẫn trước
 @msg	Live Paint: select paths or compound paths	Tô trực tiếp: chọn đường dẫn hoặc đường dẫn phức
 @msg	Live Paint: these paths are too degenerate to paint	Tô trực tiếp: các đường dẫn này quá suy biến để tô
-@msg	Loading VectorCraft…	Đang tải VectorCraft…
+@msg	Loading rsm…	Đang tải rsm…
 @msg	Make Guides: select paths	Tạo đường căn: hãy chọn đường dẫn
 @msg	missing `folder`	thiếu `folder`
 @msg	missing `id` (see plugin.list)	thiếu `id` (xem plugin.list)
@@ -4415,7 +4415,7 @@ theme	Appearance	Giao diện
 @msg	no file system here	không có hệ thống tệp ở đây
 @msg	no file writer	không có bộ ghi tệp
 @msg	no files to place	không có tệp để đặt
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` không phải là tài liệu VectorCraft, tệp PDF hay tệp .ai tương thích PDF
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` không phải là tài liệu rsm, tệp PDF hay tệp .ai tương thích PDF
 @msg	No fonts are missing in this document	Không có phông chữ nào bị thiếu trong tài liệu này
 @msg	no format to export to	không có định dạng để xuất
 @msg	no free recovery area	không có vùng phục hồi trống
@@ -4490,10 +4490,10 @@ theme	Appearance	Giao diện
 @msg	not a PSD file	không phải tệp PSD
 @msg	not a stored central record	không phải bản ghi trung tâm đã lưu
 @msg	not a valid plug-in module: {0}	không phải mô-đun plug-in hợp lệ: {0}
-@msg	not a VectorCraft file: {0}	không phải tệp VectorCraft: {0}
+@msg	not a rsm file: {0}	không phải tệp rsm: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	không phải bộ phím tắt rsm (thiếu `overrides`)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	không phải bộ phím tắt: văn bản không bắt đầu bằng một tên có dấu gạch chéo và một dấu ngoặc nhọn mở
-@msg	This shortcut file is in a form VectorCraft can't read.	Tệp phím tắt này có dạng mà VectorCraft không đọc được.
+@msg	This shortcut file is in a form rsm can't read.	Tệp phím tắt này có dạng mà rsm không đọc được.
 @msg	not an EMF or WMF file	không phải tệp EMF hoặc WMF
 @msg	not found	không tìm thấy
 @msg	not in pattern editing mode	không ở chế độ chỉnh sửa họa tiết
@@ -4678,8 +4678,8 @@ theme	Appearance	Giao diện
 @msg	the file's preview header points outside the file	tiêu đề xem trước của tệp trỏ ra ngoài tệp
 @msg	the files come to more than 1 GB: add fewer at a time	các tệp tổng cộng hơn 1 GB: thêm ít hơn mỗi lần
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Bộ xử lý đồ họa thử trước không hiển thị được cửa sổ, VectorCraft đã khởi động lại trên {summary}
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Lần khởi động trước của VectorCraft đã dừng trên {name} trước khi cửa sổ xuất hiện, nên VectorCraft đã khởi động trên {summary}. Để thử lại bộ xử lý đồ họa đó, hãy đổi Tùy chọn › Hiệu suất › Bộ xử lý đồ họa hoặc khởi động với biến WGPU_BACKEND được đặt
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Lần khởi động trước của VectorCraft đã dừng khi đang liệt kê các bộ xử lý đồ họa, nên VectorCraft đã khởi động trên {summary} chỉ với OpenGL. Để thử lại các giao diện đồ họa khác, hãy đổi Tùy chọn › Hiệu suất › Bộ xử lý đồ họa hoặc khởi động với biến WGPU_BACKEND được đặt
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Lần khởi động trước của rsm đã dừng trên {name} trước khi cửa sổ xuất hiện, nên rsm đã khởi động trên {summary}. Để thử lại bộ xử lý đồ họa đó, hãy đổi Tùy chọn › Hiệu suất › Bộ xử lý đồ họa hoặc khởi động với biến WGPU_BACKEND được đặt
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Lần khởi động trước của rsm đã dừng khi đang liệt kê các bộ xử lý đồ họa, nên rsm đã khởi động trên {summary} chỉ với OpenGL. Để thử lại các giao diện đồ họa khác, hãy đổi Tùy chọn › Hiệu suất › Bộ xử lý đồ họa hoặc khởi động với biến WGPU_BACKEND được đặt
 @msg	The graphics were lost and couldn't be restarted.	Đồ họa đã mất và không thể khởi động lại.
 @msg	The graphics were lost and have been restarted	Đồ họa đã mất và đã được khởi động lại
 @msg	the guide is on a hidden or locked layer	đường căn nằm trên lớp ẩn hoặc bị khóa
@@ -4774,7 +4774,7 @@ theme	Appearance	Giao diện
 @msg	rsm doesn't search the Shared or Public folder in Users: {path}	rsm không tìm kiếm thư mục Shared hoặc Public trong Users: {path}
 @msg	variables that aren't text were left out: {kinds}	các biến số không phải văn bản đã bị bỏ qua: {kinds}
 @msg	VectorCraft failed to start: {e}	VectorCraft khởi động thất bại: {e}
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Thư mục Phông chữ của VectorCraft chưa được đặt ở đây: ứng dụng máy tính và vectorcraft-cli đặt nó
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Thư mục Phông chữ của rsm chưa được đặt ở đây: ứng dụng máy tính và vectorcraft-cli đặt nó
 @msg	`{key}: {top}` and `options.{key}: {inner}` disagree: give the option once	`{key}: {top}` và `options.{key}: {inner}` không khớp nhau: chỉ nêu tùy chọn một lần
 @msg	version {0} files can't be compressed: only version {COMPRESSED_SINCE} and later open compressed files	tệp phiên bản {0} không thể nén: chỉ phiên bản {COMPRESSED_SINCE} trở lên mới mở tệp nén
 @msg	width and height are at least 1 pixel	chiều rộng và chiều cao phải ít nhất 1 pixel

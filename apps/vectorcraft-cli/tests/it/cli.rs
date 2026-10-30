@@ -253,7 +253,7 @@ fn help_later_in_the_line_prints_the_usage() {
 fn help_as_an_option_value_goes_to_the_option() {
     let out = Command::new(BIN).args(["run", "--cmd", "-h"]).output().unwrap();
     let err = String::from_utf8_lossy(&out.stderr);
-    assert!(!out.status.success() && err.contains("vectorcraft-cli: step 0 (-h):") && out.stdout.is_empty(), "{err}");
+    assert!(!out.status.success() && err.contains("rsm-cli: step 0 (-h):") && out.stdout.is_empty(), "{err}");
     let out = Command::new(BIN).args(["convert", "in.svg", "--range", "-h"]).output().unwrap();
     let err = String::from_utf8_lossy(&out.stderr);
     assert!(!out.status.success() && err.contains("convert needs IN and OUT") && out.stdout.is_empty(), "{err}");

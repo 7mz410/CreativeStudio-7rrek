@@ -48,7 +48,7 @@ pub(super) const OPTIONS: &[FormatOption] = &[
         name: "preserveEditing",
         ty: "boolean",
         default: "true",
-        description: "embed the native document so VectorCraft reopens the PDF editable (the default preset's choice)",
+        description: "embed the native document so rsm reopens the PDF editable (the default preset's choice)",
     },
     FormatOption { name: "compression", ty: "object", default: "null", description: "{color, gray, mono, compressText} (see document.exportPdf)" },
     FormatOption { name: "marks", ty: "object", default: "null", description: "printer's marks (see document.exportPdf)" },

@@ -140,7 +140,7 @@
 	Forget Import Matches	Glem importmatch
 @plural	agrees with {n} default shortcut|agrees with {n} default shortcuts	stemmer overens med {n} standardgenvej|stemmer overens med {n} standardgenveje
 @plural	{n} part of the file wasn't read|{n} parts of the file weren't read	{n} del af filen blev ikke læst|{n} dele af filen blev ikke læst
-@msg	This shortcut file is in a form VectorCraft can't read.	Denne genvejsfil er i et format, som VectorCraft ikke kan læse.
+@msg	This shortcut file is in a form rsm can't read.	Denne genvejsfil er i et format, som rsm ikke kan læse.
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	ikke et genvejssæt: teksten begynder ikke med et skråstregnavn og en startklammeparentes
 	Preferences…	Indstillinger…
 	Object	Objekt
@@ -2474,7 +2474,7 @@ lighting	Light	Lys
 	[PDF/X-3:2002]	[PDF/X-3:2002]
 	PDF/X-4:2010	PDF/X-4:2010
 	[PDF/X-4:2010]	[PDF/X-4:2010]
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	Bevarer dokumentet redigerbart: VectorCraft genåbner PDF'en uden at miste noget. Til filer, du vil redigere igen.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	Bevarer dokumentet redigerbart: rsm genåbner PDF'en uden at miste noget. Til filer, du vil redigere igen.
 	Compress text and line art	Komprimér tekst og streggrafik
 	Compression	Komprimering
 	Compression › Color › Above Ppi	Komprimering › Farve › Over Ppi
@@ -2552,7 +2552,7 @@ lighting	Light	Lys
 	A File…	En fil…
 	GPL palettes keep solid colours only, as RGB.	GPL-paletter indeholder kun massive farver, som RGB.
 	Save Swatch Library	Gem farveprøvebibliotek
-	VectorCraft Swatches (.vcswatches)	VectorCraft-farveprøver (.vcswatches)
+	rsm Swatches (.vcswatches)	rsm-farveprøver (.vcswatches)
 	Save To:	Gem i:
 	Saved to User Defined: {}	Gemt i Brugerdefineret: {}
 	Selected Swatches Only	Kun valgte farveprøver
@@ -4028,7 +4028,7 @@ imageTrace	Outline	Kontur
 @msg	can't encode the document: {0}	kan ikke kode dokumentet: {0}
 @msg	can't parse shortcut `{c}`	kan ikke parse genvejen `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	kan ikke parse genvejen `{s}` for `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	kan ikke gemme version {0}: VectorCraft skriver versionerne {MIN_VERSION} til {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	kan ikke gemme version {0}: rsm skriver versionerne {MIN_VERSION} til {VERSION}
 @msg	can't write .{ext} images	kan ikke skrive .{ext}-billeder
 @msg	cannot distort a zero-size bounding box	kan ikke forvrænge en omsluttende ramme uden størrelse
 @msg	cannot read PDF: {0}	kan ikke læse PDF: {0}
@@ -4052,7 +4052,7 @@ imageTrace	Outline	Kontur
 @msg	empty brush stroke	tomt penselstrøg
 @msg	empty cutter	tom skæring
 @msg	empty path	tom kurve
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	filversion {0} er nyere, end denne VectorCraft understøtter ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	filversion {0} er nyere, end denne rsm understøtter ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	freeform-punkt {i} skal have `at` [x, y] og en gyldig `color`
 @msg	freeform line {i} must be an array of point indices	freeform-linje {i} skal være et array af punktindekser
 @msg	give both `start` and `end` [x, y] (or neither)	angiv både `start` og `end` [x, y] (eller ingen af dem)
@@ -4071,8 +4071,8 @@ imageTrace	Outline	Kontur
 @msg	invalid PDF setting: {0}	ugyldig PDF-indstilling: {0}
 @msg	invalid image data for `{0}`	ugyldige billeddata for `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	ugyldige parametre for `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	er ikke et billede, som VectorCraft læser
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	den bruger `{at}`, som VectorCrafts PostScript-læser ikke kender
+@msg	is not an image rsm reads	er ikke et billede, som rsm læser
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	den bruger `{at}`, som rsms PostScript-læser ikke kender
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	den bruger `{at}`, som VectorCrafts PostScript-læser ikke kender, i {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	dens Windows-metafil-forhåndsvisning blev åbnet i stedet, hvilket kan forenkle grafikken
 @msg	its preview was placed instead, at screen resolution	dens forhåndsvisning blev placeret i stedet, i skærmopløsning
@@ -4179,7 +4179,7 @@ imageTrace	Outline	Kontur
 @msg	no user workspace `{from}`	intet brugerarbejdsområde `{from}`
 @msg	node {_1} is not text	knuden {_1} er ikke tekst
 @msg	not a DXF drawing	ikke en DXF-tegning
-@msg	not a VectorCraft file: {0}	ikke en VectorCraft-fil: {0}
+@msg	not a rsm file: {0}	ikke en rsm-fil: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	ikke et rsm-genvejssæt (`overrides` mangler)
 @msg	not a graphic style library (format `{_1}`)	ikke et bibliotek med grafiske stilarter (format `{_1}`)
 @msg	not a stored central record	ikke en gemt central post
@@ -4413,7 +4413,7 @@ imageTrace	Outline	Kontur
 @msg	{_1} files	{_1}-filer
 @msg	The graphics were lost and have been restarted	Grafikken gik tabt og er blevet genstartet
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Den grafikprocessor, der blev prøvet først, kunne ikke vise vinduet, så VectorCraft startede igen med {summary}
-@msg	Loading VectorCraft…	Indlæser VectorCraft…
+@msg	Loading rsm…	Indlæser rsm…
 @msg	VectorCraft failed to start: {e}	VectorCraft kunne ikke starte: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Der kræves en browser med WebGPU eller WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Grafikken gik tabt og kunne ikke genstartes.
@@ -4441,7 +4441,7 @@ imageTrace	Outline	Kontur
 @msg	its section ending with `%{end}` doesn't end	dens sektion, der ender med `%{end}`, ender ikke
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	objekter med flere fyld eller streger, effekter eller pensler kom ind, som de er tegnet ({_1}): deres udseende er endnu ikke redigerbart
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	gradienten »{name}« er ikke defineret i filen: der bruges en flad farve i stedet
-@msg	an image VectorCraft can't read was left out	et billede, som VectorCraft ikke kan læse, blev udeladt
+@msg	an image rsm can't read was left out	et billede, som rsm ikke kan læse, blev udeladt
 @msg	an image whose data is cut short was left out	et billede, hvis data er afkortet, blev udeladt
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	linkede billeder viser den gemte forhåndsvisning i lav opløsning, indtil deres filer findes: link dem igen i Links-panelet
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	rammetekst i rammer, der er for lave til en tekstlinje i den skrifttype, den viser i, fik højere rammer ({_1}): teksten ville ellers ikke blive vist
@@ -4454,7 +4454,7 @@ imageTrace	Outline	Kontur
 @msg	the search couldn't start: try again in a moment	søgningen kunne ikke starte: prøv igen om et øjeblik
 @msg	searching a folder isn't available on the web	mappesøgning er ikke tilgængelig i webversionen
 @msg	every search thread stopped on an internal error (please report this bug)	alle søgetråde stoppede ved en intern fejl (rapportér venligst denne programfejl)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	VectorCrafts Fonts-mappe er ikke angivet her: skrivebordsprogrammet og vectorcraft-cli angiver den
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	rsms Fonts-mappe er ikke angivet her: skrivebordsprogrammet og vectorcraft-cli angiver den
 @msg	choose the font files to add	vælg de skrifttypefiler, der skal tilføjes
 @msg	{n} font file(s) are now in {folder}	{n} skrifttypefil(er) er nu i {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} skrifttypefil(er) er nu i {folder}; {failed} kunne ikke tilføjes: {reason}
@@ -4955,8 +4955,8 @@ mark-style	Japanese	Japansk
 	Rotate View to Selection	Rotér visning til markering
 @msg	select an Intertwine group	vælg en sammenfletningsgruppe
 @msg	this is a PostScript file (an .ai saved in an older format or without PDF compatibility, or an EPS file), not a PDF: File › Open and File › Place read it as EPS	dette er en PostScript-fil (en .ai gemt i et ældre format eller uden PDF-kompatibilitet, eller en EPS-fil), ikke en PDF: Filer › Åbn og Filer › Placér læser den som EPS
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Den seneste start af VectorCraft endte på {name}, før vinduet blev vist, så programmet startede på {summary}. For at prøve den grafikprocessor igen skal du ændre Indstillinger › Ydeevne › Grafikprocessor eller starte med WGPU_BACKEND angivet
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Den seneste start af VectorCraft endte, mens grafikprocessorerne blev listet, så programmet startede på {summary} med kun OpenGL. For at prøve de andre grafikbackends igen skal du ændre Indstillinger › Ydeevne › Grafikprocessor eller starte med WGPU_BACKEND angivet
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Den seneste start af rsm endte på {name}, før vinduet blev vist, så programmet startede på {summary}. For at prøve den grafikprocessor igen skal du ændre Indstillinger › Ydeevne › Grafikprocessor eller starte med WGPU_BACKEND angivet
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Den seneste start af rsm endte, mens grafikprocessorerne blev listet, så programmet startede på {summary} med kun OpenGL. For at prøve de andre grafikbackends igen skal du ændre Indstillinger › Ydeevne › Grafikprocessor eller starte med WGPU_BACKEND angivet
 	Loaded Texture	Indlæst tekstur
 	Load Texture…	Indlæs tekstur…
 	Texture Image	Teksturbillede

@@ -3924,7 +3924,7 @@ axis	Both	Оба
 @msg	Split Into Grid: select paths large enough for the grid	Разделение на сетку: выделите контуры, достаточно большие для сетки
 @msg	Targa files are RGB: colorModel rgb	файлы Targa являются RGB: colorModel rgb
 @msg	Text Wrap: select a wrap object	Обтекание текстом: выделите объект обтекания
-@msg	This shortcut file is in a form VectorCraft can't read.	Этот файл сочетаний клавиш записан в формате, который VectorCraft не может прочитать.
+@msg	This shortcut file is in a form rsm can't read.	Этот файл сочетаний клавиш записан в формате, который rsm не может прочитать.
 @msg	`aspect` must be a number (%)	`aspect` должно быть числом (%)
 @msg	`at` must be [x, y]	`at` должно быть [x, y]
 @msg	`color` must be a colour	`color` должно быть цветом
@@ -4044,7 +4044,7 @@ axis	Both	Оба
 @msg	can't encode the document: {0}	не удалось закодировать документ: {0}
 @msg	can't parse shortcut `{c}`	не удалось разобрать сочетание `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	не удалось разобрать сочетание `{s}` для `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	не удалось сохранить версию {0}: VectorCraft записывает версии от {MIN_VERSION} до {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	не удалось сохранить версию {0}: rsm записывает версии от {MIN_VERSION} до {VERSION}
 @msg	can't write .{ext} images	не удалось записать изображения .{ext}
 @msg	cannot distort a zero-size bounding box	нельзя исказить ограничительную рамку нулевого размера
 @msg	cannot read PDF: {0}	не удалось прочитать PDF: {0}
@@ -4070,7 +4070,7 @@ axis	Both	Оба
 @msg	empty brush stroke	пустой мазок кисти
 @msg	empty cutter	пустой резак
 @msg	empty path	пустой контур
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	версия файла {0} новее, чем поддерживает этот VectorCraft ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	версия файла {0} новее, чем поддерживает этот rsm ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	произвольной точке {i} нужны `at` [x, y] и допустимый `color`
 @msg	freeform line {i} must be an array of point indices	произвольная линия {i} должна быть массивом индексов точек
 @msg	give both `start` and `end` [x, y] (or neither)	укажите и `start`, и `end` [x, y] (или ни одного)
@@ -4091,8 +4091,8 @@ axis	Both	Оба
 @msg	invalid PDF setting: {0}	недопустимый параметр PDF: {0}
 @msg	invalid image data for `{0}`	недопустимые данные изображения для `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	недопустимые параметры для `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	не является изображением, которое читает VectorCraft
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	использует `{at}`, которое не знает читатель PostScript в VectorCraft
+@msg	is not an image rsm reads	не является изображением, которое читает rsm
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	использует `{at}`, которое не знает читатель PostScript в rsm
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	использует `{at}`, которое не знает читатель PostScript в VectorCraft, в {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	вместо этого было открыто его предварительное представление метафайла Windows, что может упростить рисунок
 @msg	its preview was placed instead, at screen resolution	вместо этого было помещено его предварительное представление в разрешении экрана
@@ -4145,7 +4145,7 @@ axis	Both	Оба
 @msg	no file system here	здесь нет файловой системы
 @msg	no file writer	нет средства записи файлов
 @msg	no files to place	нет файлов для размещения
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` не является документом VectorCraft, PDF или файлом .ai, совместимым с PDF
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` не является документом rsm, PDF или файлом .ai, совместимым с PDF
 @msg	no format to export to	нет формата для экспорта
 @msg	no free recovery area	нет свободной области восстановления
 @msg	no gradient stop or freeform point is selected	не выделена ни точка перехода градиента, ни произвольная точка
@@ -4205,7 +4205,7 @@ axis	Both	Оба
 @msg	no user workspace `{from}`	нет пользовательской рабочей среды `{from}`
 @msg	node {_1} is not text	узел {_1} не является текстом
 @msg	not a DXF drawing	не является чертежом DXF
-@msg	not a VectorCraft file: {0}	не является файлом VectorCraft: {0}
+@msg	not a rsm file: {0}	не является файлом rsm: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	не является набором сочетаний клавиш rsm (отсутствует `overrides`)
 @msg	not a blend	это не переход
 @msg	not a graphic style library (format `{_1}`)	не является библиотекой графических стилей (формат `{_1}`)
@@ -4459,9 +4459,9 @@ axis	Both	Оба
 @msg	{_1} files	{_1} файлов
 @msg	The graphics were lost and have been restarted	Графика была потеряна и перезапущена
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Графический процессор, выбранный первым, не смог показать окно, поэтому VectorCraft запустился снова на {summary}
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Прошлый запуск VectorCraft завершился на {name} до появления окна, поэтому VectorCraft запустился на {summary}. Чтобы снова попробовать этот графический процессор, измените Настройки › Производительность › Графический процессор или запустите приложение с заданной переменной WGPU_BACKEND
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Прошлый запуск VectorCraft завершился во время перечисления графических процессоров, поэтому VectorCraft запустился на {summary} только с OpenGL. Чтобы снова попробовать другие графические интерфейсы, измените Настройки › Производительность › Графический процессор или запустите приложение с заданной переменной WGPU_BACKEND
-@msg	Loading VectorCraft…	Загрузка VectorCraft…
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Прошлый запуск rsm завершился на {name} до появления окна, поэтому rsm запустился на {summary}. Чтобы снова попробовать этот графический процессор, измените Настройки › Производительность › Графический процессор или запустите приложение с заданной переменной WGPU_BACKEND
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Прошлый запуск rsm завершился во время перечисления графических процессоров, поэтому rsm запустился на {summary} только с OpenGL. Чтобы снова попробовать другие графические интерфейсы, измените Настройки › Производительность › Графический процессор или запустите приложение с заданной переменной WGPU_BACKEND
+@msg	Loading rsm…	Загрузка rsm…
 @msg	VectorCraft failed to start: {e}	VectorCraft не удалось запустить: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Требуется браузер с WebGPU или WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Графика была потеряна, и её не удалось перезапустить.
@@ -4489,7 +4489,7 @@ axis	Both	Оба
 @msg	its section ending with `%{end}` doesn't end	раздел, заканчивающийся на `%{end}`, не заканчивается
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	объекты с несколькими заливками или обводками, эффектами или кистями импортированы в нарисованном виде ({_1}): их оформление пока нельзя редактировать
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	градиент «{name}» не определён в файле: вместо него используется сплошной цвет
-@msg	an image VectorCraft can't read was left out	изображение, которое VectorCraft не может прочитать, пропущено
+@msg	an image rsm can't read was left out	изображение, которое rsm не может прочитать, пропущено
 @msg	an image whose data is cut short was left out	изображение с обрезанными данными пропущено
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	связанные изображения показываются как сохранённый в файле просмотр низкого разрешения, пока их файлы не найдены: восстановите связи на панели «Связи»
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	текст в области в рамках, слишком низких для строки шрифта, которым он отображается, получил более высокие рамки ({_1}): иначе он не был бы виден
@@ -4502,7 +4502,7 @@ axis	Both	Оба
 @msg	the search couldn't start: try again in a moment	не удалось начать поиск: повторите попытку чуть позже
 @msg	searching a folder isn't available on the web	поиск в папке недоступен в веб-версии
 @msg	every search thread stopped on an internal error (please report this bug)	все потоки поиска остановились из-за внутренней ошибки (сообщите об этой ошибке)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папка Fonts VectorCraft здесь не задана: её задают настольное приложение и vectorcraft-cli
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папка Fonts rsm здесь не задана: её задают настольное приложение и vectorcraft-cli
 @msg	choose the font files to add	выберите файлы шрифтов для добавления
 @msg	{n} font file(s) are now in {folder}	Файлов шрифтов теперь в {folder}: {n}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	Файлов шрифтов теперь в {folder}: {n}; не удалось добавить {failed}: {reason}

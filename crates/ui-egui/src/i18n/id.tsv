@@ -140,7 +140,7 @@
 	Forget Import Matches	Lupakan kecocokan impor
 @plural	agrees with {n} default shortcut|agrees with {n} default shortcuts	sesuai dengan {n} pintasan default
 @plural	{n} part of the file wasn't read|{n} parts of the file weren't read	{n} bagian berkas tidak dibaca
-@msg	This shortcut file is in a form VectorCraft can't read.	Berkas pintasan ini dalam bentuk yang tidak dapat dibaca oleh VectorCraft.
+@msg	This shortcut file is in a form rsm can't read.	Berkas pintasan ini dalam bentuk yang tidak dapat dibaca oleh rsm.
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	bukan set pintasan: teks tidak diawali dengan nama garis miring dan kurung kurawal buka
 	Preferences…	Preferensi…
 	Object	Objek
@@ -2474,7 +2474,7 @@ lighting	Light	Cahaya
 	[PDF/X-3:2002]	[PDF/X-3:2002]
 	PDF/X-4:2010	PDF/X-4:2010
 	[PDF/X-4:2010]	[PDF/X-4:2010]
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	Menjaga dokumen tetap dapat diedit: VectorCraft membuka kembali PDF tanpa kehilangan apa pun. Untuk file yang akan Anda edit lagi.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	Menjaga dokumen tetap dapat diedit: rsm membuka kembali PDF tanpa kehilangan apa pun. Untuk file yang akan Anda edit lagi.
 	Compress text and line art	Kompres teks dan seni garis
 	Compression	Kompresi
 	Compression › Color › Above Ppi	Kompresi › Warna › Di atas Ppi
@@ -2552,7 +2552,7 @@ lighting	Light	Cahaya
 	A File…	File…
 	GPL palettes keep solid colours only, as RGB.	Palet GPL hanya menyimpan warna solid, sebagai RGB.
 	Save Swatch Library	Simpan pustaka swatch
-	VectorCraft Swatches (.vcswatches)	VectorCraft Swatches (.vcswatches)
+	rsm Swatches (.vcswatches)	rsm Swatches (.vcswatches)
 	Save To:	Simpan ke:
 	Saved to User Defined: {}	Disimpan ke Buatan Pengguna: {}
 	Selected Swatches Only	Hanya swatch terpilih
@@ -4028,7 +4028,7 @@ imageTrace	Outline	Kontur
 @msg	can't encode the document: {0}	tidak dapat mengodekan dokumen: {0}
 @msg	can't parse shortcut `{c}`	tidak dapat mengurai pintasan `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	tidak dapat mengurai pintasan `{s}` untuk `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	tidak dapat menyimpan versi {0}: VectorCraft menulis versi {MIN_VERSION} hingga {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	tidak dapat menyimpan versi {0}: rsm menulis versi {MIN_VERSION} hingga {VERSION}
 @msg	can't write .{ext} images	tidak dapat menulis gambar .{ext}
 @msg	cannot distort a zero-size bounding box	tidak dapat mendistorsi kotak pembatas berukuran nol
 @msg	cannot read PDF: {0}	tidak dapat membaca PDF: {0}
@@ -4052,7 +4052,7 @@ imageTrace	Outline	Kontur
 @msg	empty brush stroke	sapuan kuas kosong
 @msg	empty cutter	pemotong kosong
 @msg	empty path	jalur kosong
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	versi file {0} lebih baru daripada yang didukung VectorCraft ini ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	versi file {0} lebih baru daripada yang didukung rsm ini ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	titik bentuk bebas {i} memerlukan `at` [x, y] dan `color` yang valid
 @msg	freeform line {i} must be an array of point indices	garis bentuk bebas {i} harus berupa larik indeks titik
 @msg	give both `start` and `end` [x, y] (or neither)	berikan `start` dan `end` [x, y] keduanya (atau tidak sama sekali)
@@ -4071,8 +4071,8 @@ imageTrace	Outline	Kontur
 @msg	invalid PDF setting: {0}	pengaturan PDF tidak valid: {0}
 @msg	invalid image data for `{0}`	data gambar tidak valid untuk `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	parameter tidak valid untuk `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	bukan gambar yang dapat dibaca VectorCraft
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	menggunakan `{at}`, yang tidak dikenali pembaca PostScript VectorCraft
+@msg	is not an image rsm reads	bukan gambar yang dapat dibaca rsm
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	menggunakan `{at}`, yang tidak dikenali pembaca PostScript rsm
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	menggunakan `{at}`, yang tidak dikenali pembaca PostScript VectorCraft, dalam {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	yang dibuka adalah pratinjau metafile Windows-nya, yang mungkin menyederhanakan karya seni
 @msg	its preview was placed instead, at screen resolution	yang ditempatkan adalah pratinjaunya, pada resolusi layar
@@ -4179,7 +4179,7 @@ imageTrace	Outline	Kontur
 @msg	no user workspace `{from}`	tidak ada ruang kerja pengguna `{from}`
 @msg	node {_1} is not text	simpul {_1} bukan teks
 @msg	not a DXF drawing	bukan gambar DXF
-@msg	not a VectorCraft file: {0}	bukan berkas VectorCraft: {0}
+@msg	not a rsm file: {0}	bukan berkas rsm: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	bukan set pintasan rsm (tidak ada `overrides`)
 @msg	not a graphic style library (format `{_1}`)	bukan pustaka gaya grafis (format `{_1}`)
 @msg	not a stored central record	bukan rekaman pusat yang tersimpan
@@ -4413,7 +4413,7 @@ imageTrace	Outline	Kontur
 @msg	{_1} files	berkas {_1}
 @msg	The graphics were lost and have been restarted	Grafis hilang dan telah dimulai ulang
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Prosesor grafis yang dicoba pertama kali tidak dapat menampilkan jendela, jadi VectorCraft memulai ulang dengan {summary}
-@msg	Loading VectorCraft…	Memuat VectorCraft…
+@msg	Loading rsm…	Memuat rsm…
 @msg	VectorCraft failed to start: {e}	VectorCraft gagal dimulai: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Diperlukan browser dengan WebGPU atau WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Grafis hilang dan tidak dapat dimulai ulang.
@@ -4441,7 +4441,7 @@ imageTrace	Outline	Kontur
 @msg	its section ending with `%{end}` doesn't end	bagian yang berakhir dengan `%{end}` tidak berakhir
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	objek dengan beberapa isian atau goresan, efek, atau kuas masuk sebagai tampilan gambarnya ({_1}): penampilannya belum dapat diedit
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	gradien “{name}” tidak didefinisikan dalam berkas: warna polos dipakai sebagai pengganti
-@msg	an image VectorCraft can't read was left out	gambar yang tidak dapat dibaca VectorCraft tidak disertakan
+@msg	an image rsm can't read was left out	gambar yang tidak dapat dibaca rsm tidak disertakan
 @msg	an image whose data is cut short was left out	gambar yang datanya terpotong tidak disertakan
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	gambar tertaut menampilkan pratinjau resolusi rendah yang tersimpan dalam berkas sampai berkasnya ditemukan: tautkan ulang di panel Tautan
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	teks area dalam bingkai yang terlalu pendek untuk satu baris font yang ditampilkannya mendapat bingkai yang lebih tinggi ({_1}): tanpa itu teksnya tidak akan tampil
@@ -4454,7 +4454,7 @@ imageTrace	Outline	Kontur
 @msg	the search couldn't start: try again in a moment	pencarian tidak dapat dimulai: coba lagi sebentar lagi
 @msg	searching a folder isn't available on the web	mencari di folder tidak tersedia di web
 @msg	every search thread stopped on an internal error (please report this bug)	semua utas pencarian berhenti karena kesalahan internal (mohon laporkan bug ini)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	folder Fonts VectorCraft tidak diatur di sini: aplikasi desktop dan vectorcraft-cli yang mengaturnya
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	folder Fonts rsm tidak diatur di sini: aplikasi desktop dan vectorcraft-cli yang mengaturnya
 @msg	choose the font files to add	pilih berkas font yang akan ditambahkan
 @msg	{n} font file(s) are now in {folder}	{n} berkas font kini berada di {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} berkas font kini berada di {folder}; {failed} tidak dapat ditambahkan: {reason}
@@ -4955,8 +4955,8 @@ mark-style	Japanese	Jepang
 	Rotate View to Selection	Putar tampilan ke seleksi
 @msg	select an Intertwine group	pilih grup jalin
 @msg	this is a PostScript file (an .ai saved in an older format or without PDF compatibility, or an EPS file), not a PDF: File › Open and File › Place read it as EPS	ini adalah file PostScript (file .ai yang disimpan dalam format lama atau tanpa kompatibilitas PDF, atau file EPS), bukan PDF: File › Open dan File › Place membacanya sebagai EPS
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Peluncuran terakhir VectorCraft berakhir pada {name} sebelum jendelanya muncul, sehingga dimulai pada {summary}. Untuk mencoba prosesor grafis itu lagi, ubah Preferences › Performance › Graphics Processor atau mulai dengan WGPU_BACKEND diatur
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Peluncuran terakhir VectorCraft berakhir saat mencantumkan prosesor grafis, sehingga dimulai pada {summary} dengan OpenGL saja. Untuk mencoba backend grafis lainnya lagi, ubah Preferences › Performance › Graphics Processor atau mulai dengan WGPU_BACKEND diatur
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Peluncuran terakhir rsm berakhir pada {name} sebelum jendelanya muncul, sehingga dimulai pada {summary}. Untuk mencoba prosesor grafis itu lagi, ubah Preferences › Performance › Graphics Processor atau mulai dengan WGPU_BACKEND diatur
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Peluncuran terakhir rsm berakhir saat mencantumkan prosesor grafis, sehingga dimulai pada {summary} dengan OpenGL saja. Untuk mencoba backend grafis lainnya lagi, ubah Preferences › Performance › Graphics Processor atau mulai dengan WGPU_BACKEND diatur
 	Loaded Texture	Tekstur yang dimuat
 	Load Texture…	Muat tekstur…
 	Texture Image	Gambar tekstur

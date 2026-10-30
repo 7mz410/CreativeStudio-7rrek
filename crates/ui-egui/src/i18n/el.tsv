@@ -2141,7 +2141,7 @@ axis	Both	Και τα δύο
 @msg	Split Into Grid: select paths large enough for the grid	Διαίρεση σε πλέγμα: επιλέξτε αρκετά μεγάλες διαδρομές για το πλέγμα
 @msg	Targa files are RGB: colorModel rgb	Τα αρχεία Targa είναι RGB: colorModel rgb
 @msg	Text Wrap: select a wrap object	Αναδίπλωση κειμένου: επιλέξτε αντικείμενο αναδίπλωσης
-@msg	This shortcut file is in a form VectorCraft can't read.	Αυτό το αρχείο συντομεύσεων έχει μορφή που δεν μπορεί να διαβάσει το VectorCraft.
+@msg	This shortcut file is in a form rsm can't read.	Αυτό το αρχείο συντομεύσεων έχει μορφή που δεν μπορεί να διαβάσει το rsm.
 @msg	`aspect` must be a number (%)	Το `aspect` πρέπει να είναι αριθμός (%)
 @msg	`at` must be [x, y]	Το `at` πρέπει να είναι [x, y]
 @msg	`color` must be a colour	Το `color` πρέπει να είναι χρώμα
@@ -3972,7 +3972,7 @@ theme	Appearance	Εμφάνιση
 @msg	can't encode the document: {0}	δεν είναι δυνατή η κωδικοποίηση εγγράφου: {0}
 @msg	can't parse shortcut `{c}`	δεν είναι δυνατή η ανάλυση της συντόμευσης `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	δεν είναι δυνατή η ανάλυση της συντόμευσης `{s}` για `{k}`
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	δεν είναι δυνατή η αποθήκευση της έκδοσης {0}: το VectorCraft γράφει εκδόσεις από {MIN_VERSION} έως {VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	δεν είναι δυνατή η αποθήκευση της έκδοσης {0}: το rsm γράφει εκδόσεις από {MIN_VERSION} έως {VERSION}
 @msg	can't write .{ext} images	δεν είναι δυνατή η εγγραφή εικόνων .{ext}
 @msg	cannot distort a zero-size bounding box	δεν είναι δυνατή η παραμόρφωση πλαισίου οριοθέτησης μηδενικού μεγέθους
 @msg	cannot read PDF: {0}	δεν είναι δυνατή η ανάγνωση PDF: {0}
@@ -3998,7 +3998,7 @@ theme	Appearance	Εμφάνιση
 @msg	empty brush stroke	κενό περίγραμμα πινέλου
 @msg	empty cutter	κενό αντικείμενο αποκοπής
 @msg	empty path	κενή διαδρομή
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	η έκδοση αρχείου {0} είναι νεότερη από αυτήν που υποστηρίζει το VectorCraft ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	η έκδοση αρχείου {0} είναι νεότερη από αυτήν που υποστηρίζει το rsm ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	το σημείο ελεύθερης μορφής {i} χρειάζεται `at` [x, y] και έγκυρο `color`
 @msg	freeform line {i} must be an array of point indices	η γραμμή ελεύθερης μορφής {i} πρέπει να είναι πίνακας δεικτών σημείων
 @msg	give both `start` and `end` [x, y] (or neither)	δώστε και τα δύο `start` και `end` [x, y] (ή κανένα)
@@ -4019,8 +4019,8 @@ theme	Appearance	Εμφάνιση
 @msg	invalid PDF setting: {0}	μη έγκυρη ρύθμιση PDF: {0}
 @msg	invalid image data for `{0}`	μη έγκυρα δεδομένα εικόνας για `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	μη έγκυρες παράμετροι για `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	δεν είναι μορφή εικόνας που μπορεί να διαβάσει το VectorCraft
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του VectorCraft
+@msg	is not an image rsm reads	δεν είναι μορφή εικόνας που μπορεί να διαβάσει το rsm
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του rsm
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του VectorCraft, στις διαδικασίες {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	αντί γι' αυτό ανοίχτηκε η προεπισκόπηση μετααρχείου Windows, η οποία μπορεί να απλοποιεί το σχέδιο
 @msg	its preview was placed instead, at screen resolution	τοποθετήθηκε η προεπισκόπησή του σε ανάλυση οθόνης
@@ -4073,7 +4073,7 @@ theme	Appearance	Εμφάνιση
 @msg	no file system here	δεν υπάρχει σύστημα αρχείων εδώ
 @msg	no file writer	δεν υπάρχει μηχανισμός εγγραφής αρχείων
 @msg	no files to place	δεν υπάρχουν αρχεία για τοποθέτηση
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	Το `{file}` δεν είναι έγγραφο VectorCraft, PDF ή αρχείο .ai συμβατό με PDF
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	Το `{file}` δεν είναι έγγραφο rsm, PDF ή αρχείο .ai συμβατό με PDF
 @msg	no format to export to	δεν υπάρχει μορφή εξαγωγής
 @msg	no free recovery area	δεν υπάρχει ελεύθερη περιοχή ανάκτησης
 @msg	no gradient stop or freeform point is selected	δεν έχει επιλεγεί σημείο χρώματος ντεγκραντέ ή σημείο ελεύθερης μορφής
@@ -4133,7 +4133,7 @@ theme	Appearance	Εμφάνιση
 @msg	no user workspace `{from}`	δεν υπάρχει χώρος εργασίας χρήστη `{from}`
 @msg	node {_1} is not text	ο κόμβος {_1} δεν είναι κείμενο
 @msg	not a DXF drawing	δεν είναι σχέδιο DXF
-@msg	not a VectorCraft file: {0}	δεν είναι αρχείο VectorCraft: {0}
+@msg	not a rsm file: {0}	δεν είναι αρχείο rsm: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	δεν είναι σύνολο συντομεύσεων rsm (λείπει το `overrides`)
 @msg	not a blend	δεν είναι ανάμειξη
 @msg	not a graphic style library (format `{_1}`)	δεν είναι βιβλιοθήκη στυλ γραφικών (μορφή `{_1}`)
@@ -4381,9 +4381,9 @@ theme	Appearance	Εμφάνιση
 @msg	{_1} files	{_1} αρχεία
 @msg	The graphics were lost and have been restarted	Η λειτουργία γραφικών διακόπηκε και επανεκκινήθηκε
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Ο αρχικός επεξεργαστής γραφικών δεν μπόρεσε να εμφανίσει το παράθυρο και το VectorCraft επανεκκίνησε στον {summary}
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Η τελευταία εκκίνηση του VectorCraft τερματίστηκε στον {name} πριν εμφανιστεί το παράθυρο, οπότε ξεκίνησε στον {summary}. Για να δοκιμάσετε ξανά αυτόν τον επεξεργαστή γραφικών, αλλάξτε Προτιμήσεις › Επιδόσεις › Επεξεργαστής γραφικών ή ξεκινήστε με ορισμένη τη μεταβλητή WGPU_BACKEND
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Η τελευταία εκκίνηση του VectorCraft τερματίστηκε κατά την απαρίθμηση των επεξεργαστών γραφικών, οπότε ξεκίνησε στον {summary} μόνο με OpenGL. Για να δοκιμάσετε ξανά τα άλλα συστήματα γραφικών, αλλάξτε Προτιμήσεις › Επιδόσεις › Επεξεργαστής γραφικών ή ξεκινήστε με ορισμένη τη μεταβλητή WGPU_BACKEND
-@msg	Loading VectorCraft…	Φόρτωση VectorCraft…
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Η τελευταία εκκίνηση του rsm τερματίστηκε στον {name} πριν εμφανιστεί το παράθυρο, οπότε ξεκίνησε στον {summary}. Για να δοκιμάσετε ξανά αυτόν τον επεξεργαστή γραφικών, αλλάξτε Προτιμήσεις › Επιδόσεις › Επεξεργαστής γραφικών ή ξεκινήστε με ορισμένη τη μεταβλητή WGPU_BACKEND
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Η τελευταία εκκίνηση του rsm τερματίστηκε κατά την απαρίθμηση των επεξεργαστών γραφικών, οπότε ξεκίνησε στον {summary} μόνο με OpenGL. Για να δοκιμάσετε ξανά τα άλλα συστήματα γραφικών, αλλάξτε Προτιμήσεις › Επιδόσεις › Επεξεργαστής γραφικών ή ξεκινήστε με ορισμένη τη μεταβλητή WGPU_BACKEND
+@msg	Loading rsm…	Φόρτωση rsm…
 @msg	VectorCraft failed to start: {e}	Η εκκίνηση του VectorCraft απέτυχε: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Απαιτείται πρόγραμμα περιήγησης με WebGPU ή WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Η λειτουργία γραφικών διακόπηκε και δεν ήταν δυνατή η επανεκκίνησή της.
@@ -4411,7 +4411,7 @@ theme	Appearance	Εμφάνιση
 @msg	its section ending with `%{end}` doesn't end	η ενότητά του που τελειώνει σε `%{end}` δεν τερματίζεται
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	τα αντικείμενα με πολλαπλά γεμίσματα, περιγράμματα, εφέ ή πινέλα εισήχθησαν ως απεικονίσεις ({_1}): η εμφάνισή τους δεν είναι ακόμη επεξεργάσιμη
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	το ντεγκραντέ «{name}» δεν ορίζεται στο αρχείο: χρησιμοποιείται στη θέση του ένα συμπαγές χρώμα
-@msg	an image VectorCraft can't read was left out	παραλείφθηκε εικόνα που δεν μπορεί να διαβάσει το VectorCraft
+@msg	an image rsm can't read was left out	παραλείφθηκε εικόνα που δεν μπορεί να διαβάσει το rsm
 @msg	an image whose data is cut short was left out	παραλείφθηκε εικόνα με περικομμένα δεδομένα
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	οι συνδεδεμένες εικόνες εμφανίζουν την προεπισκόπηση χαμηλής ανάλυσης που έχει αποθηκευτεί, μέχρι να βρεθούν τα αρχεία τους: επανασυνδέστε τις στον πίνακα Σύνδεσμοι
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	οι περιοχές κειμένου με πλαίσια πολύ μικρά για μία γραμμή της γραμματοσειράς τους απέκτησαν μεγαλύτερο ύψος ({_1}), διαφορετικά το κείμενο δεν θα εμφανιζόταν
@@ -4424,7 +4424,7 @@ theme	Appearance	Εμφάνιση
 @msg	the search couldn't start: try again in a moment	η αναζήτηση δεν μπόρεσε να ξεκινήσει: δοκιμάστε ξανά
 @msg	searching a folder isn't available on the web	η αναζήτηση σε φάκελο δεν υποστηρίζεται στο web
 @msg	every search thread stopped on an internal error (please report this bug)	όλα τα νήματα αναζήτησης σταμάτησαν λόγω εσωτερικού σφάλματος (αναφέρετε το πρόβλημα)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	ο φάκελος γραμματοσειρών του VectorCraft δεν έχει καθοριστεί εδώ: τον ορίζουν η εφαρμογή υπολογιστή και το vectorcraft-cli
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	ο φάκελος γραμματοσειρών του rsm δεν έχει καθοριστεί εδώ: τον ορίζουν η εφαρμογή υπολογιστή και το vectorcraft-cli
 @msg	choose the font files to add	επιλέξτε τα αρχεία γραμματοσειρών που θέλετε να προσθέσετε
 @msg	{n} font file(s) are now in {folder}	{n} αρχεία γραμματοσειρών βρίσκονται πλέον στον φάκελο {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} αρχεία γραμματοσειρών βρίσκονται πλέον στον φάκελο {folder}· δεν ήταν δυνατή η προσθήκη {failed}: {reason}
@@ -4720,7 +4720,7 @@ theme	Appearance	Εμφάνιση
 	Include tagged source profiles	Συμπερίληψη προφίλ πηγής με ετικέτα
 	Inserting, deleting and rotating pages	Εισαγωγή, διαγραφή και περιστροφή σελίδων
 	Joins:	Συνδέσεις:
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	Διατηρεί το έγγραφο επεξεργάσιμο: το VectorCraft ανοίγει ξανά το PDF χωρίς απώλειες. Για αρχεία που θα επεξεργαστείτε ξανά.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	Διατηρεί το έγγραφο επεξεργάσιμο: το rsm ανοίγει ξανά το PDF χωρίς απώλειες. Για αρχεία που θα επεξεργαστείτε ξανά.
 	Kite	Χαρταετός
 	LF (macOS, Linux)	LF (macOS, Linux)
 	Lab Spot Colors	Πλακάτα χρώματα Lab
@@ -4857,7 +4857,7 @@ theme	Appearance	Εμφάνιση
 	VectorCraft Default	Προεπιλογή VectorCraft
 	VectorCraft Defaults	Προεπιλογές VectorCraft
 	VectorCraft Generic CMYK (SWOP-like)	Γενικό CMYK του VectorCraft (τύπου SWOP)
-	VectorCraft Swatches (.vcswatches)	Δείγματα χρωμάτων VectorCraft (.vcswatches)
+	rsm Swatches (.vcswatches)	Δείγματα χρωμάτων rsm (.vcswatches)
 	Vertical Align	Κατακόρυφη στοίχιση
 	Vertical Area Type	Κατακόρυφο κείμενο περιοχής
 	Vertical Type	Κατακόρυφο κείμενο

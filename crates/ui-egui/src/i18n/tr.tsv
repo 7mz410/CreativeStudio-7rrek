@@ -3694,7 +3694,7 @@ axis	Both	Her İkisi
 @msg	Split Into Grid: select paths large enough for the grid	Izgaraya Böl: ızgara için yeterince büyük yollar seçin
 @msg	Targa files are RGB: colorModel rgb	Targa dosyaları RGB'dir: colorModel rgb
 @msg	Text Wrap: select a wrap object	Metin Sarma: bir sarma nesnesi seçin
-@msg	This shortcut file is in a form VectorCraft can't read.	Bu kısayol dosyası VectorCraft'ın okuyamayacağı bir biçimdedir.
+@msg	This shortcut file is in a form rsm can't read.	Bu kısayol dosyası rsm'ın okuyamayacağı bir biçimdedir.
 @msg	`aspect` must be a number (%)	"boyut" bir sayı olmalıdır (%)
 @msg	`at` must be [x, y]	`at` [x, y] olmalıdır
 @msg	`color` must be a colour	"renk" bir renk olmalıdır
@@ -3790,7 +3790,7 @@ axis	Both	Her İkisi
 @msg	can't encode the document: {0}	belge kodlanamıyor: {0}
 @msg	can't parse shortcut `{c}`	`{c}` kısayolu ayrıştırılamıyor
 @msg	can't parse shortcut `{s}` for `{k}`	`{k}` için `{s}` kısayolu ayrıştırılamıyor
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	{0} sürümü kaydedilemiyor: VectorCraft, {MIN_VERSION} sürümlerini {VERSION}'ye yazıyor
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	{0} sürümü kaydedilemiyor: rsm, {MIN_VERSION} sürümlerini {VERSION}'ye yazıyor
 @msg	can't write .{ext} images	.{ext} görselleri yazılamıyor
 @msg	cannot distort a zero-size bounding box	sıfır boyutlu bir sınırlayıcı kutuyu bozamaz
 @msg	cannot read PDF: {0}	PDF okunamıyor: {0}
@@ -3816,7 +3816,7 @@ axis	Both	Her İkisi
 @msg	empty brush stroke	boş fırça darbesi
 @msg	empty cutter	boş kesici
 @msg	empty path	boş yol
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	dosya sürümü {0}, VectorCraft'ın desteklediğinden daha yenidir ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	dosya sürümü {0}, rsm'ın desteklediğinden daha yenidir ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	serbest biçimli nokta {i}'nin "[x, y]'de" ve geçerli bir "renk"te olması gerekir
 @msg	freeform line {i} must be an array of point indices	Serbest biçimli çizgi {i}, bir nokta indeks dizisi olmalıdır
 @msg	give both `start` and `end` [x, y] (or neither)	hem "başlangıç" hem de "son" [x, y] verin (ya da ikisini de)
@@ -3835,8 +3835,8 @@ axis	Both	Her İkisi
 @msg	invalid PDF setting: {0}	geçersiz PDF ayarı: {0}
 @msg	invalid image data for `{0}`	`{0}` için geçersiz resim verileri
 @msg	invalid parameters for `{cmd}`: {msg}	`{cmd}` için geçersiz parametreler: {msg}
-@msg	is not an image VectorCraft reads	VectorCraft'ın okuduğu bir resim değil
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	VectorCraft'ın PostScript okuyucusunun bilmediği `{at}`yi kullanıyor
+@msg	is not an image rsm reads	rsm'ın okuduğu bir resim değil
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	rsm'ın PostScript okuyucusunun bilmediği `{at}`yi kullanıyor
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	{procs}'de VectorCraft'ın PostScript okuyucusunun bilmediği `{at}`yi kullanıyor
 @msg	its Windows metafile preview was opened instead, which may simplify the art	bunun yerine Windows meta dosyası önizlemesi açıldı, bu da işi basitleştirebilir
 @msg	its preview was placed instead, at screen resolution	bunun yerine önizlemesi ekran çözünürlüğüne yerleştirildi
@@ -3885,7 +3885,7 @@ axis	Both	Her İkisi
 @msg	no file system here	burada dosya sistemi yok
 @msg	no file writer	dosya yazarı yok
 @msg	no files to place	yerleştirilecek dosya yok
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` bir VectorCraft belgesi, bir PDF ya da PDF ile uyumlu bir .ai dosyası değil
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` bir rsm belgesi, bir PDF ya da PDF ile uyumlu bir .ai dosyası değil
 @msg	no format to export to	dışa aktarılacak format yok
 @msg	no free recovery area	ücretsiz kurtarma alanı yok
 @msg	no gradient stop or freeform point is selected	degrade durağı veya serbest biçim noktası seçili değil
@@ -3942,7 +3942,7 @@ axis	Both	Her İkisi
 @msg	no user workspace `{from}`	kullanıcı çalışma alanı yok `{from}`
 @msg	node {_1} is not text	{_1} düğümü metin değil
 @msg	not a DXF drawing	DXF çizimi değil
-@msg	not a VectorCraft file: {0}	bir VectorCraft dosyası değil: {0}
+@msg	not a rsm file: {0}	bir rsm dosyası değil: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	rsm kısayol seti değil ("geçersiz kılmalar" eksik)
 @msg	not a graphic style library (format `{_1}`)	grafik stili kitaplığı değil (`{_1}` biçimi)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	bir kısayol seti değil: metin eğik çizgi adı ve açılış paranteziyle başlamıyor
@@ -4178,9 +4178,9 @@ axis	Both	Her İkisi
 @msg	{_1} files	{_1} dosyaları
 @msg	The graphics were lost and have been restarted	Grafikler kayboldu ve yeniden başlatıldı
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	İlk önce denenen grafik işlemcisi pencereyi gösteremedi, bu yüzden VectorCraft {summary}'de yeniden başladı
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	VectorCraft'ın son başlangıcı, penceresi görünmeden önce {name}'de sona erdi, bu nedenle {summary}'de başladı. Bu grafik işlemciyi tekrar denemek için Tercihler › Performans › Grafik İşlemcisi seçeneğini değiştirin veya WGPU_BACKEND ayarıyla başlayın
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	VectorCraft'ın son başlangıcı grafik işlemcilerini listelerken sona erdi ve {summary}'de yalnızca OpenGL ile başladı. Diğer grafik arka uçlarını tekrar denemek için Tercihler › Performans › Grafik İşlemci seçeneğini değiştirin veya WGPU_BACKEND ayarıyla başlayın
-@msg	Loading VectorCraft…	VectorCraft Yükleniyor…
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	rsm'ın son başlangıcı, penceresi görünmeden önce {name}'de sona erdi, bu nedenle {summary}'de başladı. Bu grafik işlemciyi tekrar denemek için Tercihler › Performans › Grafik İşlemcisi seçeneğini değiştirin veya WGPU_BACKEND ayarıyla başlayın
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	rsm'ın son başlangıcı grafik işlemcilerini listelerken sona erdi ve {summary}'de yalnızca OpenGL ile başladı. Diğer grafik arka uçlarını tekrar denemek için Tercihler › Performans › Grafik İşlemci seçeneğini değiştirin veya WGPU_BACKEND ayarıyla başlayın
+@msg	Loading rsm…	rsm Yükleniyor…
 @msg	VectorCraft failed to start: {e}	VectorCraft başlatılamadı: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	WebGPU veya WebGL2'ye sahip bir tarayıcı gereklidir.
 @msg	The graphics were lost and couldn't be restarted.	Grafikler kayboldu ve yeniden başlatılamadı.
@@ -4208,7 +4208,7 @@ axis	Both	Her İkisi
 @msg	its section ending with `%{end}` doesn't end	`%{end}` ile biten bölümü bitmiyor
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	çeşitli dolgulara veya konturlara, efektlere veya fırçalara sahip nesneler çizilmiş görünümleri olarak geldi ({_1}): görünümleri henüz düzenlenemez
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	“{name}” degradesi dosyada tanımlı değil: onun yerine düz bir renk geliyor
-@msg	an image VectorCraft can't read was left out	VectorCraft'ın okuyamadığı bir resim dışarıda bırakıldı
+@msg	an image rsm can't read was left out	rsm'ın okuyamadığı bir resim dışarıda bırakıldı
 @msg	an image whose data is cut short was left out	verileri kısa kesilen bir resim dışarıda bırakıldı
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	bağlantılı resimler, dosyaları bulunana kadar dosyaya kaydedilen düşük çözünürlüklü önizlemeyi gösterir: bunları Bağlantılar panelinde yeniden bağlayın
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	çerçevelerdeki alan türü, daha uzun çerçevelerde gösterdiği yazı tipinin bir satırı için çok kısa ({_1}): bunların türü aksi halde gösterilmez
@@ -4221,7 +4221,7 @@ axis	Both	Her İkisi
 @msg	the search couldn't start: try again in a moment	arama başlatılamadı: birazdan tekrar deneyin
 @msg	searching a folder isn't available on the web	Web'de klasör arama özelliği kullanılamıyor
 @msg	every search thread stopped on an internal error (please report this bug)	her arama dizisi dahili bir hata nedeniyle durduruldu (lütfen bu hatayı bildirin)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	VectorCraft'ın Fonts klasörü burada ayarlanmamış: masaüstü uygulaması ve Vectorcraft-cli bunu ayarlıyor
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	rsm'ın Fonts klasörü burada ayarlanmamış: masaüstü uygulaması ve Vectorcraft-cli bunu ayarlıyor
 @msg	choose the font files to add	eklenecek yazı tipi dosyalarını seçin
 @msg	{n} font file(s) are now in {folder}	{n} yazı tipi dosyası/dosyaları artık {folder}'de
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} yazı tipi dosyası/dosyaları artık {folder}'de; {failed} eklenemedi: {reason}
@@ -4685,7 +4685,7 @@ lighting	Light	Işık
 	Inserting, deleting and rotating pages	Sayfa ekleme, silme ve döndürme
 	Joins:	Katılma:
 	Justify	İki Yana Yasla
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	Belgeyi düzenlenebilir tutar: VectorCraft, PDF'yi hiçbir şey kaybolmadan yeniden açar. Dosyalar için tekrar düzenleme yapacaksınız.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	Belgeyi düzenlenebilir tutar: rsm, PDF'yi hiçbir şey kaybolmadan yeniden açar. Dosyalar için tekrar düzenleme yapacaksınız.
 	Keyboard Shortcuts	Klavye Kısayolları
 	Kite	Uçurtma
 	LF (macOS, Linux)	LF (macOS, Linux)
@@ -4876,7 +4876,7 @@ lighting	Light	Işık
 	VectorCraft Default	VectorCraft Varsayılanı
 	VectorCraft Defaults	VectorCraft Varsayılanları
 	VectorCraft Generic CMYK (SWOP-like)	VectorCraft Genel CMYK (SWOP benzeri)
-	VectorCraft Swatches (.vcswatches)	VectorCraft Renk Örnekleri (.vcswatches)
+	rsm Swatches (.vcswatches)	rsm Renk Örnekleri (.vcswatches)
 	Vertical Align	Dikey Hizalama
 	Vertical Area Type	Dikey Alan Türü
 	Vertical Type	Dikey Tip

@@ -181,7 +181,7 @@ pub const POSTSCRIPT_ERRORS: &[(&str, &str)] = &[
 /// (`fault`).
 fn reason(e: &PsError, fault: Option<&Fault>) -> String {
     let what = match e {
-        PsError::Ps("undefined", at) => format!("it uses `{at}`, which VectorCraft's PostScript reader doesn't know"),
+        PsError::Ps("undefined", at) => format!("it uses `{at}`, which rsm's PostScript reader doesn't know"),
         PsError::Ps(name, at) => {
             let detail = match fault.and_then(|f| f.op) {
                 Some(op) if at.is_empty() || at == op => format!("{name} in `{op}`"),
@@ -268,7 +268,7 @@ pub fn import_trusting(bytes: &[u8], editing_data: bool, trust: bool) -> Result<
     let why = match (&result, drew) {
         (Ok(()), true) if editing_data => return Ok(native::layered(ps, finish(out), trust)),
         (Ok(()), true) => return Ok(finish(out)),
-        (Ok(()), false) => "it draws nothing VectorCraft's PostScript reader can show".to_string(),
+        (Ok(()), false) => "it draws nothing rsm's PostScript reader can show".to_string(),
         (Err(e), _) => reason(e, fault.as_ref()),
     };
     // A file in the legacy Illustrator format whose program can't be run (a `.ai` that names the

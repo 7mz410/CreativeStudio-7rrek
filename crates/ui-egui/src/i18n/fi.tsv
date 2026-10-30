@@ -162,7 +162,7 @@
 	Forget Import Matches	Unohda tuonnin vastaavuudet
 @plural	agrees with {n} default shortcut|agrees with {n} default shortcuts	vastaa {n} oletuspikanäppäintä|vastaa {n} oletuspikanäppäintä
 @plural	{n} part of the file wasn't read|{n} parts of the file weren't read	{n} tiedoston osa jäi lukematta|{n} tiedoston osaa jäi lukematta
-@msg	This shortcut file is in a form VectorCraft can't read.	Tämä pikanäppäintiedosto on muodossa, jota VectorCraft ei pysty lukemaan.
+@msg	This shortcut file is in a form rsm can't read.	Tämä pikanäppäintiedosto on muodossa, jota rsm ei pysty lukemaan.
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	ei pikanäppäinjoukko: teksti ei ala vinoviivalla alkavalla nimellä ja avaavalla aaltosulkeella
 	Preferences…	Asetukset…
 	Object	Objekti
@@ -2621,7 +2621,7 @@ lighting	Light	Valo
 	[PDF/X-3:2002]	[PDF/X-3:2002]
 	PDF/X-4:2010	PDF/X-4:2010
 	[PDF/X-4:2010]	[PDF/X-4:2010]
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	Pitää asiakirjan muokattavana: VectorCraft avaa PDF:n uudelleen ilman menetyksiä. Tiedostoille, joita muokataan uudelleen.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	Pitää asiakirjan muokattavana: rsm avaa PDF:n uudelleen ilman menetyksiä. Tiedostoille, joita muokataan uudelleen.
 	Compress text and line art	Pakkaa teksti ja viivapiirrokset
 	Compression	Pakkaus
 	Compression › Color › Above Ppi	Pakkaus › Väri › Yli ppi
@@ -2699,7 +2699,7 @@ lighting	Light	Valo
 	A File…	Tiedosto…
 	GPL palettes keep solid colours only, as RGB.	GPL-paletit säilyttävät vain tasavärit RGB-muodossa.
 	Save Swatch Library	Tallenna värimallikirjasto
-	VectorCraft Swatches (.vcswatches)	VectorCraft-värimallit (.vcswatches)
+	rsm Swatches (.vcswatches)	rsm-värimallit (.vcswatches)
 	Save To:	Tallenna kohteeseen:
 	Saved to User Defined: {}	Tallennettu käyttäjän määrittämiin: {}
 	Selected Swatches Only	Vain valitut värimallit
@@ -4224,7 +4224,7 @@ imageTrace	Outline	Ääriviiva
 @msg	can't encode the document: {0}	asiakirjaa ei voi koodata: {0}
 @msg	can't parse shortcut `{c}`	pikanäppäintä `{c}` ei voi jäsentää
 @msg	can't parse shortcut `{s}` for `{k}`	pikanäppäintä `{s}` kohteelle `{k}` ei voi jäsentää
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	versiota {0} ei voi tallentaa: VectorCraft kirjoittaa versioita {MIN_VERSION}–{VERSION}
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	versiota {0} ei voi tallentaa: rsm kirjoittaa versioita {MIN_VERSION}–{VERSION}
 @msg	can't write .{ext} images	.{ext}-kuvia ei voi kirjoittaa
 @msg	cannot distort a zero-size bounding box	nollakokoista rajausruutua ei voi vääristää
 @msg	cannot read PDF: {0}	ei voi lukea PDF-tiedostoa: {0}
@@ -4250,7 +4250,7 @@ imageTrace	Outline	Ääriviiva
 @msg	empty brush stroke	tyhjä sivellinviiva
 @msg	empty cutter	tyhjä leikkaaja
 @msg	empty path	tyhjä polku
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	tiedostoversio {0} on uudempi kuin tämä VectorCraft tukee ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	tiedostoversio {0} on uudempi kuin tämä rsm tukee ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	vapaamuotoinen piste {i} tarvitsee arvon `at` [x, y] ja kelvollisen arvon `color`
 @msg	freeform line {i} must be an array of point indices	vapaamuotoisen viivan {i} on oltava pisteindeksien taulukko
 @msg	give both `start` and `end` [x, y] (or neither)	anna sekä `start` että `end` [x, y] (tai ei kumpaakaan)
@@ -4271,8 +4271,8 @@ imageTrace	Outline	Ääriviiva
 @msg	invalid PDF setting: {0}	virheellinen PDF-asetus: {0}
 @msg	invalid image data for `{0}`	virheellinen kuvadata kohteelle `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	virheelliset parametrit kohteelle `{cmd}`: {msg}
-@msg	is not an image VectorCraft reads	ei ole kuva, jota VectorCraft lukee
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	se käyttää kohdetta `{at}`, jota VectorCraftin PostScript-lukija ei tunne
+@msg	is not an image rsm reads	ei ole kuva, jota rsm lukee
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	se käyttää kohdetta `{at}`, jota rsmin PostScript-lukija ei tunne
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	se käyttää kohdetta `{at}`, jota VectorCraftin PostScript-lukija ei tunne, proseduurissa {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	sen sijaan avattiin sen Windows-metatiedoston esikatselu, mikä voi yksinkertaistaa kuvitusta
 @msg	its preview was placed instead, at screen resolution	sen sijaan sijoitettiin sen esikatselu näytön tarkkuudella
@@ -4325,7 +4325,7 @@ imageTrace	Outline	Ääriviiva
 @msg	no file system here	täällä ei ole tiedostojärjestelmää
 @msg	no file writer	ei tiedostonkirjoittajaa
 @msg	no files to place	ei sijoitettavia tiedostoja
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` ei ole VectorCraft-asiakirja, PDF- eikä PDF-yhteensopiva .ai-tiedosto
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` ei ole rsm-asiakirja, PDF- eikä PDF-yhteensopiva .ai-tiedosto
 @msg	no format to export to	ei vientimuotoa
 @msg	no free recovery area	ei vapaata palautusaluetta
 @msg	no gradient stop or freeform point is selected	liukuvärin väripistettä tai vapaamuotoista pistettä ei ole valittu
@@ -4385,7 +4385,7 @@ imageTrace	Outline	Ääriviiva
 @msg	no user workspace `{from}`	ei käyttäjän työtilaa `{from}`
 @msg	node {_1} is not text	solmu {_1} ei ole tekstiä
 @msg	not a DXF drawing	ei DXF-piirustus
-@msg	not a VectorCraft file: {0}	ei VectorCraft-tiedosto: {0}
+@msg	not a rsm file: {0}	ei rsm-tiedosto: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	ei rsmin pikanäppäinjoukko (`overrides` puuttuu)
 @msg	not a blend	ei sulautus
 @msg	not a graphic style library (format `{_1}`)	ei grafiikkatyylikirjasto (muoto `{_1}`)
@@ -4631,9 +4631,9 @@ imageTrace	Outline	Ääriviiva
 @msg	{_1} files	{_1}-tiedostot
 @msg	The graphics were lost and have been restarted	Grafiikka menetettiin ja se käynnistettiin uudelleen
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	Ensin kokeiltu grafiikkasuoritin ei pystynyt näyttämään ikkunaa, joten VectorCraft käynnistyi uudelleen: {summary}
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	VectorCraftin edellinen käynnistys päättyi grafiikkasuorittimella {name} ennen kuin sen ikkuna tuli näkyviin, joten se käynnistyi: {summary}. Jos haluat kokeilla tätä grafiikkasuoritinta uudelleen, muuta kohtaa Asetukset › Suorituskyky › Grafiikkasuoritin tai käynnistä WGPU_BACKEND-muuttuja asetettuna
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	VectorCraftin edellinen käynnistys päättyi grafiikkasuorittimien luetteloinnin aikana, joten se käynnistyi pelkällä OpenGL:llä: {summary}. Jos haluat kokeilla muita grafiikkataustoja uudelleen, muuta kohtaa Asetukset › Suorituskyky › Grafiikkasuoritin tai käynnistä WGPU_BACKEND-muuttuja asetettuna
-@msg	Loading VectorCraft…	Ladataan VectorCraftia…
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	rsmin edellinen käynnistys päättyi grafiikkasuorittimella {name} ennen kuin sen ikkuna tuli näkyviin, joten se käynnistyi: {summary}. Jos haluat kokeilla tätä grafiikkasuoritinta uudelleen, muuta kohtaa Asetukset › Suorituskyky › Grafiikkasuoritin tai käynnistä WGPU_BACKEND-muuttuja asetettuna
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	rsmin edellinen käynnistys päättyi grafiikkasuorittimien luetteloinnin aikana, joten se käynnistyi pelkällä OpenGL:llä: {summary}. Jos haluat kokeilla muita grafiikkataustoja uudelleen, muuta kohtaa Asetukset › Suorituskyky › Grafiikkasuoritin tai käynnistä WGPU_BACKEND-muuttuja asetettuna
+@msg	Loading rsm…	Ladataan rsmia…
 @msg	VectorCraft failed to start: {e}	VectorCraftin käynnistys epäonnistui: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Vaaditaan selain, joka tukee WebGPU:ta tai WebGL2:ta.
 @msg	The graphics were lost and couldn't be restarted.	Grafiikka menetettiin, eikä sitä voitu käynnistää uudelleen.
@@ -4661,7 +4661,7 @@ imageTrace	Outline	Ääriviiva
 @msg	its section ending with `%{end}` doesn't end	sen `%{end}`-merkintään päättyvä osio ei pääty
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	objektit, joilla on useita täyttöjä tai viivoja, tehosteita tai siveltimiä, tuotiin piirretyn näköisinä ({_1}): niiden ulkoasua ei voi vielä muokata
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	liukuväriä “{name}” ei ole määritetty tiedostossa: sen tilalla on tasaväri
-@msg	an image VectorCraft can't read was left out	kuva, jota VectorCraft ei voi lukea, jätettiin pois
+@msg	an image rsm can't read was left out	kuva, jota rsm ei voi lukea, jätettiin pois
 @msg	an image whose data is cut short was left out	kuva, jonka data on katkennut, jätettiin pois
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	linkitetyt kuvat näyttävät tiedostoon tallennetun matalan tarkkuuden esikatselun, kunnes niiden tiedostot löytyvät: linkitä ne uudelleen Linkit-paneelissa
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	aluetekstin kehykset, jotka olivat liian matalia yhdelle riville niiden fontilla, korotettiin ({_1}): muuten niiden teksti ei näkyisi
@@ -4674,7 +4674,7 @@ imageTrace	Outline	Ääriviiva
 @msg	the search couldn't start: try again in a moment	hakua ei voitu aloittaa: yritä hetken kuluttua uudelleen
 @msg	searching a folder isn't available on the web	kansion haku ei ole käytettävissä verkossa
 @msg	every search thread stopped on an internal error (please report this bug)	jokainen hakusäie pysähtyi sisäiseen virheeseen (ilmoita tästä virheestä)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	VectorCraftin Fonts-kansiota ei ole määritetty täällä: työpöytäsovellus ja vectorcraft-cli määrittävät sen
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	rsmin Fonts-kansiota ei ole määritetty täällä: työpöytäsovellus ja vectorcraft-cli määrittävät sen
 @msg	choose the font files to add	valitse lisättävät fonttitiedostot
 @msg	{n} font file(s) are now in {folder}	{n} fonttitiedosto(a) on nyt kansiossa {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} fonttitiedosto(a) on nyt kansiossa {folder}; {failed} ei voitu lisätä: {reason}

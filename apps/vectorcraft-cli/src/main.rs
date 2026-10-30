@@ -60,15 +60,15 @@ fn stdout_failed(e: std::io::Error) -> ! {
     if e.kind() == std::io::ErrorKind::BrokenPipe {
         std::process::exit(0);
     }
-    eprintln!("vectorcraft-cli: can't write to stdout: {e}");
+    eprintln!("rsm-cli: can't write to stdout: {e}");
     std::process::exit(1);
 }
 
 const USAGE: &str = "\
-vectorcraft-cli — VectorCraft automation
+rsm-cli — rsm automation
 
 USAGE:
-  vectorcraft-cli mcp [--connect ADDR | --headless] [--automation-read-root DIR]... [--automation-write-root DIR]...
+  rsm-cli mcp [--connect ADDR | --headless] [--automation-read-root DIR]... [--automation-write-root DIR]...
       Run the MCP server on stdio. Default: connect to a running app at 127.0.0.1:7979
       (vectorcraft --control 7979), falling back to a headless in-process session.
       --automation-read-root / --automation-write-root confine the files the agent's commands read
@@ -77,7 +77,7 @@ USAGE:
       allowed, and a kind left out grants none of its access. They imply --headless: a running app
       enforces its own (vectorcraft --control PORT --automation-read-root DIR …).
 
-  vectorcraft-cli run [--in FILE] [--cmd ID [--params JSON] | --commands FILE|-]... [--export FILE]... [--scale N]
+  rsm-cli run [--in FILE] [--cmd ID [--params JSON] | --commands FILE|-]... [--export FILE]... [--scale N]
       Headless batch: open FILE (any readable format) or start a new document, run commands in
       order, export each FILE in the format its extension picks (see Writable formats; a .ait FILE
       is a template, written as file.saveAsTemplate writes it). --scale sizes raster exports
@@ -87,10 +87,10 @@ USAGE:
       \"command\"), or one such object per line (JSON Lines), at most 64 MiB and 100000 steps.
       Errors name the step, counting from 0 as \"$N\" references do.
 
-  vectorcraft-cli commands
+  rsm-cli commands
       Print the command catalogue as JSON.
 
-  vectorcraft-cli convert IN OUT [--scale N] [--artboard I | --range R] [--outline-text] [--decimals N] [--replace-lossy] [--editing-data] [--preserve-editing] [--ai-version 7|pdf] [--hidden-objects layer|omit|visible] [--transparent-images flatten|omit]
+  rsm-cli convert IN OUT [--scale N] [--artboard I | --range R] [--outline-text] [--decimals N] [--replace-lossy] [--editing-data] [--preserve-editing] [--ai-version 7|pdf] [--hidden-objects layer|omit|visible] [--transparent-images flatten|omit]
       Open IN (any readable format) and export OUT in the format its extension picks (see Writable
       formats). --scale sizes a raster OUT (pixels per point, default 1); other formats leave it
       out. --artboard is 0-based, --range 1-based (\"1-3,5\"); a PDF gets every artboard
@@ -114,16 +114,16 @@ USAGE:
       visible), --transparent-images (default flatten, with the art under them; omit) and
       --outline-text (type as outlines instead of text).
 
-  vectorcraft-cli info FILE
+  rsm-cli info FILE
       Print a JSON summary: the import warnings (what didn't come in as it was, such as an EPS
       read from its preview and why), title, colour mode, units, artboards, object counts by
       kind, fonts.
 
-  vectorcraft-cli bench FILE [--size WxH] [--iters N]
+  rsm-cli bench FILE [--size WxH] [--iters N]
       Render FILE (any readable format) fitted to WxH (default 2880x1800) and print ms per frame
       (warm), multithreaded and single-threaded.
 
-  vectorcraft-cli perf [--paths N] [--deep]
+  rsm-cli perf [--paths N] [--deep]
       Check the performance budgets (render, pan, hit test, save/load, SVG, Pathfinder, handle
       and segment drags) on a synthetic N-path document (default 50000). Exits non-zero if a
       budget is exceeded, unless the report says the machine is busy. --deep also times work with
@@ -181,7 +181,7 @@ fn main() -> ExitCode {
         Some("perf") => perf::run(&args[1..]),
         Some("-h" | "--help" | "help") | None => help(),
         Some("-V" | "--version") => {
-            outln!("vectorcraft-cli {}", env!("CARGO_PKG_VERSION"));
+            outln!("rsm-cli {}", env!("CARGO_PKG_VERSION"));
             Ok(())
         }
         Some(other) => Err(format!("unknown subcommand `{other}`\n\n{}", usage())),
@@ -189,7 +189,7 @@ fn main() -> ExitCode {
     match r {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
-            eprintln!("vectorcraft-cli: {e}");
+            eprintln!("rsm-cli: {e}");
             ExitCode::FAILURE
         }
     }
@@ -242,7 +242,7 @@ fn mcp(args: &[String]) -> Result<(), String> {
     let backend: Box<dyn Backend> = if let Some(roots) = roots {
         // Every thread of this process, not only the server's: nothing reaches past the roots.
         file_access::confine_process(roots.clone());
-        eprintln!("vectorcraft-cli: files confined: {}", roots.describe());
+        eprintln!("rsm-cli: files confined: {}", roots.describe());
         Box::new(Headless::with_document().with_automation_roots(Some(roots)))
     } else if headless {
         Box::new(with_stores(Headless::with_document()))
@@ -255,7 +255,7 @@ fn mcp(args: &[String]) -> Result<(), String> {
             Err(_) => Box::new(with_stores(Headless::with_document())),
         }
     };
-    eprintln!("vectorcraft-cli: MCP server on stdio ({})", backend.describe());
+    eprintln!("rsm-cli: MCP server on stdio ({})", backend.describe());
     // The binary owns the logger, not the library: installing one here keeps an embedder that
     // uses `vectorcraft_mcp` free to bring its own. Silent until a client sends logging/setLevel.
     vectorcraft_mcp::logging::install();
@@ -346,7 +346,7 @@ fn convert(args: &[String]) -> Result<(), String> {
         let skipped = vectorcraft_engine::cmd::fileio::pdf::EDITING_NEEDS_EVERY_ARTBOARD;
         let embedded = !obj.get("warnings").and_then(Value::as_array).is_some_and(|w| w.iter().any(|w| w.as_str() == Some(skipped)));
         if embedded {
-            let note = "The PDF embeds the native VectorCraft document as an attachment (preserveEditing).";
+            let note = "The PDF embeds the native rsm document as an attachment (preserveEditing).";
             if let Some(Value::Array(w)) = obj.get_mut("warnings") {
                 if !w.iter().any(|w| w.as_str() == Some(note)) {
                     w.push(json!(note));

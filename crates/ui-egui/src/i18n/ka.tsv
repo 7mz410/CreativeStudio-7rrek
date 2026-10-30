@@ -3793,7 +3793,7 @@ font-technology	Variable	ცვლადი
 @msg	can't encode the document: {0}	დოკუმენტის კოდირება ვერ ხერხდება: {0}
 @msg	can't parse shortcut `{c}`	მალსახმობის `{c}` ანალიზი ვერ ხერხდება
 @msg	can't parse shortcut `{s}` for `{k}`	მალსახმობის `{s}` ანალიზი `{k}`-სთვის ვერ ხერხდება
-@msg	can't save version {0}: VectorCraft writes versions {MIN_VERSION} to {VERSION}	ვერსიის {0} შენახვა ვერ ხერხდება: VectorCraft წერს ვერსიებს {MIN_VERSION}-დან {VERSION}-მდე
+@msg	can't save version {0}: rsm writes versions {MIN_VERSION} to {VERSION}	ვერსიის {0} შენახვა ვერ ხერხდება: rsm წერს ვერსიებს {MIN_VERSION}-დან {VERSION}-მდე
 @msg	can't write .{ext} images	.{ext} გამოსახულებების ჩაწერა ვერ ხერხდება
 @msg	cannot distort a zero-size bounding box	ნულოვანი ზომის შემომსაზღვრელი ჩარჩოს დეფორმაცია შეუძლებელია
 @msg	cannot read PDF: {0}	PDF-ის წაკითხვა ვერ ხერხდება: {0}
@@ -3817,7 +3817,7 @@ font-technology	Variable	ცვლადი
 @msg	empty brush stroke	ცარიელი ფუნჯის შტრიხი
 @msg	empty cutter	ცარიელი საჭრელი
 @msg	empty path	ცარიელი ტრაექტორია
-@msg	file version {0} is newer than this VectorCraft supports ({VERSION})	ფაილის ვერსია {0} უფრო ახალია, ვიდრე ამ VectorCraft-ის მხარდაჭერილი ({VERSION})
+@msg	file version {0} is newer than this rsm supports ({VERSION})	ფაილის ვერსია {0} უფრო ახალია, ვიდრე ამ rsm-ის მხარდაჭერილი ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	თავისუფალ წერტილს {i} სჭირდება `at` [x, y] და სწორი `color`
 @msg	freeform line {i} must be an array of point indices	თავისუფალი ხაზი {i} უნდა იყოს წერტილების ინდექსების მასივი
 @msg	give both `start` and `end` [x, y] (or neither)	მიუთითეთ `start` და `end` [x, y] ორივე (ან არცერთი)
@@ -3836,8 +3836,8 @@ font-technology	Variable	ცვლადი
 @msg	invalid PDF setting: {0}	PDF-ის არასწორი პარამეტრი: {0}
 @msg	invalid image data for `{0}`	არასწორი გამოსახულების მონაცემები `{0}`-სთვის
 @msg	invalid parameters for `{cmd}`: {msg}	`{cmd}`: არასწორი პარამეტრები — {msg}
-@msg	is not an image VectorCraft reads	ეს არ არის გამოსახულება, რომელსაც VectorCraft კითხულობს
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	ის იყენებს `{at}`-ს, რომელიც VectorCraft-ის PostScript-ის წამკითხველმა არ იცის
+@msg	is not an image rsm reads	ეს არ არის გამოსახულება, რომელსაც rsm კითხულობს
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	ის იყენებს `{at}`-ს, რომელიც rsm-ის PostScript-ის წამკითხველმა არ იცის
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	ის იყენებს `{at}`-ს, რომელიც VectorCraft-ის PostScript-ის წამკითხველმა არ იცის, {procs}-ში
 @msg	its Windows metafile preview was opened instead, which may simplify the art	სამაგიეროდ გაიხსნა მისი Windows metafile გადახედვა, რამაც შეიძლება ნახატი გაამარტივოს
 @msg	its preview was placed instead, at screen resolution	სამაგიეროდ განთავსდა მისი გადახედვა, ეკრანის გარჩევადობით
@@ -3888,7 +3888,7 @@ font-technology	Variable	ცვლადი
 @msg	no file system here	აქ ფაილური სისტემა არ არის
 @msg	no file writer	ფაილის ჩამწერი არ არის
 @msg	no files to place	განსათავსებელი ფაილები არ არის
-@msg	`{file}` isn't a VectorCraft document, a PDF or a PDF-compatible .ai file	`{file}` არ არის VectorCraft-ის დოკუმენტი, PDF ან PDF-თან თავსებადი .ai ფაილი
+@msg	`{file}` isn't a rsm document, a PDF or a PDF-compatible .ai file	`{file}` არ არის rsm-ის დოკუმენტი, PDF ან PDF-თან თავსებადი .ai ფაილი
 @msg	no format to export to	ექსპორტის ფორმატი არ არის
 @msg	no free recovery area	აღდგენის თავისუფალი არე არ არის
 @msg	no gradient stop or freeform point is selected	გრადიენტის გადასვლის წერტილი ან თავისუფალი წერტილი მონიშნული არ არის
@@ -3945,7 +3945,7 @@ font-technology	Variable	ცვლადი
 @msg	no user workspace `{from}`	მომხმარებლის სამუშაო სივრცე `{from}` არ არის
 @msg	node {_1} is not text	კვანძი {_1} ტექსტი არ არის
 @msg	not a DXF drawing	ეს არ არის DXF ნახაზი
-@msg	not a VectorCraft file: {0}	ეს არ არის VectorCraft-ის ფაილი: {0}
+@msg	not a rsm file: {0}	ეს არ არის rsm-ის ფაილი: {0}
 @msg	not a rsm shortcut set (missing `overrides`)	ეს არ არის rsm-ის მალსახმობების ნაკრები (აკლია `overrides`)
 @msg	not a graphic style library (format `{_1}`)	ეს არ არის გრაფიკული სტილების ბიბლიოთეკა (ფორმატი `{_1}`)
 @msg	not a stored central record	ეს არ არის შენახული ცენტრალური ჩანაწერი
@@ -4177,7 +4177,7 @@ font-technology	Variable	ცვლადი
 @msg	{_1} files	ფაილები: {_1}
 @msg	The graphics were lost and have been restarted	გრაფიკა დაიკარგა და ხელახლა გაეშვა
 @msg	The graphics processor tried first couldn't show the window, so VectorCraft started again on {summary}	პირველად ნაცდმა გრაფიკულმა პროცესორმა ფანჯარა ვერ აჩვენა, ამიტომ VectorCraft ხელახლა გაეშვა: {summary}
-@msg	Loading VectorCraft…	VectorCraft იტვირთება…
+@msg	Loading rsm…	rsm იტვირთება…
 @msg	VectorCraft failed to start: {e}	VectorCraft-ის გაშვება ვერ მოხერხდა: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	საჭიროა ბრაუზერი WebGPU-ით ან WebGL2-ით.
 @msg	The graphics were lost and couldn't be restarted.	გრაფიკა დაიკარგა და ხელახლა ვერ გაეშვა.
@@ -4205,7 +4205,7 @@ font-technology	Variable	ცვლადი
 @msg	its section ending with `%{end}` doesn't end	მისი სექცია, რომელიც `%{end}`-ით მთავრდება, არ სრულდება
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	რამდენიმე შევსების ან კონტურის, ეფექტის ან ფუნჯის მქონე ობიექტები შემოვიდა დახატული სახით ({_1}): მათი იერსახე ჯერ არ რედაქტირდება
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	გრადიენტი „{name}“ ფაილში განსაზღვრული არ არის: მის ნაცვლად ერთგვაროვანი ფერია
-@msg	an image VectorCraft can't read was left out	გამოსახულება, რომელსაც VectorCraft ვერ კითხულობს, გამოტოვებულია
+@msg	an image rsm can't read was left out	გამოსახულება, რომელსაც rsm ვერ კითხულობს, გამოტოვებულია
 @msg	an image whose data is cut short was left out	გამოსახულება, რომლის მონაცემებიც შეკვეცილია, გამოტოვებულია
 @msg	its editing data doesn't say where its art is	მისი რედაქტირების მონაცემები არ მიუთითებს, სად არის მისი ნახატი
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	ეს ფაილი PDF-თავსებადობის გარეშეა შენახული და მისი რედაქტირების მონაცემების წაკითხვა ვერ ხერხდება ({why})
@@ -4216,7 +4216,7 @@ font-technology	Variable	ცვლადი
 @msg	the search couldn't start: try again in a moment	ძიება ვერ დაიწყო: ცოტა ხანში სცადეთ ხელახლა
 @msg	searching a folder isn't available on the web	საქაღალდეში ძიება ვებში მიუწვდომელია
 @msg	every search thread stopped on an internal error (please report this bug)	ძიების ყველა ნაკადი შიდა შეცდომით შეჩერდა (გთხოვთ, შეგვატყობინოთ ეს ხარვეზი)
-@msg	VectorCraft's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	VectorCraft-ის შრიფტების საქაღალდე აქ დაყენებული არ არის: მას აყენებს სამაგიდო აპი და vectorcraft-cli
+@msg	rsm's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	rsm-ის შრიფტების საქაღალდე აქ დაყენებული არ არის: მას აყენებს სამაგიდო აპი და vectorcraft-cli
 @msg	choose the font files to add	აირჩიეთ დასამატებელი შრიფტის ფაილები
 @msg	{n} font file(s) are now in {folder}	შრიფტის ფაილები ({n}) ახლა აქ არის: {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	შრიფტის ფაილები ({n}) ახლა აქ არის: {folder}; ვერ დაემატა {failed}: {reason}
@@ -4682,7 +4682,7 @@ mark-style	Japanese	იაპონური
 	High Fidelity Photo	მაღალი სიზუსტის ფოტო
 	Image Trace (Make and Expand)	გამოსახულების ვექტორიზაცია (შექმნა და გაშლა)
 	Joins:	შეერთებები:
-	Keeps the document editable: VectorCraft reopens the PDF with nothing lost. For files you'll edit again.	დოკუმენტს რედაქტირებადს ტოვებს: VectorCraft PDF-ს ხელახლა ხსნის ყველაფრის შენარჩუნებით. ფაილებისთვის, რომლებსაც კიდევ დაარედაქტირებთ.
+	Keeps the document editable: rsm reopens the PDF with nothing lost. For files you'll edit again.	დოკუმენტს რედაქტირებადს ტოვებს: rsm PDF-ს ხელახლა ხსნის ყველაფრის შენარჩუნებით. ფაილებისთვის, რომლებსაც კიდევ დაარედაქტირებთ.
 	Lab Spot Colors	Lab სპოტ-ფერები
 	Lasso	ლასო
 	Length:	სიგრძე:
@@ -4724,7 +4724,7 @@ mark-style	Japanese	იაპონური
 	Variation	ვარიაცია
 	VectorCraft Default	VectorCraft-ის ნაგულისხმევი
 	VectorCraft Generic CMYK (SWOP-like)	VectorCraft-ის ზოგადი CMYK (SWOP-ის მსგავსი)
-	VectorCraft Swatches (.vcswatches)	VectorCraft-ის ფერის ნიმუშები (.vcswatches)
+	rsm Swatches (.vcswatches)	rsm-ის ფერის ნიმუშები (.vcswatches)
 	Vertical Area Type	ვერტიკალური არის ტექსტი
 	Vertical Type	ვერტიკალური ტექსტი
 	Vertical Type on a Path	ვერტიკალური ტექსტი ტრაექტორიაზე
@@ -4852,7 +4852,7 @@ imageTrace	Outline	კონტური
 	from your earlier imports	თქვენი წინა იმპორტებიდან
 	not known yet	ჯერ უცნობია
 	{ready} of {total} ready	მზადაა: {ready} / {total}
-@msg	This shortcut file is in a form VectorCraft can't read.	მალსახმობების ეს ფაილი ისეთ ფორმატშია, რომელსაც VectorCraft ვერ კითხულობს.
+@msg	This shortcut file is in a form rsm can't read.	მალსახმობების ეს ფაილი ისეთ ფორმატშია, რომელსაც rsm ვერ კითხულობს.
 @msg	control must be fillStroke, coloring, drawMode or screenMode	control უნდა იყოს fillStroke, coloring, drawMode ან screenMode
 @msg	give a fraction `t` from 0 to 1	მიუთითეთ წილი `t` 0-დან 1-მდე
 @msg	give the path `id`	მიუთითეთ ტრაექტორიის `id`
@@ -5077,8 +5077,8 @@ imageTrace	Outline	კონტური
 @msg	name is empty	სახელი ცარიელია
 @msg	no symbol named `{n}`	სიმბოლო სახელით `{n}` არ არის
 @msg	no saved selection recalled	შენახული მონიშვნა გამოძახებული არ არის
-@msg	The last start of VectorCraft ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	VectorCraft-ის ბოლო გაშვება ფანჯრის გამოჩენამდე შეწყდა (გრაფიკული პროცესორი: {name}), ამიტომ VectorCraft გაეშვა: {summary}. ამ გრაფიკული პროცესორის ხელახლა საცდელად შეცვალეთ პარამეტრები › წარმადობა › გრაფიკული პროცესორი ან გაუშვით WGPU_BACKEND ცვლადის მითითებით
-@msg	The last start of VectorCraft ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	VectorCraft-ის ბოლო გაშვება გრაფიკული პროცესორების ჩამოთვლისას შეწყდა, ამიტომ VectorCraft გაეშვა მხოლოდ OpenGL-ით: {summary}. სხვა გრაფიკული ინტერფეისების ხელახლა საცდელად შეცვალეთ პარამეტრები › წარმადობა › გრაფიკული პროცესორი ან გაუშვით WGPU_BACKEND ცვლადის მითითებით
+@msg	The last start of rsm ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	rsm-ის ბოლო გაშვება ფანჯრის გამოჩენამდე შეწყდა (გრაფიკული პროცესორი: {name}), ამიტომ rsm გაეშვა: {summary}. ამ გრაფიკული პროცესორის ხელახლა საცდელად შეცვალეთ პარამეტრები › წარმადობა › გრაფიკული პროცესორი ან გაუშვით WGPU_BACKEND ცვლადის მითითებით
+@msg	The last start of rsm ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	rsm-ის ბოლო გაშვება გრაფიკული პროცესორების ჩამოთვლისას შეწყდა, ამიტომ rsm გაეშვა მხოლოდ OpenGL-ით: {summary}. სხვა გრაფიკული ინტერფეისების ხელახლა საცდელად შეცვალეთ პარამეტრები › წარმადობა › გრაფიკული პროცესორი ან გაუშვით WGPU_BACKEND ცვლადის მითითებით
 @msg	the image can't be read as a texture	გამოსახულების ტექსტურად წაკითხვა ვერ ხერხდება
 # Upstream sync 2026-10-18 (5e681065): SVG Interactivity, Live Paint gaps, graph column designs, Cutout/Neon Glow/Poster Edges, undo step names, blend spine errors.
 	Add Event	მოვლენის დამატება
