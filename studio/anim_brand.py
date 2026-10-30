@@ -102,12 +102,33 @@ TARGETED = {
     ],
     'packaging/macos/Info.plist.in': [
         ('<string>rsm Document</string>', '<string>7rrek Document</string>'),
+        # Our type owns only `.7rrek`, with our icon; `.rsm` and the upstream names stay rsm's and open
+        # here as an alternate (exporting them too would let Finder show either app's icon). The icon file
+        # keeps rsm's name (`rsm-document`, see studio/rebrand.py); its art in this repo is 7rrek's.
         ('<array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>',
-         '<array><string>7rrek</string><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>'),
+         '<array><string>7rrek</string></array>'),
+        ('<array><string>7rrek</string><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>',
+         '<array><string>7rrek</string></array>'),
+        ('<string>ps.creative.studio.7rrek.document</string></array>\n'
+         '      <key>CFBundleTypeRole</key><string>Editor</string>\n'
+         '      <key>LSHandlerRank</key><string>Owner</string>\n'
+         '    </dict>\n',
+         '<string>ps.creative.studio.7rrek.document</string></array>\n'
+         '      <key>CFBundleTypeRole</key><string>Editor</string>\n'
+         '      <key>LSHandlerRank</key><string>Owner</string>\n'
+         '    </dict>\n'
+         '    <dict>\n'
+         '      <key>CFBundleTypeName</key><string>rsm Document</string>\n'
+         '      <key>CFBundleTypeExtensions</key><array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>\n'
+         '      <key>CFBundleTypeRole</key><string>Editor</string>\n'
+         '      <key>LSHandlerRank</key><string>Alternate</string>\n'
+         '    </dict>\n'),
     ],
     'xtask/src/bundle.rs': [
         ('"<array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>"',
-         '"<array><string>7rrek</string><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>"'),
+         '"<array><string>7rrek</string></array>"'),
+        ('"<array><string>7rrek</string><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>"',
+         '"<array><string>7rrek</string></array>"'),
     ],
     'crates/ui-egui/src/tests_picks.rs': [
         ('/art/card.vectorcraft', '/art/card.7rrek'),

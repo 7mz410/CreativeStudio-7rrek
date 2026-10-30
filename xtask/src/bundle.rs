@@ -70,7 +70,7 @@ mod tests {
         let read = |p: &str| std::fs::read_to_string(crate::root().join(p)).unwrap();
         let plist = read("packaging/macos/Info.plist.in");
         assert!(
-            plist.contains("<array><string>7rrek</string><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>"),
+            plist.contains("<array><string>7rrek</string></array>"),
             "native format extensions"
         );
         assert!(read("packaging/linux/ai.storyteller.vectorcraft.desktop").contains("Categories=Graphics;2DGraphics;VectorGraphics;"));

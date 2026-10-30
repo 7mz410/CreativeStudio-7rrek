@@ -127,6 +127,8 @@ EXT_FILES = {
     ],
     'packaging/macos/Info.plist.in': [
         ('<string>VectorCraft Document</string>', '<string>rsm Document</string>'),
+        # Our own document type: a type shared with other VectorCraft builds lets Finder show their icon.
+        ('ai.storyteller.vectorcraft.document', 'ps.creative.studio.7rrek.document'),
         ('<key>UTTypeIconFile</key>\n      <string>VectorCraft</string>', '<key>UTTypeIconFile</key>\n      <string>rsm-document</string>'),
         ('<array><string>vectorcraft</string><string>drawcraft</string></array>',
          '<array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>'),
@@ -294,6 +296,14 @@ def main():
 # (packaging/macos/package.sh). Bundle and binary names inside the package stay as upstream has them.
 PACKAGING_NAMES = {
     'packaging/macos/package.sh': [
+        # The document icon the Info.plist names, and the CLI (MCP) inside the app, under our name.
+        ('cp "$ROOT/assets/app-icon/vectorcraft.icns" "$APP/Contents/Resources/VectorCraft.icns"\n',
+         'cp "$ROOT/assets/app-icon/vectorcraft.icns" "$APP/Contents/Resources/VectorCraft.icns"\n'
+         'cp "$ROOT/assets/app-icon/rsm-document.icns" "$APP/Contents/Resources/rsm-document.icns"\n'
+         'cp "$WORK/bin/vectorcraft-cli" "$APP/Contents/MacOS/7rrek-cli"\n'),
+        ('sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/VectorCraft"\n',
+         'sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/7rrek-cli"\n'
+         'sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/VectorCraft"\n'),
         ('VectorCraft.app', '7rrek.app'),
         ('-volname "VectorCraft"', '-volname "7rrek"'),
         ('-hfs-volume-name "VectorCraft"', '-hfs-volume-name "7rrek"'),
@@ -308,7 +318,8 @@ def apply_packaging_names() -> list:
         src = path.read_text(encoding='utf-8')
         out = src
         for a, b in pairs:
-            out = out.replace(a, b)
+            if b not in out:
+                out = out.replace(a, b)
         if out != src:
             path.write_text(out, encoding='utf-8')
             changed.append(path)
