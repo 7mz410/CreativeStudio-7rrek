@@ -6,8 +6,9 @@
 //! near an end of a selected open path continues it. Shift held at the press draws a straight
 //! Pencil line at 45° steps from the Constrain Angle instead. The Pencil's new path starts and ends on
 //! Smart Guides ([`DrawSnap`]: an anchor, a path, in line with the art), hovering too; the points
-//! between follow the hand. The Paintbrush records the pen pressure of each point (a stroke a pen
-//! pressed less than fully on sends `[x, y, pressure]` points) for pressure-sensitive brushes. The
+//! between follow the hand. The Pencil and the Paintbrush record the pen pressure of each point (a
+//! stroke a pen pressed less than fully on sends `[x, y, pressure]` points); the Pencil's pressure
+//! becomes the line's width (`pressureWidth`), the Paintbrush's drives its brush. The
 //! other tools collect the drag polyline (shown as an overlay) and run
 //! one command on release. With Shift held, the Blob Brush's points stay on the horizontal or
 //! vertical line through the press point.
@@ -23,7 +24,7 @@ use crate::{Action, Cursor, Mods, Overlay, PointerEvent, PointerKind, Tool, Tool
 pub struct GestureTool {
     id: &'static str,
     points: Vec<Point>,
-    /// The pen pressure of each of `points` (the Paintbrush only).
+    /// The pen pressure of each of `points` (the Pencil and the Paintbrush).
     pressures: Vec<f32>,
     active: bool,
     began: bool,
@@ -120,7 +121,7 @@ impl GestureTool {
             self.shift_raw.push(raw);
         }
         self.points.push(p);
-        if self.id == "paintbrush" {
+        if self.draws_path() {
             self.pressures.push(pressure);
         }
     }
@@ -233,6 +234,9 @@ impl GestureTool {
             "fill": self.fill,
             "keepSelected": self.keep_selected,
         });
+        if self.id == "pencil" {
+            v["pressureWidth"] = json!(true);
+        }
         if let Some((id, start)) = self.extend {
             v["extend"] = json!({"id": id.0, "end": if start { "start" } else { "end" }});
         } else if let Some((id, within)) = self.redraw {
@@ -337,9 +341,11 @@ impl Tool for GestureTool {
                     if self.points.first().is_some_and(|s| s.distance(p) < cx.tol(1.0)) {
                         // Back at the press point there is no line: the one shown goes.
                         self.points.truncate(1);
+                        self.pressures.truncate(1);
                         return if std::mem::take(&mut self.began) { vec![Action::Cancel] } else { vec![] };
                     }
                     self.points.truncate(1);
+                    self.pressures.truncate(1);
                 } else if self.points.last().is_some_and(|l| l.distance(p) < cx.tol(1.0)) {
                     return vec![];
                 }
@@ -365,6 +371,7 @@ impl Tool for GestureTool {
                 let mut cancel = false;
                 if self.straight {
                     self.points.truncate(1);
+                    self.pressures.truncate(1);
                     if self.points.first().is_some_and(|s| s.distance(p) >= cx.tol(1.0)) {
                         self.push(end, ev.pressure);
                     } else {
@@ -551,8 +558,8 @@ mod tests {
         assert_eq!(v["points"][0], json!([102.0, 98.0]));
     }
 
-    /// #852: the Paintbrush sends each point's pen pressure; a mouse (always fully pressed) and
-    /// the Pencil send plain points.
+    /// #852: the Paintbrush and the Pencil send each point's pen pressure; a mouse (always fully
+    /// pressed) sends plain points.
     #[test]
     fn paintbrush_sends_pen_pressure() {
         let (d, _) = doc_with_rect();
@@ -571,7 +578,8 @@ mod tests {
         };
         assert_eq!(stroke("paintbrush", [0.25, 0.5, 1.0]), json!([[0.0, 0.0, 0.25], [40.0, 0.0, 0.5], [80.0, 0.0, 1.0]]));
         assert_eq!(stroke("paintbrush", [1.0; 3]), json!([[0.0, 0.0], [40.0, 0.0], [80.0, 0.0]]));
-        assert_eq!(stroke("pencil", [0.25, 0.5, 1.0]), json!([[0.0, 0.0], [40.0, 0.0], [80.0, 0.0]]));
+        assert_eq!(stroke("pencil", [0.25, 0.5, 1.0]), json!([[0.0, 0.0, 0.25], [40.0, 0.0, 0.5], [80.0, 0.0, 1.0]]));
+        assert_eq!(stroke("pencil", [1.0; 3]), json!([[0.0, 0.0], [40.0, 0.0], [80.0, 0.0]]));
     }
 
     #[test]

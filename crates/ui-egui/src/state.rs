@@ -192,6 +192,15 @@ pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     (crate::panels::asset_export::ID, "Asset Export", "share-2"),
     (crate::panels::css_properties::ID, "CSS Properties", "globe"),
     (crate::panels::variables::ID, "Variables", "chart-column"),
+    (crate::panels::drawings::ID, "Drawings", "layers"),
+    (crate::panels::xsheet::ID, "Xsheet", "layers"),
+    (crate::panels::palettes::ID, "Palettes", "swatch-book"),
+    (crate::panels::topview::ID, "Top View", "layers"),
+    (crate::panels::camera_preview::ID, "Camera Preview", "layers"),
+    (crate::panels::row_effects::ID, "Row Effects", "layers"),
+    (crate::panels::node_view::ID, "Node View", "layers"),
+    (crate::panels::actions_tpl::ID, "Action Templates", "layers"),
+    (crate::panels::textures::ID, "Textures", "layers"),
 ];
 
 /// Groups of icon panels separated by dividers in the collapsed column.

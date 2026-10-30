@@ -634,6 +634,15 @@ shown_when = [
 hotspot = "Where the pin goes."
 
 [[cursor]]
+id = "CurveDeform"
+group = "Drawing and editing tools"
+shown_when = [
+    "The Curve Deform tool over an anchor or a handle of the curve deformer: a drag moves it.",
+    "The Curve Deform tool away from the curve: a click does nothing.",
+]
+hotspot = "The centre of the cursor, where the press lands."
+
+[[cursor]]
 id = "Measure"
 group = "Drawing and editing tools"
 shown_when = ["The Measure tool: drag to measure distance and angle."]

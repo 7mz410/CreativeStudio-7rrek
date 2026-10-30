@@ -409,7 +409,7 @@ fn magnifier(p: &mut Ink, o: Pos2, out: bool) {
 
 /// Every cursor with a glyph: its own, drawn here, or the one it borrows.
 #[cfg(test)]
-const GLYPHS: [Cursor; 78] = [
+const GLYPHS: [Cursor; 79] = [
     Cursor::Hand,
     Cursor::HandGrab,
     Cursor::ZoomIn,
@@ -488,6 +488,7 @@ const GLYPHS: [Cursor; 78] = [
     Cursor::Scissors,
     Cursor::MeshAdd,
     Cursor::PuppetPin,
+    Cursor::CurveDeform,
 ];
 
 /// The shapes of cursor `c` with its hotspot at `p`; `None` for cursors that stay system cursors

@@ -32,7 +32,13 @@ fn playback_id() -> egui::Id {
 
 /// The Timeline's height for the active document (its rows, up to [`MAX_ROWS_SHOWN`]).
 pub fn height(app: &VectorcraftApp) -> f32 {
-    let rows = app.session.active().map_or(1, |st| st.doc.layers.len());
+    let layers = app.session.active().map_or(1, |st| st.doc.layers.len().max(1));
+    // The camera, sound and bones rows under the layers count too.
+    let rows = layers
+        + crate::timeline_av::rows(app)
+        + crate::timeline_rig::rows(app)
+        + crate::timeline_peg::rows(app)
+        + crate::panels::timeline_timing::rows(app);
     BAR_H + RULER_H + rows.clamp(1, MAX_ROWS_SHOWN) as f32 * ROW_H + 6.0
 }
 
@@ -47,6 +53,7 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     let current = info["current"].as_u64().unwrap_or(1) as u32;
     let fps = info["fps"].as_u64().unwrap_or(12).max(1) as u32;
     let onion = info["onion"].as_bool().unwrap_or(false);
+    let light = info["lightTable"].as_bool().unwrap_or(false);
 
     tick(app, ui, fps);
 
@@ -54,8 +61,13 @@ pub fn timeline(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.painter().rect_filled(full, 0.0, t.panel);
     ui.painter().line_segment([full.left_top(), full.right_top()], Stroke::new(1.0, t.border));
     let bar = Rect::from_min_size(full.min, vec2(full.width(), BAR_H));
-    ui.scope_builder(egui::UiBuilder::new().max_rect(bar).layout(egui::Layout::left_to_right(egui::Align::Center)), |ui| {
-        controls(app, ui, &t, current, frames, fps, onion);
+    // Right to left in Arabic; scrolls sideways when the window is too narrow for every button.
+    let flow = if egui::is_rtl() { egui::Layout::right_to_left(egui::Align::Center) } else { egui::Layout::left_to_right(egui::Align::Center) };
+    ui.scope_builder(egui::UiBuilder::new().max_rect(bar), |ui| {
+        egui::ScrollArea::horizontal().id_salt("timeline-bar").show(ui, |ui| {
+            ui.set_min_height(BAR_H);
+            ui.with_layout(flow, |ui| controls(app, ui, &t, current, frames, fps, onion, light));
+        });
     });
     let below = Rect::from_min_max(pos2(full.min.x, bar.max.y), full.max);
     ui.scope_builder(egui::UiBuilder::new().max_rect(below), |ui| {
@@ -73,12 +85,15 @@ fn info_of(doc: &vectorcraft_doc::Document) -> Value {
         .iter()
         .rev()
         .map(|r| {
-            let keys: Vec<Value> =
-                a.row_keys(r).into_iter().map(|(f, id)| json!({"frame": f, "id": id.0, "tween": a.tweens.contains(&id.0)})).collect();
+            let keys: Vec<Value> = a
+                .row_keys(r)
+                .into_iter()
+                .map(|(f, id)| json!({"frame": f, "id": id.0, "tween": a.tweens.contains(&id.0), "ease": a.eases.get(&id.0)}))
+                .collect();
             json!({"id": r.id.0, "name": r.name.clone().unwrap_or_default(), "keys": keys})
         })
         .collect();
-    json!({"fps": a.fps, "frames": a.frames, "current": a.current, "rows": rows, "onion": a.onion_before + a.onion_after > 0})
+    json!({"fps": a.fps, "frames": a.frames, "current": a.current, "rows": rows, "onion": a.onion_before + a.onion_after > 0, "lightTable": a.light_table.is_some()})
 }
 
 /// Step the playhead while playing.
@@ -92,36 +107,52 @@ fn tick(app: &mut VectorcraftApp, ui: &Ui, fps: u32) {
     let step = 1.0 / fps as f32;
     if pb.acc >= step {
         pb.acc %= step;
-        let _ = app.run("anim.next", json!({}));
+        // Back at frame 1 after the last: the sound starts over with the picture.
+        if app.run("anim.next", json!({})).ok().and_then(|r| r["frame"].as_u64()) == Some(1) {
+            crate::timeline_audio::start(app, 1);
+        }
     }
     ctx.data_mut(|d| d.insert_temp(playback_id(), pb));
     ctx.request_repaint();
 }
 
 fn set_playing(ui: &Ui, on: bool) {
+    if !on {
+        crate::timeline_audio::stop();
+    }
     ui.ctx().data_mut(|d| d.insert_temp(playback_id(), Playback { playing: on, acc: 0.0 }));
 }
 
-fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32, onion: bool) {
+#[allow(clippy::too_many_arguments)]
+fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, frames: u32, fps: u32, onion: bool, light: bool) {
     let playing = ui.ctx().data(|d| d.get_temp::<Playback>(playback_id())).is_some_and(|p| p.playing);
     {
         ui.add_space(8.0);
         ui.label(egui::RichText::new(tl!("Timeline")).font(theme::semibold(12.0)).color(t.text_strong));
         ui.add_space(10.0);
         if ui.small_button("⏮").on_hover_text(tl!("First Frame")).clicked() {
+            set_playing(ui, false);
             let _ = app.run("anim.goto", json!({"frame": 1}));
         }
         if ui.small_button("◀").on_hover_text(tl!("Previous Frame")).clicked() {
+            set_playing(ui, false);
             let _ = app.run("anim.prev", json!({}));
         }
         let play = if playing { "⏸" } else { "▶" };
         if ui.small_button(play).on_hover_text(if playing { tl!("Pause") } else { tl!("Play") }).clicked() {
             set_playing(ui, !playing);
+            if playing {
+                crate::timeline_audio::stop();
+            } else {
+                crate::timeline_audio::start(app, current);
+            }
         }
         if ui.small_button("▶|").on_hover_text(tl!("Next Frame")).clicked() {
+            set_playing(ui, false);
             let _ = app.run("anim.next", json!({}));
         }
         if ui.small_button("⏭").on_hover_text(tl!("Last Frame")).clicked() {
+            set_playing(ui, false);
             let _ = app.run("anim.goto", json!({"frame": frames}));
         }
         ui.add_space(8.0);
@@ -150,15 +181,52 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         if ui.button(tl!("Motion Tween")).on_hover_text(tl!("Move the keyframe's art toward the next keyframe")).clicked() {
             run_reporting(app, "anim.tween");
         }
+        ui.menu_button(tl!("Easing"), |ui| {
+            for (id, label) in
+                [("linear", tl!("Linear")), ("easeIn", tl!("Ease In")), ("easeOut", tl!("Ease Out")), ("easeInOut", tl!("Ease In Out"))]
+            {
+                if ui.button(label).clicked() {
+                    if let Err(e) = app.run("anim.tween", json!({"ease": id})) {
+                        app.status(e);
+                    }
+                    ui.close();
+                }
+            }
+        })
+        .response
+        .on_hover_text(tl!("How the tween speeds up and slows down"));
+        if ui.button(tl!("Camera Key")).on_hover_text(tl!("Keep what the camera sees at this frame")).clicked() {
+            run_reporting(app, "anim.cameraKey");
+        }
+        if ui.button(tl!("Add Peg")).on_hover_text(tl!("Hang the current layer from a new peg")).clicked() {
+            run_reporting(app, "peg.add");
+        }
+        if ui.button(tl!("Peg Key")).on_hover_text(tl!("Key the current layer's peg at this frame")).clicked() {
+            run_reporting(app, "peg.key");
+        }
+        cutter_menu(app, ui);
+        blend_menu(app, ui);
+        if ui.button(tl!("Import Sound…")).on_hover_text(tl!("Add a WAV, MP3 or Ogg sound at this frame")).clicked() {
+            run_reporting(app, "anim.soundImportAs");
+        }
+        if ui.button(tl!("Lip Sync")).on_hover_text(tl!("Pick the current layer's mouth drawings from the first sound")).clicked() {
+            run_reporting(app, "anim.lipSync");
+        }
         ui.add_space(8.0);
         // Onion skin: one keyframe on each side, faint.
         if ui.selectable_label(onion, tl!("Onion Skin")).on_hover_text(tl!("Show the keyframes before and after faintly")).clicked() {
             let n = if onion { 0 } else { 1 };
             let _ = app.run("anim.onion", json!({"before": n, "after": n}));
         }
+        if ui.selectable_label(light, tl!("Light Table")).on_hover_text(tl!("Show the other rows faded while drawing on this one")).clicked() {
+            run_reporting(app, "anim.lightTable");
+        }
         ui.add_space(8.0);
         if ui.button(tl!("Export GIF…")).on_hover_text(tl!("Export Animated GIF")).clicked() {
             run_reporting(app, "anim.exportGifAs");
+        }
+        if ui.button(tl!("Export Video…")).on_hover_text(tl!("Export the frames as a WebM video")).clicked() {
+            run_reporting(app, "anim.exportVideoAs");
         }
     }
 }
@@ -173,6 +241,165 @@ pub fn export_gif(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> 
     Ok(info)
 }
 
+/// `anim.exportVideoAs`: the frames as a WebM at `path`, else a picked file (the web downloads it).
+pub fn export_video(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> Result<Value, String> {
+    let doc = app.session.active().ok_or("no document")?.doc.clone();
+    let ext = if p.get("format").and_then(Value::as_str) == Some("mp4") { "mp4" } else { "webm" };
+    let path = crate::io::target_path(app, path, ext)?;
+    // A name typed with .mp4 picks MP4.
+    let mut p = p.clone();
+    if p.get("format").is_none() && path.to_ascii_lowercase().ends_with(".mp4") {
+        p["format"] = json!("mp4");
+    }
+    let (bytes, mut info) = vectorcraft_engine::cmd::anim::encode_video(&doc, &p).map_err(|e| e.to_string())?;
+    crate::io::write_to(&mut app.services, &path, &bytes)?;
+    info["path"] = json!(path);
+    Ok(info)
+}
+
+/// `anim.soundImportAs`: `anim.soundImport` for `path`, else a picked sound file.
+pub fn import_sound(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> Result<Value, String> {
+    let path = match path {
+        Some(p) => p,
+        None => {
+            let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Sounds", &["wav", "mp3", "ogg"])], ..Default::default() };
+            crate::picks::open(app, &pick).ok_or("cancelled")?
+        }
+    };
+    let mut p = p.clone();
+    p["path"] = json!(path);
+    app.run("anim.soundImport", p)
+}
+
+/// `character.saveAs`: the current layer's row (or `row`) as a character template at `path`, else a
+/// picked file (the web downloads it).
+pub fn save_character(app: &mut VectorcraftApp, path: Option<String>, p: &Value) -> Result<Value, String> {
+    use vectorcraft_engine::cmd::{anim::row_of, character};
+    let st = app.session.active().ok_or("no document")?;
+    let row = match p.get("row").and_then(Value::as_u64) {
+        Some(r) => vectorcraft_doc::NodeId(r),
+        None => st.current_layer().and_then(|l| row_of(&st.doc, l)).ok_or("no current layer")?,
+    };
+    let bytes = character::template_bytes(&st.doc, row).ok_or("no such layer")?;
+    let path = crate::io::target_path(app, path, character::EXTENSION)?;
+    crate::io::write_to(&mut app.services, &path, &bytes)?;
+    Ok(json!({"path": path, "bytes": bytes.len()}))
+}
+
+/// `character.loadAs`: `character.load` for `path`, else a picked template.
+pub fn load_character(app: &mut VectorcraftApp, path: Option<String>) -> Result<Value, String> {
+    use vectorcraft_engine::cmd::character::EXTENSION;
+    let path = match path {
+        Some(p) => p,
+        None => {
+            let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Character Templates", &[EXTENSION])], ..Default::default() };
+            crate::picks::open(app, &pick).ok_or("cancelled")?
+        }
+    };
+    app.run("character.load", json!({"path": path}))
+}
+
+/// The Cutter menu: cut the current layer's row by another row's shape, keep only the overlap
+/// instead, or stop cutting it.
+fn cutter_menu(app: &mut VectorcraftApp, ui: &mut egui::Ui) {
+    let Some(st) = app.session.active() else { return };
+    let row = st.current_layer().and_then(|l| vectorcraft_engine::cmd::anim::row_of(&st.doc, l));
+    let others: Vec<(u64, String)> = st.doc.layers.iter().rev().filter(|l| Some(l.id) != row).map(|l| (l.id.0, l.display_name())).collect();
+    let list = app.session.execute("cutter.list", &json!({})).unwrap_or(Value::Null);
+    let mine = list["cutters"].as_array().into_iter().flatten().find(|c| c["row"].as_u64() == row.map(|r| r.0)).cloned();
+    // The cutter's fields as they are now. Every change re-sends all of them, so none is lost.
+    let matte = mine.as_ref().map_or(Value::Null, |c| c["matte"].clone());
+    let inverted = mine.as_ref().and_then(|c| c["inverted"].as_bool()).unwrap_or(false);
+    let by = mine.as_ref().and_then(|c| c["by"].as_str()).unwrap_or("shape").to_string();
+    let also: Vec<u64> = mine.as_ref().and_then(|c| c["also"].as_array()).into_iter().flatten().filter_map(Value::as_u64).collect();
+    let op = mine.as_ref().and_then(|c| c["op"].as_str()).unwrap_or("add").to_string();
+    let mut act: Option<(&str, Value)> = None;
+    ui.menu_button(tl!("Cutter"), |ui| {
+        ui.label(tl!("Cut This Layer By"));
+        for (id, name) in &others {
+            let on = mine.as_ref().is_some_and(|c| c["matte"].as_u64() == Some(*id));
+            if ui.selectable_label(on, name).clicked() {
+                // The new matte leaves the also-list: it can't be both.
+                let rest: Vec<u64> = also.iter().copied().filter(|a| a != id).collect();
+                act = Some(("cutter.add", cutter_args(json!(id), inverted, &by, &rest, &op)));
+                ui.close();
+            }
+        }
+        if mine.is_some() {
+            ui.separator();
+            let next = if by == "brightness" { "shape" } else { "brightness" };
+            if ui.selectable_label(by == "brightness", tl!("By Brightness")).clicked() {
+                act = Some(("cutter.add", cutter_args(matte.clone(), inverted, next, &also, &op)));
+                ui.close();
+            }
+            ui.menu_button(tl!("Also Cut By"), |ui| {
+                for (id, name) in others.iter().filter(|(id, _)| Some(*id) != matte.as_u64()) {
+                    let on = also.contains(id);
+                    if ui.selectable_label(on, name).clicked() {
+                        let next: Vec<u64> =
+                            if on { also.iter().copied().filter(|a| a != id).collect() } else { also.iter().copied().chain([*id]).collect() };
+                        act = Some(("cutter.add", cutter_args(matte.clone(), inverted, &by, &next, &op)));
+                    }
+                }
+            });
+            if !also.is_empty() {
+                ui.label(tl!("Combine"));
+                ui.horizontal(|ui| {
+                    for (key, label) in [("add", tl!("Add")), ("subtract", tl!("Subtract")), ("intersect", tl!("Intersect"))] {
+                        if ui.selectable_label(op == key, label).clicked() {
+                            act = Some(("cutter.add", cutter_args(matte.clone(), inverted, &by, &also, key)));
+                            ui.close();
+                        }
+                    }
+                });
+            }
+            if ui.selectable_label(inverted, tl!("Inverted (Keep Only the Overlap)")).clicked() {
+                act = Some(("cutter.add", cutter_args(matte.clone(), !inverted, &by, &also, &op)));
+                ui.close();
+            }
+            if ui.button(tl!("Remove Cutter")).clicked() {
+                act = Some(("cutter.remove", json!({})));
+                ui.close();
+            }
+        }
+    })
+    .response
+    .on_hover_text(tl!("Hide this layer where another layer's shape covers it"));
+    if let Some((id, p)) = act
+        && let Err(e) = app.run(id, p)
+    {
+        app.status(e);
+    }
+}
+
+/// The `cutter.add` params for a whole cutter.
+fn cutter_args(matte: Value, inverted: bool, by: &str, also: &[u64], op: &str) -> Value {
+    json!({"matte": matte, "inverted": inverted, "by": by, "also": also, "op": op})
+}
+
+/// The Blend menu: how the current layer's row mixes with the rows beneath it (its blend mode).
+fn blend_menu(app: &mut VectorcraftApp, ui: &mut egui::Ui) {
+    let Some(st) = app.session.active() else { return };
+    let Some(row) = st.current_layer().and_then(|l| vectorcraft_engine::cmd::anim::row_of(&st.doc, l)) else { return };
+    let current = st.doc.node(row).map_or(vectorcraft_color::BlendMode::Normal, |n| n.blend);
+    let mut pick = None;
+    ui.menu_button(tl!("Blend"), |ui| {
+        for mode in vectorcraft_color::BlendMode::ALL {
+            if ui.selectable_label(mode == current, tl!(mode.label())).clicked() {
+                pick = Some(mode);
+                ui.close();
+            }
+        }
+    })
+    .response
+    .on_hover_text(tl!("How this layer's art mixes with the layers beneath it"));
+    if let Some(mode) = pick
+        && let Err(e) = app.run("object.setProps", json!({"id": row.0, "blend": mode.label()}))
+    {
+        app.status(e);
+    }
+}
+
 fn run_reporting(app: &mut VectorcraftApp, id: &str) {
     if let Err(e) = app.run(id, json!({})) {
         app.status(e);
@@ -181,19 +408,27 @@ fn run_reporting(app: &mut VectorcraftApp, id: &str) {
 
 fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], current: u32, frames: u32) {
     let width = NAME_W + frames as f32 * CELL_W + 8.0;
-    let height = RULER_H + rows.len().max(1) as f32 * ROW_H;
+    let extra =
+        crate::timeline_av::rows(app) + crate::timeline_rig::rows(app) + crate::timeline_peg::rows(app) + crate::panels::timeline_timing::rows(app);
+    let height = RULER_H + (rows.len().max(1) + extra) as f32 * ROW_H;
     let (area, resp) = ui.allocate_exact_size(vec2(width, height), Sense::click_and_drag());
     let p = ui.painter_at(area);
+    // Laid out left to right, then mirrored in a right-to-left language: names on the right,
+    // frame 1 next to them, time running leftwards.
+    let rtl = egui::is_rtl();
+    let mx = |x: f32| if rtl { area.min.x + area.max.x - x } else { x };
+    let mrect = |r: Rect| Rect::from_two_pos(pos2(mx(r.min.x), r.min.y), pos2(mx(r.max.x), r.max.y));
+    let (start, end_align) = if rtl { (Align2::RIGHT_TOP, Align2::RIGHT_CENTER) } else { (Align2::LEFT_TOP, Align2::LEFT_CENTER) };
     let x0 = area.min.x + NAME_W;
     let col = |f: u32| x0 + (f - 1) as f32 * CELL_W;
 
     // Frame ruler: a tick per frame, numbers every 5.
     for f in 1..=frames {
-        let x = col(f);
+        let x = mx(col(f));
         let major = f == 1 || f % 5 == 0;
         p.line_segment([pos2(x, area.min.y + if major { 2.0 } else { 9.0 }), pos2(x, area.min.y + RULER_H)], Stroke::new(1.0, t.ruler_tick));
         if major {
-            p.text(pos2(x + 2.0, area.min.y + 1.0), Align2::LEFT_TOP, f.to_string(), egui::FontId::proportional(9.5), t.text_dim);
+            p.text(pos2(x + if rtl { -2.0 } else { 2.0 }, area.min.y + 1.0), start, f.to_string(), egui::FontId::proportional(9.5), t.text_dim);
         }
     }
 
@@ -202,7 +437,7 @@ fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], curre
         let band = Rect::from_min_size(pos2(area.min.x, y), vec2(width, ROW_H));
         p.rect_filled(band, 0.0, if i % 2 == 0 { t.panel } else { t.panel_darker });
         let name = row["name"].as_str().unwrap_or("");
-        p.text(pos2(area.min.x + 8.0, y + ROW_H / 2.0), Align2::LEFT_CENTER, name, egui::FontId::proportional(11.5), t.text);
+        p.text(pos2(mx(area.min.x + 8.0), y + ROW_H / 2.0), end_align, name, egui::FontId::proportional(11.5), t.text);
         let keys: Vec<(u32, bool)> = row["keys"]
             .as_array()
             .into_iter()
@@ -213,20 +448,35 @@ fn grid(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, rows: &[Value], curre
             let next = keys.get(k + 1).map(|(n, _)| *n);
             let end = next.unwrap_or(frames + 1);
             let span = Rect::from_min_max(pos2(col(*f), y + 3.0), pos2(col(end), y + ROW_H - 3.0));
-            p.rect_filled(span, 3.0, t.accent.gamma_multiply(if *tween && next.is_some() { 0.45 } else { 0.25 }));
+            p.rect_filled(mrect(span), 3.0, t.accent.gamma_multiply(if *tween && next.is_some() { 0.45 } else { 0.25 }));
             if *tween && next.is_some() {
-                p.arrow(pos2(col(*f) + CELL_W, span.center().y), vec2(col(end) - col(*f) - CELL_W * 1.5, 0.0), Stroke::new(1.0, t.accent));
+                let len = col(end) - col(*f) - CELL_W * 1.5;
+                p.arrow(pos2(mx(col(*f) + CELL_W), span.center().y), vec2(if rtl { -len } else { len }, 0.0), Stroke::new(1.0, t.accent));
             }
-            p.circle_filled(pos2(col(*f) + CELL_W / 2.0, y + ROW_H / 2.0), 3.5, t.accent);
+            p.circle_filled(pos2(mx(col(*f) + CELL_W / 2.0), y + ROW_H / 2.0), 3.5, t.accent);
         }
     }
 
+    // The camera and sound rows, under the layers.
+    let top = area.min.y + RULER_H + rows.len().max(1) as f32 * ROW_H;
+    let g = crate::timeline_av::Geom { area, top, row_h: ROW_H, name_w: NAME_W, x0, cell_w: CELL_W, frames, rtl };
+    crate::timeline_av::paint(app, &p, t, g);
+    // The bones row, under those.
+    let top = top + crate::timeline_av::rows(app) as f32 * ROW_H;
+    crate::timeline_rig::paint(app, &p, t, crate::timeline_av::Geom { top, ..g });
+    // The pegs' rows, under the bones.
+    let top = top + crate::timeline_rig::rows(app) as f32 * ROW_H;
+    crate::timeline_peg::paint(app, &p, t, crate::timeline_av::Geom { top, ..g });
+    // The timing chart of the current row's keys, under the pegs.
+    let top = top + crate::timeline_peg::rows(app) as f32 * ROW_H;
+    crate::panels::timeline_timing::paint(app, &p, t, crate::timeline_av::Geom { top, ..g });
+
     // The playhead.
-    let x = col(current) + CELL_W / 2.0;
+    let x = mx(col(current) + CELL_W / 2.0);
     p.line_segment([pos2(x, area.min.y), pos2(x, area.max.y)], Stroke::new(1.5, Color32::from_rgb(0xeb, 0x1b, 0x3c)));
 
     // Click or drag on the frames: go there (and to that row's layer).
-    if let Some(pos) = resp.interact_pointer_pos().filter(|_| resp.clicked() || resp.dragged())
+    if let Some(pos) = resp.interact_pointer_pos().filter(|_| resp.clicked() || resp.dragged()).map(|q| pos2(mx(q.x), q.y))
         && pos.x >= x0
     {
         let f = (((pos.x - x0) / CELL_W).floor() as u32 + 1).clamp(1, frames);
@@ -282,6 +532,11 @@ mod tests {
         assert_eq!(r["frames"], 24);
         assert!(std::fs::read(&path).unwrap().starts_with(b"GIF89a"));
         let _ = std::fs::remove_file(&path);
+        let path = path.with_extension("webm");
+        let r = app.run("anim.exportVideoAs", json!({"path": path.to_string_lossy(), "scale": 0.25})).unwrap();
+        assert_eq!(r["frames"], 24);
+        assert!(std::fs::read(&path).unwrap().starts_with(&[0x1A, 0x45, 0xDF, 0xA3]));
+        let _ = std::fs::remove_file(&path);
     }
 
     #[test]
@@ -315,6 +570,12 @@ mod snapshot_probe {
         app.run("anim.keyframe", json!({"frame": 1})).unwrap();
         app.run("shape.ellipse", json!({"x": 100, "y": 300, "width": 80, "height": 80})).unwrap();
         app.run("anim.blankKeyframe", json!({"frame": 6})).unwrap();
+        app.run("anim.tween", json!({"frame": 1, "ease": "easeOut"})).unwrap();
+        // TIMELINE_LANG=ar for a look right to left.
+        if let Some(l) = std::env::var("TIMELINE_LANG").ok().and_then(|c| crate::i18n::Lang::from_code(&c)) {
+            crate::i18n::set_current(l);
+            egui::set_rtl(crate::i18n::bidi::RTL_CODES.contains(&l.code()));
+        }
         let mut ready = false;
         let mut h = egui_kittest::Harness::builder().with_size(egui::vec2(1000.0, 200.0)).wgpu().build_ui_state(
             move |ui, app: &mut VectorcraftApp| {

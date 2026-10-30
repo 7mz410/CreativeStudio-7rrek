@@ -4,6 +4,7 @@
 //! Every icon panel has a body (`show_icon_panel`) and a panel (≡) menu (`panel_menu`).
 
 pub mod actions;
+pub mod actions_tpl;
 pub mod align;
 pub mod appearance;
 pub mod artboards;
@@ -11,12 +12,14 @@ pub mod asset_export;
 pub mod attributes;
 pub mod blend;
 pub mod brushes;
+pub mod camera_preview;
 pub mod character;
 pub mod color;
 pub mod color_guide;
 pub mod color_themes;
 pub mod css_properties;
 pub mod doc_info;
+pub mod drawings;
 pub mod flattener_preview;
 pub mod glyphs;
 pub mod gradient;
@@ -30,11 +33,14 @@ pub mod library_panel;
 pub mod links;
 pub mod magic_wand;
 pub mod navigator;
+pub mod node_view;
 pub mod opentype;
+pub mod palettes;
 pub mod paragraph;
 pub mod pathfinder;
 pub mod pattern_options;
 pub mod properties;
+pub mod row_effects;
 pub mod separations;
 pub mod stroke;
 pub mod svg_interactivity;
@@ -42,9 +48,13 @@ pub mod swatches;
 pub mod symbols;
 pub mod tabs;
 pub mod text_styles;
+pub mod textures;
+pub mod timeline_timing;
+pub mod topview;
 pub mod transform;
 pub mod transparency;
 pub mod variables;
+pub mod xsheet;
 
 use egui::{Rect, Sense, Ui, vec2};
 use serde_json::{Value, json};
@@ -174,6 +184,15 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         "attributes" => attributes::show(app, ui),
         svg_interactivity::ID => svg_interactivity::show(app, ui),
         variables::ID => variables::show(app, ui),
+        drawings::ID => drawings::show(app, ui),
+        xsheet::ID => xsheet::show(app, ui),
+        palettes::ID => palettes::show(app, ui),
+        topview::ID => topview::show(app, ui),
+        camera_preview::ID => camera_preview::show(app, ui),
+        row_effects::ID => row_effects::show(app, ui),
+        node_view::ID => node_view::show(app, ui),
+        actions_tpl::ID => actions_tpl::show(app, ui),
+        textures::ID => textures::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),
         links::ID => links::show(app, ui),
         asset_export::ID => asset_export::show(app, ui),

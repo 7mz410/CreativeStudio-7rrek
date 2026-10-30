@@ -44,7 +44,7 @@ pub use sketch::{HALFTONE_TYPES, HalftonePattern};
 pub use texture::{GRAIN_TYPES, Grain, LIGHT_DIRECTIONS, Light, TEXTURES, TEXTURES_LOADED, Texture};
 
 /// The Photoshop-style effect ids (all raster effects, see [`crate::is_raster`]).
-pub const PIXEL_EFFECTS: [&str; 56] = [
+pub const PIXEL_EFFECTS: [&str; 68] = [
     "artistic.coloredPencil",
     "artistic.cutout",
     "artistic.dryBrush",
@@ -60,7 +60,10 @@ pub const PIXEL_EFFECTS: [&str; 56] = [
     "artistic.sponge",
     "artistic.underpainting",
     "artistic.watercolor",
+    "blur.box",
+    "blur.directional",
     "blur.radial",
+    "blur.radialZoom",
     "blur.smart",
     "brushStrokes.accentedEdges",
     "brushStrokes.angledStrokes",
@@ -73,6 +76,12 @@ pub const PIXEL_EFFECTS: [&str; 56] = [
     "distort.diffuseGlow",
     "distort.glass",
     "distort.oceanRipple",
+    "key.chroma",
+    "filter.bloom",
+    "blur.motion",
+    "generator.gradient",
+    "combine.tone",
+    "combine.highlight",
     "pixelate.colorHalftone",
     "pixelate.crystallize",
     "pixelate.mezzotint",
@@ -101,6 +110,9 @@ pub const PIXEL_EFFECTS: [&str; 56] = [
     "texture.texturizer",
     "video.deinterlace",
     "video.ntscColors",
+    "adjust.greyscale",
+    "adjust.colourScale",
+    "adjust.transparency",
 ];
 
 /// A Photoshop-style raster effect with its parameters read and clamped to their ranges. Lengths
@@ -286,6 +298,30 @@ pub enum PixelFx {
     DeInterlace { even: bool, interpolate: bool },
     /// Video › NTSC Colors: colours a television signal can't carry made less saturated.
     NtscColors,
+    /// Blur › Box Blur: separable 2D box blur by `radius`.
+    BoxBlur { radius: f64 },
+    /// Blur › Directional Blur: directional smear along `angle` (degrees) by `radius`.
+    DirectionalBlur { radius: f64, angle: f64 },
+    /// Blur › Radial Zoom Blur: radiating blur by `amount` from `(cx, cy)` (0..1).
+    RadialZoomBlur { amount: f64, cx: f64, cy: f64 },
+    /// Adjust › Greyscale: desaturates using Rec.709 luma by `amount` (0..100%).
+    Greyscale { amount: f64 },
+    /// Adjust › Colour Scale: scales each channel by multipliers `(r, g, b, a)`.
+    ColourScale { r: f64, g: f64, b: f64, a: f64 },
+    /// Adjust › Transparency: scales alpha by `(1.0 - amount / 100)`.
+    Transparency { amount: f64 },
+    /// Key › Chroma Key: makes pixels near `color` in Cb/Cr transparent by `threshold` (0..100), fades them in over `softness`, pulls green spill down by `spill` (0..100).
+    ChromaKey { color: [u8; 3], threshold: f64, softness: f64, spill: f64 },
+    /// Filter › Bloom: softens and blurs pixels brighter than `threshold` by `radius`, adding light back on top by `amount`.
+    Bloom { threshold: f64, radius: f64, amount: f64 },
+    /// Blur › Motion Blur: blurs along displacement vector `(dx, dy)` with `samples`.
+    MotionBlur { dx: f64, dy: f64, samples: usize },
+    /// Generator › Gradient: linear or radial gradient between `c0` and `c1`, inside row.
+    Gradient { grad_type: String, c0: [u8; 4], c1: [u8; 4], p0: (f64, f64), p1: (f64, f64) },
+    /// Combine › Tone: darkens with `color` at `opacity`.
+    Tone { color: [u8; 3], opacity: f64 },
+    /// Combine › Highlight: brightens with `color` at `opacity`.
+    Highlight { color: [u8; 3], opacity: f64 },
 }
 
 /// What a raster's colour channels hold, for the filters that treat them apart (Color Halftone
@@ -597,6 +633,63 @@ pub(crate) fn parse(id: &str, p: &Value) -> Option<PixelFx> {
             interpolate: text(p, "create", "duplication").eq_ignore_ascii_case("interpolation"),
         },
         "video.ntscColors" => PixelFx::NtscColors,
+        "blur.box" => PixelFx::BoxBlur { radius: num(p, "radius", 5.0).clamp(0.0, 250.0) },
+        "blur.directional" => PixelFx::DirectionalBlur { radius: num(p, "radius", 5.0).clamp(0.0, 250.0), angle: num(p, "angle", 0.0) },
+        "blur.radialZoom" => PixelFx::RadialZoomBlur {
+            amount: num(p, "amount", 10.0).clamp(0.0, 100.0),
+            cx: num(p, "cx", 0.5).clamp(0.0, 1.0),
+            cy: num(p, "cy", 0.5).clamp(0.0, 1.0),
+        },
+        "adjust.greyscale" => PixelFx::Greyscale { amount: num(p, "amount", 100.0).clamp(0.0, 100.0) },
+        "adjust.colourScale" => {
+            let k = num(p, "amount", 100.0) / 100.0;
+            PixelFx::ColourScale { r: num(p, "r", 1.0) * k, g: num(p, "g", 1.0) * k, b: num(p, "b", 1.0) * k, a: num(p, "a", 1.0) }
+        }
+        "adjust.transparency" => PixelFx::Transparency { amount: num(p, "amount", 50.0).clamp(0.0, 100.0) },
+        "key.chroma" => {
+            let color = hex_rgb(text(p, "color", "#00ff00"))?;
+            PixelFx::ChromaKey {
+                color,
+                threshold: num(p, "threshold", 20.0).clamp(0.0, 100.0),
+                softness: num(p, "softness", 10.0).clamp(0.0, 100.0),
+                spill: num(p, "spill", 50.0).clamp(0.0, 100.0),
+            }
+        }
+        "filter.bloom" => PixelFx::Bloom {
+            threshold: num(p, "threshold", 75.0).clamp(0.0, 100.0),
+            radius: num(p, "radius", 10.0).clamp(0.0, 250.0),
+            amount: num(p, "amount", 50.0).clamp(0.0, 100.0),
+        },
+        "blur.motion" => {
+            let dx_val = p.get("dx").and_then(Value::as_f64).unwrap_or(0.0);
+            let dy_val = num(p, "dy", 0.0);
+            let (dx, dy) = if dx_val.hypot(dy_val) > 1e-4 {
+                (dx_val, dy_val)
+            } else if let Some(r) = p.get("radius").and_then(Value::as_f64).filter(|r| *r > 0.0) {
+                (r, 0.0)
+            } else {
+                (0.0, 0.0)
+            };
+            PixelFx::MotionBlur { dx, dy, samples: num(p, "samples", 8.0).clamp(2.0, 32.0).round() as usize }
+        }
+        "generator.gradient" => {
+            let grad_type = text(p, "type", "linear").to_string();
+            let c0_rgb = hex_rgb(text(p, "color0", "#000000")).unwrap_or([0, 0, 0]);
+            let c1_rgb = hex_rgb(text(p, "color1", "#ffffff")).unwrap_or([255, 255, 255]);
+            let c0 = [c0_rgb[0], c0_rgb[1], c0_rgb[2], 255];
+            let c1 = [c1_rgb[0], c1_rgb[1], c1_rgb[2], 255];
+            let p0 = (num(p, "x0", 0.0).clamp(0.0, 1.0), num(p, "y0", 0.5).clamp(0.0, 1.0));
+            let p1 = (num(p, "x1", 1.0).clamp(0.0, 1.0), num(p, "y1", 0.5).clamp(0.0, 1.0));
+            PixelFx::Gradient { grad_type, c0, c1, p0, p1 }
+        }
+        "combine.tone" => {
+            let color = hex_rgb(text(p, "color", "#000000")).unwrap_or([0, 0, 0]);
+            PixelFx::Tone { color, opacity: num(p, "opacity", 50.0).clamp(0.0, 100.0) }
+        }
+        "combine.highlight" => {
+            let color = hex_rgb(text(p, "color", "#ffffff")).unwrap_or([255, 255, 255]);
+            PixelFx::Highlight { color, opacity: num(p, "opacity", 50.0).clamp(0.0, 100.0) }
+        }
         _ => return None,
     })
 }
@@ -611,6 +704,17 @@ impl PixelFx {
             // A rotated corner reaches the circle through the corners.
             PixelFx::RadialBlur { zoom: false, .. } => (far - near).max(0.0),
             PixelFx::RadialBlur { amount, zoom: true, .. } => far * (blur::zoom_extent(amount).exp() - 1.0),
+            PixelFx::BoxBlur { radius } | PixelFx::DirectionalBlur { radius, .. } => radius,
+            PixelFx::RadialZoomBlur { amount, .. } => far * (amount / 100.0 * 0.5),
+            PixelFx::Greyscale { .. }
+            | PixelFx::ColourScale { .. }
+            | PixelFx::Transparency { .. }
+            | PixelFx::ChromaKey { .. }
+            | PixelFx::Gradient { .. }
+            | PixelFx::Tone { .. }
+            | PixelFx::Highlight { .. } => 0.0,
+            PixelFx::Bloom { radius, .. } => radius,
+            PixelFx::MotionBlur { dx, dy, .. } => dx.hypot(dy),
             PixelFx::SmartBlur { radius, .. } => radius,
             PixelFx::AccentedEdges { .. } => 0.0,
             // Strokes reach out of the object as far as they reach into it.
@@ -740,6 +844,17 @@ impl PixelFx {
             // The lines above and below.
             PixelFx::DeInterlace { .. } => Some(video::MAX_LINE),
             PixelFx::NtscColors => Some(0.0),
+            PixelFx::BoxBlur { radius } | PixelFx::DirectionalBlur { radius, .. } => Some(radius),
+            PixelFx::RadialZoomBlur { .. } => None,
+            PixelFx::Greyscale { .. }
+            | PixelFx::ColourScale { .. }
+            | PixelFx::Transparency { .. }
+            | PixelFx::ChromaKey { .. }
+            | PixelFx::Gradient { .. }
+            | PixelFx::Tone { .. }
+            | PixelFx::Highlight { .. } => Some(0.0),
+            PixelFx::Bloom { radius, .. } => Some(radius),
+            PixelFx::MotionBlur { dx, dy, .. } => Some(dx.hypot(dy)),
         }
     }
 
@@ -824,6 +939,18 @@ impl PixelFx {
             }
             PixelFx::DeInterlace { even, interpolate } => video::deinterlace(px, w, h, space, even, interpolate),
             PixelFx::NtscColors => video::ntsc(px),
+            PixelFx::BoxBlur { radius } => crate::rowops::box_blur(px, w, h, to_px(radius)),
+            PixelFx::DirectionalBlur { radius, angle } => crate::rowops::directional_blur(px, w, h, to_px(radius), angle),
+            PixelFx::RadialZoomBlur { amount, cx, cy } => crate::rowops::radial_zoom_blur(px, w, h, cx * w as f64, cy * h as f64, amount),
+            PixelFx::Greyscale { amount } => crate::rowops::greyscale(px, amount),
+            PixelFx::ColourScale { r, g, b, a } => crate::rowops::colour_scale(px, r, g, b, a),
+            PixelFx::Transparency { amount } => crate::rowops::transparency(px, amount),
+            PixelFx::ChromaKey { color, threshold, softness, spill } => crate::rowops::chroma_key(px, w, h, color, threshold, softness, spill),
+            PixelFx::Bloom { threshold, radius, amount } => crate::rowops::bloom(px, w, h, threshold, to_px(radius), amount),
+            PixelFx::MotionBlur { dx, dy, samples } => crate::rowops::motion_blur(px, w, h, to_px(dx), to_px(dy), samples),
+            PixelFx::Gradient { ref grad_type, c0, c1, p0, p1 } => crate::rowops::gradient(px, w, h, grad_type, c0, c1, p0, p1),
+            PixelFx::Tone { color, opacity } => crate::rowops::tone(px, color, opacity),
+            PixelFx::Highlight { color, opacity } => crate::rowops::highlight(px, color, opacity),
         }
     }
 }
@@ -832,6 +959,16 @@ impl PixelFx {
 /// otherwise.
 fn pick<T: Clone>(table: &[(&str, &str)], all: &[T], value: &str, default: T) -> T {
     table.iter().zip(all).find(|((_, v), _)| v.eq_ignore_ascii_case(value)).map_or(default, |(_, t)| t.clone())
+}
+
+/// `#rrggbb` as RGB bytes; `None` for anything else.
+fn hex_rgb(s: &str) -> Option<[u8; 3]> {
+    let digits = s.strip_prefix('#')?;
+    if digits.len() != 6 || !digits.bytes().all(|c| c.is_ascii_hexdigit()) {
+        return None;
+    }
+    let v = u32::from_str_radix(digits, 16).ok()?;
+    Some([(v >> 16) as u8, (v >> 8) as u8, v as u8])
 }
 
 /// `data` as `w` × `h` RGBA pixels, `None` when it isn't that size (or is empty).

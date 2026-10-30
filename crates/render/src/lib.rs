@@ -17,6 +17,7 @@ mod images;
 mod ink;
 mod live;
 mod lru;
+pub mod mesh_warp;
 mod paint;
 pub use paint::decode_failures;
 mod pattern;

@@ -172,8 +172,11 @@ impl Catalog {
                 }
             }
         }
-        // Most literal text first, so `Couldn't open {name}: {e}` wins over `{path}: {e}`.
-        c.templates.sort_by_key(|t| std::cmp::Reverse(t.literal));
+        // Templates that open with text first, so a message's outer frame (`invalid parameters for
+        // `{cmd}`: {msg}`) wins over a template that opens with a placeholder and would swallow that
+        // frame into it (`{key} must be …`), which right-to-left catalogs then show jumbled. Then
+        // most literal text, so `Couldn't open {name}: {e}` wins over `{path}: {e}`.
+        c.templates.sort_by_key(|t| (!matches!(t.pieces.first(), Some(Piece::Text(_))), std::cmp::Reverse(t.literal)));
         c
     }
 

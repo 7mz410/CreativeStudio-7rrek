@@ -1219,3 +1219,54 @@ fn symbol_nine_slice_guides_round_trip() {
     s.execute("symbol.delete", &json!({"name": "Box copy"})).unwrap();
     assert!(s.doc().unwrap().doc.unknown.get(vectorcraft_doc::SYMBOL_NINE_SLICE).is_none());
 }
+
+/// 7rrek D1: a pencil line drawn with pressure keeps its widths after save/open, and moving one
+/// width point changes only that part of the line.
+#[test]
+fn pencil_pressure_becomes_a_width_profile_that_lasts_and_edits_locally() {
+    let mut s = session();
+    let pts = json!([[0, 0, 0.2], [100, 0, 0.5], [200, 0, 1.0], [300, 0, 0.5]]);
+    let id = NodeId(s.execute("path.freehand", &json!({"points": pts, "style": "pencil", "pressureWidth": true})).unwrap()["id"].as_u64().unwrap());
+    let doc: Document = (*s.doc().unwrap().doc).clone();
+    let prof = doc.node(id).unwrap().appearance.stroke().unwrap().profile.clone().expect("a width profile");
+    let w = |t: f64| prof.at(t).0;
+    assert!(w(0.0) < 0.5 && w(1.0) > 0.9 && w(1.0) < 1.1, "{prof:?}");
+    assert!(w(2.0 / 3.0) > 1.9, "full pressure is twice the weight: {prof:?}");
+    let back = vectorcraft_format::load(&vectorcraft_format::save(&doc, false)).unwrap();
+    assert_eq!(back.node(id).unwrap().appearance.stroke().unwrap().profile.as_ref(), Some(&prof));
+    // One point moved: only the widths around it change.
+    let mut edited = prof.clone();
+    let last = edited.points.len() - 1;
+    edited.points[last].1 = 3.0;
+    edited.points[last].2 = 3.0;
+    assert_eq!(edited.at(0.0), prof.at(0.0));
+    assert_eq!(edited.at(0.5), prof.at(0.5));
+    assert_ne!(edited.at(1.0), prof.at(1.0));
+    // Without the switch a pencil line keeps an even weight.
+    let plain = NodeId(s.execute("path.freehand", &json!({"points": pts, "style": "pencil"})).unwrap()["id"].as_u64().unwrap());
+    assert!(node(&s, plain).appearance.stroke().unwrap().profile.is_none());
+}
+
+/// 7rrek D1: the Pencil records the pen pressure too, drawn as a width profile that is thin where
+/// the pen pressed lightly; a mouse stroke (fully pressed) stays an even line.
+#[test]
+fn pencil_tool_records_pen_pressure_as_a_width_profile() {
+    let mut s = session();
+    let v = ViewInfo::default();
+    s.select_tool("pencil", v).unwrap();
+    let strokes = |s: &mut Session, y: f64, pressure: [f32; 4]| {
+        let kinds = [PointerKind::Down, PointerKind::Drag, PointerKind::Drag, PointerKind::Up];
+        for ((k, x), p) in kinds.into_iter().zip([20.0, 120.0, 220.0, 320.0]).zip(pressure) {
+            s.pointer(&PointerEvent { pressure: p, ..PointerEvent::new(k, x, y) }, v).unwrap();
+        }
+        let id = s.doc().unwrap().selection.objects[0];
+        // Deselected, so the next stroke starts a path of its own.
+        select(s, &[]);
+        id
+    };
+    let pen = strokes(&mut s, 60.0, [0.2, 0.5, 1.0, 0.5]);
+    let prof = node(&s, pen).appearance.stroke().unwrap().profile.clone().expect("a width profile");
+    assert!(prof.at(0.0).0 < prof.at(0.5).0, "thinner at the start than the middle: {prof:?}");
+    let mouse = strokes(&mut s, 200.0, [1.0; 4]);
+    assert!(node(&s, mouse).appearance.stroke().unwrap().profile.is_none(), "a mouse presses fully: an even line");
+}

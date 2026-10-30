@@ -48,6 +48,7 @@ pub mod preview;
 mod raster;
 mod reshape;
 mod revolve;
+pub mod rowops;
 mod solids;
 pub mod stroke;
 mod stylize;
@@ -86,6 +87,7 @@ pub use reshape::{
     outline_text, reshape,
 };
 pub use revolve::{REVOLVE, has_revolve, revolve_art, revolve_options, validate_revolve};
+pub use rowops::*;
 pub use solids::{
     EXTRUDE, INFLATE, ROTATE, ROTATION_PRESETS, SOLIDS, extrude_options, has_solid, inflate_options, is_three_d, solid_art, validate_solid,
     validate_three_d, view_options,
@@ -480,12 +482,69 @@ pub fn effect_catalog() -> Vec<EffectInfo> {
             "{brushDetail: 1..14 (9; the larger, the more detail stays), shadowIntensity: 0..10 (1; deepens the shadows), texture: 1..3 (1; paper grain, whole numbers)} paints the object in a watercolor style: detail simplified, colour saturated and darker where tones change at edges. Coverage is kept. Original visual approximation; chosen VectorCraft defaults.",
             json!({"brushDetail": 9.0, "shadowIntensity": 1.0, "texture": 1.0}),
         ),
+        r("blur.box", "Box Blur…", BLUR, "{radius: pt 0..250 (5)} blurs by a 2D box filter", json!({"radius": 5.0})),
+        r(
+            "blur.directional",
+            "Directional Blur…",
+            BLUR,
+            "{radius: pt 0..250 (5), angle: deg -360..360 (0)} blurs along an angle",
+            json!({"radius": 5.0, "angle": 0.0}),
+        ),
         r(
             "blur.radial",
             "Radial Blur…",
             BLUR,
             "{amount: 1..100 (10; spin: an arc of `amount`°, zoom: the content scaled by up to about ±amount/2 %), method: \"spin\"|\"zoom\" (\"spin\"), quality: \"draft\"|\"good\"|\"best\" (\"good\"; 16, 64 or 256 samples)} blurs around the object's centre",
             json!({"amount": 10.0, "method": "spin", "quality": "good"}),
+        ),
+        r(
+            "blur.radialZoom",
+            "Radial Zoom Blur…",
+            BLUR,
+            "{amount: 0..100 (10), cx: 0..1 (0.5), cy: 0..1 (0.5)} blurs radially from a center point",
+            json!({"amount": 10.0, "cx": 0.5, "cy": 0.5}),
+        ),
+        r(
+            "key.chroma",
+            "Chroma Key…",
+            ADJUST,
+            "{color: #rrggbb (#00ff00), threshold: 0..100 (20; chroma distance from the key colour that is keyed out), softness: 0..100 (10; the ramp above threshold that fades pixels back in), spill: 0..100 (50; pulls the key colour's spill out of the kept pixels)}. Distance is in the Cb/Cr chroma plane, so brightness alone does not key. Original visual approximation; chosen VectorCraft defaults.",
+            json!({"color": "#00ff00", "threshold": 20.0, "softness": 10.0, "spill": 50.0}),
+        ),
+        r(
+            "filter.bloom",
+            "Bloom…",
+            BLUR,
+            "{threshold: 0..100 (75), radius: pt 0..250 (10), amount: 0..100 (50)} softens and blurs bright areas",
+            json!({"threshold": 75.0, "radius": 10.0, "amount": 50.0}),
+        ),
+        r(
+            "blur.motion",
+            "Motion Blur…",
+            BLUR,
+            "{dx: pt -250..250 (0), dy: pt -250..250 (0), samples: 2..32 (8)} blurs along the motion vector",
+            json!({"dx": 0.0, "dy": 0.0, "samples": 8}),
+        ),
+        r(
+            "generator.gradient",
+            "Gradient…",
+            ADJUST,
+            "{type: \"linear\"|\"radial\" (\"linear\"), color0: #rrggbb (#000000), color1: #rrggbb (#ffffff), x0: 0..1 (0), y0: 0..1 (0.5), x1: 0..1 (1), y1: 0..1 (0.5)} fills with a linear or radial gradient",
+            json!({"type": "linear", "color0": "#000000", "color1": "#ffffff", "x0": 0.0, "y0": 0.5, "x1": 1.0, "y1": 0.5}),
+        ),
+        r(
+            "combine.tone",
+            "Tone…",
+            ADJUST,
+            "{color: #rrggbb (#000000), opacity: 0..100 (50), blur: pt 0..250 (0)} darkens inside a matte",
+            json!({"color": "#000000", "opacity": 50.0, "blur": 0.0}),
+        ),
+        r(
+            "combine.highlight",
+            "Highlight…",
+            ADJUST,
+            "{color: #rrggbb (#ffffff), opacity: 0..100 (50), blur: pt 0..250 (0)} brightens inside a matte",
+            json!({"color": "#ffffff", "opacity": 50.0, "blur": 0.0}),
         ),
         r(
             "blur.smart",
@@ -819,6 +878,9 @@ pub fn effect_catalog() -> Vec<EffectInfo> {
             "{temperature: -100 (cooler) .. 100 (warmer) (0), tint: -100 (greener) .. 100 (more magenta) (0)} recolours as Brightness/Contrast does",
             json!({"temperature": 0.0, "tint": 0.0}),
         ),
+        r("adjust.greyscale", "Greyscale…", ADJUST, "{amount: 0..100 % (100)} desaturates using Rec.709 luma", json!({"amount": 100.0})),
+        r("adjust.colourScale", "Colour Scale…", ADJUST, "{r: multiplier (1), g: multiplier (1), b: multiplier (1), a: multiplier (1)} scales color channels", json!({"r": 1.0, "g": 1.0, "b": 1.0, "a": 1.0})),
+        r("adjust.transparency", "Transparency…", ADJUST, "{amount: 0..100 % (50)} adjusts transparency", json!({"amount": 50.0})),
     ]);
     for (suffix, label) in WARP_STYLES {
         let id: &'static str = match suffix {

@@ -8,10 +8,12 @@
 #![forbid(unsafe_code)]
 
 pub mod bbox;
+pub mod bone;
 pub mod builder;
 pub mod catalog;
 pub mod corners;
 pub mod cropimage;
+pub mod curve_deform;
 pub mod cut;
 pub mod dimension;
 pub mod direct;
@@ -20,6 +22,7 @@ pub mod draw2;
 pub mod extra;
 pub mod guides;
 pub mod intertwine;
+pub mod mesh_deform;
 pub mod meshblend;
 pub mod meshedit;
 pub mod mirror;
@@ -138,6 +141,46 @@ pub enum ToolKey {
     /// A letter key a–z, lowercase (E while dragging a Selection or Group Selection marquee makes it
     /// select only the objects entirely inside it, and E again switches it back).
     Letter(char),
+}
+
+/// A skeleton as the Bone tool sees it: joints posed at the current frame (document points).
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct Bones {
+    /// The layer (timeline row) the skeleton bends.
+    pub row: u64,
+    pub frame: u32,
+    /// Each joint where the pose puts it.
+    pub at: Vec<Point>,
+    pub parents: Vec<Option<usize>>,
+    /// Each joint's turn from rest at this frame (degrees).
+    pub angles: Vec<f64>,
+}
+
+/// The mesh deformer's mesh over the selected object (or the document's only one) at the current
+/// frame, for the Mesh Deform tool.
+#[derive(Clone, Debug, PartialEq)]
+pub struct MeshPoints {
+    /// The object the mesh bends.
+    pub node: u64,
+    pub frame: u32,
+    /// Each vertex where the mesh puts it at this frame.
+    pub points: Vec<Point>,
+    pub tris: Vec<[u32; 3]>,
+    /// The pinned vertices, in pin order (a pin's index is its place here).
+    pub pins: Vec<usize>,
+}
+
+/// The curve deformer over the selected object (or the document's only one) at the current frame,
+/// for the Curve Deform tool.
+#[derive(Clone, Debug, PartialEq)]
+pub struct CurvePoints {
+    /// The object the curve bends.
+    pub node: u64,
+    pub frame: u32,
+    /// Each point where the chain puts it at this frame: anchor, out handle, in handle, anchor, ….
+    pub points: Vec<Point>,
+    /// A closed chain (an envelope); its last segment runs back to the first anchor.
+    pub closed: bool,
 }
 
 /// What a tool asks the engine to do.
@@ -367,6 +410,12 @@ pub struct ToolContext<'a> {
     pub screen: Option<ScreenFrame>,
     /// Where the Plane Switching Widget sits (Perspective Grid Options); None while it's hidden.
     pub plane_widget: Option<distort::perspective::widget::WidgetCorner>,
+    /// The current layer's skeleton posed at the current frame, for the Bone tool.
+    pub bones: Option<&'a Bones>,
+    /// The mesh the Mesh Deform tool works on.
+    pub mesh: Option<&'a MeshPoints>,
+    /// The curve the Curve Deform tool works on.
+    pub curve: Option<&'a CurvePoints>,
 }
 
 impl ToolContext<'_> {
@@ -628,6 +677,8 @@ pub enum Cursor {
     MeshAdd,
     /// Puppet Warp over the selection's mesh where a pin can go: a click adds one.
     PuppetPin,
+    /// The Curve Deform tool: a drag moves an anchor or a handle of the curve deformer.
+    CurveDeform,
 }
 
 impl Cursor {
@@ -749,7 +800,8 @@ impl Cursor {
             | Cursor::SymbolStainer
             | Cursor::SymbolScreener
             | Cursor::SymbolStyler
-            | Cursor::Scissors => Some(Cursor::Crosshair),
+            | Cursor::Scissors
+            | Cursor::CurveDeform => Some(Cursor::Crosshair),
             Cursor::TypeVertical | Cursor::LoadedText => Some(Cursor::Text),
             Cursor::MeshAdd | Cursor::PuppetPin => Some(Cursor::PenAdd),
             Cursor::ScissorsNotAllowed => Some(Cursor::NotAllowed),
@@ -852,6 +904,9 @@ pub fn create(id: &str) -> Box<dyn Tool> {
         "directSelection" => Box::new(direct::DirectSelectionTool::new(false)),
         "groupSelection" => Box::new(direct::DirectSelectionTool::new(true)),
         "pen" => Box::new(pen::PenTool::default()),
+        "bone" => Box::new(bone::BoneTool::default()),
+        "meshDeform" => Box::new(mesh_deform::MeshDeformTool::default()),
+        "curveDeform" => Box::new(curve_deform::CurveDeformTool::default()),
         "dimension" => Box::new(dimension::DimensionTool::default()),
         "type" | "areaType" | "typeOnPath" | "verticalType" | "verticalAreaType" | "verticalTypeOnPath" => Box::new(text::TypeTool::new(id)),
         "rectangle" | "roundedRectangle" | "ellipse" | "polygon" | "star" | "lineSegment" => Box::new(shape::ShapeTool::new(id)),
@@ -1070,6 +1125,9 @@ pub(crate) mod testutil {
             construction_angles: guides::construction_angles(guides::DEFAULT_CONSTRUCTION_ANGLES),
             screen: None,
             plane_widget: Some(Default::default()),
+            bones: None,
+            mesh: None,
+            curve: None,
         }
     }
 }

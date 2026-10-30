@@ -104,6 +104,11 @@ pub const TOOL_GROUPS: &[&[ToolInfo]] = &[
     &[t("blend", "Blend Tool", Some("W"), "tool-blend"), t("objectsOnPath", "Objects on Path Tool", None, "tool-objects-on-path")],
     &[t("dimension", "Dimension Tool", None, "tool-dimension")],
     &[
+        t("bone", "Bone Tool", None, "tool-bone"),
+        t("meshDeform", "Mesh Deform Tool", None, "tool-mesh-deform"),
+        t("curveDeform", "Curve Deform Tool", None, "tool-curve-deform"),
+    ],
+    &[
         t("symbolSprayer", "Symbol Sprayer Tool", Some("Shift+S"), "tool-symbol"),
         t("symbolShifter", "Symbol Shifter Tool", None, "tool-symbol"),
         t("symbolScruncher", "Symbol Scruncher Tool", None, "tool-symbol"),

@@ -660,6 +660,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
         selection_overlay(app, &painter, &xf, overlays.iter().any(|o| matches!(o, Overlay::CurvePoint { .. })));
         mirror_axis_overlay(app, &painter, &xf);
+        crate::rig_overlay::paint(app, &painter, &xf);
+        crate::mesh_overlay::paint(app, &painter, &xf);
+        crate::panels::timeline_timing::paint_overlay(app, &painter, &xf);
+        crate::curve_overlay::paint(app, &painter, &xf);
         if app.ui.view.text_threads {
             // Under the tools' overlays: a selected frame's own ports are drawn over its thread's.
             let mut threads = thread_overlays(app, xf.zoom);
@@ -924,6 +928,7 @@ fn cursor_icon(c: Cursor) -> egui::CursorIcon {
         | Cursor::ScissorsNotAllowed
         | Cursor::MeshAdd
         | Cursor::PuppetPin
+        | Cursor::CurveDeform
         | Cursor::LoadedText => cursor_icon(c.stand_in().unwrap_or(Cursor::Crosshair)),
     }
 }

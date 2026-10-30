@@ -31,6 +31,7 @@ vectorcraft-render = { workspace = true }
 vectorcraft-text = { workspace = true }
 vectorcraft-tools = { workspace = true }
 vectorcraft-engine = { workspace = true }
+vectorcraft-audio = { workspace = true }
 vectorcraft-svg = { workspace = true }
 vectorcraft-effects = { workspace = true }
 vectorcraft-three-d = { workspace = true }
@@ -52,6 +53,10 @@ log = { workspace = true }
 # `now_ms` (src/lib.rs) reads the page's `performance.now()` with this crate in the web build. It is
 # MIT OR Apache-2.0 and already in the build through eframe.
 web-time = "1"
+
+# The timeline's sound playback: the default output device (src/timeline_audio.rs). Native only.
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+cpal = { workspace = true }
 
 # The current user's id (`geteuid`): Preview in Browser uses its temporary folder only when that
 # user owns it (src/dialogs/save_for_web.rs). Already in Cargo.lock (tempfile), so this adds no
