@@ -46,7 +46,7 @@ pub struct RawAction {
 }
 
 // 1. walk: a 24-frame cycle for a character facing right in the side view, two steps of 12
-// frames, each keyed at contact, down, passing and up. Angles are degrees from the rest pose; a
+// frames, each keyed at contact, down, passing and up; frame 24 closes the loop on frame 0. Angles are degrees from the rest pose; a
 // positive turn is clockwise on screen, so a leg or arm swings forward with a negative one. Knees
 // bend with a positive shin turn, the hips drop on the down pose and rise on the up pose.
 // Checked by eye on a traced character (plans/refs/char1.rsm, side view).
@@ -60,8 +60,9 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(9, 10.0),
             RawKey::rot(12, 18.0),
             RawKey::rot(15, 18.0),
-            RawKey::rot(18, -10.0),
+            RawKey::rot(18, -14.0),
             RawKey::rot(21, -22.0),
+            RawKey::rot(24, -22.0),
         ],
     },
     RawPart {
@@ -73,8 +74,9 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(9, 2.0),
             RawKey::rot(12, 8.0),
             RawKey::rot(15, 22.0),
-            RawKey::rot(18, 40.0),
+            RawKey::rot(18, 52.0),
             RawKey::rot(21, 18.0),
+            RawKey::rot(24, 4.0),
         ],
     },
     RawPart {
@@ -88,6 +90,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(15, 14.0),
             RawKey::rot(18, 8.0),
             RawKey::rot(21, -4.0),
+            RawKey::rot(24, -8.0),
         ],
     },
     RawPart {
@@ -95,12 +98,13 @@ const WALK_PARTS: &[RawPart] = &[
         keys: &[
             RawKey::rot(0, 18.0),
             RawKey::rot(3, 18.0),
-            RawKey::rot(6, -10.0),
+            RawKey::rot(6, -14.0),
             RawKey::rot(9, -22.0),
             RawKey::rot(12, -22.0),
             RawKey::rot(15, -15.0),
             RawKey::rot(18, -2.0),
             RawKey::rot(21, 10.0),
+            RawKey::rot(24, 18.0),
         ],
     },
     RawPart {
@@ -108,12 +112,13 @@ const WALK_PARTS: &[RawPart] = &[
         keys: &[
             RawKey::rot(0, 8.0),
             RawKey::rot(3, 22.0),
-            RawKey::rot(6, 40.0),
+            RawKey::rot(6, 52.0),
             RawKey::rot(9, 18.0),
             RawKey::rot(12, 4.0),
             RawKey::rot(15, 12.0),
             RawKey::rot(18, 4.0),
             RawKey::rot(21, 2.0),
+            RawKey::rot(24, 8.0),
         ],
     },
     RawPart {
@@ -127,6 +132,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(15, 0.0),
             RawKey::rot(18, 0.0),
             RawKey::rot(21, 6.0),
+            RawKey::rot(24, 10.0),
         ],
     },
     RawPart {
@@ -140,6 +146,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(15, -10.0),
             RawKey::rot(18, 0.0),
             RawKey::rot(21, 10.0),
+            RawKey::rot(24, 16.0),
         ],
     },
     RawPart {
@@ -153,6 +160,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(15, -14.0),
             RawKey::rot(18, -10.0),
             RawKey::rot(21, -6.0),
+            RawKey::rot(24, -5.0),
         ],
     },
     RawPart {
@@ -166,6 +174,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(15, 10.0),
             RawKey::rot(18, 0.0),
             RawKey::rot(21, -10.0),
+            RawKey::rot(24, -16.0),
         ],
     },
     RawPart {
@@ -179,6 +188,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(15, -6.0),
             RawKey::rot(18, -10.0),
             RawKey::rot(21, -14.0),
+            RawKey::rot(24, -18.0),
         ],
     },
     RawPart {
@@ -192,6 +202,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(15, 3.0),
             RawKey::rot(18, 4.0),
             RawKey::rot(21, 3.0),
+            RawKey::rot(24, 3.0),
         ],
     },
     RawPart {
@@ -205,6 +216,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::rot(15, -2.0),
             RawKey::rot(18, -3.0),
             RawKey::rot(21, -2.0),
+            RawKey::rot(24, -2.0),
         ],
     },
     RawPart {
@@ -218,6 +230,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::scale(15, 1.04, 0.96),
             RawKey::scale(18, 1.0, 1.0),
             RawKey::scale(21, 0.98, 1.03),
+            RawKey::scale(24, 1.0, 1.0),
         ],
     },
     RawPart {
@@ -231,6 +244,7 @@ const WALK_PARTS: &[RawPart] = &[
             RawKey::dy(15, 6.0),
             RawKey::dy(18, 0.0),
             RawKey::dy(21, -4.0),
+            RawKey::dy(24, 0.0),
         ],
     },
 ];

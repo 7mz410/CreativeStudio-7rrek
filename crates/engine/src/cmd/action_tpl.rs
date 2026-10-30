@@ -985,6 +985,9 @@ fn apply_to_pegs(s: &mut Session, character: &str, action: &Action, at: u32) -> 
             }
         }
         anim.frames = anim.frames.max(at.saturating_add(action.length).min(MAX_LENGTH));
+        if action.parts.contains_key("foot_L") || action.parts.contains_key("foot_R") {
+            plant_feet(d, &mut pegs, &anim, character, at, action.length);
+        }
         pegs.store(d);
         anim.store(d);
         Ok(())
@@ -992,6 +995,69 @@ fn apply_to_pegs(s: &mut Session, character: &str, action: &Action, at: u32) -> 
     let current = Anim::of(&s.doc()?.doc).current;
     show(s, current)?;
     Ok(json!({"character": character, "action": action.name, "at": at, "skipped": skipped}))
+}
+
+/// Keys the character's own peg on every frame of a stepping action so the foot on the ground
+/// stays put: the lowest heel or toe point is locked from one frame to the next (the character
+/// travels by what the stride gives, no more), and the lowest point of both feet sits on the floor
+/// line the feet stand on at rest (the body bobs as the knees bend). Continues a walk applied just
+/// before, so cycles chain without a slip.
+fn plant_feet(d: &Document, pegs: &mut Pegs, anim: &Anim, character: &str, at: u32, length: u32) {
+    use vectorcraft_geom::{Affine, Point};
+    let Some(whole) = pegs.pegs.iter().position(|p| p.name == character) else { return };
+    // Heel and toe of each foot: the bottom corners of the drawing it shows when the action starts,
+    // read from the art itself, not from the posed copy of the frame on screen.
+    let d = &super::anim::unposed(d);
+    let mut points: Vec<(usize, Point)> = Vec::new();
+    for foot in ["foot_L", "foot_R"] {
+        let full = format!("{character}/{foot}");
+        let Some((i, peg)) = pegs.pegs.iter().enumerate().find(|(_, p)| p.name == full) else { continue };
+        let Some(row) = peg.rows.first().and_then(|r| d.node(NodeId(*r))) else { continue };
+        let shown = anim.row_frames(row).into_iter().rfind(|(f, _)| *f <= at).and_then(|(_, id)| d.node(id));
+        let Some(b) = shown.unwrap_or(row).geometric_bounds() else { continue };
+        points.push((i, Point::new(b.x0, b.y1)));
+        points.push((i, Point::new(b.x1, b.y1)));
+    }
+    let Some(peg) = pegs.pegs.get(whole).filter(|_| !points.is_empty()) else { return };
+    let world = |pegs: &Pegs, f: u32| -> Vec<Point> {
+        let m = pegs.matrices(f);
+        points.iter().map(|(i, p)| m.get(*i).copied().unwrap_or(Affine::IDENTITY) * *p).collect()
+    };
+    let lowest = |pts: &[Point]| pts.iter().enumerate().fold((0, f64::NEG_INFINITY), |acc, (i, p)| if p.y > acc.1 { (i, p.y) } else { acc });
+    let base = peg.key_at(at);
+    // The floor: where the feet stand at rest, placed by the character's own peg alone.
+    let place = pegs.matrices(at).get(whole).copied().unwrap_or(Affine::IDENTITY);
+    let floor = points.iter().map(|(_, p)| (place * *p).y).fold(f64::NEG_INFINITY, f64::max);
+    // A stepping action keyed just before: start from its last frame so the locked foot carries over.
+    let start = if at > 1 && peg.keys.contains_key(&(at - 1)) { at - 1 } else { at };
+    let end = at.saturating_add(length).min(MAX_LENGTH) + 1;
+    let mut lock: Option<(usize, Point)> = None;
+    let mut x = base.x;
+    for f in start..end {
+        let mut key = pegs.pegs.get(whole).map(|p| p.key_at(f)).unwrap_or(base);
+        let mut pts = world(pegs, f);
+        if f > start || start == at {
+            let mut set = |pegs: &mut Pegs, key: PegKey| {
+                if let Some(p) = pegs.pegs.get_mut(whole) {
+                    p.keys.insert(f, key);
+                }
+            };
+            key = PegKey { x, y: base.y, ease: None, ..key };
+            set(pegs, key);
+            pts = world(pegs, f);
+            if let Some((i, before)) = lock {
+                x -= pts.get(i).map_or(0.0, |p| p.x - before.x);
+            }
+            let (_, low) = lowest(&pts);
+            key.x = x;
+            key.y = base.y + if low.is_finite() { floor - low } else { 0.0 };
+            set(pegs, key);
+            pts = world(pegs, f);
+        }
+        let (i, _) = lowest(&pts);
+        lock = pts.get(i).map(|p| (i, *p));
+        x = key.x;
+    }
 }
 
 fn remove(s: &mut Session, p: &Value) -> Result<Value> {
