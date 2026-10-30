@@ -116,6 +116,15 @@ SPECIFIC = {
         ('    let bx = Rect::from_min_size(pos2(rect.left(), rect.center().y - 6.5), Vec2::splat(13.0));\n    ui.painter().galley(pos2(bx.right() + 5.0, rect.center().y - galley.size().y / 2.0), galley, t.text);',
          '    // Creative Studio: right to left, the box sits on the right and its label to its left.\n    let (bx, text_x) = if egui::is_rtl() {\n        let bx = Rect::from_min_size(pos2(rect.right() - 13.0, rect.center().y - 6.5), Vec2::splat(13.0));\n        (bx, bx.left() - 5.0 - galley.size().x)\n    } else {\n        let bx = Rect::from_min_size(pos2(rect.left(), rect.center().y - 6.5), Vec2::splat(13.0));\n        (bx, bx.right() + 5.0)\n    };\n    ui.painter().galley(pos2(text_x, rect.center().y - galley.size().y / 2.0), galley, t.text);'),
     ],
+    # Updates come from our own releases: upstream's would offer VectorCraft in place of rsm.
+    'crates/ui-egui/src/updates_ui.rs': [
+        ('use craft_update::updater::{Action, Status, Updater};\n',
+         'use craft_update::updater::{Action, Status, Updater};\n\n'
+         '/// Creative Studio: the app the updater checks, on our own repository.\n'
+         '#[cfg(not(target_arch = "wasm32"))]\n'
+         f'pub const STUDIO_APP: craft_update::app::App = craft_update::app::App::new("{NAME}", "{NAME}", "Vector illustration", "{REPO.removeprefix("https://github.com/")}");\n'),
+        ('Updater::new(&craft_update::suite::VECTORCRAFT,', 'Updater::new(&STUDIO_APP,'),
+    ],
     # Help › AI Agents (crates/ui-egui/src/agents.rs).
     'crates/ui-egui/src/menus.rs': [
         ('    ("help.about", "About VectorCraft", "", "{}"),\n',
@@ -205,6 +214,9 @@ EXT_FILES = {
         ('The last start of VectorCraft ended', f'The last start of {NAME} ended'),
         ('.with_title("VectorCraft")', f'.with_title("{NAME}")'),
         ('Opens the VectorCraft desktop app', f'Opens the {NAME} desktop app'),
+        ('use vectorcraft-cli:\n  vectorcraft-cli --help', f'use {NAME}-cli:\n  {NAME}-cli --help'),
+        ('craft_update::self_update::finish(&craft_update::suite::VECTORCRAFT,',
+         'craft_update::self_update::finish(&vectorcraft_ui_egui::updates_ui::STUDIO_APP,'),
     ],
     'crates/engine/src/cmd/fileio/tests.rs': [
         ('        exts,\n        [\n            "vectorcraft",', '        exts,\n        [\n            "rsm",'),

@@ -7,6 +7,10 @@ use crate::VectorcraftApp;
 #[cfg(not(target_arch = "wasm32"))]
 use craft_update::updater::{Action, Status, Updater};
 
+/// Creative Studio: the app the updater checks, on our own repository.
+#[cfg(not(target_arch = "wasm32"))]
+pub const STUDIO_APP: craft_update::app::App = craft_update::app::App::new("rsm", "rsm", "Vector illustration", "7mz410/CreativeStudio-rsm");
+
 pub(crate) struct Runtime {
     #[cfg(not(target_arch = "wasm32"))]
     updater: Updater,
@@ -26,7 +30,7 @@ impl Default for Runtime {
     fn default() -> Self {
         Self {
             #[cfg(not(target_arch = "wasm32"))]
-            updater: Updater::new(&craft_update::suite::VECTORCRAFT, env!("CARGO_PKG_VERSION")),
+            updater: Updater::new(&STUDIO_APP, env!("CARGO_PKG_VERSION")),
             #[cfg(not(target_arch = "wasm32"))]
             startup_check: false,
             #[cfg(not(target_arch = "wasm32"))]
