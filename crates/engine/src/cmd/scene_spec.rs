@@ -144,12 +144,20 @@ fn build_stage(
             let Some(&peg) = pegs.get(&c.name) else { continue };
             let doc = super::peg::Pegs::of(&s.doc()?.doc);
             let Some(cp) = doc.pegs.get(peg as usize) else { continue };
-            // Measure the feet at rest, falling back to the whole character when it has no feet rows.
-            let ids: Vec<NodeId> = match feet.get(&c.name) {
-                Some(f) if !f.is_empty() => f.iter().map(|r| NodeId(*r)).collect(),
-                _ => cp.rows.iter().map(|r| NodeId(*r)).collect(),
+            // Measure the feet at rest: the drawing each foot row shows at frame 1, in the art
+            // itself (not the posed copy on screen, which the character's peg already moved).
+            let rows: Vec<u64> = match feet.get(&c.name) {
+                Some(f) if !f.is_empty() => f.clone(),
+                _ => doc.pegs.iter().filter(|p| p.name.starts_with(&format!("{}/", c.name))).flat_map(|p| p.rows.clone()).collect(),
             };
-            let Some(b) = s.doc()?.doc.bounds_of(&ids, true) else {
+            let art = super::anim::unposed(&s.doc()?.doc);
+            let anim = super::anim::Anim::of(&art);
+            let ids: Vec<NodeId> = rows
+                .iter()
+                .filter_map(|r| art.node(NodeId(*r)))
+                .map(|row| anim.row_frames(row).into_iter().rfind(|(f, _)| *f <= 1).map_or(row.id, |(_, id)| id))
+                .collect();
+            let Some(b) = art.bounds_of(&ids, false) else {
                 skipped.push(format!("{}: nothing to measure, no shadow", c.name));
                 continue;
             };
