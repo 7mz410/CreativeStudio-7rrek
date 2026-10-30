@@ -118,6 +118,8 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 # Executable and icon carry the display name (CFBundleExecutable / CFBundleIconFile).
 cp "$WORK/bin/vectorcraft" "$APP/Contents/MacOS/VectorCraft"
 cp "$ROOT/assets/app-icon/vectorcraft.icns" "$APP/Contents/Resources/VectorCraft.icns"
+cp "$ROOT/assets/app-icon/rsm-document.icns" "$APP/Contents/Resources/rsm-document.icns"
+cp "$WORK/bin/vectorcraft-cli" "$APP/Contents/MacOS/7rrek-cli"
 sed -e "s/@VERSION@/$VERSION/g" -e "s/@SHORT_VERSION@/$SHORT_VERSION/g" \
   -e "s/@BUILD_SHA@/${VECTORCRAFT_BUILD_SHA:-unknown}/g" \
   "$HERE/Info.plist.in" >"$APP/Contents/Info.plist"
@@ -128,6 +130,7 @@ copy_docs "$APP/Contents/Resources"
 
 # Sign inside-out: nested code first, then the bundle itself (no --deep on the final signature).
 # Today the only nested code is the main executable; frameworks/helpers would be signed here too.
+sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/7rrek-cli"
 sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/VectorCraft"
 sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP"
 codesign --verify --strict --deep --verbose=2 "$APP"

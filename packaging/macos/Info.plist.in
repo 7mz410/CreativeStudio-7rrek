@@ -54,9 +54,15 @@
   <array>
     <dict>
       <key>CFBundleTypeName</key><string>7rrek Document</string>
-      <key>LSItemContentTypes</key><array><string>ai.storyteller.vectorcraft.document</string></array>
+      <key>LSItemContentTypes</key><array><string>ps.creative.studio.7rrek.document</string></array>
       <key>CFBundleTypeRole</key><string>Editor</string>
       <key>LSHandlerRank</key><string>Owner</string>
+    </dict>
+    <dict>
+      <key>CFBundleTypeName</key><string>rsm Document</string>
+      <key>CFBundleTypeExtensions</key><array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>
+      <key>CFBundleTypeRole</key><string>Editor</string>
+      <key>LSHandlerRank</key><string>Alternate</string>
     </dict>
     <dict>
       <key>CFBundleTypeName</key><string>VectorCraft Template</string>
@@ -123,7 +129,7 @@
   <array>
     <dict>
       <key>UTTypeIdentifier</key>
-      <string>ai.storyteller.vectorcraft.document</string>
+      <string>ps.creative.studio.7rrek.document</string>
       <key>UTTypeDescription</key>
       <string>7rrek Document</string>
       <key>UTTypeConformsTo</key>
@@ -136,7 +142,7 @@
       <key>UTTypeTagSpecification</key>
       <dict>
         <key>public.filename-extension</key>
-        <array><string>7rrek</string><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>
+        <array><string>7rrek</string></array>
         <key>public.mime-type</key>
         <array><string>application/x-vectorcraft</string></array>
       </dict>
