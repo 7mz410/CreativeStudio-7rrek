@@ -146,10 +146,13 @@ fn from_rsm(s: &mut Session, p: &Value) -> Result<Value> {
             view_parts.insert(v.clone(), parts);
         }
 
-        // shortcut: pivot comes from first view, update if per-view pivots needed
+        // shortcut: pivots come from the starting view (where a walk happens; turns are made
+        // standing, near rest, so the other views barely turn), add per-view pivots when actions
+        // run in more than one view.
         let mut all_part_names: Vec<String> = Vec::new();
         let mut pivots: HashMap<String, [f64; 2]> = HashMap::new();
-        for v in &views {
+        let first = views.iter().filter(|v| v.as_str() == view);
+        for v in first.chain(views.iter().filter(|v| v.as_str() != view)) {
             if let Some(parts_v) = view_parts.get(v) {
                 for pt in parts_v {
                     if !all_part_names.contains(&pt.name.to_string()) {

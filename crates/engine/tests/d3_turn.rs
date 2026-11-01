@@ -454,3 +454,20 @@ fn scene_build_blink_after_turn_takes_the_new_view() {
     assert!(names.iter().any(|n| n == "front.closed"), "blink after the turn should use front drawings: {names:?}");
     assert!(!names.iter().any(|n| n.starts_with("side.")), "no side drawings after the turn: {names:?}");
 }
+
+#[test]
+fn only_the_exposed_drawing_of_each_row_renders_before_any_turn() {
+    let dir = test_dir("t-render");
+    let rsm = dir.join("char.rsm");
+    contract_file(&rsm);
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 800.0, "height": 800.0})).unwrap();
+    let r = s.execute("character.fromRsm", &json!({"path": rsm.to_str().unwrap(), "name": "hero", "views": ["side", "3q", "front"]})).unwrap();
+    let d = vectorcraft_engine::cmd::anim::at_frame(&s.doc().unwrap().doc, 1);
+    for (part, row) in r["rows"].as_object().unwrap() {
+        let row = d.node(NodeId(row.as_u64().unwrap())).unwrap();
+        let shown: Vec<String> =
+            row.children().into_iter().flatten().filter(|c| c.is_layer() && c.visible).map(|c| c.name.clone().unwrap_or_default()).collect();
+        assert!(shown.len() <= 1, "{part}: {shown:?} all show at frame 1");
+    }
+}
