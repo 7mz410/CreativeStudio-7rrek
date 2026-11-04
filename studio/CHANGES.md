@@ -73,8 +73,10 @@ python3 studio/rebrand.py      # re-apply the branding
   cubic-bezier).
 - Camera keys (centre, zoom, rotation, eased) applied to exports; the camera turns as in Harmony.
 - Sound (`crates/audio`): WAV, MP3 and Ogg clips embedded in the document, mixed into exports and
-  played with the timeline on desktop, with waveforms on the timeline. Lip sync guesses a mouth
-  shape (Preston Blair A–H and X) per frame from a sound.
+  played with the timeline on desktop, with waveforms on the timeline. Lip sync picks a mouth
+  shape (Preston Blair A–H and X) per frame from a sound: through Rhubarb Lip Sync
+  (`crates/audio/src/rhubarb.rs`, run as a separate program; its phonetic recognizer works on
+  Arabic and any other language) when it is installed, else by a guess from loudness.
 - Rigging: bones with linear blend skinning and IK (two-bone and FABRIK), pegs with keyed
   transforms that nest, mesh deformers (ARAP) for images, and curve and envelope deformers, each
   with its tool and canvas overlay (Bone, Mesh Deform, Curve Deform).

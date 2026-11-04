@@ -3,9 +3,11 @@
 //!
 //! [`decode`] reads WAV, MP3 and Ogg Vorbis through symphonia. [`mix`] sums [`Clip`]s at their
 //! start times, and [`peaks`] reduces a clip to per-bucket maxima for a waveform.
-//! [`mouths`] guesses a lip-sync mouth shape for each animation frame.
+//! [`mouths`] guesses a lip-sync mouth shape for each animation frame; [`rhubarb_mouths`] asks
+//! Rhubarb Lip Sync instead, when it is installed.
 
 mod mouth;
+mod rhubarb;
 
 use std::io::Cursor;
 
@@ -18,6 +20,7 @@ use symphonia::core::meta::MetadataOptions;
 use symphonia::core::probe::Hint;
 
 pub use mouth::{MOUTHS, mouths};
+pub use rhubarb::{RHUBARB_ENV, Recognizer, rhubarb_mouths, rhubarb_path};
 
 /// Output sample rate in Hz.
 pub const RATE: u32 = 48_000;

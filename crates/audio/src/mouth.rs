@@ -19,7 +19,7 @@ use crate::{Pcm, RATE};
 pub const MOUTHS: [char; 9] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'X'];
 
 // Heuristic thresholds. `rel` is loudness against the clip's loudest frame, 0 to 1.
-// shortcut: a heuristic guess from loudness, zero crossings and brightness; a phoneme recogniser would replace `mouths`.
+// shortcut: a heuristic guess from loudness, zero crossings and brightness; lip sync uses it only when Rhubarb (rhubarb.rs) is not installed.
 const SILENT_REL: f32 = 0.08;
 const NOISY_ZCR: f32 = 0.25;
 const FRICATIVE_MAX_REL: f32 = 0.3;

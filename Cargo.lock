@@ -5055,6 +5055,7 @@ dependencies = [
 name = "vectorcraft-audio"
 version = "0.16.0"
 dependencies = [
+ "serde_json",
  "symphonia",
 ]
 

@@ -6,7 +6,7 @@
 use std::collections::BTreeMap;
 
 use serde_json::json;
-use vectorcraft_audio::{MOUTHS, mouths};
+use vectorcraft_audio::{MOUTHS, RHUBARB_ENV, Recognizer, mouths, rhubarb_mouths, rhubarb_path};
 use vectorcraft_doc::Document;
 
 use super::anim::{Anim, frame_param, row_param, show};
@@ -47,7 +47,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Lip Sync from Sound",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), sound?: index of the sound clip (default 0)} guesses a mouth shape per frame of the clip and exposes the chart's drawings over the frames it plays (replacing the exposures there) → {keys: [{frame, shape}], missing: [shapes with no drawing]}",
+            "{row?: layer id (default: the current layer's row), sound?: index of the sound clip (default 0), recognizer?: \"auto\" (default: \"phonetic\" when Rhubarb Lip Sync is installed, else \"guess\") | \"phonetic\" (Rhubarb, any language, Arabic included) | \"english\" (Rhubarb, English words) | \"guess\" (from loudness, no Rhubarb)} picks a mouth shape per frame of the clip and exposes the chart's drawings over the frames it plays (replacing the exposures there). Rhubarb is found through RHUBARB_PATH, beside the app, or on PATH → {keys: [{frame, shape}], missing: [shapes with no drawing], recognizer: the one used}",
             has_doc,
             lip_sync
         ),
@@ -153,7 +153,7 @@ fn lip_sync(s: &mut Session, p: &Value) -> Result<Value> {
         Some(v) => v.as_u64().ok_or_else(|| bad(C, "`sound` must be a sound clip index"))? as usize,
     };
     let sound = anim.sounds.get(index).ok_or_else(|| bad(C, "no such sound clip: import a sound first"))?;
-    let shapes = mouths(&sound_pcm(d, sound)?, anim.fps);
+    let (shapes, recognizer) = recognize(p, &sound_pcm(d, sound)?, anim.fps)?;
 
     let char_name: Option<String> = d.node(row).and_then(|n| n.name.as_deref()).and_then(|n| n.split_once('/')).map(|(c, _)| c.to_string());
     let cv = super::character_rig::CharacterViews::of(d);
@@ -225,7 +225,7 @@ fn lip_sync(s: &mut Session, p: &Value) -> Result<Value> {
         let current = Anim::of(&s.doc()?.doc).current;
         show(s, current)?;
         let keys_json: Vec<Value> = keys.iter().map(|(f, m)| json!({"frame": f, "shape": m.to_string()})).collect();
-        return Ok(json!({"keys": keys_json, "missing": missing}));
+        return Ok(json!({"keys": keys_json, "missing": missing, "recognizer": recognizer}));
     }
 
     let chart = chart(d, &anim, row);
@@ -261,7 +261,32 @@ fn lip_sync(s: &mut Session, p: &Value) -> Result<Value> {
     let current = Anim::of(&s.doc()?.doc).current;
     show(s, current)?;
     let keys: Vec<Value> = keys.iter().map(|(f, m)| json!({"frame": f, "shape": m.to_string()})).collect();
-    Ok(json!({"keys": keys, "missing": missing}))
+    Ok(json!({"keys": keys, "missing": missing, "recognizer": recognizer}))
+}
+
+/// One mouth shape per frame of `pcm`, and the recognizer that gave them.
+fn recognize(p: &Value, pcm: &vectorcraft_audio::Pcm, fps: u32) -> Result<(Vec<char>, &'static str)> {
+    const C: &str = "anim.lipSync";
+    let asked = match p.get("recognizer") {
+        None | Some(Value::Null) => "auto",
+        Some(v) => v.as_str().ok_or_else(|| bad(C, "`recognizer` must be auto, phonetic, english or guess"))?,
+    };
+    let (rec, name) = match asked {
+        "guess" => return Ok((mouths(pcm, fps), "guess")),
+        "auto" => match rhubarb_path() {
+            // Auto never fails on Rhubarb's account: the guess stands in.
+            Some(exe) => {
+                return Ok(rhubarb_mouths(&exe, pcm, fps, Recognizer::Phonetic).map_or_else(|_| (mouths(pcm, fps), "guess"), |m| (m, "phonetic")));
+            }
+            None => return Ok((mouths(pcm, fps), "guess")),
+        },
+        "phonetic" => (Recognizer::Phonetic, "phonetic"),
+        "english" => (Recognizer::English, "english"),
+        _ => return Err(bad(C, "`recognizer` must be auto, phonetic, english or guess")),
+    };
+    let exe =
+        rhubarb_path().ok_or_else(|| bad(C, format!("Rhubarb Lip Sync is not installed: put it beside the app, on PATH, or set {RHUBARB_ENV}")))?;
+    Ok((rhubarb_mouths(&exe, pcm, fps, rec).map_err(|e| bad(C, e))?, name))
 }
 
 #[cfg(test)]
@@ -334,7 +359,8 @@ mod tests {
         std::fs::write(&path, wav()).unwrap();
         s.execute("anim.soundImport", &json!({"path": path, "start": 1})).unwrap();
         let _ = std::fs::remove_file(&path);
-        let out = s.execute("anim.lipSync", &json!({})).unwrap();
+        let out = s.execute("anim.lipSync", &json!({"recognizer": "guess"})).unwrap();
+        assert_eq!(out["recognizer"], "guess");
         let keys = out["keys"].as_array().unwrap();
         assert_eq!(keys[0], json!({"frame": 1, "shape": "X"}), "silence first");
         assert!(keys.len() >= 2 && keys.iter().any(|k| k["shape"] != "X"), "the tone opens the mouth: {keys:?}");
@@ -342,5 +368,15 @@ mod tests {
         let x = ids[MOUTHS.iter().position(|m| *m == 'X').unwrap()];
         let a = Anim::of(&s.doc().unwrap().doc);
         assert_eq!(a.exposures.values().next().unwrap().get(&1), Some(&x));
+
+        // Auto always succeeds and says which recognizer it used.
+        let auto = s.execute("anim.lipSync", &json!({})).unwrap();
+        assert!(["guess", "phonetic"].contains(&auto["recognizer"].as_str().unwrap()), "{auto}");
+        assert!(s.execute("anim.lipSync", &json!({"recognizer": "klingon"})).is_err());
+        assert!(s.execute("anim.lipSync", &json!({"recognizer": 3})).is_err());
+        if vectorcraft_audio::rhubarb_path().is_none() {
+            let err = s.execute("anim.lipSync", &json!({"recognizer": "phonetic"})).unwrap_err().to_string();
+            assert!(err.contains("not installed"), "{err}");
+        }
     }
 }
