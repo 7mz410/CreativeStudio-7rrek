@@ -4778,7 +4778,7 @@ imageTrace	Outline	Kontur
 @msg	invalid image data for `{0}`	nieprawidłowe dane obrazu dla `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	nieprawidłowe parametry dla `{cmd}`: {msg}
 @msg	is not an image rsm reads	nie jest obrazem obsługiwanym przez rsm
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	używa `{at}`, czego czytnik PostScript programu VectorCraft nie zna
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	używa `{at}`, czego czytnik PostScript programu rsm nie zna
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	używa `{at}`, czego czytnik PostScript programu VectorCraft nie zna, w {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	zamiast tego otwarto jego podgląd w formacie metapliku Windows, co może uprościć kompozycję
 @msg	its preview was placed instead, at screen resolution	zamiast tego umieszczono jego podgląd w rozdzielczości ekranowej

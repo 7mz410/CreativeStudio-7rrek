@@ -5020,7 +5020,7 @@ imageTrace	Outline	Contour
 @msg	invalid image data for `{0}`	ongeldige afbeeldingsgegevens voor `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	ongeldige parameters voor `{cmd}`: {msg}
 @msg	is not an image rsm reads	is geen afbeelding die rsm leest
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	het gebruikt `{at}`, die de PostScript-lezer van VectorCraft niet kent
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	het gebruikt `{at}`, die de PostScript-lezer van rsm niet kent
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	het gebruikt `{at}`, die de PostScript-lezer van VectorCraft niet kent, in {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	zijn Windows-metabestandvoorbeeld is in plaats daarvan geopend, wat het artwork kan vereenvoudigen
 @msg	its preview was placed instead, at screen resolution	zijn voorvertoning is in plaats daarvan geplaatst, op schermresolutie

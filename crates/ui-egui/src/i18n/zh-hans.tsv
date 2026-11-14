@@ -4468,7 +4468,7 @@ imageTrace	Outline	轮廓
 @msg	the program asks for a resource that isn't defined	程序请求了未定义的资源
 @msg	a calculation has no result, as in a division by zero	计算没有结果，例如除以零
 @msg	the operator looks for a mark on the stack and finds none	运算符在栈中找不到标记
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	它使用了 `{at}`，VectorCraft 的 PostScript 读取器无法识别
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	它使用了 `{at}`，rsm 的 PostScript 读取器无法识别
 @msg	the file was read up to an error ({why}): what follows it was left out	文件已读取到出错处 ({why})：其后的内容已略去
 @msg	this file's PostScript couldn't be read ({why}): {what}	无法读取此文件的 PostScript ({why})：{what}
 @msg	it has no page	它没有页面

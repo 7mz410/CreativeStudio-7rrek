@@ -4681,7 +4681,7 @@ axis	Both	Оба
 @msg	invalid image data for `{0}`	недопустимые данные изображения для `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	недопустимые параметры для `{cmd}`: {msg}
 @msg	is not an image rsm reads	не является изображением, которое читает rsm
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	использует `{at}`, которое не знает читатель PostScript в VectorCraft
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	использует `{at}`, которое не знает читатель PostScript в rsm
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	использует `{at}`, которое не знает читатель PostScript в VectorCraft, в {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	вместо этого было открыто его предварительное представление метафайла Windows, что может упростить рисунок
 @msg	its preview was placed instead, at screen resolution	вместо этого было помещено его предварительное представление в разрешении экрана

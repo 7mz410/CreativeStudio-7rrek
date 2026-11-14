@@ -4860,7 +4860,7 @@ imageTrace	Outline	Ääriviiva
 @msg	invalid image data for `{0}`	virheellinen kuvadata kohteelle `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	virheelliset parametrit kohteelle `{cmd}`: {msg}
 @msg	is not an image rsm reads	ei ole kuva, jota rsm lukee
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	se käyttää kohdetta `{at}`, jota VectorCraftin PostScript-lukija ei tunne
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	se käyttää kohdetta `{at}`, jota rsmin PostScript-lukija ei tunne
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	se käyttää kohdetta `{at}`, jota VectorCraftin PostScript-lukija ei tunne, proseduurissa {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	sen sijaan avattiin sen Windows-metatiedoston esikatselu, mikä voi yksinkertaistaa kuvitusta
 @msg	its preview was placed instead, at screen resolution	sen sijaan sijoitettiin sen esikatselu näytön tarkkuudella

@@ -4327,7 +4327,7 @@ font-technology	Variable	ცვლადი
 @msg	invalid image data for `{0}`	არასწორი გამოსახულების მონაცემები `{0}`-სთვის
 @msg	invalid parameters for `{cmd}`: {msg}	`{cmd}`: არასწორი პარამეტრები — {msg}
 @msg	is not an image rsm reads	ეს არ არის გამოსახულება, რომელსაც rsm კითხულობს
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	ის იყენებს `{at}`-ს, რომელიც VectorCraft-ის PostScript-ის წამკითხველმა არ იცის
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	ის იყენებს `{at}`-ს, რომელიც rsm-ის PostScript-ის წამკითხველმა არ იცის
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	ის იყენებს `{at}`-ს, რომელიც VectorCraft-ის PostScript-ის წამკითხველმა არ იცის, {procs}-ში
 @msg	its Windows metafile preview was opened instead, which may simplify the art	სამაგიეროდ გაიხსნა მისი Windows metafile გადახედვა, რამაც შეიძლება ნახატი გაამარტივოს
 @msg	its preview was placed instead, at screen resolution	სამაგიეროდ განთავსდა მისი გადახედვა, ეკრანის გარჩევადობით

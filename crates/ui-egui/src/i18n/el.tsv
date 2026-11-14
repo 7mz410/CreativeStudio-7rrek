@@ -4600,7 +4600,7 @@ digits	Malayalam	Μαλαγιάλαμ
 @msg	invalid image data for `{0}`	μη έγκυρα δεδομένα εικόνας για `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	μη έγκυρες παράμετροι για `{cmd}`: {msg}
 @msg	is not an image rsm reads	δεν είναι μορφή εικόνας που μπορεί να διαβάσει το rsm
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του VectorCraft
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του rsm
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του VectorCraft, στις διαδικασίες {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	αντί γι' αυτό ανοίχτηκε η προεπισκόπηση μετααρχείου Windows, η οποία μπορεί να απλοποιεί το σχέδιο
 @msg	its preview was placed instead, at screen resolution	τοποθετήθηκε η προεπισκόπησή του σε ανάλυση οθόνης

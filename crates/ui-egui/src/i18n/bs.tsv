@@ -4783,7 +4783,7 @@ imageTrace	Outline	Obris
 @msg	invalid image data for `{0}`	nevažeći podaci slike za `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	nevažeći parametri za `{cmd}`: {msg}
 @msg	is not an image rsm reads	nije slika koju rsm čita
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	koristi `{at}`, što PostScript čitač VectorCrafta ne poznaje
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	koristi `{at}`, što PostScript čitač rsma ne poznaje
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	koristi `{at}`, što PostScript čitač VectorCrafta ne poznaje, u {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	umjesto nje otvoren je njen Windows metafile pregled, što može pojednostaviti crtež
 @msg	its preview was placed instead, at screen resolution	umjesto nje postavljen je njen pregled, u rezoluciji ekrana

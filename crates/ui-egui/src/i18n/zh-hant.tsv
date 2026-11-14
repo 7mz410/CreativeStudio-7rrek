@@ -2179,7 +2179,7 @@ file-filter	Templates	範本
 @msg	the program asks for a resource that isn't defined	程式要求了未定義的資源
 @msg	a calculation has no result, as in a division by zero	計算沒有結果，例如除以零
 @msg	the operator looks for a mark on the stack and finds none	運算子在堆疊中找不到標記
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	它使用了 `{at}`，VectorCraft 的 PostScript 讀取器無法辨識
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	它使用了 `{at}`，rsm 的 PostScript 讀取器無法辨識
 @msg	the file was read up to an error ({why}): what follows it was left out	檔案已讀取到發生錯誤處 ({why})：之後的內容已略過
 @msg	this file's PostScript couldn't be read ({why}): {what}	無法讀取此檔案的 PostScript ({why})：{what}
 @msg	it has no page	它沒有頁面

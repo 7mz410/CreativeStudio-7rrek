@@ -4709,7 +4709,7 @@ theme	Appearance	외관
 @msg	the program asks for a resource that isn't defined	프로그램이 정의되지 않은 리소스를 요청합니다
 @msg	a calculation has no result, as in a division by zero	0으로 나누기처럼 계산 결과가 없습니다
 @msg	the operator looks for a mark on the stack and finds none	연산자가 스택에서 마크를 찾지 못했습니다
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	`{at}`을(를) 사용하며, VectorCraft의 PostScript 판독기는 이를 알지 못합니다
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	`{at}`을(를) 사용하며, rsm의 PostScript 판독기는 이를 알지 못합니다
 @msg	the file was read up to an error ({why}): what follows it was left out	오류({why})까지 파일을 읽었으며, 그 뒤의 내용은 제외했습니다
 @msg	this file's PostScript couldn't be read ({why}): {what}	이 파일의 PostScript를 읽을 수 없습니다({why}): {what}
 @msg	it has no page	페이지가 없습니다

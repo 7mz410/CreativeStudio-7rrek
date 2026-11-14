@@ -4644,7 +4644,7 @@ axis	Both	Ambos
 @msg	invalid image data for `{0}`	datos de imagen no válidos para `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	parámetros no válidos para `{cmd}`: {msg}
 @msg	is not an image rsm reads	no es una imagen que rsm pueda leer
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	usa `{at}`, que el lector de PostScript de VectorCraft no conoce
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	usa `{at}`, que el lector de PostScript de rsm no conoce
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	usa `{at}`, que el lector de PostScript de VectorCraft no conoce, en {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	en su lugar se abrió su previsualización de metarchivo de Windows, que puede simplificar la ilustración
 @msg	its preview was placed instead, at screen resolution	en su lugar se colocó su previsualización, a resolución de pantalla

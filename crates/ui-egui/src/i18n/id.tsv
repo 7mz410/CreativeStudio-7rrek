@@ -4501,7 +4501,7 @@ imageTrace	Outline	Kontur
 @msg	invalid image data for `{0}`	data gambar tidak valid untuk `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	parameter tidak valid untuk `{cmd}`: {msg}
 @msg	is not an image rsm reads	bukan gambar yang dapat dibaca rsm
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	menggunakan `{at}`, yang tidak dikenali pembaca PostScript VectorCraft
+@msg	it uses `{at}`, which rsm's PostScript reader doesn't know	menggunakan `{at}`, yang tidak dikenali pembaca PostScript rsm
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	menggunakan `{at}`, yang tidak dikenali pembaca PostScript VectorCraft, dalam {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	yang dibuka adalah pratinjau metafile Windows-nya, yang mungkin menyederhanakan karya seni
 @msg	its preview was placed instead, at screen resolution	yang ditempatkan adalah pratinjaunya, pada resolusi layar
