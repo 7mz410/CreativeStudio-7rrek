@@ -47,3 +47,8 @@ python3 studio/rebrand.py      # re-apply the branding
   choice is saved in `studio-agents.json` next to the preferences), and add the app's MCP server
   to Claude Desktop, Claude Code or Gemini CLI. Strings for other languages: `studio/i18n/`.
 - Checkboxes and radio buttons put their box on the right in the right-to-left interface.
+- Upstream sync 2026-11-14: upstream split `lib.rs`, `menus.rs`, `i18n/mod.rs` and others into
+  folders, so `studio/rebrand.py` moves its rules with the text they match and prints `MISSING` for
+  a rule that no longer applies. The Arabic catalog, `bidi` and `plural_arabic` moved into
+  `crates/ui-egui/src/i18n.rs`. Upstream's panel docking replaced `dock.rs`: the docked panels
+  don't change sides in the right-to-left interface yet.

@@ -1,0 +1,180 @@
+@msg	unknown attribute `{attribute}`
+@msg	unknown attribute `{k}`
+@msg	unknown axis `{other}` (vertical|horizontal|free)
+@msg	unknown blend mode `{b}`
+@msg	unknown blend mode {b}
+@msg	unknown brush type `{o}`
+@msg	unknown category `{c}`
+@msg	unknown category `{c}` ({_1})
+@msg	unknown character `{c}`
+@msg	unknown character style number field
+@msg	unknown effect `{e}`
+@msg	unknown end {e}
+@msg	unknown flattenerPreset `{name}` (High Resolution, Medium Resolution, Low Resolution or a saved one: see flattener.presets.list)
+@msg	unknown format `{f}` (vcswatches, gpl, ase or css)
+@msg	unknown from {f}
+@msg	unknown graph type `{t}`
+@msg	unknown grid colours `{name}` (one of {_1})
+@msg	unknown gridType `{t}`
+@msg	unknown highlight `{v}`
+@msg	unknown intent `{i}`
+@msg	unknown issue kind {id}
+@msg	unknown issue kind {v}
+@msg	unknown knockout state {k}
+@msg	unknown language `{language}` (one of {_1})
+@msg	unknown language `{l}` (one of {_1})
+@msg	unknown method `{m}` ({_1})
+@msg	unknown mode `{other}` (gray, rgb, hsb, lab, cmyk or web)
+@msg	unknown mode `{other}` (mono|cmyk)
+@msg	unknown mode `{other}` (rgb|cmyk|gray|global)
+@msg	unknown mode `{other}` (set, add, subtract)
+@msg	unknown mode `{o}`
+@msg	unknown mode {m}
+@msg	unknown model `{other}`
+@msg	unknown model `{other}` (keep, new or document)
+@msg	unknown op {o}
+@msg	unknown order `{o}`: toggle, front, forward, backward or back
+@msg	unknown overprints `{v}` (preserve, simulate or discard)
+@msg	unknown panel
+@msg	unknown pieLegend `{v}` (none, standard or wedges)
+@msg	unknown piePosition `{v}` (even, ratio or stacked)
+@msg	unknown pieSort `{v}` (none, all or first)
+@msg	unknown plate `{n}`
+@msg	unknown preference `{k}`
+@msg	unknown profile {id} (see stroke.widthProfile.list)
+@msg	unknown proof target `{t}`
+@msg	unknown quotes key `{k}` (double, single)
+@msg	unknown resolution `{v}`
+@msg	unknown rule `{rule}` ({_1})
+@msg	unknown rule `{r}` (see color.harmony)
+@msg	unknown setting `{k}`
+@msg	unknown shape `{v}` (circle|ellipse|square|diamond|line)
+@msg	unknown spacing `{o}` (smooth|steps|distance)
+@msg	unknown tileType `{t}` ({_1})
+@msg	unknown units
+@msg	unknown units `{u}`
+@msg	unknown value axis `{v}` (left, right or both)
+@msg	unknown variation `{v}` (tintsShades|warmCool|vividMuted)
+@msg	unknown warp style `{s}`
+@msg	unknown {key} `{v}` (none, short or full)
+@msg	unknown {key} profile `{n}`
+@msg	unknown {k} key `{key}` (size, position)
+@msg	unreadable object
+@msg	unsafe destination file name
+@msg	use paths or compound paths
+@msg	useArtboards must be true or false, not {v}
+@msg	value for `{var}` must match its variable kind
+@msg	variable `{_1}` is already defined
+@msg	variable `{name}` has no `trait`
+@msg	variable `{name}` is already defined
+@msg	variable `{name}` is declared twice
+@msg	variable `{to}` already exists
+@msg	view is required
+@msg	view must be one of {_1}
+@msg	warpStyle can only edit an applied Warp effect
+@msg	width and height must be more than 0 and at most {limit}
+@msg	width factors must be finite
+@msg	width must be positive
+@msg	width out of range
+@msg	width/height must be > 0
+@msg	x and y must be finite numbers
+@msg	x and y must be given together
+@msg	zone needs an anchor: dock beside a panel with anchor, or in a new dock column with side (Start or End)
+@msg	zoom must be positive
+@msg	{C}: no effect at index {list}
+@msg	{DEFAULT_PRESET} is protected and stays
+@msg	{DEFAULT_PRESET} is protected: save the settings under another name
+@msg	{LABEL} produced an empty result
+@msg	{_1} MB of document, at most {_2} MB
+@msg	{_1} MB of images, at most {_2} MB
+@msg	{_1} bytes of RGBA data for a {width} × {height} image
+@msg	{_1} can't be read, or changed since it was read: relink or update it first
+@msg	{_1} can't go into {into}
+@msg	{_1} can't limit printing to low resolution: choose PDF 1.4 or later, or allow high-resolution printing
+@msg	{_1} files can't be opened yet
+@msg	{_1} files can't be password-protected: remove the passwords or choose no standard
+@msg	{_1} files can't be {_2}
+@msg	{_1} files can't carry editing data: turn off preserveEditing
+@msg	{_1} files can't have PDF layers: turn off createLayers
+@msg	{_1} files need a creation date, and this platform has no clock to give one
+@msg	{_1} isn't a path
+@msg	{_1} options: {e}
+@msg	{_1} paints nothing to rasterize
+@msg	{_1} passwords can have up to {MAX_LEGACY_PASSWORD} ASCII characters (PDF 1.7 and later take any)
+@msg	{_1} with linked images or an image map writes several files: use document.export
+@msg	{_1} writes one file per artboard here: use document.export, or name one artboard
+@msg	{_1} × {_2} pixels is too large for {_3} (at most {max} pixels a side): lower the scale
+@msg	{_1}: belongs to another account
+@msg	{_1}: not a folder of its own
+@msg	{_1}: not a plain file
+@msg	{dest}: {e}
+@msg	{doc} has no folder
+@msg	{file} isn't linked
+@msg	{folder} is not a package folder
+@msg	{folder}: more than {max} files and folders
+@msg	{folder}: {e}
+@msg	{g} is not a Live Paint group
+@msg	{id} is not a slice
+@msg	{key} must be 0–{MAX_ADD_AROUND} pt
+@msg	{key} must be [x,y]
+@msg	{key} must be a percentage {min}..100
+@msg	{key} must be a positive number, not {n}
+@msg	{key} must be a positive number, not {v}
+@msg	{key} must be one of {_1}
+@msg	{key} must be {_1}, got {s}
+@msg	{key} must name a floating panel
+@msg	{key} must name a panel in another group
+@msg	{key} must name a panel that shows
+@msg	{key} must name a registered panel
+@msg	{kind} files have no transparency, and the file would have {what}: flatten it first (object.flattenTransparency)
+@msg	{kind} images can't be opened (see document.formats)
+@msg	{k} `{v}` is not one of the choices
+@msg	{k} has control characters{_1}
+@msg	{k} is too long (at most {MAX_TEXT} characters)
+@msg	{k} must be > 0
+@msg	{k} must be a number (pt) or a length such as "210 mm"
+@msg	{k} must be a number from {min} to {max}
+@msg	{k} must be a number or "auto"
+@msg	{k} must be a string
+@msg	{k} must be text
+@msg	{k} must be true or false
+@msg	{k} must be {{size?, position?}}
+@msg	{k}: can't read `{s}` as a length
+@msg	{label} must be a number at most {max}
+@msg	{label} must be a number from -1296 to 1296
+@msg	{label} must be a number from 1 to 10000
+@msg	{name} `{s}`: {ids}
+@msg	{name} is built in and can't be deleted
+@msg	{name} must be {lo}–{hi}{unit} (got {v})
+@msg	{name}: CRC or size mismatch
+@msg	{name}: only this Affinity file's embedded preview could be read; use File › Open to see it with its warning, or export SVG or PDF from Affinity before placing
+@msg	{name}: {e}
+@msg	{native}; its embedded preview can't be read either ({e})
+@msg	{std} files are CMYK, and the file would have colours in {_1}
+@msg	{std} files embed their fonts, and the file would have one that isn't
+@msg	{target} is the file this document was read from, and reading it left things out ({what}): writing over it would lose them for good. Write another file instead, or pass acknowledgeLoss: true to replace it anyway
+@msg	{ty} brushes need selected art (or params.{k})
+@msg	{v} is not an asset id
+@msg	{what} can't be intertwined
+@msg	{what} doesn't fit the paper with its bleed and marks
+@msg	{what} would print on more than {MAX_TILES} tiles: scale it down
+@msg	Alignment must be one of the choices
+@msg	Line Gap must be a number
+@msg	`at` must be a point [x, y]
+@msg	`points` must hold from 2 to 100000 points
+@msg	`rect` must be [x, y, width, height]
+@msg	`tolerance` must be from 0 to 100 pt
+@msg	`warichuAlign` must be one of {_1}
+@msg	`warichuLines` must be a whole number from {_1} to {_2}
+@msg	bad point {v}: expected [x, y]
+@msg	give exactly one of `at`, `rect` and `points`
+@msg	the line is too long, or the paths it passes too many, to check
+@msg	the paths are too many or too tangled to find where they cross
+@msg	the rectangle or line reaches too many paths to check
+@msg	{name} must be a number
+	Banner Hems and Grommets…
+	Banner Hems and Grommets
+	Hem
+	Grommets
+	Grommet Inset
+	Diameter

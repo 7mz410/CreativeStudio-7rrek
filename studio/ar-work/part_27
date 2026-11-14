@@ -1,0 +1,200 @@
+@msg	needs approval: it asks for {0}, which the user grants when installing it on its own
+@msg	not JSON: {e}
+@msg	not a WebAssembly binary (missing \0asm header)
+@msg	parameter `{k}`: {what}
+@msg	parameter `{name}`: {what}
+@msg	plug-in parameters must be a JSON object
+@msg	the module must export its linear memory as `memory`
+@msg	the objects to change are no longer in the document
+@msg	the runtime panicked
+@msg	unexpected host trap
+@msg	vc_abi_version returned {v}; this host implements version {ABI_VERSION}
+@msg	vc_alloc returned 0 (out of memory)
+@msg	vc_alloc returned a block outside memory
+@msg	vc_run returned error code {packed}
+@msg	{_1} is not a file
+@msg	{_1} is {_2} bytes (limit {_3})
+@msg	{_1} objects (limit {MAX_OBJECTS})
+@msg	{at}: {msg}
+@msg	{what} points outside memory
+@msg	`angle` must be a number
+@msg	`aspect` must be from 0.01 to 100
+@msg	`cap` must be "butt", "round" or "square"
+@msg	`fillRule` must be "nonzero" or "evenodd"
+@msg	`helpUrl` must be an https:// address of at most {MAX_HELP_URL} bytes
+@msg	`help` must be 1-{MAX_HELP} printable characters
+@msg	`id` must be an effect id of 1-{MAX_EFFECT_ID} bytes
+@msg	`id` must be the id of an input object
+@msg	`join` must be "miter", "round" or "bevel"
+@msg	`label` and `group` must be 1-{MAX_LABEL} printable characters
+@msg	`maxLength` must be 1-{MAX_TEXT}, and the default no longer
+@msg	`minItems` and `maxItems` must be 0-{MAX_LIST}, `maxItems` at least 1, and the default that many
+@msg	`name` must be a string
+@msg	`opacity` must be a number
+@msg	`type` must be "path" or "compound"
+@msg	`unit` must be 1-{MAX_UNIT} printable characters
+@msg	`visibleWhen` lists 1 to {MAX_CONDITION_VALUES} values for `{other}`
+@msg	`visibleWhen` names `{other}`, which isn't a parameter declared before this one
+@msg	`visibleWhen` names at most {MAX_CONDITIONS} parameters
+@msg	`visibleWhen` takes `{other}`'s values, of a checkbox or a choice
+@msg	`visible` must be true or false
+@msg	`{key}` must be a number from {_1} to {_2}
+@msg	`{key}` must be an array of at most {MAX_ITEMS} entries
+@msg	a color default must be a color object or a hex string such as "#3a7bd5"
+@msg	a color object or a hex string such as "#3a7bd5"
+@msg	a freeform gradient holds at most {MAX_ITEMS} points and lines
+@msg	a freeform gradient line names a point it doesn't have
+@msg	a gradient needs 1-{MAX_ITEMS} stops
+@msg	a list of numbers
+@msg	a list of {min_items} to {max_items} numbers
+@msg	a new object needs a `path`
+@msg	a number
+@msg	a painted live effect returns only `objects`
+@msg	a painted live effect's piece has only `path`, `fillRule`, `fills` and `strokes`
+@msg	a read-only object was left out
+@msg	a read-only object was left out: return it, as {"id"} alone or as it was given
+@msg	a string
+@msg	a stroke has only `paint`, `width`, `join`, `cap` and `miterLimit`
+@msg	a stroke must be {"paint", "width"?, "join"?, "cap"?, "miterLimit"?}
+@msg	an effect must be {"id", "params"?, "visible"?}
+@msg	an effect on a fill returns only `fills`
+@msg	an effect on a stroke returns only `strokes`
+@msg	an object must be a JSON object
+@msg	bad range
+@msg	choices must be 1-64 non-empty, printable strings
+@msg	coordinate out of range (limit ±{MAX_COORD} pt)
+@msg	default is not one of the options
+@msg	each piece needs a `path`
+@msg	is listed twice
+@msg	pattern transform out of range
+@msg	read-only field '{field}' changed
+@msg	stops must be in order of `offset`
+@msg	the document has no pattern {pattern}
+@msg	the document has no swatch {n}
+@msg	the output
+@msg	the path has no anchor points
+@msg	too many anchor points (limit {MAX_ANCHORS})
+@msg	true or false
+@msg	a number >= {_1}
+@msg	a number > {_1}
+@msg	a number <= {_1}
+@msg	a number < {_1}
+@msg	a number {_1} to {_2}
+@msg	a number >= {_1} and < {_2}
+@msg	a number > {_1} and <= {_2}
+@msg	a number > {_1} and < {_2}
+@msg	a number ({_1})
+@msg	a number >= {_1} ({_2})
+@msg	a number > {_1} ({_2})
+@msg	a number <= {_1} ({_2})
+@msg	a number < {_1} ({_2})
+@msg	a number {_1} to {_2} ({_3})
+@msg	a number >= {_1} and < {_2} ({_3})
+@msg	a number > {_1} and <= {_2} ({_3})
+@msg	a number > {_1} and < {_2} ({_3})
+@msg	an integer
+@msg	an integer >= {_1}
+@msg	an integer <= {_1}
+@msg	an integer {_1} to {_2}
+@msg	one of {_1}
+@msg	`{path}` must be one of {_1}, not {got}
+@msg	an object id (a non-negative integer)
+@msg	a list of object ids
+@msg	a color (a string, [r, g, b] or an object)
+@msg	[x, y] (two numbers)
+@msg	an object
+@msg	a list
+@msg	unknown key `{k}`; the keys here are {_1}
+@msg	{_1} is listed twice
+@msg	{_1} is not the id of an input object
+@msg	{_1} is read-only
+@msg	{what} must be from {lo} to {hi}
+@msg	a color component
+@msg	a plate
+	Install “{name}”, which asks for these permissions?
+	ID: {id}
+	Version: {version}
+	Install “{name}” in place of the plug-in with the same ID?
+	This file is not the plug-in installed before with this ID. It gets the settings and cache kept for that ID.
+	Automation asked to install this plug-in. To install it, choose Object › Plug-ins › Install Plug-in… yourself.
+@msg	Automation asked to install this plug-in. To install it, choose Object › Plug-ins › Install Plug-in… yourself.
+@msg	“{name}” is another module than the plug-in with id {_1} and would get the settings and cache kept for it: install it with `replace: true` once the user agrees
+	File SHA-256: {hash}
+	Read the objects it is given
+	Change, add and delete objects in the document
+	Keep data of its own with the document
+	Change how the objects its effect is applied to are drawn
+	Write the document as a file in its own format
+	Show its progress, see Cancel and write log lines
+	Keep settings of its own
+	Keep a cache of its own, which you can clear
+	Run these commands on the document: {ids}
+@msg	“{name}” lists `{id}` in `commandAllowlist`, which a plug-in may not call
+@msg	vc_call `{shown}`: {why}
+@msg	vc_call `{shown}`: the manifest's `commandAllowlist` doesn't list it
+@msg	vc_call `{shown}`: the id or the arguments lie outside the module's memory
+@msg	vc_call `{shown}`: the id or the arguments are not UTF-8
+@msg	vc_call `{shown}`: the arguments are not a JSON object
+@msg	only a filter with the usual budget declares `commandAllowlist`
+@msg	command calls ({MAX_CALLS} calls and {MAX_CALL_BYTES} bytes per run)
+@msg	command call size (vc_call `{shown}`: {len} bytes, limit {MAX_CALL_DATA})
+@msg	at most {MAX_ALLOWED_COMMANDS} commands in `commandAllowlist`
+@msg	a plug-in may not call this command
+@msg	`commandAllowlist` needs the permission `commands`, and `commands` needs a `commandAllowlist`
+@msg	`commandAllowlist` names `{shown}`, which is not a command id or is listed twice
+	Clear Plug-in Cache
+@msg	permission `{permission}` needs plug-in API level {PROGRESS_API}: give `api` {PROGRESS_API}
+@msg	the module imports `env.{name}` with another type than the host's: it is {signature}
+@msg	the module imports `env.{name}`, which a plug-in may use only at plug-in API level {PROGRESS_API} (`api` {PROGRESS_API}) and with the permission `{permission}`
+@msg	the module imports `{from}.{name}`, which the host doesn't offer: a plug-in may import only the `env.vc_*` functions that docs/plugins.md lists (plug-in API level 2), and no WASI, files or network
+@msg	`api` is {_1}; this host implements plug-in API levels 1 to {API_LEVEL}
+@msg	`paintOutput` may only be true
+@msg	`paintOutput` is only for a live effect (`kind` "effect") at `api` 2
+@msg	`grant` must be a list of permission names
+@msg	`grant` names an unknown permission `{shown}`
+@msg	a plug-in of kind `{_1}` needs the permission `{_2}`
+@msg	at most {MAX_PERMISSIONS} `permissions`
+@msg	permission `{shown}` doesn't apply to a plug-in of kind `{_1}`
+@msg	permission `{shown}` is listed twice
+@msg	only a filter declares `inputs`
+@msg	`inputs` names an unknown object kind `{shown}`: use type, image or symbolInstance
+@msg	`inputs` lists `{shown}` twice
+@msg	`inputs` needs `api` 2 or later
+@msg	`inputs` needs the permission `doc.read`
+@msg	memory budget (object {_1} needs {size} bytes of input, {left} left)
+@msg	object budget (more than {MAX_OBJECTS} read-only objects)
+@msg	instruction budget
+@msg	time budget
+@msg	memory budget (the selection is too large to hand over)
+@msg	output size ({what} is {len} bytes, limit {max})
+@msg	the plug-in's grant can't be removed from the plug-in store
+@msg	permission `{shown}` is reserved for a later plug-in API; this host doesn't grant it
+@msg	unknown permission `{shown}`
+@msg	“{name}” asks for the permissions {asked}: a person has to approve them in the desktop app, or pass `grant` in a session started with --allow-plugin-grants
+@msg	`grant` and `allowHeavy` take effect only in a session started with --allow-plugin-grants: approve the plug-in in the desktop app
+@msg	Only the person at the keyboard can approve installing a plug-in
+@msg	“{name}” wasn't granted `{p}`, which its output needs: nothing was changed
+@msg	a heavy filter runs in the background, so it can't declare `commands`
+@msg	at most {MAX_COMMANDS} `commands`
+@msg	command {name} is declared twice
+@msg	command {name}: `label` must be 1-64 printable characters
+@msg	command {name}: use an id of 1-{MAX_COMMAND_ID} characters from a-z 0-9 _ that starts with a letter
+@msg	command {name}: {e}
+@msg	manifest: {e}
+@msg	manifest: {e} at line {line} column {column}
+@msg	`commands` must be a list of commands, each with an `id` and a `label`
+@msg	command {name} must be an object with an `id` and a `label`
+@msg	missing field `{key}`
+@msg	duplicate field `{key}`
+@msg	only a filter or a live effect declares `commands`
+@msg	“{name}” › {label}: {e}
+@msg	the module doesn't have the SHA-256 `hash` gives: nothing was installed
+	Action Options…
+	Action Options
+	Playback Options…
+	Button Mode
+	No actions.
+	Insert Stop…
+	Insert Stop
+	Record Stop
+	Allow Continue

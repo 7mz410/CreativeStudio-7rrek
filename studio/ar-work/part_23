@@ -1,0 +1,200 @@
+	Push Out First
+	Push Out Only
+	Move Mesh Points
+	Blend Easing
+	Navigator Panel Options
+	Draw Dashed Lines as Solid Lines
+	Tilt
+	Bearing
+	missing from the Brushes panel
+	built in
+	embedding not allowed
+	embedding for editing
+	embedding for preview and print
+	embedding allowed
+	{file}; {embedding}
+	substituted: shown in {family} {style} ({detail})
+	missing: shown in {family} {style}
+	missing
+	{width} × {height} px
+	{size} — {file}
+	{n} ppi
+	{kind}, {instances}
+	{kind}, {rows} × {cols}
+	{grid}, {instances}
+	Linear gradient
+	Radial gradient
+	Conic gradient
+	Diamond gradient
+	Freeform gradient
+@plural	{n} instance|{n} instances
+@plural	{n} row|{n} rows
+@plural	{n} column|{n} columns
+	New Character Style…
+	New Paragraph Style…
+	Next Document
+	Previous Document
+	New Toolbar…
+	New Toolbar
+	Show Toolbar
+	List Toolbars
+	Manage Toolbars…
+	Manage Toolbars
+	Rename Toolbar
+	Duplicate Toolbar
+	Delete Toolbar
+	Show DCS Transparency Interactions
+	Transparent, or overlaps transparent objects: check its separations
+	Optical
+	Dynamic Text
+	Dynamic Text Presets
+	Arch
+@msg	select point type or type on a path
+@msg	type on a path in a thread cannot use Dynamic Text: {frames}
+@msg	type on an open or compound path cannot be centered on its top or bottom: {open}
+@msg	type on a path with no length or no height cannot be centered: {flat}
+@msg	type on a path in a thread cannot be centered on its top or bottom: {frames}
+@msg	select type on a closed path
+	Organic Fades
+	Holographic
+@plural	Packaged {n} file {note} in {folder}|Packaged {n} files {note} in {folder}
+	Save Actions…
+	Load Actions…
+	Preview:
+	Insert Aki Left
+	Insert Aki Right
+digits	Devanagari
+digits	Bengali
+digits	Gurmukhi
+digits	Gujarati
+digits	Odia
+digits	Tamil
+digits	Telugu
+digits	Kannada
+digits	Malayalam
+	Proportional Lining
+	Position:
+	Default Position
+	Numerator
+	Denominator
+	Conic Gradient
+	Diamond Gradient
+	Include Placed Images
+	Include Fill Hatches
+	Use Monitor Profile for Canvas
+	The canvas is drawn in sRGB.
+	Canvas display profile:
+	The system matches the window to the display's colors.
+	No usable display profile was found: the canvas is drawn in sRGB.
+	Rearrange
+	Select All Artboards
+	Switch Orientation
+	{folders} and {files} searched
+@plural	{n} folder|{n} folders
+@plural	{n} file|{n} files
+@plural	{n} folder skipped, such as another app's or the system's folder or a hidden one|{n} folders skipped, such as other apps' and the system's folders and hidden ones
+@plural	{n} folder or file couldn't be read|{n} folders or files couldn't be read
+	Each Link Separately
+	Selected Instances
+	All Instances
+	Missing Links from This Folder
+@msg	scope {v} is not each|selected|all|missingInFolder
+@msg	scope each and paths go together: paths lists entries of ids and path, in place of ids, path and folder
+@msg	paths entry {i} needs path and ids (object ids no other entry has)
+@msg	scope missingInFolder takes path: the folder of that file is searched for the other missing links
+	Break Thread
+	Replace:
+	Create Spine
+	Create Spine:
+	Always
+	Never
+	Reset Transformation
+	Replace With Font From
+	Find In
+	System
+	Export Preferences…
+	Import Preferences…
+	Save the applied preferences to a JSON file
+	Apply the preferences in a file Export Preferences saved
+	Export Preferences
+	Import Preferences
+	Search Preferences
+	No settings found
+	Arrowheads
+	Edit Arrowheads
+	Edit Arrowheads…
+	Reload Arrowheads
+	Color Theme Picker
+	Click or drag across the art to pick its colors; Shift adds more
+	Prominent Colors
+	Save All Colors
+	Save Prominent Colors
+	Reset all preferences to their defaults?
+	The defaults are applied when you click OK in Preferences. Cancel there keeps your current preferences.
+	Korean Line Break Anywhere
+	Bunri-Kinshi
+	East Asian Composition Settings
+	Korean Composition Settings
+	Hold a Tool Shortcut to Use the Tool Temporarily
+	Show Bounding Box While Moving and Drawing
+	Save As Preset…
+	Save Changes
+	Save Document Preset
+	Saved View 11
+	Saved View 12
+	Saved View 13
+	Saved View 14
+	Saved View 15
+	Saved View 16
+	Saved View 17
+	Saved View 18
+	Saved View 19
+	Saved View 20
+	Saved View 21
+	Saved View 22
+	Saved View 23
+	Saved View 24
+	Saved View 25
+@msg	`Custom` stands for changed settings: save the preset under another name
+	Marquee Selection
+	Touching
+	Fully Enclosed
+	Drag Direction
+	Game HUD
+	Health Fill
+	Mana Glow
+	Damage Flash
+	Quest Outline
+	Coin Shine
+	Boss Alert
+	Status Effects
+	Poison Tint
+	Freeze Edge
+	Burn Aura
+	Stun Pulse
+	Stealth Fade
+	Shield Buff
+	Textures
+	Fine Grain
+	Canvas Weave
+	Burlap Sack
+	Cracked Glaze
+	Mosaic Floor
+	Quilted Squares
+	Leaded Glass
+	Damp Paper
+	Shape Mode
+	Shape Properties
+	Show Recent Colors
+	Toggle RGB Percent
+	Auto-Smooth
+	Smooth…
+	Keep Tools Beside the Canvas
+	Toggle Line Composer
+	Press and hold to view the source image
+	Image Trace Preview
+	Snap to Last Location
+	Spot Color Objects
+	Pattern Objects
+	Gradient Objects
+	Font Details

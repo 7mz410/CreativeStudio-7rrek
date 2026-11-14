@@ -1,0 +1,200 @@
+@msg	the paths have nothing to merge there
+	Break Text
+	Combine Point Text
+	Join Point Text
+	Remove Breaks
+	Split Text at Cursor
+	Set Alignment, Keep Position
+	Reset Text Transform
+	Replace Missing Fonts…
+	Replace Missing Fonts
+	Remove Line Breaks
+	Remove Paragraph Breaks
+	Break Text into Lines
+	Break Text into Paragraphs
+	Break Text into Words
+	Break Text into Glyphs
+	Reset Text Transform and Scale
+	Set Alignment, Keep Position:
+	Break Text into:
+	Split at Cursor
+	Reset Transform
+	Shift-click: break into paragraphs
+	Alt-click: reset the horizontal scale too
+breakText	Lines
+breakText	Words
+breakText	Glyphs
+@msg	Click in type with a Type tool to split it
+@msg	Too many type objects to change at once
+@msg	Too many pieces to make at once
+@msg	Select horizontal point or area type whose text fits
+@msg	Nothing to split at the cursor
+@msg	Select two or more one-line point type objects on one baseline to combine
+@msg	Select two or more one-line point type objects to join
+@msg	No line breaks to remove
+@msg	No paragraph breaks to remove
+@msg	Too many breaks to remove at once
+@msg	Select point type
+@msg	The point type is aligned that way already
+@msg	The point type has no transform to reset
+@msg	No fonts are missing
+@msg	the replacement font is not available
+@msg	missing `align`
+@msg	`by` must be lines, paragraphs, words or glyphs, not {other}
+@msg	`kind` must be "line" or "paragraph", not {other}
+@msg	`align` must be "left", "center" or "right", not {other}
+	File + Number
+	File + Data Set Name
+	Data Set Name
+@msg	`datasetFileNaming` must be `fileNumber`, `fileDataSetName` or `dataSetName`
+	Each data set saves over the same file, which keeps only the last data set.
+@msg	save the document with Save As before Save and Close
+@msg	no free data set file name in destination folder
+	Path Effects
+	Reverse Direction
+	Align to Corners and Ends
+	Count
+	Max Count
+	Start Length
+	Start Percent
+	Start Shape
+	End Length
+	End Percent
+	End Shape
+	By Count
+	By Distance
+	Both
+	Shorter Than Length
+	Dashes to Geometry
+	Dashes to Geometry…
+	Add Anchors
+	Add Anchors…
+	Smooth Anchors
+	Smooth Anchors…
+	Simplify Anchors
+	Simplify Anchors…
+	Split at Anchors
+	Split at Anchors…
+	Extend Path…
+	Close Path…
+	Retract Handles…
+	Dash 1
+	Gap 1
+	Dash 2
+	Gap 2
+	Dash 3
+	Gap 3
+	Dash 4
+	Gap 4
+	Dash 5
+	Gap 5
+@msg	{_1}: they came in as the page's art
+@msg	warped text objects that came in as drawn art, not as editable type: {_1}
+@msg	objects that drew differently from the file's own page came in as its art: {_1}
+@msg	You must choose a side pattern.
+@msg	invalid pattern tile choice
+@msg	no pattern named `{choice}`
+	Delete the selected brushes?
+	Strokes use one or more of these brushes. Take the brushes off those strokes and delete the brushes?
+	Remove Strokes
+	Place Brush Art
+	Replace Brush Art
+	Strokes use this brush. Apply the new art to those strokes, or leave them as they are and add a copy of the brush with the new art?
+	Apply to Strokes
+	Leave Strokes
+@msg	`{name}` has no art (only scatter, art and pattern brushes do)
+	Arrange Tools
+	Arrange in Grid…
+	Arrange in Grid
+	Swap Objects
+	Swap Objects and Sizes
+	Replace with Top Object…
+	Replace with Top Object
+	Set Size of Each…
+	Set Size of Each
+@msg	select exactly two objects
+@msg	give `width` or `height`
+	Group Overlapping Objects
+@msg	too many objects selected (at most 20000)
+	Divide into Dashes…
+	Divide into Dashes
+	Dash:
+	Gap:
+	Fit to Corners and Ends
+	Remove Gaps
+@msg	that makes too many pieces (at most 100000): make the dashes longer
+@msg	select paths, or segments, to divide
+	Expand Dashes into Paths
+@msg	select paths with dashed strokes to expand
+	Document Tools
+	Save a Timestamped Copy
+@msg	there is no clock here
+@msg	there is no clock here: give `time` (Unix seconds)
+@msg	the document has never been saved: give `folder`
+@msg	every numbered name for the copy is taken
+	New Symbols from Layers
+	Convert Layers to Symbols
+@msg	{id} is no top-level layer
+	Marathi
+	Gujarati
+	Bengali
+	Punjabi
+	Tamil
+	Telugu
+	Kannada
+	Malayalam
+	Odia
+	Urdu
+	rsm {release} and later (version {n})
+	Export All Open Documents as PDF
+	Export All Open Documents as SVG
+@msgplural	Exported {n} document|Exported {n} documents
+@msgplural	Exported {n} document; {title} wasn't written: {error}|Exported {n} documents; {title} wasn't written: {error}
+	Batch Trace Folder
+@msgplural	Traced {n} image|Traced {n} images
+@msgplural	{n} image couldn't be traced|{n} images couldn't be traced
+@msgplural	Traced {n} image; not traced: {failed}|Traced {n} images; not traced: {failed}
+	Symbol Type:
+	Dynamic Symbol
+	Static Symbol
+	Symbol Instance Appearance
+	Reset Symbol Instance
+@msg	type must be static or dynamic, not {v}
+@msg	`{name}` is a static symbol: set its Symbol Type to Dynamic first
+@msg	Only the fill, stroke, opacity and blend of a path, compound path or type selected in a symbol instance can change
+@msg	path must be a list of child indices
+@msg	no object at path {shown} in the symbol's art
+@msg	give fill, stroke, opacity and/or blend
+@msg	{key} cannot be set on a guide
+@msg	{key} cannot be set on a blend
+@msg	{key} cannot be set on an envelope
+@msg	{key} cannot be set on a gradient mesh
+@msg	{key} cannot be set on a Repeat
+@msg	{key} cannot be set on a placed document
+@msg	{key} cannot be set on an Intertwine group
+@msg	stroke cannot be set on a symbol instance
+@msg	fill on a symbol instance must be a solid color or none
+@msg	{key} cannot be set on an image without a Convert to Shape or Outline Object effect on it
+@msg	pass newName, registration, exportType, nineSlice and/or type
+	Text Flow
+	By Rows
+	By Columns
+	Randomize Opacity…
+	Randomize Opacity
+	Minimum:
+	Maximum:
+	Seed:
+@msg	`min` is greater than `max`
+	Sort Objects…
+	Sort Objects
+	Sort By:
+	Apply To:
+	Area
+	X Position
+	Y Position
+	Stacking Order
+	Small to Large
+	Large to Small
+	Distribute Evenly
+	Q
+	Ha

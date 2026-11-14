@@ -1,0 +1,200 @@
+@msg	id {value} is a layer, not an object; move layers with layer.move
+	Rename Library Item
+	Add to Character Styles
+@plural	{n} linked image changed on disk. Show the new version?|{n} linked images changed on disk. Show the new versions?
+	rsm Title Bar on Every Desktop
+	The VECTORCRAFT_TITLEBAR environment variable chooses the title bar while it is set.
+	System Title Bar takes precedence over this option while it is on.
+	This desktop draws the window's title bar with this option on or off while rsm Title Bar on Every Desktop is off.
+	Auto-Centered
+	Auto-Between
+	Auto-Sliced
+	Auto-Overlap
+@msg	the PCX file is cut short
+@msg	the PCX file's header is damaged
+@msg	PCX files with {bits}-bit pixels in {planes} planes can't be read
+@msg	the Pixar file is cut short
+@msg	the Pixar file's header is damaged
+@msg	the Pixar file's image data is damaged
+@msg	the JPEG 2000 file can't be read
+@msg	the JPEG 2000 file has an unsupported color space or JPX content
+@msg	the HEIC or HEIF file can't be read
+@msg	the HEIC or HEIF file holds a kind of image that can't be read
+@msg	HEIC and HEIF images can't be opened in this build
+@msg	zipped 1-bit PSD image data with prediction can't be read
+@msg	the PSD file's layer data uses an unknown compression ({m})
+@msg	the PSD file's layer records are damaged
+@msg	the PSD file's layer groups are nested too deeply
+@msg	a layer of the PSD file is too large to read
+@msg	the PSD file's layers take more memory to read than allowed
+@msg	the layers can't be read ({e}): the file opened as its merged image
+@msg	the JPEG XL file is cut short
+@msg	the JPEG XL container is too large to read
+@msg	CMYK JPEG XL images can't be read
+@msg	the JPEG XL file can't be read: {e}
+@msg	{label} currently requires a path, compound path, type, group, blend or symbol instance. Expand other objects first.
+@msg	{label} can't build a solid from an image: trace it first with Object › Image Trace › Make.
+@msg	Extrude & Bevel
+@msg	Revolve
+@msg	Inflate
+@msg	Rotate
+@msg	Extrude & Bevel (Classic)
+@msg	Revolve (Classic)
+@msg	Rotate (Classic)
+@msg	This effect
+@msg	clipping paths
+@msg	other objects
+@msg	{label} requires a group holding a shape with at least two anchors
+@msg	Revolve requires a group holding a shape with at least two anchors
+@msg	Revolve requires a shape with at least two anchors
+@msg	{label} on a group needs paths, compound paths, type, groups, clipping groups, blends and symbol instances: release or expand its {what} first.
+@msg	{label} on a group takes at most {MAX_MEMBERS} objects
+@msg	A 3D effect on a group or layer goes on the group itself, not on its fill or stroke
+@msg	a 3D effect on a group's fill or stroke draws nothing
+@msg	a 3D effect on a group's fill or stroke draws nothing to export
+@msg	The 3D object is too complex to export
+@msg	the object has no 3D effect (Extrude & Bevel, Revolve, Inflate or Rotate)
+@msg	its 3D effect builds no solid
+@msg	bevel must be none or one of {_1}
+@msg	{_1} can't build solids from this art: its symbol instances, blends and clipping groups hold too many objects
+@msg	{label} can't build a solid from the instance of symbol "{symbol}": the symbol's art isn't available
+@msg	{_1}: the clipping path is too complex to cut the art with
+@msg	{_1} takes at most {MAX_MEMBERS} objects
+@msg	{_1} can't build solids from art nested more than {MAX_DEPTH} levels deep
+@msg	Revolve paint is too complex for this surface; reduce Segments or simplify the gradient
+@msg	Revolve edge must be left or right
+@msg	Revolve cap must be a boolean
+@msg	the revolved object has no fill or stroke
+@msg	lightColor must be an opaque RGB color in #rrggbb form
+@msg	lights must contain one to ten lights
+@msg	each light must be an object
+@msg	unknown light setting: use color, intensity, rotation, height, softness or behind
+@msg	light {key} must be a number from {min} to {max}
+@msg	light color must use opaque #rrggbb
+@msg	light behind must be true or false
+@msg	shadow must be true or false
+@msg	shadowPosition must be behind or below
+@msg	{key} must be a number from {min} to {max}
+@msg	each of `{GRAPHICS}` must be an object
+@msg	`{GRAPHICS}` entries take symbol, face, x, y, scale and rotation, not `{k}`
+@msg	each of `{GRAPHICS}` needs `symbol`, the name of a symbol
+@msg	`{GRAPHICS}` face must be front or back
+@msg	`{GRAPHICS}` {key} must be a number from {lo} to {hi}
+@msg	`{GRAPHICS}` must be an array
+@msg	Graphics map onto the Plane, Extrude and Revolve object types
+@msg	Revolve maps graphics onto its side: map them onto the front
+@msg	The graphics are too complex for this surface: simplify the symbols' art or reduce Segments
+@msg	`{GRAPHICS}` takes at most {MAX_GRAPHICS} graphics
+@msg	A plane has one face: map its graphics onto the front
+@msg	The graphics are too complex: simplify the symbols' art
+@msg	A graphic's art may be nested at most {MAX_LEVELS} levels deep: simplify the symbol's art
+@msg	A graphic's art may nest symbols at most {MAX_NESTING} levels deep: simplify the symbol's art
+@msg	A graphic's art holds too many objects: simplify the symbol's art
+@msg	A graphic draws at most {MAX_PIECES} fills and strokes: simplify the symbol's art
+@msg	`surface` must be one of {_1}
+@msg	{label} draws the source art for this object instead of its 3D surface
+@msg	{label} draws no faces for this object
+@msg	the wireframe has more than {MAX_WIRE_EDGES} edges
+@msg	the params must be an object, not {got}
+@msg	unknown parameter `{path}`; the object takes no keys
+@msg	unknown parameter `{path}`; it takes: {keys}
+@msg	missing `{path}`
+@msg	`{path}` must be {expected}, not {got}
+@msg	`{path}` is nested too deeply
+@msg	{path}: not a PNG, JPEG, WebP, TIFF or BMP image
+@msg	the image is {iw} × {ih} pixels and the artboard at that width is {rw} × {rh} pixels: their proportions differ
+@msg	`threshold` must be a number from 0 to 1
+@msg	background {v}: a color such as "#808080"
+@msg	comparing with an image file isn't available in the browser
+@msg	an image of {w} × {h} pixels is shown at reduced size
+	Shadows
+	Distance from Object
+	Shadow Bounds
+	Behind Object
+	Below Object
+	 two points, then move and click to place an aligned, horizontal or vertical dimension  |  
+@msg	Invalid measured point
+@msg	Only linear dimensions are horizontal or vertical
+@msg	Unknown dimension orientation
+@msg	span: "selection" places a linear, radial, conic or diamond gradient, not a freeform one
+	Save Variable Library…
+@msg	a variable library holds text variables, and the document has none
+@msg	variable `{name}` can't be saved in a variable library: rename it to start with a letter or `_`, without spaces or symbols other than `-`, `_` and `.`
+@msg	data set `{name}` holds a control character, which a variable library can't hold
+@msg	data set `{name}` starts or ends with white space, which a variable library can't hold
+@msg	columns {first} and {column} both name the variable `{name}`
+@msg	no bound object reports a value (locked objects and embedded images report none)
+@msg	the action has no included steps
+@msg	no such action step
+@msg	included must be true or false
+@msg	others must be true or false
+@msg	an action is already recording
+@msg	an action is already playing
+@msg	the action stopped playing: its document is no longer active
+@msg	speed must be accelerated, step or pause
+@msg	seconds must be a whole number from 1 to 60
+@msg	no such function key
+@msg	no such color
+@msg	{_1} cannot be used on Windows
+@msg	more than one action is named “{_1}”
+@msg	the action “{_1}” sets the folder preference {_2}; delete that step to save the set
+@msg	too many changed shortcuts
+@msg	byColor must be true or false
+@msg	byColor can't split Auto Grouping groups: trace without Auto Grouping
+@msg	byColor can't regroup a trace with a live Pathfinder effect: expand without byColor
+@msg	Flat Logo mode does not use keepColors: it traces the colors named in logoColors, or the colors it finds.
+@msg	Nothing was traced: none of the colors the trace found matches keepColors ({_1}).
+@msg	Nothing was traced: Ignore Color leaves out every area of the colors keepColors lists.
+@msg	Nothing was traced: the colors that match keepColors produce no paths.
+@msg	keepColors: none of the colors the trace found matches {c}, so nothing of it is traced.
+@msg	`colorGroup` needs `library: "document"`
+@msg	`colorGroup` needs `palette: "documentLibrary"`
+@msg	`colorGroup` needs `mode: "color"`
+@msg	no color group `{name}` in the document (see swatch.list)
+@msg	Flat Logo traced the image at {_1} × {_2} pixels, averaged down from {_3} × {_4}.
+@msg	the file's variable bindings weren't all read (bindings skipped: {_1}): those objects aren't bound to their variables
+@msg	the file's variable library was partly read (entries skipped: {_1}): the Variables panel lists the rest
+@msg	the file's variable library couldn't be read: the Variables panel doesn't list it
+@msg	a variable of unknown kind can't be bound to objects
+	Optical Effects
+	Geometric Patterns
+	Grit Textures
+	Lock Artboards
+	Unlock Artboards
+	Lock Selected
+	Lock All Except Selected
+	Lock All
+	Unlock Selected
+@msgplural	Packaged {n} file in {folder}|Packaged {n} files in {folder}
+@msgplural	Packaged {n} file {note}|Packaged {n} files {note}
+@msgplural	Packaged {n} file|Packaged {n} files
+@plural	Packaged {n} file|Packaged {n} files
+@plural	Packaged {n} file in {folder}|Packaged {n} files in {folder}
+@plural	Packaged {n} file {note}|Packaged {n} files {note}
+@plural	{n} file in {folder}. Show the package folder?|{n} files in {folder}. Show the package folder?
+	Hue Clockwise
+	Hue Counterclockwise
+@msg	`method` must be classic, perceptual, hue-clockwise or hue-counterclockwise
+@msg	`spread` must be pad, repeat or reflect
+@msg	`repeats` must be a whole number from 1 to {MAX_REPEATS}
+@msg	`spread` applies to linear, radial, conic and diamond gradients
+@msg	“{_1}” asks for a heavy budget (each run up to {minutes} minutes and {times} times the usual instructions): a person has to approve it in the desktop app, or pass `allowHeavy: true` in a session started with --allow-plugin-grants
+@msg	`name` must be 1-64 printable characters
+@msg	`version`, `description` or `author` is too long
+@msg	`warnings` must be a list of strings
+@msg	`{k}` must be one of {_1}
+@msg	`{k}` must be {what}
+@msg	an exporter declares 1 to {MAX_EXTENSIONS} `extensions`
+@msg	at most {MAX_UNGROUPED} parameters outside groups: give the others a `group`
+@msg	can't encode the input
+@msg	expected {"dataBase64"}
+@msg	expected {"objects"}
+@msg	export `{name}`: {e}
+@msg	extension {e} is listed twice
+@msg	extension {e}: use 1-16 lower-case letters and digits, without the dot
+@msg	invalid id {_1}: use 1-64 characters from A-Z a-z 0-9 . _ -
+@msg	invalid parameter name {k}
+@msg	manifest is not UTF-8
+@msg	manifest is too long (limit {MAX_MANIFEST_BYTES} bytes)
+@msg	manifest is {_1} bytes (limit {MAX_MANIFEST_BYTES})
+@msg	module is {_1} bytes (limit {_2})

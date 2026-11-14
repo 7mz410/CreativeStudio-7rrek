@@ -1,0 +1,200 @@
+	Create Swatch Legend
+	Create Swatch Legend…
+	HEX
+	Help Bar
+	Type Tools
+	Text Tweaker…
+	Text Tweaker
+	Attribute:
+	From:
+	To:
+	Bow
+	Spike
+	Skip Spaces
+	Release Type on a Path…
+	Release Type on a Path
+	Text and Path
+	Path Only
+@msg	The art is too large to copy as a picture: other apps get no PNG of it
+	Select by Artboards
+	Select by Artboards…
+	Selection Tools
+	Search artboards
+	Fully Inside
+	Fully Outside
+	No artboards match.
+	Chosen: {n} of {total}
+	Contour
+	Contour Tool
+	Sharp
+	Bake
+	Turn the Contour into plain paths
+	Set Corners…
+	All Anchors
+	Odd-Numbered Anchors
+	Even-Numbered Anchors
+	Minimum angle
+	Maximum angle
+	Select Linked
+	Select Embedded
+	Select Missing
+	Select Modified
+	Select by Link Status
+	Select by Link Status…
+	Search images
+	No images match.
+@msgplural	Selected {n} linked image|Selected {n} linked images
+@msgplural	Selected {n} embedded image|Selected {n} embedded images
+@msgplural	Selected {n} missing image|Selected {n} missing images
+@msgplural	Selected {n} modified image|Selected {n} modified images
+@msgplural	Selected {n} image|Selected {n} images
+@msgplural	{selected}; {n} more is hidden or locked|{selected}; {n} more are hidden or locked
+@msgplural	{selected}; {n} more is on a template layer|{selected}; {n} more are on template layers
+@msgplural	{selected}; {n} more is outside the isolated group|{selected}; {n} more are outside the isolated group
+@msgplural	{selected}; {n} more can't be selected now|{selected}; {n} more can't be selected now
+	Compound Shapes
+	Shape Mode Buttons Make Compound Shapes
+	3D Box
+	3D Box Tool
+	Open With
+	No importer plug-ins installed
+	Read files you open in its format and make documents from them
+@msg	{_1} is an importer (File › Open With)
+@msg	missing `importer` (see document.formats)
+@msg	`importer` must be a plug-in format id (see document.formats)
+@msg	“{shown}” opens {_1} files, not `{_2}`
+@msg	`{_1}` is a plug-in of kind `{_2}`, not an importer
+@msg	`{_1}` is a plug-in of kind `{_2}`, not an exporter
+@msg	`{_1}` is an importer: open a file with document.open {{"importer": "{_2}"}}
+@msg	`{_1}` is an exporter: export with document.export {{"format": "{_2}"}}
+@msg	`{_1}` is a live effect: apply it with effect.apply {{"effect": "{_2}"}}
+@msg	the importer returned no objects
+@msg	an importer returns `objects` and `warnings`, not `{key}`
+@msg	the file is larger than the {MAX_INPUT_BYTES} bytes an importer reads
+@msg	an importer declares 1 to {MAX_EXTENSIONS} `extensions`
+@msg	only an exporter or an importer declares `extensions`
+@msg	an importer always gets an import's budget: leave `budget` out
+	Copy Troubleshooting Info
+@msg	Copied the troubleshooting info
+@msg	The last session of rsm stopped responding before it closed. Help › Copy Troubleshooting Info copies the details for a bug report
+	Safe Mode…
+	Safe Mode
+	Help › Safe Mode…
+	Enable on Re-launch
+	The last launch of rsm stopped while the plug-in {name} was loading. It may not be what stopped it.
+	Disable and Continue
+	Start Normally
+	Start in Safe Mode
+	rsm is in Safe Mode: no plug-ins load or run until it starts normally.
+	Disabled plug-ins
+	No plug-ins are disabled.
+@msg	Safe Mode is on: plug-ins don't load or run until VectorCraft starts normally
+@msg	give `id` or `file` (see plugin.safeMode)
+@msg	that plug-in isn't disabled (see plugin.safeMode)
+@msg	Couldn't save the disabled plug-ins for the next launch
+@msg	Expand Appearance: a plug-in effect in the selection can't be expanded in Safe Mode
+	Align to Pixel Grid
+	Align New Objects to Pixel Grid
+	Not Aligned to Pixel Grid
+@msg	only paths and compound paths can be aligned to the pixel grid
+@msg	side is left or right, not `{s}`
+	Ignore All
+	Add to Dictionary
+	No Suggestions
+	Edit Custom Dictionary
+	Entry:
+	Script Console
+	Clear Script Console
+	Copy Script Console
+	Copy All
+	Copy Selected
+	Finished
+	Ended with an error
+	Out of fuel
+	Ended at a host limit
+	Ended at a limit
+	Stopped
+	Ended by an internal fault
+	time unavailable
+	{ms} ms
+	{time}, {calls}
+	slowest: {commands}
+	{dropped}, {cut}
+@plural	{n} host call|{n} host calls
+@plural	{n} earlier line dropped|{n} earlier lines dropped
+@plural	{n} line cut|{n} lines cut
+@msg	`first` and `last` must be numbers of lines the console holds, first before last
+	Learn
+	Explore tutorials
+	For you
+	Skills
+	Get started
+	Quick skill guide
+	Short hands-on tutorials for the essential tools, grouped by skill. Choose a skill to see its tutorials.
+	List Tutorials
+	Show Tutorial
+	Show Tool Location
+	Show where this tool is
+@msg	missing `tutorial` (see learn.list)
+@msg	unknown tutorial `{id}` (see learn.list)
+	View more
+	Finish tutorial
+	Next Up
+	You finished the last tutorial in this skill.
+	Back to skills
+	Open Tutorial Sample
+	Finish Tutorial
+	Next Tutorial
+	Back to Skills
+@msg	tutorial `{id}` has no practice sample
+@msg	open the practice sample of `{id}` first (see learn.openSample)
+@msg	finish `{id}` first (see learn.finish)
+@msg	`{id}` is the last tutorial in its skill
+	Refresh Deferred Effects
+	Deferred Effects
+@msg	no plug-in effect is deferred
+@msgplural	Opened with {n} plug-in effect deferred. Effect › Refresh Deferred Effects runs it.|Opened with {n} plug-in effects deferred. Effect › Refresh Deferred Effects runs them.
+	Cutting Tools
+	Stencil Bridges…
+	Stencil Bridges
+	Shortest Crossing
+@msg	The selected art has no islands to bridge
+@msg	No bridge of this width fits across the selected art
+@msg	Some islands could not be joined to the area around the art
+@msg	`width` must be from {lo} to {hi} pt
+@msg	`count` must be a whole number from 1 to {MAX_BRIDGES_PER_ISLAND}
+	Weed Box and Lines…
+	Weed Box and Lines
+	Margin
+	Box
+	Swatch
+@msg	'caller', 'callee' and 'arguments' cannot be used on strict mode functions
+@msg	Boolean.prototype.{name} was called on a value that is not a Boolean
+@msg	CMYK images whose samples couldn't be read in CMYK were imported in RGB
+@msg	Cannot write to the location of “{name}”; choose where to save it
+@msg	DCS files can only be placed linked: use File › Place with Link on
+@msg	Date.prototype method called on a value that is not a Date object
+@msg	Error.prototype.toString was called on a value that is not an object
+@msg	Function.prototype.toString was called on a value that is not a function
+@msg	Import SVG Filter reads SVG files, not SVGZ
+@msg	JSON.parse: {why} (at offset {at})
+@msg	JSON.stringify cannot write a structure that contains itself
+@msg	Namespace.prototype.toString needs a Namespace
+@msg	New Document profiles need the preferences folder, which this run doesn't have
+@msg	Number.prototype.{name} was called on a value that is not a number
+@msg	Object.create's prototype must be an object or null
+@msg	Object.{function} was given a value that is not an object
+@msg	QName.prototype.toString needs a QName
+@msg	RegExp.prototype.{name} was called on a value that is not a RegExp object
+@msg	Stencil Bridges: the selected art is too large or too detailed to bridge
+@msg	String.prototype.toString was called on a value that is not a string
+@msg	The {name} profile could not be read, so the new document has the default settings: {reason}
+@msg	Trap: more than {_1} pairs of objects lie close enough to trap, or too many objects share a horizontal range; trap fewer objects at a time
+@msg	Weed Box and Lines: no weeding line fits outside the art, and the weed box is off
+@msg	\\ at end of pattern
+@msg	`alignOn` cannot be empty
+@msg	`alignOn` must be a string
+@msg	`align` must be a string
+@msg	`answer` for this {kind} dialog must be one of: {_1}
+@msg	`answers` has more than {MAX_ANSWERS} answers
+@msg	`answers` is larger than 1 MiB

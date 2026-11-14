@@ -1,0 +1,200 @@
+@msg	Couldn't paste: the document it was pasted in was reverted
+@msg	Couldn't save recovery data for {title}: {e}. Copies go to {folder}, the default recovery folder; to use another folder, set Preferences → File Handling → Data Recovery → Folder (recoveryFolder)
+@msg	Couldn't save recovery data for {title}: {e}. Copies go to {folder}, the folder set in Preferences; to use another folder, set Preferences → File Handling → Data Recovery → Folder (recoveryFolder)
+@msg	Couldn't save recovery data: {e}. Copies go to {folder}, the default recovery folder; to use another folder, set Preferences → File Handling → Data Recovery → Folder (recoveryFolder)
+@msg	Couldn't save recovery data: {e}. Copies go to {folder}, the folder set in Preferences; to use another folder, set Preferences → File Handling → Data Recovery → Folder (recoveryFolder)
+@msg	Data Recovery can't keep copies in {path}: {e}
+@msg	Plug-ins can't be loaded from {path}: {e}
+@msg	select a path
+@msg	Live Paint takes paths and compound paths: convert type, images and other objects to paths first
+@msgplural	Packaged {n} file ({note}) in {folder}|Packaged {n} files ({note}) in {folder}
+@msg	aiVersion 7 writes legacy .ai files, not .ait templates
+@msg	`antiAlias` must be "none", "sharp", "crisp" or "strong"
+@msg	`groupColors` must be an array
+@msg	a negative `aspect` applies to conic gradients
+@msg	`focal` applies to radial gradients
+@msg	`preserve` must be an object
+@msg	`globalAdjust` must be an object
+@msg	`{key}` must be an array
+@msg	`{key}` must be a #rrggbb color or a layer color name
+@msg	unknown Live Paint option `{key}`
+@msg	unknown Shape Builder option `{key}`
+@msg	`{key}` must be a number, not {v}
+@msg	`{key}` must be a profile name or null
+@msg	`top` and `below` can't both be true
+@msg	`select` must be true or false
+@msg	`minAnchors` and `maxAnchors` must be whole numbers
+@msg	`{key}` must be a number not below 0
+@msg	`{key}` must be four numbers not below 0: [tl, tr, br, bl]
+@msg	`{key}` must be [x, y, width, height]: four finite numbers, width and height not negative
+@msg	`{min_key}` is greater than `{max_key}`
+@msg	give at least one of `name`, `kind`, `text`, `within`, `intersects`, `minWidth`, `maxWidth`, `minHeight`, `maxHeight`, `minThickness`, `maxThickness`, `minArea`, `maxArea`, `minAnchors`, `maxAnchors`
+@msg	a process color can't colorize a grayscale image with transparency: use a spot color, black or white
+@msg	`name` is empty
+@msg	`newName` is empty
+@msg	`{name}` is a built-in preset and can't change: save it under another name
+@msg	`{name}` is a built-in preset and stays
+@msg	`guideLabel` is null, a layer color's name or #rrggbb
+@msg	the Smooth slider is not open
+@msg	the screen color sampler did not answer
+@msg	the screen color sampler failed
+@msg	check an artboard to export
+@msg	command `{id}` is not available right now
+@msg	the page of artboard {n} is {size}, longer than PDF's page limit of 14,400 pt (200 in): it is written with a UserUnit of {unit}, so apps that ignore UserUnit show it that many times smaller
+@msg	the page of artboard {n} is {size}, longer than PDF's page limit of 14,400 pt (200 in): it is written with a UserUnit of {unit}, so apps that ignore UserUnit show it that many times smaller: turn on Write pages longer than 200 in at full size in points
+@msg	the page of artboard {n} is {size}, longer than PDF's page limit of 14,400 pt (200 in): {label} pages are written without a UserUnit, in points, and apps that keep to the limit cut the page to 200 in
+@msg	PDF 1.5 has no UserUnit, which a page longer than 14,400 pt (200 in) needs to keep its size: the file is written as PDF 1.6
+@msg	PDF 1.4 has no UserUnit, which a page longer than 14,400 pt (200 in) needs to stay within PDF/A-2's page limit of 14,400 units: the file is written as PDF 1.6
+@msg	the page of artboard {n} is {size}, too long and narrow for PDF's page sides of 3 to 14,400 units: it is written with a UserUnit of {unit}, which keeps the short side at 3 units or more, and apps that keep to the limit cut the long side to 14,400 units
+@msg	{label} files hold real numbers up to {max}, and the page of artboard {n}, {side} pt long, needs larger ones: choose PDF 1.6 or later without a PDF/X standard, or a smaller artboard
+@msg	line {line}: value for `{var}` must be true or false
+@msg	line {line}: value for `{var}` is longer than {MAX_GRAPH_CSV} bytes
+@msg	missing id
+@msg	the open dialog has no Reset
+@msg	no Pathfinder operation applied yet
+@msg	no saved preset named `{name}`
+@msg	no saved preset named `{name}` to rename
+@msg	no such action set
+@msg	the action sets changed; nothing was deleted
+@msg	no action set to save
+@msg	the action set file can't be read in full
+@msgplural	Loaded “{name}”: {n} step was left out|Loaded “{name}”: {n} steps were left out
+@msg	not an action set file
+@msg	the action set file is larger than 8 MiB
+@msg	`{ID}`: the reference would be larger than {MAX_BYTES} bytes
+@msg	the action set file holds more than 1,000 actions
+@msg	the action set file needs a later version of rsm
+@msg	an action in the action set file has more than 10,000 steps
+@msg	some text is hidden or locked, so its font wasn't replaced
+@msg	`with` must be a list of at most 10000 spine point indexes
+@msg	`with` moves points, not a handle
+@msg	node {_1} is on a locked artboard
+@msg	not an HP-GL file
+@msg	not a PICT file
+@msg	`pens` must be an array of 1 to 255 #rrggbb colors
+@msg	finish editing the pattern first
+@msg	nothing selected is in a group
+@msg	no history state {v}
+@msg	the document it was prepared for is no longer active
+@msg	choose the object to detach with its Select/Move widget
+@msg	select instances of one symbol
+@msg	a symbol can't hold an instance of itself
+@msg	`background` must be edges, corners or colors
+@msg	`match` must be distance or channels
+@msg	`{key}` must be from 0 to 100
+@msg	`colors` must list 1 to 16 colors, each hex (#rrggbb or #rgb) or black, white, red, green or blue
+@msg	the linked image shows its preview: embed or relink it first
+@msg	a CMYK image has no transparency to set
+@msg	every pixel matches the background: no image would be left
+@msg	an image of {w} × {h} pixels is too large to change
+@msg	select an image with a color mask
+@msg	the color mask's settings are out of range
+@msg	a CMYK image can't take a color mask
+@msg	the mask would hide every pixel
+@msg	Recolor completed; {locked} and {hidden} were left unchanged
+@msg	Recolor completed; {objects} were left unchanged
+@msg	Recolor completed; {objects} was left unchanged
+@msg	1 locked object
+@msg	{n} locked objects
+@msg	1 hidden object
+@msg	{n} hidden objects
+@msg	exit isolation mode first
+@msg	the object is hidden or locked
+@msg	the object is outside the isolated group
+@msg	type objects can't be isolated
+@msg	stop editing the opacity mask first
+@msg	unknown command `{0}`; did you mean `{1}`?
+@msg	unknown gradient kind `{k}` (linear, radial, conic, diamond, freeform)
+@msg	panels can't be shown in Presentation Mode
+@msg	Preferences imported.
+@msg	not a preferences file: {e}
+@msg	not a preferences file: no JSON object
+@msg	not a preferences file (format `{format}`)
+@msg	not a preferences file: no `format`
+@msg	not a preferences file: no `version`
+@msg	not a preferences file: no `prefs`
+@msg	the file was saved by a newer version of rsm (version {v})
+@msg	the file holds no preferences
+@msg	`{key}` names a folder, which preferences files leave out
+@msg	the file is larger than 1 MB
+@msg	give `path` or `data`
+@msg	`{key}` must be an object
+@msg	`prefs.import` runs on its own, not as a batch step
+@msg	unknown preset `{name}`: not a built-in or saved preset (see imageTrace.presets)
+@msg	more than {MAX_CSV_ROWS} data sets: Import Data Sets reads at most {MAX_CSV_ROWS}
+@msg	more than {MAX_CSV_COLS} variables: Import Data Sets reads at most {MAX_CSV_COLS}
+@msg	a new document won't read these variables back with their kind: {names}
+@msg	a new document refuses this file because of these variables: {names}
+@msg	the header `{header}` for `{name}` would read back as the variable `{other}`: rename one of them
+@msg	`{key}: {top}` and `options.{key}: {inner}` disagree: give the option once
+@msg	{_1} is reserved by the system
+@msg	Couldn't paste: the document it was pasted in was closed
+@msg	Pasting
+@msgplural	Discarded {n} recovered document|Discarded {n} recovered documents
+@msgplural	Restored {n} recovered document: save it to keep it|Restored {n} recovered documents: save them to keep them
+@msgplural	Opened with {n} note: {first}|Opened with {n} notes: {first}
+@msgplural	{notice}. Opened with {n} note: {first}|{notice}. Opened with {n} notes: {first}
+@msgplural	Saved {path} with {n} note: {first}|Saved {path} with {n} notes: {first}
+@msgplural	Embedded {n} image; {missing} missing: relink them first|Embedded {n} images; {missing} missing: relink them first
+@msgplural	Embedded {n} image|Embedded {n} images
+@msgplural	Relinked {n} image|Relinked {n} images
+@msgplural	Relinked {n} image; not in that folder: {names}|Relinked {n} images; not in that folder: {names}
+@msgplural	Relinked {n} image; {name} couldn't be relinked: {reason}|Relinked {n} images; {name} couldn't be relinked: {reason}
+@msgplural	Updated {n} image|Updated {n} images
+@msgplural	Replaced {n} image|Replaced {n} images
+@msgplural	Broke {n} link|Broke {n} links
+@msgplural	Broke {n} link; {missing} can't be read: relink or update them first|Broke {n} links; {missing} can't be read: relink or update them first
+@msgplural	{n} linked file can't be read here: its preview shows|{n} linked files can't be read here: their previews show
+@msgplural	{n} image couldn't be decoded and shows as a crossed box|{n} images couldn't be decoded and show as crossed boxes
+@msgplural	{n} linked image changed on disk: Update Links shows the new version|{n} linked images changed on disk: Update Links shows the new versions
+@msgplural	Updated {n} linked file changed on disk|Updated {n} linked files changed on disk
+@msg	the document sets a bleed that this PDF/X file leaves out: turn on Use document bleed settings
+@msgplural	Exported {what} with {n} note: {first}|Exported {what} with {n} notes: {first}
+@msgplural	{n} font file is now in {folder}|{n} font files are now in {folder}
+@msgplural	{n} font file is now in {folder}; {failed} couldn't be added: {reason}|{n} font files are now in {folder}; {failed} couldn't be added: {reason}
+@msgplural	{n} font isn't available here: its text shows in another font|{n} fonts aren't available here: their text shows in another font
+@msgplural	Copied the CSS of {n} object|Copied the CSS of {n} objects
+@msgplural	Downloaded {n} file|Downloaded {n} files
+@msgplural	Exported {n} file to {folder}|Exported {n} files to {folder}
+@msg	All colors are within the CMYK gamut
+@msgplural	{n} color is out of the CMYK gamut|{n} colors are out of the CMYK gamut
+@msg	a mask that covers several layers comes in as a clipping group in each layer it covers
+@msg	a graph's records don't end where they should: its art was read as it is
+@msg	`{w}` takes no operands
+@msg	a wraparound group is inside a compound path
+@msg	it ends inside a group or compound path
+@msg	it ends inside a multi-layer mask
+@msg	a multi-layer mask's operators are out of order
+@msg	a multi-layer mask needs one clipping path
+@msg	a group crosses a multi-layer mask
+@msg	brushes VectorCraft can't read yet were left out of the Brushes panel ({_1})
+@msg	objects with several fills or strokes, variable-width strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet
+@msg	the name `{name}` isn't UTF-8 and was read as {label}: if it looks wrong, open the file with another legacyNameEncoding
+@msg	the name `{name}` isn't UTF-8, and parts of it aren't valid {label} either: open the file with another legacyNameEncoding
+@msg	more names that aren't UTF-8 were read as {label} ({count})
+@msg	graphs come in as plain art, without their data or settings
+@msg	an embedded image of {_1} × {_2} pixels was reduced to {_3} × {_4} pixels to keep the layers
+@msg	linked type areas past rsm's limits were left out
+@msg	the Line Breaking setting of legacy type was left out
+@msg	the Japanese layout rules of legacy type were left out
+@msg	type that changes writing direction inside a text object opens in the direction of its first character
+@msg	type used as a mask in linked areas, wraparound text or a compound path doesn't clip
+@msg	linked pictures with no preview in the file show a placeholder until their files are found: relink them in the Links panel
+@msg	the PDF part couldn't be read ({_1}): the file opened from its editing data
+@msg	the active document changed while the question was open; nothing was deleted
+@msg	The link is inside a symbol, graph design, pattern or opacity mask and has no place on the canvas
+	Remove from Shaper Group
+@msg	source must be the id of a Shaper Group's original shape
+@msg	group must be the id of a Shaper Group
+@msg	the shape is not an editable original shape of that Shaper Group
+	Show Font Height Options
+	Hide Font Height Options
+	Set Font Height Reference
+	Em Box
+	x-Height
+	ICF Box
+@msg	`colors` must be an array of colors, not {v}
+@msg	`{key}` entry {index} is {value}, not a non-negative integer object id
+@msg	id {value} is a ruler guide, not an object
+@msg	a ruler guide goes only directly in a layer or sublayer
+@msg	id {value} is a layer, not an object
