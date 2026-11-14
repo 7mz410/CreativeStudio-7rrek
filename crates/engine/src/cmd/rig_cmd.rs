@@ -6,7 +6,7 @@ use vectorcraft_geom::Point;
 
 use super::anim::{Anim, ease_param, frame_param, row_param, show};
 use super::rig::{Joint, MAX_JOINTS, Pose, Rig, Skeleton};
-use super::{cmd, CommandSpec, has_doc, Session, Result, index, bad};
+use super::{CommandSpec, Result, Session, bad, cmd, has_doc, index};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

@@ -5,7 +5,7 @@
 //! difference is that the encoder *writes* the band-skip, intensity and dual-stereo symbols.
 
 use crate::opus::range::{BITRES, RangeEncoder, ilog};
-use crate::opus::tables::{NB_EBANDS, EBANDS, MAX_LM, LOG2_FRAC_TABLE, ALLOC};
+use crate::opus::tables::{ALLOC, EBANDS, LOG2_FRAC_TABLE, MAX_LM, NB_EBANDS};
 
 const MAX_PSEUDO: i32 = 40;
 const LOG_MAX_PSEUDO: i32 = 6;

@@ -7049,7 +7049,7 @@ antiAlias	Sharp	शार्प
 @msg	it has too many text objects	इसमें बहुत सारे टेक्स्ट ऑब्जेक्ट हैं
 @msg	it has too many values in a row	यह एक पंक्ति में बहुत अधिक मूल्य है
 @msg	it has too much text	इसमें बहुत ज्यादा टेक्स्ट है
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	यह `{at}` का उपयोग करता है, जो VectorCraft के पोस्टस्क्रिप्ट रीडर को पता नहीं है
+@msg	it uses `{at}`, which 7rrek's PostScript reader doesn't know	यह `{at}` का उपयोग करता है, जो 7rrek के पोस्टस्क्रिप्ट रीडर को पता नहीं है
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	यह `{at}` का उपयोग करता है, जो VectorCraft के पोस्टस्क्रिप्ट रीडर को पता नहीं है, {procs} में
 @msg	its artboards all lie beyond the canvas (more than {_1} pt from the origin)	इसके आर्टबोर्ड सभी कैनवास से परे हैं (मूल से {_1} pt से अधिक)
 @msg	its clipping masks are nested too deeply	इसके क्लिपिंग मास्क बहुत गहराई से घोंसले होते हैं

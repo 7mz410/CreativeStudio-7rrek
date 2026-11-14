@@ -5,7 +5,10 @@
 //! spec-derived `filmcraft-opus` decoder (MIT OR Apache-2.0): the encoder must reconstruct the
 //! quantised NLSFs and LPC coefficients bit-exactly as the decoder does.
 
-use super::tables::{NLSF_CB_WB, NLSF_CB_NBMB, NLSF_PSEL_WB, NLSF_PSEL_NBMB, NLSF_PRED_WB, NLSF_PRED_NBMB, NLSF_MIN_SPACING_WB, NLSF_MIN_SPACING_NBMB, LSF_ORDER_WB, LSF_ORDER_NBMB, COS_Q12};
+use super::tables::{
+    COS_Q12, LSF_ORDER_NBMB, LSF_ORDER_WB, NLSF_CB_NBMB, NLSF_CB_WB, NLSF_MIN_SPACING_NBMB, NLSF_MIN_SPACING_WB, NLSF_PRED_NBMB, NLSF_PRED_WB,
+    NLSF_PSEL_NBMB, NLSF_PSEL_WB,
+};
 
 pub const MAX_LPC_ORDER: usize = 16;
 

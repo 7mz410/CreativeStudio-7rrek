@@ -6,7 +6,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use serde_json::{Value, json};
 use vectorcraft_doc::Document;
 
-use super::{cmd, CommandSpec, always, Result, bad, Session};
+use super::{CommandSpec, Result, Session, always, bad, cmd};
 
 /// Maximum nodes walked to prevent cycles or pathological inputs.
 const MAX_NODES: usize = 10_000;

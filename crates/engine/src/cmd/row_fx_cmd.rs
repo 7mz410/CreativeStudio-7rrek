@@ -6,7 +6,7 @@ use serde_json::{Value, json};
 use super::anim::{Anim, frame_param, row_param, show};
 use super::row_fx::{FxKind, MAX_ROW_EFFECTS, RowEffect, RowFx, RowFxList};
 use super::selector::Part;
-use super::{cmd, CommandSpec, has_doc, Session, Result, str_param, bad};
+use super::{CommandSpec, Result, Session, bad, cmd, has_doc, str_param};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

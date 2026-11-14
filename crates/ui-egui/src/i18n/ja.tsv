@@ -4782,7 +4782,7 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	the program asks for a resource that isn't defined	プログラムが定義されていないリソースを要求しています
 @msg	a calculation has no result, as in a division by zero	ゼロによる除算などで、計算の結果が得られません
 @msg	the operator looks for a mark on the stack and finds none	オペレーターがスタック上のマークを探しましたが、見つかりません
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	VectorCraft の PostScript 読み込み機能が対応していない `{at}` を使用しています
+@msg	it uses `{at}`, which 7rrek's PostScript reader doesn't know	7rrek の PostScript 読み込み機能が対応していない `{at}` を使用しています
 @msg	the file was read up to an error ({why}): what follows it was left out	ファイルはエラーが発生した箇所まで読み込まれました ({why}): それ以降の内容は除外されました
 @msg	this file's PostScript couldn't be read ({why}): {what}	このファイルの PostScript を読み込めませんでした ({why}): {what}
 @msg	it has no page	ページがありません

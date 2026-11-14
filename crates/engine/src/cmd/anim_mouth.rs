@@ -11,7 +11,7 @@ use vectorcraft_doc::Document;
 
 use super::anim::{Anim, frame_param, row_param, show};
 use super::anim_sound::sound_pcm;
-use super::{cmd, CommandSpec, has_doc, Value, Result, bad, NodeId, Session};
+use super::{CommandSpec, NodeId, Result, Session, Value, bad, cmd, has_doc};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

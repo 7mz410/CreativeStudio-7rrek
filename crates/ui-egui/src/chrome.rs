@@ -189,8 +189,11 @@ pub fn system_title_bar(app: &VectorcraftApp) -> bool {
 /// marks unsaved changes, like the `*` in the document tabs), or just the app name with no
 /// document open; in Safe Mode, followed by "(Safe Mode)".
 pub fn window_title(app: &VectorcraftApp) -> String {
-    let title =
-        app.session.active().map(|d| format!("{}{} \u{2014} 7rrek", if d.is_dirty() { "*" } else { "" }, d.title())).unwrap_or_else(|| "7rrek".into());
+    let title = app
+        .session
+        .active()
+        .map(|d| format!("{}{} \u{2014} 7rrek", if d.is_dirty() { "*" } else { "" }, d.title()))
+        .unwrap_or_else(|| "7rrek".into());
     if vectorcraft_plugins::safe_mode::active() { format!("{title} ({})", tl!("Safe Mode")) } else { title }
 }
 

@@ -5710,7 +5710,7 @@ digits	Malayalam	Malaiàlam
 @msg	it has too many values in a row	té massa valors en una fila
 @msg	it has too much text	té massa text
 @msg	it has {_1}, which VectorCraft doesn't read from it yet	té {_1}, que VectorCraft encara no en llegeix
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	fa servir `{at}`, que el lector de PostScript de VectorCraft no coneix
+@msg	it uses `{at}`, which 7rrek's PostScript reader doesn't know	fa servir `{at}`, que el lector de PostScript de 7rrek no coneix
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	fa servir `{at}`, que el lector de PostScript de VectorCraft no coneix, a {procs}
 @msg	its editing data doesn't say where its art is	les seves dades d’edició no diuen on és el seu art
 @msg	its editing data doesn't say where its artboard is	les seves dades d’edició no diuen on és el seu tauler

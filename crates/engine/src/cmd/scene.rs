@@ -8,7 +8,7 @@ use vectorcraft_doc::Document;
 use vectorcraft_geom::Rect;
 
 use super::anim::{Anim, MAX_FPS, MAX_FRAMES};
-use super::{cmd, CommandSpec, has_doc, Result, bad, number_or, Session, switch_or};
+use super::{CommandSpec, Result, Session, bad, cmd, has_doc, number_or, switch_or};
 use crate::EngineError;
 
 pub fn specs() -> Vec<CommandSpec> {

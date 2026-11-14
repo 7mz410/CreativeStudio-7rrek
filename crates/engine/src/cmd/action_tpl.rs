@@ -14,7 +14,7 @@ use super::mesh::Meshes;
 use super::peg::{PegKey, Pegs};
 use super::rig::{Pose, Rig};
 use super::row_fx::RowFxList;
-use super::{cmd, CommandSpec, has_doc, Session, Result, bad, str_param};
+use super::{CommandSpec, Result, Session, bad, cmd, has_doc, str_param};
 
 pub const EXTENSION: &str = "7rrekaction";
 const KEY: &str = "actions";

@@ -61,6 +61,8 @@ pub use craft_vectorcraft_format::{
     BLOB_MAGIC, COMPRESSED_SINCE, EXTENSION, ICC_MIME, INLINE_MAX, LEGACY_EXTENSION, MIN_VERSION, PREVIEW_MAX, VERSION, is_compressed, json_part,
     sniff,
 };
+/// rsm saves documents as `.rsm` (the same contents as `.vectorcraft`).
+pub const STUDIO_EXTENSION: &str = "rsm";
 /// 7rrek saves documents as `.7rrek` (the same contents as `.vectorcraft`); `.rsm` still opens.
 pub const STUDIO_EXTENSION: &str = "7rrek";
 use stream::{Gz, Indent, KeyScan, Out};

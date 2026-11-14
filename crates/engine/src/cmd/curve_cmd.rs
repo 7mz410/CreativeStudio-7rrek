@@ -5,7 +5,7 @@ use vectorcraft_doc::{Document, NodeId};
 
 use super::anim::{Anim, frame_param, show};
 use super::curve::{Curve, Curves, MAX_CURVES, MAX_SEGMENTS};
-use super::{cmd, CommandSpec, has_doc, Session, Result, bad, checked_id, index, switch_or, str_param, number_or};
+use super::{CommandSpec, Result, Session, bad, checked_id, cmd, has_doc, index, number_or, str_param, switch_or};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

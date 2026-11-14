@@ -14,7 +14,7 @@ use vectorcraft_doc::{Appearance, AppearanceItem, Document, FillLayer, Node, Opa
 use vectorcraft_geom::{Point, Rect};
 
 use super::edit::{roots_of, selected_roots};
-use super::{cmd, CommandSpec, has_doc, Session, Result, str_param, bad, ids_param, EngineError};
+use super::{CommandSpec, EngineError, Result, Session, bad, cmd, has_doc, ids_param, str_param};
 
 const KEY: &str = "textures";
 pub const MAX_TEXTURES: usize = 64;

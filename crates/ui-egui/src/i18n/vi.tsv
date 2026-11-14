@@ -4953,7 +4953,7 @@ theme	Appearance	Giao diện
 @msg	it has too many values in a row	nó có quá nhiều giá trị liên tiếp
 @msg	it has too much text	nó có quá nhiều văn bản
 @msg	it has {_1}, which VectorCraft doesn't read from it yet	nó có {_1}, VectorCraft chưa đọc được từ đó
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	nó dùng `{at}`, trình đọc PostScript của VectorCraft không hỗ trợ
+@msg	it uses `{at}`, which 7rrek's PostScript reader doesn't know	nó dùng `{at}`, trình đọc PostScript của 7rrek không hỗ trợ
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	nó dùng `{at}`, trình đọc PostScript của VectorCraft không hỗ trợ, trong {procs}
 @msg	its editing data doesn't say where its art is	dữ liệu chỉnh sửa không cho biết vị trí tác phẩm
 @msg	its editing data doesn't say where its artboard is	dữ liệu chỉnh sửa không cho biết vị trí bảng vẽ

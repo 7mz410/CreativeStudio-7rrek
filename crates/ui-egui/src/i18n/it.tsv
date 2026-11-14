@@ -4696,7 +4696,7 @@ axis	Both	Entrambi
 @msg	invalid image data for `{0}`	dati immagine non validi per `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	parametri non validi per `{cmd}`: {msg}
 @msg	is not an image 7rrek reads	non è un'immagine che 7rrek sa leggere
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	usa `{at}`, che il lettore PostScript di VectorCraft non conosce
+@msg	it uses `{at}`, which 7rrek's PostScript reader doesn't know	usa `{at}`, che il lettore PostScript di 7rrek non conosce
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	usa `{at}`, che il lettore PostScript di VectorCraft non conosce, in {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	è stata aperta invece la sua anteprima metafile di Windows, che potrebbe semplificare la grafica
 @msg	its preview was placed instead, at screen resolution	è stata inserita invece la sua anteprima, a risoluzione dello schermo

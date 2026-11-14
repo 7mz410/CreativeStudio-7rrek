@@ -11,7 +11,7 @@ use vectorcraft_pathops as po;
 
 use super::anim::Anim;
 use super::edit::selected_roots;
-use super::{cmd, CommandSpec, has_doc, NodeId, Session, Value, Result, bad, str_param, EngineError, ids_param};
+use super::{CommandSpec, EngineError, NodeId, Result, Session, Value, bad, cmd, has_doc, ids_param, str_param};
 
 /// The name of a drawing's colour art sublayer.
 pub const COLOUR_ART: &str = "Colour Art";

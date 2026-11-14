@@ -4544,7 +4544,7 @@ axis	Both	Båda
 @msg	invalid image data for `{0}`	ogiltiga bilddata för `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	ogiltiga parametrar för `{cmd}`: {msg}
 @msg	is not an image 7rrek reads	är inte en bild som 7rrek kan läsa
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	den använder `{at}`, som VectorCrafts PostScript-läsare inte känner till
+@msg	it uses `{at}`, which 7rrek's PostScript reader doesn't know	den använder `{at}`, som rsms PostScript-läsare inte känner till
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	den använder `{at}`, som VectorCrafts PostScript-läsare inte känner till, i {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	filens förhandsgranskning som Windows-metafil öppnades i stället, vilket kan förenkla bilden
 @msg	its preview was placed instead, at screen resolution	dess förhandsgranskning placerades i stället, i skärmupplösning

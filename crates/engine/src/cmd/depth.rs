@@ -75,7 +75,7 @@ pub(crate) fn project(doc: &mut Document, c: &Cam, rect: Rect) {
 use serde_json::json;
 
 use super::anim::{row_param, show};
-use super::{cmd, CommandSpec, has_doc, Session, Value, Result, number_or, bad};
+use super::{CommandSpec, Result, Session, Value, bad, cmd, has_doc, number_or};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

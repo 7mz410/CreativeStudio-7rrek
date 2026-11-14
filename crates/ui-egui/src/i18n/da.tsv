@@ -4501,7 +4501,7 @@ imageTrace	Outline	Kontur
 @msg	invalid image data for `{0}`	ugyldige billeddata for `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	ugyldige parametre for `{cmd}`: {msg}
 @msg	is not an image 7rrek reads	er ikke et billede, som 7rrek læser
-@msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know	den bruger `{at}`, som VectorCrafts PostScript-læser ikke kender
+@msg	it uses `{at}`, which 7rrek's PostScript reader doesn't know	den bruger `{at}`, som rsms PostScript-læser ikke kender
 @msg	it uses `{at}`, which VectorCraft's PostScript reader doesn't know, in {procs}	den bruger `{at}`, som VectorCrafts PostScript-læser ikke kender, i {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	dens Windows-metafil-forhåndsvisning blev åbnet i stedet, hvilket kan forenkle grafikken
 @msg	its preview was placed instead, at screen resolution	dens forhåndsvisning blev placeret i stedet, i skærmopløsning

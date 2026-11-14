@@ -14,7 +14,7 @@ use vectorcraft_color::Color;
 use vectorcraft_doc::Document;
 
 use super::anim::{Anim, row_param, show};
-use super::{cmd, NodeId, CommandSpec, has_doc, Value, Result, bad, Session, color_value, str_param};
+use super::{CommandSpec, NodeId, Result, Session, Value, bad, cmd, color_value, has_doc, str_param};
 
 const KEY: &str = "palettes";
 /// Most palettes a document takes.

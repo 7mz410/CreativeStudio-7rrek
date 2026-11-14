@@ -4,7 +4,7 @@
 use serde_json::json;
 
 use super::anim::{Anim, Cam, ease_param, frame_param, show};
-use super::{cmd, CommandSpec, has_doc, Value, Session, Result, bad, number_or};
+use super::{CommandSpec, Result, Session, Value, bad, cmd, has_doc, number_or};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

@@ -682,9 +682,11 @@ pub fn show(app: &mut VectorcraftApp, ctx: &egui::Context) {
         });
         ui.add_space(4.0);
         ui.label(
-            egui::RichText::new(tl!("Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left."))
-                .color(t.text_dim)
-                .size(11.5),
+            egui::RichText::new(tl!(
+                "Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left."
+            ))
+            .color(t.text_dim)
+            .size(11.5),
         );
         lists = keys_section(ui, &mut d, &mut review, keys_h) + rows_section(ui, &mut d, &mut review, &statuses, rows_h);
         ui.add_space(8.0);
