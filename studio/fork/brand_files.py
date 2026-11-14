@@ -31,14 +31,14 @@ def git(*a):
     return subprocess.run(['git', '-C', str(repo), *a], capture_output=True, text=True).stdout
 
 
-# 1. App icon: the app's star on a navy tile, in the frame the icon script expects (rounded 512).
+# 1. App icon: the app's star on a white tile (like the website's app cards), in the frame the icon script expects (rounded 512).
 logo = (repo / f'docs/studio/{app}.svg').read_text(encoding='utf-8')
 logo = re.sub(r'<\?xml[^>]*\?>\s*', '', logo)
 logo = re.sub(r'<title>.*?</title>', '', logo, flags=re.S)
 vb = re.search(r'viewBox="([^"]+)"', logo).group(1)
 body = re.sub(r'^<svg[^>]*>|</svg>\s*$', '', logo.strip())
 icon = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><clipPath id="t"><rect width="512" height="512" rx="112"/></clipPath></defs>'
-        f'<g clip-path="url(#t)"><rect width="512" height="512" fill="#0d2d3f"/><svg x="80" y="80" width="352" height="352" viewBox="{vb}">{body}</svg></g></svg>\n')
+        f'<g clip-path="url(#t)"><rect width="512" height="512" rx="112" fill="#ffffff" stroke="#e4e0d8" stroke-width="12"/><svg x="96" y="96" width="320" height="320" viewBox="{vb}">{body}</svg></g></svg>\n')
 svgs = [p for p in (repo / 'assets/app-icon').glob('*.svg') if 'document' not in p.name]
 for svg in svgs:
     svg.write_text(icon, encoding='utf-8')
@@ -51,8 +51,8 @@ if not svgs:  # PNG-only icon set: keep an SVG source and render every PNG from 
 if (repo / 'packaging/icons.sh').exists():
     subprocess.run(['bash', str(repo / 'packaging/icons.sh')], check=True, capture_output=True)
 (repo / 'assets/app-icon/README.md').write_text(
-    f'# {app} app icon\n\n**Artwork:** the {app} star (`docs/studio/{app}.svg`, by Hamza Abu Ayyash for Creative Studio) on a navy '
-    '(#0d2d3f) tile. Regenerate every size with `packaging/icons.sh`.\n', encoding='utf-8')
+    f'# {app} app icon\n\n**Artwork:** the {app} star (`docs/studio/{app}.svg`, by Hamza Abu Ayyash for Creative Studio) on a white '
+    'tile, like the app cards on studio.creative.ps. Regenerate every size with `packaging/icons.sh`.\n', encoding='utf-8')
 
 # 2. Upstream brand files go (their brand licence requires it of forks).
 if (repo / 'docs/brand').exists():

@@ -94,3 +94,8 @@ python3 studio/rebrand.py      # re-apply the branding
   a scene spec into a shot.
 - The timeline mirrors right to left in Arabic, and the new commands, panels and rows have Arabic
   labels.
+- Upstream sync 2026-11-14: upstream split `lib.rs`, `menus.rs`, `i18n/mod.rs` and others into
+  folders, so `studio/rebrand.py` moves its rules with the text they match and prints `MISSING` for
+  a rule that no longer applies. The Arabic catalog, `bidi` and `plural_arabic` moved into
+  `crates/ui-egui/src/i18n.rs`. Upstream's panel docking replaced `dock.rs`: the docked panels
+  don't change sides in the right-to-left interface yet.

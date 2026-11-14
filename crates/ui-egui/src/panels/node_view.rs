@@ -346,6 +346,7 @@ fn port_color(port: &str, t: &Tokens) -> Color32 {
     }
 }
 
+#[allow(clippy::cognitive_complexity)] // shortcut: big immediate-mode panel, split it when it next grows
 pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     if app.session.active().is_none() {
         widgets::dim_label(ui, tl!("No document"));
@@ -534,15 +535,15 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         display_edges.push(GraphEdge { from: from_v, to: to_v, port: edge.port });
     }
 
-    let drag_id = ui.id().with("node_view_drag");
+    let drag_id = ui.scope_id().with("node_view_drag");
     let mut drag_from = ui.data_mut(|d| d.get_temp::<String>(drag_id));
-    let sel_id = ui.id().with("node_view_selected_edge");
+    let sel_id = ui.scope_id().with("node_view_selected_edge");
     let mut selected_edge = ui.data_mut(|d| d.get_temp::<(String, String, String)>(sel_id));
-    let sel_nodes_id = ui.id().with("node_view_selected_nodes");
+    let sel_nodes_id = ui.scope_id().with("node_view_selected_nodes");
     let mut selected_nodes: BTreeSet<String> = ui.data_mut(|d| d.get_temp::<BTreeSet<String>>(sel_nodes_id).unwrap_or_default());
-    let menu_id = ui.id().with("node_view_menu");
+    let menu_id = ui.scope_id().with("node_view_menu");
     let mut menu_state: Option<(Pos2, String)> = ui.data_mut(|d| d.get_temp(menu_id));
-    let rename_id = ui.id().with("node_view_rename");
+    let rename_id = ui.scope_id().with("node_view_rename");
     let mut rename_state: Option<(u64, String)> = ui.data_mut(|d| d.get_temp(rename_id));
 
     let diagram_size = vec2((total_width + MARGIN_X * 2.0).max(fixed_right), comp_y + NODE_H + MARGIN_Y);
@@ -551,7 +552,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let (display_src, write_src) = (fixed_src("display"), fixed_src("write"));
 
     // Top bar: Fit scales the graph to the panel width (0.5..=1.0). The choice stays in egui memory.
-    let fit_id = ui.id().with(FIT_KEY);
+    let fit_id = ui.scope_id().with(FIT_KEY);
     let mut fit = ui.data_mut(|d| d.get_persisted::<bool>(fit_id).unwrap_or(false));
     let avail_w = ui.available_width();
     ui.horizontal(|ui| {
@@ -563,7 +564,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let s = if fit { fit_scale(avail_w, diagram_size.x) } else { 1.0 };
     // Read by the layout tests: the content size, the Write node's rect and the scale in use.
     let write_rect = rects.get("write").copied();
-    ui.data_mut(|d| d.insert_temp(ui.id().with(LAYOUT_KEY), (diagram_size, write_rect, s)));
+    ui.data_mut(|d| d.insert_temp(ui.scope_id().with(LAYOUT_KEY), (diagram_size, write_rect, s)));
 
     egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
         let (canvas_rect, resp) = ui.allocate_exact_size(diagram_size * s, Sense::click_and_drag());
@@ -872,7 +873,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         // Context Menu
         let mut close_menu = false;
         if let Some((menu_pos, ref target_id)) = menu_state {
-            egui::Area::new(ui.id().with("node_view_ctx_area")).fixed_pos(menu_pos).order(egui::Order::Foreground).show(ui.ctx(), |ui| {
+            egui::Area::new(ui.scope_id().with("node_view_ctx_area")).fixed_pos(menu_pos).order(egui::Order::Foreground).show(ui.ctx(), |ui| {
                 egui::Frame::menu(ui.style()).show(ui, |ui| {
                     if let Some(cmd) = branch_cmd(target_id) {
                         if ui.button(tl!("Reset")).clicked() {
@@ -1149,10 +1150,10 @@ mod tests {
         let mut layout = None;
         ctx.run_ui(input, |ui| {
             if fit {
-                ui.data_mut(|d| d.insert_persisted(ui.id().with(FIT_KEY), true));
+                ui.data_mut(|d| d.insert_persisted(ui.scope_id().with(FIT_KEY), true));
             }
             show(app, ui);
-            layout = ui.data_mut(|d| d.get_temp::<(egui::Vec2, Option<Rect>, f32)>(ui.id().with(LAYOUT_KEY)));
+            layout = ui.data_mut(|d| d.get_temp::<(egui::Vec2, Option<Rect>, f32)>(ui.scope_id().with(LAYOUT_KEY)));
         })
         .textures_delta
         .clear();

@@ -8,6 +8,7 @@ upstream, resolve any conflicts in favour of upstream and run it again.
     python3 studio/rebrand.py
 """
 import re
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -15,10 +16,38 @@ NAME = 'rsm'
 REPO = 'https://github.com/7mz410/CreativeStudio-7rrek'
 SITE = 'https://studio.creative.ps'
 # Persisted names that saved preferences and files refer to; renaming them would break those.
-KEEP = ('VectorCraft Default',)
+KEEP = ('VectorCraft Default', 'VectorCraft Templates', 'VectorCraft Generic CMYK', '%VectorCraft_',
+        'VectorCraft_Legacy', 'VectorCraft editing data', 'VectorCraft.portable', 'VectorCraftData',
+        'the VectorCraft authors')
+# Messages users see outside the UI crate (errors, warnings, command and MCP descriptions): every
+# literal is renamed, KEEP aside. Files holding metadata or persisted names get EXT_FILES pairs instead.
+VISIBLE = [
+    'crates/mcp/src/backend.rs', 'crates/mcp/src/tools.rs',
+    'apps/vectorcraft-cli/src/main.rs',
+    'apps/vectorcraft/build.rs', 'apps/vectorcraft/src/gpu.rs', 'apps/vectorcraft/src/portal_save.rs',
+    'apps/vectorcraft/src/mac_save_format.rs',
+    'apps/vectorcraft-web/src/api.rs', 'apps/vectorcraft-web/src/web.rs',
+    'crates/metafile/src/import.rs', 'crates/svg/src/import/files.rs', 'crates/color/src/palette_io.rs',
+    'crates/effects/src/lib.rs', 'crates/pdf/src/presets.rs',
+    # Tests that expect those messages.
+    'crates/engine/src/tests/placed_document.rs',
+    'crates/engine/src/cmd/fileio/tests_exportas.rs', 'crates/engine/src/cmd/fileio/tests_psdlayers.rs',
+    'crates/engine/src/cmd/fileio/tests_screens.rs', 'crates/engine/src/cmd/findfiles/tests.rs',
+    'crates/engine/src/tests/prefs_file.rs', 'crates/eps/src/import/tests_native.rs', 'crates/engine/src/tests/saveoptions.rs', 'crates/engine/src/tests/rasterfilters.rs',
+    'crates/engine/src/tests/textimport.rs', 'crates/eps/src/import/ai/tests.rs',
+    'crates/eps/src/import/tests_generators.rs', 'crates/metafile/src/tests/import.rs',
+]
+VISIBLE_DIRS = ['crates/engine/src/cmd', 'crates/eps/src/import']
+# interp.rs answers PostScript's `product` with the upstream name.
+NOT_VISIBLE = {'crates/eps/src/import/interp.rs'}
+# The CLI's own name in its help and messages.
+CLI = 'apps/vectorcraft-cli/src/main.rs'
 
 # Exact replacements, applied before the general rename.
 SPECIFIC = {
+    'crates/engine/src/cmd/findfiles/walk.rs': [
+        ("VectorCraft doesn't search", "rsm doesn't search"),
+    ],
     'crates/engine/src/cmd/help.rs': [
         ('pub const WEBSITE_URL: &str = "https://getartcraft.com";', f'pub const WEBSITE_URL: &str = "{SITE}";'),
         ('format!("{WEBSITE_URL}/apps/{APP_ID}")', 'WEBSITE_URL.to_string()'),
@@ -30,7 +59,7 @@ SPECIFIC = {
         ('["url"], "https://github.com/storytold/vectorcraft");', f'["url"], "{REPO}");'),
         ('["website"], "https://getartcraft.com");', f'["website"], "{SITE}");'),
     ],
-    'crates/engine/src/cmd/fileio/mod.rs': [
+    'crates/engine/src/cmd/fileio/formats.rs': [
         ('label: "VectorCraft",', f'label: "{NAME}",'),
         ('label: "VectorCraft Template",', f'label: "{NAME} Template",'),
         ('extensions: &[vectorcraft_format::EXTENSION, vectorcraft_format::LEGACY_EXTENSION],',
@@ -48,18 +77,11 @@ SPECIFIC = {
     ],
     # No Creative Studio Discord yet: drop the upstream community button and the ArtCraft website link.
     'crates/ui-egui/src/chrome.rs': [
-        ('let discord = room >= with_search + 10.0 + gap + crate::community::discord_width(ui, false);',
+        ('let discord = learn && room >= ws_w + 8.0 + 2.0 * (gap + icon) + 10.0 + gap + crate::community::discord_width(ui, false);',
          'let discord = false; // Creative Studio: no community Discord button yet'),
     ],
-    'crates/ui-egui/src/titlebar.rs': [
-        ('assert_eq!((has("Discord"), has("Search commands and tools")), (width > 1000.0, width > 1000.0), "{width}: {texts:?}");',
-         'assert_eq!((has("Discord"), has("Search commands and tools")), (false, width > 1000.0), "{width}: {texts:?}");'),
-    ],
     'crates/ui-egui/src/community.rs': [
-        ('''    discord_button(app, ui, true);
-    ui.add_space(8.0);
-''', ''),
-        ('''    link(app, ui, "globe", tl!("ArtCraft website"), "help.website", &s("website"));
+        ('''    link(app, ui, "globe", tl!("ArtCraft website"), "help.website", &s("website"), centered);
 ''', ''),
         ('''                "https://getartcraft.com",
                 "https://getartcraft.com/apps/vectorcraft",
@@ -74,11 +96,11 @@ SPECIFIC = {
         ('pub mod background;\n',
          'pub mod agents;\npub mod background;\n'),
         ('    /// The macOS menu bar, when the desktop app installed one: the in-window menus are hidden then.\n    pub native_menu: Option<native_menu::NativeMenu>,\n',
-         '    /// The macOS menu bar, when the desktop app installed one: the in-window menus are hidden then.\n    pub native_menu: Option<native_menu::NativeMenu>,\n    /// Creative Studio: Help › AI Agents (desktop): the control channel for agents and their settings.\n    pub agents: Option<Box<dyn agents::AgentsService>>,\n'),
+         '    /// The macOS menu bar, when the desktop app installed one: the in-window menus are hidden then.\n    pub native_menu: Option<native_menu::NativeMenu>,\n    /// Creative Studio: Help › AI Agents (desktop): the control channel for agents and their settings.\n    pub agents: Option<Box<dyn crate::agents::AgentsService>>,\n'),
         ('    pub fn with_control(mut self, rx: Receiver<ControlRequest>) -> Self {\n        self.control_rx = Some(rx);\n        self\n    }\n',
          '    pub fn with_control(mut self, rx: Receiver<ControlRequest>) -> Self {\n        self.control_rx = Some(rx);\n        self\n    }\n\n    /// Creative Studio: take requests from a control channel started while the app runs (Help › AI Agents).\n    pub fn set_control(&mut self, rx: Receiver<ControlRequest>) {\n        self.control_rx = Some(rx);\n    }\n'),
         ('        dialogs::show(self, &ctx);\n',
-         '        dialogs::show(self, &ctx);\n        agents::show(self, &ctx);\n'),
+         '        dialogs::show(self, &ctx);\n        crate::agents::show(self, &ctx);\n'),
         ('        i18n::set_current(lang);\n',
          '        i18n::set_current(lang);\n'
          '        // Creative Studio: Arabic lays the interface out right to left (vendor/egui). The switch is\n'
@@ -89,6 +111,12 @@ SPECIFIC = {
     'crates/ui-egui/src/widgets.rs': [
         ('    let bx = Rect::from_min_size(pos2(rect.left(), rect.center().y - 6.5), Vec2::splat(13.0));\n    ui.painter().galley(pos2(bx.right() + 5.0, rect.center().y - galley.size().y / 2.0), galley, t.text);',
          '    // Creative Studio: right to left, the box sits on the right and its label to its left.\n    let (bx, text_x) = if egui::is_rtl() {\n        let bx = Rect::from_min_size(pos2(rect.right() - 13.0, rect.center().y - 6.5), Vec2::splat(13.0));\n        (bx, bx.left() - 5.0 - galley.size().x)\n    } else {\n        let bx = Rect::from_min_size(pos2(rect.left(), rect.center().y - 6.5), Vec2::splat(13.0));\n        (bx, bx.right() + 5.0)\n    };\n    ui.painter().galley(pos2(text_x, rect.center().y - galley.size().y / 2.0), galley, t.text);'),
+    ],
+    # Updates come from our own releases: upstream's would offer VectorCraft in place of rsm.
+    # Updates: upstream's UPDATE_APP (lib.rs) checks our own repository's releases.
+    'crates/ui-egui/src/lib.rs#update': [
+        ('    ..craft_update::suite::VECTORCRAFT\n',
+         f'    ..craft_update::app::App::new("{NAME}", "{NAME}", "Vector illustration", "{REPO.removeprefix("https://github.com/")}")\n'),
     ],
     # Help › AI Agents (crates/ui-egui/src/agents.rs).
     'crates/ui-egui/src/menus.rs': [
@@ -102,10 +130,7 @@ SPECIFIC = {
     'crates/ui-egui/src/toolbar.rs': [
         ('egui::Panel::left("toolbar")', '(if egui::is_rtl() { egui::Panel::right("toolbar") } else { egui::Panel::left("toolbar") })'),
     ],
-    'crates/ui-egui/src/dock.rs': [
-        ('egui::Panel::right("dock")', '(if egui::is_rtl() { egui::Panel::left("dock") } else { egui::Panel::right("dock") })'),
-        ('egui::Panel::right("icon_column")', '(if egui::is_rtl() { egui::Panel::left("icon_column") } else { egui::Panel::right("icon_column") })'),
-    ],
+    # shortcut: upstream's panel docking (panel_docking.rs) replaced dock.rs; the docked panels don't flip sides in Arabic yet.
     'crates/ui-egui/src/dialogs/about.rs': [
         ('"Part of ArtCraft. MIT OR Apache-2.0.',
          '"Based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0.'),
@@ -115,18 +140,32 @@ SPECIFIC = {
 # its own document icon in Finder. Applied as is, without the general rename.
 EXT_FILES = {
     'crates/format/src/lib.rs': [
-        ('pub const LEGACY_EXTENSION: &str = "drawcraft";\n',
-         'pub const LEGACY_EXTENSION: &str = "drawcraft";\n'
+        ('    sniff,\n};\n',
+         '    sniff,\n};\n'
          '/// rsm saves documents as `.rsm` (the same contents as `.vectorcraft`).\n'
          'pub const STUDIO_EXTENSION: &str = "rsm";\n'),
         ('    ext.eq_ignore_ascii_case(EXTENSION) || ext.eq_ignore_ascii_case(LEGACY_EXTENSION)',
          '    ext.eq_ignore_ascii_case(STUDIO_EXTENSION) || ext.eq_ignore_ascii_case(EXTENSION) || ext.eq_ignore_ascii_case(LEGACY_EXTENSION)'),
+        # The document's generator field stays; the errors are renamed.
+        ('"not a VectorCraft file: {0}"', f'"not a {NAME} file: {{0}}"'),
+        # Its tests read the renamed error (upstream wraps these in plain and raw literals).
+        ('"not a VectorCraft file: format is `x`"', f'"not a {NAME} file: format is `x`"'),
+        ('r#"not a VectorCraft file: invalid type: string', f'r#"not a {NAME} file: invalid type: string'),
+        ('m.starts_with("not a VectorCraft file: missing field', f'm.starts_with("not a {NAME} file: missing field'),
+        ('Some("not a VectorCraft file: format is `svg`")', f'Some("not a {NAME} file: format is `svg`")'),
+        ('m.starts_with("not a VectorCraft file: invalid type")', f'm.starts_with("not a {NAME} file: invalid type")'),
+        ('newer than this VectorCraft supports', f'newer than this {NAME} supports'),
+        (': VectorCraft writes versions', f': {NAME} writes versions'),
+        ('unpacks to more than VectorCraft reads', f'unpacks to more than {NAME} reads'),
     ],
     'crates/engine/src/cmd/package.rs': [
         ('format!("{stem}.{}", vectorcraft_format::EXTENSION)', 'format!("{stem}.{}", vectorcraft_format::STUDIO_EXTENSION)'),
     ],
     'packaging/macos/Info.plist.in': [
         ('<string>VectorCraft Document</string>', '<string>rsm Document</string>'),
+        ('<string>VectorCraft Template</string>', '<string>rsm Template</string>'),
+        # Our own document type: a type shared with other VectorCraft builds lets Finder show their icon.
+        ('ai.storyteller.vectorcraft.document', 'ps.creative.studio.7rrek.document'),
         ('<key>UTTypeIconFile</key>\n      <string>VectorCraft</string>', '<key>UTTypeIconFile</key>\n      <string>rsm-document</string>'),
         ('<array><string>vectorcraft</string><string>drawcraft</string></array>',
          '<array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>'),
@@ -139,30 +178,97 @@ EXT_FILES = {
         ('"<array><string>vectorcraft</string><string>drawcraft</string></array>"',
          '"<array><string>rsm</string><string>vectorcraft</string><string>drawcraft</string></array>"'),
     ],
+    'apps/vectorcraft/src/mac_save_format.rs': [
+        ('&["vectorcraft"][..]', '&["rsm"][..]'),
+    ],
+    'apps/vectorcraft-cli/src/perf.rs': [
+        ('outln!("VectorCraft performance budgets', f'outln!("{NAME} performance budgets'),
+    ],
+    'apps/vectorcraft-cli/tests/it/fileio.rs': [
+        ('out.contains("vectorcraft-cli perf [--paths N]', f'out.contains("{NAME}-cli perf [--paths N]'),
+    ],
+    'apps/vectorcraft-cli/tests/it/cli.rs': [
+        ('err.contains("vectorcraft-cli: step 0 (-h):")', f'err.contains("{NAME}-cli: step 0 (-h):")'),
+    ],
+    # serverInfo's name and the tool prefix stay "vectorcraft".
+    'crates/mcp/src/server.rs': [
+        ('const INSTRUCTIONS: &str = "VectorCraft is', f'const INSTRUCTIONS: &str = "{NAME} is'),
+        ('"title": "VectorCraft"', f'"title": "{NAME}"'),
+    ],
     'Cargo.toml': [
-        ('[workspace.dependencies]\n',
-         '[patch.crates-io]\n# Creative Studio: egui with a right-to-left switch for the Arabic interface (studio/RTL.md).\negui = { path = "vendor/egui" }\n\n[workspace.dependencies]\n'),
+        # Upstream patches egui from its git fork; ours swaps that one line for the local copy.
+        ('egui = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }\n',
+         '# Creative Studio: egui with a right-to-left switch for the Arabic interface (studio/RTL.md).\negui = { path = "vendor/egui" }\n'),
+        # The egui family from the git fork (egui_extras…) depends on egui by that source too.
+        ('[patch.crates-io]\n',
+         '[patch."https://github.com/storytold/egui.git"]\negui = { path = "vendor/egui" }\n\n[patch.crates-io]\n'),
     ],
     'apps/vectorcraft/src/main.rs': [
-        ('mod printing;\n',
-         'mod printing;\nmod studio_agents;\n'),
-        ('                if let Some(port) = control_port {\n                    let rx = control_server::start(port, cc.egui_ctx.clone());\n                    app = app.with_control(rx);\n                }\n',
-         '                if let Some(port) = control_port {\n                    let rx = control_server::start(port, cc.egui_ctx.clone());\n                    app = app.with_control(rx);\n                }\n                // Creative Studio: Help › AI Agents; allowed agents connect from the start.\n                let mut agents = studio_agents::Agents::new(prefs_path().and_then(|p| Some(p.parent()?.to_path_buf())), cc.egui_ctx.clone());\n                if control_port.is_some() {\n                    // `--control` already serves agents on its own port.\n                    agents.mark_started();\n                } else if let Some(rx) = agents.start_if_enabled() {\n                    app = app.with_control(rx);\n                }\n                app.services.agents = Some(Box::new(agents));\n'),
+        ('mod single_instance;\n',
+         'mod single_instance;\nmod studio_agents;\n'),
+        ('                        log::info!("control channel confined to the automation roots: {}", roots.describe());\n                    }\n                }\n',
+         '                        log::info!("control channel confined to the automation roots: {}", roots.describe());\n                    }\n                }\n                // Creative Studio: Help › AI Agents; allowed agents connect from the start.\n                let mut agents = studio_agents::Agents::new(prefs_path().and_then(|p| Some(p.parent()?.to_path_buf())), cc.egui_ctx.clone());\n                if control_port.is_some() {\n                    // `--control` already serves agents on its own port.\n                    agents.mark_started();\n                } else if let Some(rx) = agents.start_if_enabled() {\n                    app = app.with_control(rx);\n                }\n                app.services.agents = Some(Box::new(agents));\n'),
+        # The prefs folder and eframe's app id keep "VectorCraft"; the window title and messages don't.
+        ('restart VectorCraft"', f'restart {NAME}"'),
+        ('so VectorCraft started again', f'so {NAME} started again'),
+        ('The last start of VectorCraft ended', f'The last start of {NAME} ended'),
+        ('.with_title("VectorCraft")', f'.with_title("{NAME}")'),
+        ('Opens the VectorCraft desktop app', f'Opens the {NAME} desktop app'),
+        ('use vectorcraft-cli:\n  vectorcraft-cli --help', f'use {NAME}-cli:\n  {NAME}-cli --help'),
     ],
     'crates/engine/src/cmd/fileio/tests.rs': [
         ('        exts,\n        [\n            "vectorcraft",', '        exts,\n        [\n            "rsm",'),
+    ],
+    # Packaging: the names a user sees (the app folder in the .dmg, the volume name, the Linux menu
+    # entry). Bundle and binary names inside the packages stay as upstream has them.
+    'packaging/macos/package.sh': [
+        # The document icon the Info.plist names, and the CLI (MCP) inside the app, under our name.
+        ('cp "$ROOT/assets/app-icon/vectorcraft.icns" "$APP/Contents/Resources/VectorCraft.icns"\n',
+         'cp "$ROOT/assets/app-icon/vectorcraft.icns" "$APP/Contents/Resources/VectorCraft.icns"\n'
+         'cp "$ROOT/assets/app-icon/rsm-document.icns" "$APP/Contents/Resources/rsm-document.icns"\n'
+         'cp "$WORK/bin/vectorcraft-cli" "$APP/Contents/MacOS/rsm-cli"\n'),
+        ('sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/VectorCraft"\n',
+         'sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/rsm-cli"\n'
+         'sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/VectorCraft"\n'),
+        ('VectorCraft.app', 'rsm.app'),
+        ('-volname "VectorCraft"', '-volname "rsm"'),
+    ],
+    # The DMG window: DS_Store finds the background through the volume name, so generate.py must
+    # match package.sh's -volname. Rerun packaging/macos/dmg/generate.py after a change here.
+    'packaging/macos/dmg/generate.py': [
+        ('VOLUME = "VectorCraft"', f'VOLUME = "{NAME}"'),
+        ('ICONS = {"VectorCraft.app":', f'ICONS = {{"{NAME}.app":'),
+    ],
+    'packaging/macos/dmg/background.svg': [
+        ('fill="#0b0b0c">VectorCraft</text>', f'fill="#0b0b0c">{NAME}</text>'),
+        # The upstream cover crop is made for its dragon; ours is the whole icon on the navy panel.
+        ('<rect width="232" height="400" fill="#e8573f"/><g transform="translate(-62.5,-31.0) scale(1.05)">',
+         '<rect width="232" height="400" fill="#0d2d3f"/><g transform="translate(36,120) scale(0.3125)">'),
+    ],
+    'packaging/linux/ai.storyteller.vectorcraft.desktop': [
+        ('Name=VectorCraft\n', 'Name=rsm\n'),
+    ],
+    'packaging/linux/ai.storyteller.vectorcraft.metainfo.xml.in': [
+        ('<name>VectorCraft</name>', '<name>rsm</name>'),
     ],
 }
 # Tests that expect the names native saves suggest: their `.vectorcraft` file names become `.rsm`.
 EXT_TESTS = {
     'crates/engine/src/cmd/fileio/tests_affinity.rs',
-    'crates/engine/src/tests_package.rs',
-    'crates/engine/src/tests_save.rs',
-    'crates/engine/src/tests_saveoptions.rs',
+    'crates/engine/src/tests/package.rs',
+    'crates/engine/src/tests/save.rs',
+    'crates/engine/src/tests/saveoptions.rs',
+    'crates/engine/src/cmd/addons/document/tests.rs',
     'crates/ui-egui/src/dialogs/save_options.rs',
+    'crates/ui-egui/src/dialogs/save_options/tests.rs',
+    'crates/ui-egui/src/addons/document/tests.rs',
     'crates/ui-egui/src/dialogs/tests_package.rs',
-    'crates/ui-egui/src/tests_nativeoptions.rs',
-    'crates/ui-egui/src/tests_saveext.rs',
+    'crates/ui-egui/src/tests/nativeoptions.rs',
+    'crates/ui-egui/src/tests/saveext.rs',
+    'crates/engine/src/cmd/fileio/tests.rs',
+    'crates/engine/src/cmd/fileio/tests_batch.rs',
+    'apps/vectorcraft-cli/tests/it/fileio.rs',
+    'crates/ui-egui/src/tests/picks.rs',
 }
 for _t in EXT_TESTS:
     EXT_FILES.setdefault(_t, [])
@@ -179,6 +285,8 @@ DROPPED_ROWS = {'ArtCraft website'}
 CREDIT = 'Based on VectorCraft by the ArtCraft team'
 
 STRING = re.compile(r'"(?:[^"\\\n]|\\.)*"')
+# String constants that run over several lines (STRING stops at the line's end).
+CONST_STRING = re.compile(r'(?m)^ *(?:pub(?:\([a-z]+\))? )?const [A-Z_]+: &str = "(?:[^"\\]|\\[\s\S])*"')
 
 
 def rename(text: str) -> str:
@@ -189,13 +297,63 @@ def rename(text: str) -> str:
     return text.replace('VectorCraft', NAME)
 
 
+SPECIFIC.setdefault('apps/vectorcraft/tests/it/help.rs', []).append(
+    ('assert!(stdout.contains("vectorcraft-cli"),', f'assert!(stdout.contains("{NAME}-cli"),'))
+SPECIFIC.setdefault('apps/vectorcraft/src/tests.rs', []).append(
+    ('    ("vectorcraft", "application/x-vectorcraft"),\n', '    ("rsm", "application/x-vectorcraft"),\n    ("vectorcraft", "application/x-vectorcraft"),\n'))
+# help.agents is listed in both catalogs: the UI's and the MCP server's copy.
+SPECIFIC.setdefault('crates/ui-egui/src/menus/ui_commands.rs', []).extend(
+    (rename(a), rename(b)) for a, b in SPECIFIC.get('crates/ui-egui/src/menus.rs', []) if a.startswith('    ("help.about"'))
+# Tests upstream added that read the renamed name.
+for rel, a in (('crates/mcp/src/resources.rs', '"# VectorCraft command API reference\\n"'),
+               ('crates/svg/tests/it/image_orientation.rs', '"is not an image VectorCraft reads"'),
+               ('crates/ui-egui/tests/safe_mode.rs', '"VectorCraft");')):
+    SPECIFIC.setdefault(rel, []).append((a, a.replace('VectorCraft', NAME)))
+SPECIFIC.setdefault('crates/ui-egui/src/tests/home.rs', []).append(('"ArtCraft website", ', ''))
+# The suggested name is `Untitled-1.rsm`, so the other-case test types `.RSM`.
+SPECIFIC.setdefault('crates/ui-egui/src/tests/saveext.rs', []).append(('"/art/Untitled-1.VECTORCRAFT"', '"/art/Untitled-1.RSM"'))
+# Creative Studio's Home has no Discord button, so its test skips that check.
+SPECIFIC['crates/ui-egui/src/tests/home.rs'].append((
+    '    let (x, centre) = text_centre_x(&mut app, "Join our Discord").unwrap();\n'
+    '    assert!((x - centre - 0.375 * 36.0).abs() < 2.0, "the Discord button is centred: label at {x} about {centre}");\n', ''))
+# Upstream split some files (sync 2026-11-14): rules move with the text they match.
+MOVED = [
+    ('crates/ui-egui/src/io.rs', 'const TEMPLATE_EXTS', 'crates/ui-egui/src/io/open.rs'),
+    ('crates/ui-egui/src/lib.rs', '    /// The macOS menu bar', 'crates/ui-egui/src/services.rs'),
+    ('crates/ui-egui/src/lib.rs', '    pub fn with_control', 'crates/ui-egui/src/app.rs'),
+    ('crates/ui-egui/src/lib.rs', '        dialogs::show(self', 'crates/ui-egui/src/app.rs'),
+    ('crates/ui-egui/src/lib.rs', '        i18n::set_current(lang)', 'crates/ui-egui/src/app.rs'),
+    ('crates/ui-egui/src/widgets.rs', '    let bx = Rect::from_min_size', 'crates/ui-egui/src/widgets/toggles.rs'),
+    ('crates/ui-egui/src/menus.rs', '    ("help.about"', 'crates/mcp/src/ui_catalog.rs'),
+    ('crates/ui-egui/src/menus.rs', '        "help.about" =>', 'crates/ui-egui/src/menus/run.rs'),
+    ('crates/ui-egui/src/menus.rs', '                Sep,\n                c("Search Commands', 'crates/ui-egui/src/menus/tree.rs'),
+]
+SPECIFIC.setdefault('crates/ui-egui/src/lib.rs', []).extend(SPECIFIC.pop('crates/ui-egui/src/lib.rs#update'))
+for old, start, new in MOVED:
+    keep, move = [], []
+    for pair in SPECIFIC.get(old, []):
+        (move if pair[0].startswith(start) else keep).append(pair)
+    SPECIFIC[old] = keep
+    SPECIFIC.setdefault(new, []).extend(move)
+
+
+for start, new in (('restart VectorCraft"', 'apps/vectorcraft/src/app.rs'), ('.with_title("VectorCraft")', 'apps/vectorcraft/src/titlebar.rs')):
+    old = 'apps/vectorcraft/src/main.rs'
+    EXT_FILES.setdefault(new, []).extend(p for p in EXT_FILES[old] if p[0].startswith(start))
+    EXT_FILES[old] = [p for p in EXT_FILES[old] if not p[0].startswith(start)]
+
+
 def rebrand_rust(path: Path) -> bool:
     src = path.read_text(encoding='utf-8')
     out = src
     for a, b in SPECIFIC.get(path.relative_to(ROOT).as_posix(), []):
         if not b or b not in out:  # some replacements contain what they replace
+            if a not in out and rename(a) not in out:
+                print(f'MISSING in {path.relative_to(ROOT)}: {a[:70]!r}')
             out = out.replace(a, b)
-    out = STRING.sub(lambda m: rename(m.group(0)), out)
+    lit = (lambda t: rename(t).replace('vectorcraft-cli', f'{NAME}-cli')) if path == ROOT / CLI else rename
+    out = CONST_STRING.sub(lambda m: lit(m.group(0)), out)
+    out = STRING.sub(lambda m: lit(m.group(0)), out)
     if out != src:
         path.write_text(out, encoding='utf-8')
     return out != src
@@ -204,7 +362,7 @@ def rebrand_rust(path: Path) -> bool:
 def source_strings() -> set:
     """Every string literal in the rebranded sources, without quotes."""
     found = set()
-    for p in RUST_FILES():
+    for p in RUST_FILES() + [ROOT / r for r in EXT_FILES if r.endswith('.rs') and 'test' not in r]:
         found.update(m.group(0)[1:-1] for m in STRING.finditer(p.read_text(encoding='utf-8')))
     return found
 
@@ -239,7 +397,13 @@ def rebrand_plist(path: Path) -> bool:
 
 
 def RUST_FILES():
-    return sorted((ROOT / 'crates/ui-egui/src').rglob('*.rs')) + [ROOT / p for p in SPECIFIC if p.startswith('crates/engine')]
+    visible = {ROOT / p for p in VISIBLE}
+    for d in VISIBLE_DIRS:
+        visible.update(p for p in (ROOT / d).rglob('*.rs')
+                       if 'test' not in p.name and p.relative_to(ROOT).as_posix() not in NOT_VISIBLE)
+    ui = set((ROOT / 'crates/ui-egui/src').rglob('*.rs'))
+    engine = {ROOT / p for p in SPECIFIC if p.startswith(('crates/', 'apps/')) and p.endswith('.rs') and (ROOT / p).exists()}
+    return sorted(ui) + sorted((engine | visible) - ui)
 
 
 def main():
@@ -262,7 +426,8 @@ def main():
             changed.append(p)
     web = ROOT / 'apps/vectorcraft-web/index.html'
     html = web.read_text(encoding='utf-8')
-    branded = html.replace('<title>VectorCraft</title>', f'<title>{NAME}</title>').replace('Loading VectorCraft&hellip;', f'Loading {NAME}&hellip;')
+    branded = html.replace('<title>VectorCraft</title>', f'<title>{NAME}</title>').replace('Loading VectorCraft&hellip;', f'Loading {NAME}&hellip;')\
+        .replace('apple-mobile-web-app-title" content="VectorCraft"', f'apple-mobile-web-app-title" content="{NAME}"')
     if branded != html:
         web.write_text(branded, encoding='utf-8')
         changed.append(web)
@@ -276,49 +441,27 @@ def main():
             # 7rrek renames the constant on top of this; don't add a second one.
             if a.startswith('pub const LEGACY_EXTENSION') and 'pub const STUDIO_EXTENSION' in out:
                 continue
-            # Cargo.toml: one [patch.crates-io] only, even when the merge kept our other pins in it.
-            if b.startswith('[patch.crates-io]') and '[patch.crates-io]' in out:
-                continue
             if not b or b not in out:
+                if a not in out:
+                    print(f'MISSING in {rel}: {a[:70]!r}')
                 out = out.replace(a, b)
         if rel in EXT_TESTS:
+            # The PDF attachment's internal name keeps the upstream format name (crates/pdf EDITING_FILE).
+            out = out.replace('vectorcraft-editing.vectorcraft', '\x00EDITING\x00')
             out = re.sub(r'\.vectorcraft\b(?!_)', '.rsm', out)
+            out = out.replace('\x00EDITING\x00', 'vectorcraft-editing.vectorcraft')
         if out != src:
             path.write_text(out, encoding='utf-8')
             changed.append(path)
     for p in changed:
         print('rebranded', p.relative_to(ROOT))
-
-
-# Creative Studio: the macOS app folder in the .dmg and the volume name carry our name
-# (packaging/macos/package.sh). Bundle and binary names inside the package stay as upstream has them.
-PACKAGING_NAMES = {
-    'packaging/macos/package.sh': [
-        ('VectorCraft.app', '7rrek.app'),
-        ('-volname "VectorCraft"', '-volname "7rrek"'),
-        ('-hfs-volume-name "VectorCraft"', '-hfs-volume-name "7rrek"'),
-    ],
-}
-
-
-def apply_packaging_names() -> list:
-    changed = []
-    for rel, pairs in PACKAGING_NAMES.items():
-        path = ROOT / rel
-        src = path.read_text(encoding='utf-8')
-        out = src
-        for a, b in pairs:
-            out = out.replace(a, b)
-        if out != src:
-            path.write_text(out, encoding='utf-8')
-            changed.append(path)
-    return changed
+    # Shorter names can let rustfmt join lines; keep `cargo fmt --check` green.
+    if any(p.suffix == '.rs' for p in changed):
+        subprocess.run(['cargo', 'fmt', '--all'], cwd=ROOT, check=True)
 
 
 if __name__ == '__main__':
     main()
-    for _p in apply_packaging_names():
-        print('rebranded', _p.relative_to(ROOT))
 
 
 # Creative Studio: the app's Arabic name in its Arabic interface (studio/arabic_names.py).

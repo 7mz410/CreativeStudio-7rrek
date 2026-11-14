@@ -1,0 +1,200 @@
+@msg	Save writes one artboard: name one, or export several with document.export
+@msg	Select a dimension first
+@msg	Select dimensions to update
+@msg	Select only dimensions
+@msg	Select two or more objects, or a group
+@msg	Shaper needs 1–64 source paths
+@msg	Switch x/y is for scatter graphs
+@msg	Text options: {e}
+@msg	`align` is start, center or end
+@msg	`anchors` must be an array of [subpath, anchor] pairs
+@msg	`anchors` must list anchor indices (0, 1, 2…), not {k}
+@msg	`anchors` must list anchor indices (0, 1, 2…), not {v}
+@msg	`artboards` must be a list of artboard indices
+@msg	`asset` is the asset id (see assets.list)
+@msg	`at` must be a byte offset
+@msg	`autoLeading` must be a number
+@msg	`background` must be "", "matte" or #rrggbb
+@msg	`burasagari` must be "none", "standard" or "forced"
+@msg	`center` must be [x, y]
+@msg	`charAlign` must be "romanBaseline", "emBoxTop", "emBoxCenter", "emBoxBottom", "icfTop" or "icfBottom"
+@msg	`charDirection` must be "default", "leftToRight" or "rightToLeft"
+@msg	`clearStroke` requires `stroke: false`, `ids: []` and no `stop`
+@msg	`clear` must be a list of type object ids, not {v}
+@msg	`clear` must list type objects; {_1} is not one
+@msg	`clear` must not list `id`
+@msg	`color` needs a `rule` to make the theme from
+@msg	`colors` is empty
+@msg	`columnType` is vertical, uniform, repeating or sliding
+@msg	`columns` must be a whole number 1..50
+@msg	`commands` must not be empty
+@msg	`contents` goes with `to`
+@msg	`corners` must be sharp, round or square, not `{other}`
+@msg	`corners` must list anchor indices (0, 1, 2…), not {v}
+@msg	`count` must be a whole number from 1 to 100
+@msg	`dataBase64` is larger than the module limit
+@msg	`dataBase64` is not valid base64
+@msg	`defaultsOnly` cannot be combined with `ids`, `reverse` or `append`
+@msg	`depth` and `childLimit` slice the summary: pass `summary: true`
+@msg	`design` is a design name, or null for plain columns
+@msg	`design` is a design name, or null for the default marker
+@msg	`destinationFolder` is required when destination is `folder`
+@msg	`destination` must be `none`, `saveAndClose` or `folder`
+@msg	`diameter` must be from 0.1 to 2500 pt
+@msg	`digits` must be one of {_1}
+@msg	`dimImages` is a percentage or false
+@msg	`direction` must be "auto", "leftToRight" or "rightToLeft"
+@msg	`each` is the value one design stands for, more than 0
+@msg	`end` must be "start" or "end"
+@msg	`ends` applies to joining exactly two paths
+@msg	`event` must be one of {_1}
+@msg	`every` must be "all", "odd" or "even", not {v}
+@msg	`expand` must be true or false
+@msg	`files` must be 1 to 1000 paths of font files the last text.findFontFiles search found
+@msg	`folder` must be an absolute folder path
+@msg	`fontAxes` must be an object of axis tags and values, such as {"wght"}
+@msg	`format` must be a string
+@msg	`format` must be one of {_1}
+@msg	`fractions` is chop or scale
+@msg	`from` and `to` must differ
+@msg	`from` has an empty frame
+@msg	`from` must be a non-negative integer
+@msg	`from` must be area type or type on a path
+@msg	`gid` must be a glyph id, not {v}
+@msg	`glyphAlternate` belongs to one character, not to a character style (text.setGlyphAlternate sets it)
+@msg	`guide` must be a guide index (guide.list)
+@msg	`hAlign` must be default, left, center or right
+@msg	`id` must be a node id
+@msg	`id` must be an object id, not {v}
+@msg	`ids` must name Objects on Path groups or objects in them
+@msg	`ids` takes at most {MAX_INSPECT_IDS} ids
+@msg	`imageMap` must be none, rectangle or polygon
+@msg	`includeArtboardFill` must be true or false
+@msg	`includeSubdirs` must be true or false
+@msg	`index` must be a point index
+@msg	`index` must be a whole number or null
+@msg	`indices` must be a non-empty array of item indices
+@msg	`items` is a list of {kind, item}
+@msg	`items` is empty
+@msg	`items` must be a list of {id, points}
+@msg	`items` must be a list of {{id, anchors?}}, not {v}
+@msg	`items` must be an array of {id, anchors}
+@msg	`items` must be an array of {{id, corners?}}, not {v}
+@msg	`kashida` must be "none", "short", "medium", "long" or "stylistic"
+@msg	`kind` is one of {_1}
+@msg	`kind` must be "round", "invertedRound" or "chamfer", not {v}
+@msg	`kind` must be `text`, `visibility`, `image` or `graph`
+@msg	`kind` must be a string
+@msg	`kind` must be image, noImage or htmlText
+@msg	`kinsoku` must be "none", "hard" or "soft"
+@msg	`label` must be a non-empty name of at most 200 characters
+@msg	`language` must be a language name or tag, such as "Turkish" or "tr"
+@msg	`leadingModel` must be "romanBaseline" or "emBoxTop"
+@msg	`leading` must be from 0.1 to 5000, or null for Auto
+@msg	`length` must be a number of at most 1000000 pt either way
+@msg	`line` must be true or false
+@msg	`minAngle` ({min_angle}°) can't be more than `maxAngle` ({max_angle}°)
+@msg	`mode` must be "handles", "straight" or "smooth"
+@msg	`mode` must be "straight", "bezier" or "arc"
+@msg	`mode` must be one of {_1}
+@msg	`mojikumi` must be "none", "yakumonoHankaku", "gyomatsuYakumonoHankaku", "gyomatsuYakumonoZenkaku", "yakumonoZenkaku" or "lineEndHalf"
+@msg	`names` is a list of preset names
+@msg	`names` lists preset names
+@msg	`names` must be a list of names
+@msg	`names` must be a list of swatch names
+@msg	`names` must be an array of style names
+@msg	`new` is a design name, or true
+@msg	`path` must be a folder
+@msg	`path` must be a path object
+@msg	`pivot` must be a whole number from 0 to 8
+@msg	`points` must be a list of [x, y] points
+@msg	`points` must be a list of point indexes
+@msg	`points` must be an array of point indices
+@msg	`points` must be point indexes
+@msg	`port` must be "in" or "out"
+@msg	`position` is above or below
+@msg	`preset` must be a string
+@msg	`ratio` must be from 0.1 to 0.5
+@msg	`rect` must be [x, y, width, height] with a positive size
+@msg	`relation` must be overlap, inside or outside
+@msg	`reversed` must be true or false
+@msg	`rotate` must be a finite number
+@msg	`rule` must be nonZero or evenOdd
+@msg	`scale` must be a number in (0, 100]
+@msg	`scope` must be "selection" or "document", not {other}
+@msg	`script` must be a string
+@msg	`seriesIndexes` is a non-empty list of series indexes
+@msg	`seriesIndexes` needs a `type` or a `valueAxis`
+@msg	`shift` must be a number of points
+@msg	`showCenter` must be true or false
+@msg	`singleWordJustification` must be "fullJustify", "alignLeft", "alignCenter" or "alignRight"
+@msg	`size` is a percentage of the base text's size, 1 to 100
+@msg	`source` and `target` are the same object
+@msg	`source` must be `folder` or `datasets`
+@msg	`spacing` must be a number
+@msg	`spacing` must be a number of points, 0 or more, or "auto"
+@msg	`start` must be a finite number
+@msg	`starts` must be an array of anchor indices (or nulls)
+@msg	`status` must be linked, embedded, missing or modified, or a list of them
+@msg	`stop` must be a stop index
+@msg	`story` styles the whole story: give no `start` or `end`
+@msg	`story` takes the whole story: give no `start` or `end`
+@msg	`strokeMode` applies to strokes (stroke: true)
+@msg	`style` must be roman or japanese
+@msg	`subpaths` must be two integer indices
+@msg	`symbol` must be a symbol name
+@msg	`target` must be "object" or "contents", not {v}
+@msg	`tint` applies to global and spot colours
+@msg	`tint` goes with a global or spot `swatch`
+@msg	`tint` must be a number (%)
+@msg	`tint` needs a global or spot colour
+@msg	`to` is already threaded
+@msg	`to` is the design's new name
+@msg	`to` must be [x, y]
+@msg	`to` must be a closed path, area type or type on a path other than `from`
+@msg	`to` must be a whole number
+@msg	`to` takes the rows of one object's stack, not aligned rows
+@msg	`useLab` must be true or false
+@msg	`vAlign` must be default, top, middle, baseline or bottom
+@msg	`values` must be a list
+@msg	`values` must be an object
+@msg	`values` must name hex, rgb, cmyk, lab or gray
+@msg	`values` names a kind twice
+@msg	`{_1}` can't be edited or removed
+@msg	`{_1}` is built in and always listed
+@msg	`{_1}` is not a font file the last text.findFontFiles search found
+@msg	`{_1}` would be overwritten by the package: choose a different folder or name
+@msg	`{file}` has no art to place
+@msg	`{file}` is over {_1} MB
+@msg	`{f}` belongs to a rsm that is running
+@msg	`{f}` is the copy of a document open now
+@msg	`{id}` is no writable format (see document.formats)
+@msg	`{id}` isn't a loaded library
+@msg	`{key}` has no colours
+@msg	`{key}` is a design name
+@msg	`{key}` is a design name or a list of them
+@msg	`{key}` is longer than {MAX_NAME} characters
+@msg	`{key}` is out of range
+@msg	`{key}` must be [min, desired, max] or {{min?, desired?, max?}}, in percent
+@msg	`{key}` must be a non-negative integer
+@msg	`{key}` must be a number {_1}..{_2}
+@msg	`{key}` must be a whole number of at least 0, not {n}
+@msg	`{key}` must be an appearance item index (paint order) or null
+@msg	`{key}` must be an array of asset ids (see assets.list)
+@msg	`{key}` must be from 0 to 180 degrees, not {a}
+@msg	`{key}` must be from {_1} to {shift_max}
+@msg	`{key}`: not a colour: {v}
+@msg	`{k}.family` is required
+@msg	`{k}` is a number 0..1
+@msg	`{k}` is true or false
+@msg	`{k}` isn't an export setting: {_1}
+@msg	`{k}` must be a byte offset
+@msg	`{k}` must be a number
+@msg	`{k}` must be a number of points
+@msg	`{k}` must be a string
+@msg	`{k}` must be a whole number
+@msg	`{k}` must be from {lo} to {hi} for {key}
+@msg	`{k}` must be {what}, not {v}
+@msg	`{l}` isn't a global or spot colour
+@msg	`{m}` isn't a bitmap: use clipboard.importSvg, importPdf or importText
+@msg	`{name}` can't be deleted

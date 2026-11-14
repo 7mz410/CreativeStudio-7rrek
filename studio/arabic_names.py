@@ -24,7 +24,8 @@ def apply(root: Path, latin: str, arabic: str) -> list:
         rows = []
         for line in s.split('\n'):
             cells = line.split('\t')
-            if len(cells) >= 3 and not line.startswith('#'):
+            # A row whose English is the bare name is a kept menu label: its translation stays the name.
+            if len(cells) >= 3 and not line.startswith('#') and cells[1] != latin:
                 line = '\t'.join(cells[:2] + [_swap(c, latin, arabic) for c in cells[2:]])
             rows.append(line)
         o = '\n'.join(rows)

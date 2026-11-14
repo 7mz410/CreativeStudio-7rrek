@@ -5,7 +5,7 @@ use vectorcraft_doc::NodeId;
 
 use super::anim::{Anim, frame_param, show};
 use super::mesh::{MAX_MESHES, Mesh, Meshes};
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Result, bad, checked_id, index, number_or};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

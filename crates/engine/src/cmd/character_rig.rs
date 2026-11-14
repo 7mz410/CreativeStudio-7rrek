@@ -15,7 +15,7 @@ use vectorcraft_geom::{Affine, Rect, Vec2};
 use super::anim::{Anim, frame_param, show};
 use super::character_contract::{PARTS, REQUIRED_VIEWS, check_doc, part_spec};
 use super::peg::{MAX_PEGS, Peg, Pegs};
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Value, Result, str_param, bad, EngineError};
 
 pub const CHARACTER_VIEWS_KEY: &str = "characterViews";
 

@@ -5,7 +5,7 @@
   <id>ai.storyteller.vectorcraft</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT OR Apache-2.0</project_license>
-  <name>VectorCraft</name>
+  <name>rsm</name>
   <summary>Draw and edit vector illustrations, SVG and PDF</summary>
   <developer id="ai.storyteller">
     <name>Learning Machines LLC</name>

@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 use serde_json::json;
 
 use super::anim::{Anim, frame_param, row_param, show};
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Value, Result, NodeId, bad};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

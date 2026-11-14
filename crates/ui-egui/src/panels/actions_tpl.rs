@@ -15,10 +15,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         return;
     }
 
-    let sel_id = ui.id().with("selected_action");
-    let name_id = ui.id().with("save_name");
-    let from_id = ui.id().with("save_from");
-    let to_id = ui.id().with("save_to");
+    let sel_id = ui.scope_id().with("selected_action");
+    let name_id = ui.scope_id().with("save_name");
+    let from_id = ui.scope_id().with("save_from");
+    let to_id = ui.scope_id().with("save_to");
 
     let mut selected: Option<String> = ui.data(|d| d.get_temp(sel_id));
     let mut save_name: String = ui.data(|d| d.get_temp(name_id).unwrap_or_default());

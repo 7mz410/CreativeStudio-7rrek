@@ -1,0 +1,200 @@
+@msg	`{name}` can't be duplicated
+@msg	`{name}` can't be edited
+@msg	`{name}` can't be edited this way
+@msg	`{name}` can't be renamed
+@msg	`{name}` can't name a folder
+@msg	`{name}` has no art to place
+@msg	`{name}` has no text to place
+@msg	`{name}` in the Word document is not UTF-8 or UTF-16 text
+@msg	`{name}` in the Word document is not well-formed XML: {e}
+@msg	`{name}` in the Word document nests elements more than {MAX_NESTING} deep
+@msg	`{name}` is a built-in preset and is read-only: save it under another name
+@msg	`{name}` is a built-in preset: save under another name
+@msg	`{name}` is a built-in profile and stays
+@msg	`{name}` is a tint of `{base}`: edit `{base}` (a tint swatch only takes a new name)
+@msg	`{name}` is a working space: choose another with edit.colorSettings first
+@msg	`{name}` is built in and stays
+@msg	`{name}` takes a paint of its own kind (colour, gradient or pattern)
+@msg	`{n}` can't be deleted
+@msg	`{n}` can't be merged
+@msg	`{n}` can't be moved
+@msg	`{n}` is not a colour swatch
+@msg	`{n}` isn't a solid colour
+@msg	`{n}`: colour groups hold solid colours only
+@msg	`{other}` doesn't trace an image
+@msg	`{s}`: the step's references copy in more than {_1} MB of values
+@msg	`{tag}` is not an axis tag: a tag is four characters, such as "wght"
+@msg	`{to}` is empty or already used
+@msg	`{what}` is longer than {MAX_TEXT} bytes
+@msg	`{what}` must be text
+@msg	a DXF drawing has one origin: pass useArtboards: true for one drawing per artboard
+@msg	a PDF presets file with over {_1} presets
+@msg	a batch preview cannot switch documents
+@msg	a brush named `{nn}` exists
+@msg	a container of the listed objects is gone
+@msg	a content stream can't be read
+@msg	a content stream isn't a stream
+@msg	a design holds at most {_1} objects
+@msg	a design needs a name
+@msg	a dictionary grew too large
+@msg	a document keeps at most {_1} graph designs
+@msg	a document keeps at most {_1} saved selections
+@msg	a document keeps at most {_1} views
+@msg	a document links at most {MAX_SVG_SCRIPTS} JavaScript files
+@msg	a feConvolveMatrix filter's order is {x}×{y}, which overflows the kernel-size multiply usvg makes
+@msg	a gradient preset is already called {n}
+@msg	a graph has at most {_1} series, so it transposes with at most that many categories
+@msg	a layer can't be merged into its own sublayer
+@msg	a layer's form box isn't an array
+@msg	a layer's form can't be read
+@msg	a layer's form has no box
+@msg	a layer's form has no dictionary
+@msg	a legend draws at most {MAX_CHIPS} swatches
+@msg	a name names one asset: give multiple: false, or one object
+@msg	a page can't be read
+@msg	a page object is used by something else
+@msg	a page thumbnail must be RGB pixels, 1 to {THUMBNAIL_SIZE} a side (got {w} × {h})
+@msg	a pattern layer doesn't end what it starts
+@msg	a pattern layer's colors hold something else
+@msg	a pattern named `{n}` exists
+@msg	a plug-in with id {_1} is already installed
+@msg	a preset named `{n}` exists
+@msg	a print presets file with over {_1} presets
+@msg	a profile is already called {n}
+@msg	a row can't go into itself
+@msg	a series goes on the left or the right value axis
+@msg	a start must be an anchor index ≥ 0 or null
+@msg	a style named `{name}` already exists
+@msg	a style named `{to}` already exists
+@msg	a swatch needs a colour, gradient or pattern
+@msg	a symbol named `{n}` already exists
+@msg	a theme has 1 to {THEME_SIZE} colours
+@msg	a theme is already called {name} (replace: "{name}" overwrites it)
+@msg	a toolbar name has at most {MAX_NAME} characters
+@msg	a view named `{_1}` exists
+@msg	a view named `{name}` exists
+@msg	a workspace keeps at most {MAX} toolbars
+@msg	a {_1} series can't go in a {_2} graph
+@msg	aiVersion {v}: "pdf" (PDF-compatible, the default) or "7" (legacy .ai, version 7)
+@msg	already editing an opacity mask
+@msg	already editing another object's opacity mask
+@msg	already in pattern editing mode
+@msg	an artboard is listed twice
+@msg	an empty artboard has no width or height to scale to
+@msg	an image is too large for DXF and was left out
+@msg	an image of {_1} MB, at most {_2} MB
+@msg	an image of {declared_w} × {declared_h} pixels is too large to draw
+@msg	an image of {width} × {height} pixels is too large to draw
+@msg	an index must be a whole number
+@msg	an inline graphic has no glyphs
+@msg	an invisible text form can't be read
+@msg	an object is missing
+@msg	an object's header is missing
+@msg	an overprinting form can't be read
+@msg	an unread object has no readable bounds
+@msg	an unread object holds a frame of threaded type
+@msg	an unread object is missing from its layer
+@msg	anchor `smooth` must be true or false
+@msg	anchor `{key}` must be [x, y]
+@msg	anchor `{key}` must be a number
+@msg	angle and roundness must be finite
+@msg	angles must be a list as long as pins (degrees or null)
+@msg	appearance must be flat|center|edge
+@msg	apply is "fill" or "stroke", not `{other}`
+@msg	area must be a closed polygon of 3 to 100000 [x, y] points
+@msg	area type needs a path that encloses an area
+@msg	area type {_1} is named twice
+@msg	arrowAlign must be extend|tip, got {o}
+@msg	arrowScale must be [start, end]
+@msg	artboard is a 0-based index
+@msg	artboard must be a 0-based index
+@msg	artboard {i} doesn't print
+@msg	artboardLayout must be {layout?, columns?, spacing?, rightToLeft?}
+@msg	artboardLayout.columns must be 1 or more
+@msg	artboardLayout.layout must be gridByRow, gridByColumn, row or column
+@msg	artboardLayout.rightToLeft must be true or false
+@msg	artboardLayout.spacing must be 0–{MAX_SPACING} pt
+@msg	artboards must be a non-empty list
+@msg	artboards must be a number
+@msg	asset `{_1}` has no art to export
+@msg	at most {MAX_KEYWORDS} keywords
+@msg	at most {MAX_MATCHES} matches are kept
+@msg	at most {MAX_POINTS} points
+@msg	at most {MAX_QUEUE} files
+@msg	at must be [x, y]
+@msg	at/rect lie outside the canvas
+@msg	attribute must be size|leading|tracking|kerning|baselineShift
+@msg	attrs must be an object
+@msg	automation path rejected: the folder's name isn't valid text
+@msg	automation path rejected: {_1} isn't valid text
+@msg	automation path rejected: {why}: {path}
+@msg	axis must be "vertical", "horizontal" or an angle in degrees, not `{given}`
+@msg	backgroundContents must be transparent or white
+@msg	bad AES key
+@msg	bad `runs`: {e}
+@msg	bad arrowScale
+@msg	bad base64
+@msg	bad color {c}
+@msg	bad colour
+@msg	bad colour in `colors`
+@msg	bad colour {v}
+@msg	bad colour {v} in groupColors
+@msg	bad cross-reference entry
+@msg	bad cross-reference table
+@msg	bad current colour {v}
+@msg	bad dataBase64
+@msg	bad edit
+@msg	bad fill {v}
+@msg	bad fit: {e}
+@msg	bad model {other} (keep, new or document)
+@msg	bad new colour {v}
+@msg	bad object
+@msg	bad object number
+@msg	bad offset
+@msg	bad path data: {e}
+@msg	bad point {v}: expected [x, y] or [x, y, pressure]
+@msg	bad reference
+@msg	bad trailer size
+@msg	bad {k} colour
+@msg	batches cannot nest
+@msg	bind something to a variable first
+@msg	bleed must be 0–{MAX_BLEED} pt: a number, [top, bottom, left, right] or {{top, bottom, left, right}}
+@msg	brush must be a name or null
+@msg	by must be a number
+@msg	can't add page thumbnails: {why}
+@msg	can't add the editing data for other apps: {why}
+@msg	can't edit the written PDF: {why}
+@msg	can't encrypt the PDF: {why}
+@msg	can't linearise the PDF: {why}
+@msg	can't open `{_1}`: {_2}
+@msg	can't open `{_1}`: {e}
+@msg	can't open `{name}`: not a format rsm reads (see document.formats)
+@msg	can't place `{name}`: not a format rsm reads (see document.formats)
+@msg	can't read back the written PDF: {e}
+@msg	can't read this Word document: {why}
+@msg	can't write .{e} images: use .png, .jpg, .gif, .webp, .tif or .bmp
+@msg	can't write PDF layers, overprint or invisible text: {why}
+@msg	can't write the file's copyright: {why}
+@msg	can't write the file's modification date: {why}
+@msg	can't write the pages' user units: {why}
+@msg	cannot distort a zero-size or non-finite bounding box
+@msg	cannot move an object into itself
+@msg	case must be upper|lower|title|sentence
+@msg	category `{c}`: one of {_1}
+@msg	center must be [x, y]
+@msg	choose at least one artboard
+@msg	choose at least one status
+@msg	clip must be true or false
+@msg	clippingMask must be true or false
+@msg	closed must be a boolean
+@msg	collapsed must be true or false
+@msg	color.profile: no RGB or CMYK profile is called “{profile}”
+@msg	colorMode must be rgb or cmyk, not `{m}`
+@msg	colorModel must be {own} (the document's mode), grayscale or bitmap
+@msg	colour groups can't go into colour groups
+@msg	colour, mode and spot apply to solid-colour swatches only
+@msg	column {column}: `{cell}` is a `%` column of graph data files, which are not read
+@msg	column {column}: `{cell}` names `{name}`, which is a {_1} variable
+@msg	column {column}: `{cell}` names no variable
+@msg	column {column}: the variable name is longer than {MAX_NAME} characters
+@msg	column: true floats the whole column and takes no onto, above or below

@@ -1,0 +1,200 @@
+	Plane
+	Extrude
+	Revolve
+	Inflate
+	Select objects, then pick an object type to give them a 3D effect.
+	"In" Control Points
+	"Out" Control Points
+	Anti-aliasing Method
+antiAlias	Sharp
+	Crisp
+	Strong
+@plural	Apply to All ({n} more missing)|Apply to All ({n} more missing)
+	Assign Profile
+	Guide Label:
+	Fade Region Outside Artboard
+	Update While Dragging
+	Exclude from playback
+	Include in playback
+	Include Action Steps
+	Numbered List
+	Apply Numbers
+	Bullets and Numbering…
+	Numbers
+	Level:
+	Bullet Character:
+	Number Style:
+	Left Indent:
+	First Line Indent:
+	Convert to Text
+	Color (, or Shift+,)
+	Color Wheel
+	Hue ring
+	Saturation and brightness
+	Color field
+	{name1} {value1}, {name2} {value2}
+	Command API Reference
+	Compound Shape
+	Convert to Indexed Color
+	Convert to Indexed Color…
+	Clear Selection
+	Export PDFs As:
+	Single File
+	Multiple Files
+	Format Presets
+	Grid View
+	Selected: {n}, Total number of files to export: {m}
+	Image Tools
+	Remove Background…
+	Draw (Pencil)
+	Place Image
+	Remove Background
+	Background
+	Edge Color
+	Picked Colors
+	Corner Color
+	Contiguous
+	Each Channel
+	Color Mask…
+	Color Mask
+	Remove Color Mask
+	Apply Color Mask
+	Delete the selected symbol?
+	Delete the selected symbols?
+	No unused symbols
+	Delete Symbols
+	One or more of the symbols are in use and cannot be deleted until their instances are expanded or deleted.
+	Expand Instances
+	Delete Instances
+	Yes
+	No
+	Delete Action Sets
+	Duplicate Action or Action Set
+	Delete the action set “{name}” and its actions?
+	Delete the selected action sets and their actions?
+	Delete the selected items and their artwork?
+	Delete this layer and its artwork?
+	Click to edit
+	Double-click to edit
+	Alternates for Current Selection
+	Select a character with the Type tool to see its alternates.
+	The selected character's font is not available.
+	No alternates for the selected character.
+	Double-click to replace
+	Select one character with the Type tool first.
+	{glyph} is a glyph of {font}, not of the font the selected text is set in ({text_font}).
+	{glyph} belongs to {base} (U+{base_code}) {place}; your selection is {sel} (U+{code}).
+	at the start of a word
+	in the middle of a word
+	at the end of a word
+	standing alone
+	{glyph} is not an alternate of {sel} (U+{code}) as it stands in its word.
+	Double-click to insert {base} (U+{code}) instead: a presentation form does not join, the letter does.
+	Inserted {base} (U+{code}) instead of a presentation form: the font joins it to its neighbors by position.
+	No OpenType feature draws this glyph here, so it replaces the character's glyph and may not join its neighbors.
+	Rename Artboards
+	Exit Symbol Editing Mode
+	Edit the point
+	Show samples on white
+	Switch Selection and Drawing Modes
+	Export Export Presets
+	Export Preset…
+	Import Export Presets
+	Import Preset…
+@msg	`exportPreset` is the name of a preset of document.exportPresets.list
+@msg	no export preset `{n}` (see document.exportPresets.list)
+@msg	no saved export presets to export (name built-in ones in `names`)
+@msg	not an export presets file (format `{_1}`)
+@msg	not an export presets file: {e}
+@msg	`{_1}`: {msg}
+	Export 3D Object
+	3D Export Format
+	Export 3D Assets
+@msg	{what} can't be exported in 3D: {e}
+@msg	asset {id} isn't a 3D asset
+@msg	asset {id} is a 3D asset: assets.export3D writes it
+@msg	no 3D assets yet: collect an object with a 3D effect first (assets.add3D)
+@msg	select an object with a 3D effect (or give its ids)
+	Export Keyboard Shortcuts as Text…
+	Export Text…
+	3D (Classic)
+	Extrude & Bevel (Classic)…
+	Revolve (Classic)…
+	Rotate (Classic)…
+	Surface
+	Wireframe
+	No Shading
+	Plastic
+	Highlight Intensity
+	Highlight Size
+	Blend Steps
+	Shading Color
+	Draw Hidden Faces
+	Live curve fitting
+	Start Lists From Typed Markers
+	Compare with Image
+	Highlight Font Name
+	Highlight Kerning
+	Highlight Tracking
+file-filter	Preferences
+file-filter	Export presets
+	Float All in Windows
+	Paint Fills
+	Paint Strokes
+	Highlight
+	Global Adjust
+	Gradient (. or Shift+.)
+	High Color
+	Low Color
+	Painted and Sketched
+	Washed Blue
+	Bristle Ochre
+	Pastel Heather
+	Charcoal Shade
+	Ink Contour
+	Wet Ink
+	Fine Pen
+	Segmented color wheel
+	Show smooth color wheel
+	Show segmented color wheel
+	Show color bars
+	New Document from State
+	Delete Styles
+	Pivot:
+	Rotate:
+	Detach
+	Detach Object from Path
+	Manage Presets
+	Save as New Preset…
+	Rename…
+	Rename Preset
+	Save Image Trace Preset
+	Delete Image Trace Preset
+	Include Artboard Fill
+	Include Variable Data
+	Write pages longer than 200 in at full size in points
+	Align Top
+	Align Center
+	Align Bottom
+	Justify Vertically
+	Kerning
+	Read Action Set File
+	Enclosing Lasso Tool
+	Enclosing Lasso
+	Light Red
+	Load Character Styles…
+	Load Paragraph Styles…
+	Load All Styles…
+	Lock Guides by Default
+	Artboard Guides with Cmd/Ctrl + Ruler Drag
+	Use System Defaults for Edit Original
+	Pad
+	Repeats
+	Mixed
+	Kashidas
+	YakumonoHankaku
+	GyomatsuYakumonoHankaku
+	GyomatsuYakumonoZenkaku
+	YakumonoZenkaku
+	Kinsoku Shori Type
+	Push In First

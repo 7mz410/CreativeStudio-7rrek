@@ -27,7 +27,7 @@ struct Playback {
 }
 
 fn playback_id() -> egui::Id {
-    egui::Id::new("7rrek-playback")
+    egui::Id::unique("7rrek-playback")
 }
 
 /// The Timeline's height for the active document (its rows, up to [`MAX_ROWS_SHOWN`]).

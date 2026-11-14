@@ -13,7 +13,7 @@ use super::anim::{Anim, show};
 use super::cutter::{Cutter, Cutters, MAX_CUTTERS};
 use super::peg::Pegs;
 use super::row_fx::RowFxList;
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Value, Result, bad};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

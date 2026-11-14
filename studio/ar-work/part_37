@@ -1,0 +1,200 @@
+@msg	loading profiles from disk isn't available in the browser
+@msg	margin: a {m} pt margin leaves no imageable area on the paper
+@msg	matrix must be finite and invertible, depth finite
+@msg	matte: {e}
+@msg	member is for order front, forward, backward or back
+@msg	missing `artboards`
+@msg	missing `at` [x, y]
+@msg	missing `attrs`
+@msg	missing `color` or `opacity`
+@msg	missing `colors`
+@msg	missing `commands`
+@msg	missing `destinationFolder`
+@msg	missing `effect` id
+@msg	missing `family`
+@msg	missing `find`
+@msg	missing `gid` (a glyph id, or null for the default glyph)
+@msg	missing `group`
+@msg	missing `id`
+@msg	missing `id`: give one, or select one type object
+@msg	missing `index` (a point index, or null to clear)
+@msg	missing `index` (a stop index, or null to clear)
+@msg	missing `index` (an item index or null)
+@msg	missing `item`
+@msg	missing `library`
+@msg	missing `library` (see graphicStyle.libraries)
+@msg	missing `library` (see swatch.library.list)
+@msg	missing `map` (rows [{from, to}] or {current})
+@msg	missing `matrix` [a,b,c,d,e,f]
+@msg	missing `name` (see gradient.presets.list)
+@msg	missing `offset` (a distance in points)
+@msg	missing `path`
+@msg	missing `path` (a path object id)
+@msg	missing `rule`
+@msg	missing `source` id
+@msg	missing `start` (the byte offset of a character)
+@msg	missing `status`: linked, embedded, missing or modified
+@msg	missing `target` id
+@msg	missing `text`
+@msg	missing `to`
+@msg	missing `to` (an index)
+@msg	missing `to`: a non-negative integer
+@msg	missing `type`
+@msg	missing `value`
+@msg	missing `{key}`
+@msg	missing `{k}`
+@msg	missing anchor
+@msg	missing anchors
+@msg	missing anchors [[subpath, anchor]…]
+@msg	missing array `{key}`
+@msg	missing case
+@msg	missing color
+@msg	missing commands
+@msg	missing destination folder
+@msg	missing from
+@msg	missing group
+@msg	missing id or ids
+@msg	missing ids
+@msg	missing indexes
+@msg	missing matrix [a,b,c,d,e,f]
+@msg	missing name
+@msg	missing op
+@msg	missing or invalid `color`
+@msg	missing or unknown `tool`
+@msg	missing point
+@msg	missing point [x,y]
+@msg	missing point `{key}` ([x, y])
+@msg	missing points
+@msg	missing points [[x,y]…]
+@msg	missing segment
+@msg	missing stops
+@msg	missing subpaths
+@msg	missing target
+@msg	missing to
+@msg	missing x, y
+@msg	mode is set, add or toggle, not `{other}`
+@msg	mode must be "cmyk" or "rgb"
+@msg	mode must be area|onPath, got {o}
+@msg	more than 10000 linked files: package dependencies in smaller parts
+@msg	more than 256 commands
+@msg	more than {MAX_BATCH_FILES} data sets
+@msg	more than {MAX_BATCH_FILES} files
+@msg	more than {MAX_CSV_ROWS} data rows
+@msg	more than {MAX_FILES} images
+@msg	more than {MAX_IMPORT} presets
+@msg	moved must be [[x,y]…]
+@msg	name (a toolbar's name) is required
+@msg	name (a toolbar's name) must be a string
+@msg	name must be a toolbar's name
+@msg	names is empty
+@msg	names must be an array of symbol names
+@msg	need `anchor` or `segment` + `t`
+@msg	need at least one anchor
+@msg	need at least one point
+@msg	need at least two points
+@msg	needs points
+@msg	nineSlice must be true or false
+@msg	nineSliceGuides must be [left, top, right, bottom], each -16..16, with left + right < 1 and top + bottom < 1
+@msg	no PDF preset named `{n}`
+@msg	no action set is current
+@msg	no active data set
+@msg	no appearance item {index}
+@msg	no artboard {_1}
+@msg	no artboard {artboard} (0-based; the document has {_1})
+@msg	no asset {id}
+@msg	no asset {id} (see assets.list)
+@msg	no assets to export
+@msg	no assets yet: collect art for export first (assets.add)
+@msg	no brush named `{n}`
+@msg	no character at byte {start}
+@msg	no colour
+@msg	no colour group `{group}`
+@msg	no colour group `{name}`
+@msg	no data sets
+@msg	no dataset named `{from}`
+@msg	no dataset named `{name}`
+@msg	no datasets
+@msg	no design named `{name}`
+@msg	no design named `{n}`
+@msg	no design named `{old}`
+@msg	no encoder for {_1} yet
+@msg	no export preset `{name}` (see document.exportPresets.list)
+@msg	no folder: pass `path` or set Preferences › Plug-ins & Scratch Disks › Additional Plug-ins Folder
+@msg	no fonts to look for: they are all available
+@msg	no formats to export
+@msg	no gradient preset `{name}` (see gradient.presets.list)
+@msg	no graphic style `{n}` in `{_1}`
+@msg	no graphic style library `{key}` (see graphicStyle.libraries)
+@msg	no guide selected
+@msg	no guide selected (or give an index)
+@msg	no guide {i}
+@msg	no images in the folder
+@msg	no item at index {_1}
+@msg	no item at index {from}
+@msg	no item at one of the indices {idx}
+@msg	no layer
+@msg	no layer {id} (see layer.list)
+@msg	no layers to export
+@msg	no library `{key}`
+@msg	no metafile format
+@msg	no object {_1}
+@msg	no objects
+@msg	no parent layer
+@msg	no perspective grid preset named `{b}` (see perspective.presets.list)
+@msg	no perspective grid preset named `{n}`
+@msg	no point selected (give `index`)
+@msg	no preset called `{from}` (see file.newPresets)
+@msg	no preset called `{name}` (see file.newPresets)
+@msg	no preset named `{n}`
+@msg	no print preset named `{b}` (see print.presets.list)
+@msg	no print preset named `{name}` (presets: {_1})
+@msg	no print preset named `{n}`
+@msg	no profile named `{name}`
+@msg	no readable files in the folder
+@msg	no recovery copy `{f}` (see file.recovery.list)
+@msg	no rows
+@msg	no saved PDF preset named `{name}`
+@msg	no saved export preset `{name}`
+@msg	no saved gradient preset called {name}
+@msg	no saved gradient presets
+@msg	no saved preset called `{name}`
+@msg	no saved presets to export (name [Default] in `names` to export it)
+@msg	no saved presets to export (name built-in ones in `names`)
+@msg	no saved print preset named `{name}`
+@msg	no saved profile called {name}
+@msg	no saved selection `{name}`
+@msg	no saved theme called {name} (see colorTheme.list)
+@msg	no saved views
+@msg	no series {i}
+@msg	no slice {n} in the image (see slice.list)
+@msg	no source art
+@msg	no stop {i} (the gradient has {n})
+@msg	no style `{name}`
+@msg	no such assets (see assets.list)
+@msg	no such frame anchor, or the frame would reach past the canvas
+@msg	no such objects
+@msg	no such path anchor, or the path would reach past the canvas
+@msg	no such rows
+@msg	no swatch `{keep}`
+@msg	no swatch `{n}`
+@msg	no swatch `{n}` (swatches and colour groups move separately)
+@msg	no swatch library `{key}` (see swatch.library.list)
+@msg	no swatch library `{key}` (see swatch.library.list; "document": the document's swatches)
+@msg	no swatch library `{key}` (see swatch.library.list; "{DOCUMENT_SWATCHES}": the document's swatches)
+@msg	no swatch named `{n}`
+@msg	no swatch or colour group `{n}`
+@msg	no swatch or colour group `{n}` in `{_1}`
+@msg	no symbol named `{name}`
+@msg	no text objects selected
+@msg	no toolbar named `{_1}`
+@msg	no toolbar named `{name}`
+@msg	no tracing preset `{preset}` (see imageTrace.presets)
+@msg	no user library folder here (save with a path, or without one to get the data)
+@msg	no variable named `{from}`
+@msg	no variable named `{name}`
+@msg	no variable named `{var}`
+@msg	no variable named `{v}`
+@msg	no view named `{name}`
+@msg	node {_1} is not a graph
+@msg	node {_1} is not an image
+@msg	node {_1} is not type

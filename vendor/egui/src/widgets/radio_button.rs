@@ -1,6 +1,6 @@
 use crate::{
-    Atom, AtomLayout, Atoms, Id, IntoAtoms, NumExt as _, Response, Sense, Ui, Vec2, Widget,
-    WidgetInfo, WidgetType, epaint,
+    Atom, Atoms, IdSalt, IntoAtoms, NumExt as _, Response, Role, Sense, Ui, Vec2, Widget,
+    WidgetAtom, WidgetInfo, epaint,
 };
 
 /// One out of several alternatives, either selected or not.
@@ -57,7 +57,7 @@ impl Widget for RadioButton<'_> {
         // In order to center the checkbox based on min_size we set the icon height to at least min_size.y
         let mut icon_size = Vec2::splat(icon_width);
         icon_size.y = icon_size.y.at_least(min_size.y);
-        let rect_id = Id::new("egui::radio_button");
+        let rect_id = IdSalt::new("radio_button_icon");
         // Creative Studio: the box goes after the text (on its right) when right to left.
         if crate::layout::is_rtl() {
             atoms.push_right(Atom::custom(rect_id, icon_size));
@@ -67,14 +67,15 @@ impl Widget for RadioButton<'_> {
 
         let text = atoms.text().map(String::from);
 
-        let mut prepared = AtomLayout::new(atoms)
+        let mut prepared = WidgetAtom::new(atoms)
             .sense(Sense::click())
+            .direction(ui.style().chrome_direction())
             .min_size(min_size)
             .allocate(ui);
 
         prepared.response.widget_info(|| {
             WidgetInfo::selected(
-                WidgetType::RadioButton,
+                Role::RadioButton,
                 ui.is_enabled(),
                 checked,
                 text.as_deref().unwrap_or(""),
@@ -95,7 +96,7 @@ impl Widget for RadioButton<'_> {
 
                 painter.add(epaint::CircleShape {
                     center: big_icon_rect.center(),
-                    radius: big_icon_rect.width() / 2.0 + visuals.expansion,
+                    radius: big_icon_rect.width() * 0.5 + visuals.expansion,
                     fill: visuals.bg_fill,
                     stroke: visuals.bg_stroke,
                 });

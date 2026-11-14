@@ -10,7 +10,7 @@ use vectorcraft_doc::Document;
 use super::cutter::Cutters;
 use super::peg::Pegs;
 use super::row_fx::RowFxList;
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Result, bad, Session};
 
 pub const KEY: &str = "nodeGroups";
 pub const MAX_GROUPS: usize = 256;

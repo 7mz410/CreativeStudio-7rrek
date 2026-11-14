@@ -1,0 +1,200 @@
+@msg	command must be a shape.* command
+@msg	commands[{i}]: missing `command`
+@msg	composer must be "singleLine" or "everyLine"
+@msg	compound shapes take paths, compound paths, groups, compound shapes, type, blends and envelopes
+@msg	compound {_1} must contain exactly one open path to join
+@msg	connect end must be "start" or "end"
+@msg	connect needs a path other than the one extended
+@msg	connect needs id
+@msg	connect path has no open end
+@msg	copy needs path: the file to copy into the document's folder
+@msg	copy takes images only: relink placed documents where their files are
+@msg	copying a file isn't available on the web
+@msg	copyrightStatus must be unknown, copyrighted or publicDomain
+@msg	copyrightUrl must be a URL (no spaces, at most 2048 characters)
+@msg	corners must be 4 [x, y] points (TL, TR, BR, BL)
+@msg	counterPer `{c}`: item or file
+@msg	crop `{_1}`: only PDF pages have art, trim, bleed and media boxes; use "crop" or "bounding"
+@msg	crop rectangle doesn't overlap the image
+@msg	cross-reference and object streams aren't supported
+@msg	damaged compressed data: {e}
+@msg	dash lengths must be numbers, got {v}
+@msg	dash must be a list of lengths or null, got {v}
+@msg	data key `{k}`: letters, digits, -, _ and . (not name or vc-…)
+@msg	data must be an object of key: value, not {v}
+@msg	data set `{name}` holds a value for `{var}`, which the library doesn't declare
+@msg	data set `{name}` holds two values for `{var}`
+@msg	data set `{name}` is declared twice
+@msg	data takes at most {MAX_DATA} keys at once
+@msg	dataset `{name}` already exists
+@msg	dataset `{to}` already exists
+@msg	date `{d}`: YYYY-MM-DD
+@msg	decoded data is too large
+@msg	define a variable first
+@msg	detect must be true or false
+@msg	direct-select anchor points of a path
+@msg	distance must be > 0
+@msg	dx and dy give the arrow's direction
+@msg	dx and dy must be numbers
+@msg	dxf fitTo must be [width, height], positive
+@msg	dxf must be an object of DXF import options
+@msg	dxf scale must be a positive number up to {_1}, not {s}
+@msg	dxf unit `{u}`: a unit such as mm, cm, in or pt
+@msg	dxf: {e}
+@msg	each format is an object {format, scale?, suffix?}
+@msg	each item needs an id
+@msg	each match needs `kind`
+@msg	each match needs a `name`
+@msg	each of `fonts` is {family, style?}; 1 to 1000 of them
+@msg	each of `items` is {kind, item}
+@msg	each of `items` is {{id, corners?}} with an object id, not {it}
+@msg	each row needs `from`
+@msg	each stop needs a position
+@msg	each subpath needs an anchors array
+@msg	easingType must be easeIn, easeOut, easeInOut or easeOutIn
+@msg	editingData must be true or false
+@msg	editingData must be true, false or "always"
+@msg	edits overlap
+@msg	effects of objects whose appearances differ can't be moved together
+@msg	empty header in column {_1}
+@msg	encoding `{_1}`: utf8 or utf16
+@msg	ends must be two of "first" and "last"
+@msg	every numbered name for the result is taken
+@msg	expanded SVG styles exceed the import size limit
+@msg	export presets file is larger than {MAX_PRESET_FILE_BYTES} bytes
+@msg	exportText must be editable or appearance
+@msg	exportType must be movieClip or graphic, not `{s}`
+@msg	extend needs id
+@msg	featureChanges lists at most {MAX_FEATURE_CHANGES} tags
+@msg	featureChanges must be a list of tags
+@msg	features must be a list of tags
+@msg	fidelity must be 0..100
+@msg	files must be {name, dataBase64}
+@msg	fit must be none|autoHeight|shrinkText|block, got {id}
+@msg	flattener: {e}
+@msg	flattenerPreset `{name}`: high, medium, low or a saved one (see flattener.presets.list)
+@msg	flipProfile must be along|across, got {o}
+@msg	folders `{f}`: none, rows, format, item or itemFormat
+@msg	folders deeper than {MAX_BATCH_DEPTH} levels
+@msg	folders deeper than {MAX_DEPTH} levels
+@msg	font family `{family}` is not available
+@msg	font family `{tf}` is not available
+@msg	format `{f}`: pdf or postscript
+@msg	format `{f}`: text or json
+@msg	format is `{format}`
+@msg	formats must be an array of rows, not {v}
+@msg	frequency must be between 1 and 300 lines per inch
+@msg	from and to must be finite
+@msg	from must be [x0, y0, x1, y1]
+@msg	give `before` or `after`, not both
+@msg	give `colors`, or `color` and `rule`
+@msg	give `event`, such as onclick
+@msg	give `file`, the JavaScript file's path or URL
+@msg	give `fill` and/or `stroke`
+@msg	give `fill`, `stroke` or both
+@msg	give `folder`
+@msg	give `fonts`, or open a document
+@msg	give `from` or `indices`, not both
+@msg	give `id` (no text is being edited)
+@msg	give `id` and `anchors`, or `items`, not both
+@msg	give `id` or `guide`, not both
+@msg	give `length` or `to`
+@msg	give `matches`: [{kind, name, target}]
+@msg	give `name` (or edit a pattern)
+@msg	give `name` or `names`
+@msg	give `path` (a .wasm file) or `dataBase64` (the module)
+@msg	give `path`, `data` or `dataBase64`
+@msg	give `path`, `data`, `dataBase64` or `csv`
+@msg	give `path`, `xml` or `dataBase64`
+@msg	give `script`, the JavaScript the event runs ("" removes the event)
+@msg	give `text` (the reading) or `remove`
+@msg	give `x` and `y` (and a `tolerance` of 0 or more)
+@msg	give a mode or r/g/b, c/m/y/k, gray or tint adjustments
+@msg	give a name, or paint the active proxy with a saved preset
+@msg	give a name, or select a stroke with a saved profile
+@msg	give a pattern name or select an object painted with a pattern
+@msg	give at least one of clip, invert, disabled, linked
+@msg	give color, none, swatch or gradient
+@msg	give dataBase64
+@msg	give either at (a click) or area (a path drawn around the overlaps)
+@msg	give formats or a preset, not both
+@msg	give newName or delete
+@msg	give offset or by
+@msg	give one of `to`, `rect` or `at`
+@msg	give one of assets, layers, selection or fullDocument
+@msg	give only one of onto, above, below, icon and a column place
+@msg	give origin: [x, y], or reset: true
+@msg	give overprintFill, overprintStroke, showCenter, imageMap, url or note
+@msg	give path (a file) or folder
+@msg	give path, or name and dataBase64
+@msg	give paths or files
+@msg	give rows, rowHeight, columns or columnWidth
+@msg	give svg, or dataBase64 of an SVG or SVGZ file
+@msg	give text
+@msg	give the asset a name
+@msg	give the preset a `name`
+@msg	give the preset a name
+@msg	give the preset a name (1–64 characters)
+@msg	give the settings to change, e.g. {"formats"}]}
+@msg	give the style a name
+@msg	give two or more style `names`
+@msg	give two or more swatches
+@msg	give x, y, or a handle's length or angle
+@msg	give {key, value} or {values}
+@msg	global must be true or false
+@msg	glyph {_1} is not drawn for {ch} with the character's style (such as All Caps, Small Caps or a numeral system)
+@msg	glyph {g} is not an alternate of {ch} in {_1} {_2}
+@msg	gradient must be "objects" or "mesh"
+@msg	grays must be "profile" or "black", not `{g}`
+@msg	gridColors must be a preset name or two colours
+@msg	gridSize must be small, medium or large
+@msg	guide {g} is not selected
+@msg	handle must be 0..3
+@msg	hiddenObjects {v}: "layer" (the default), "omit" or "visible"
+@msg	highlight a layer to merge into
+@msg	highlight two or more rows in one layer or group
+@msg	highlight two or more rows to merge
+@msg	icon docks a panel in the icon column: use window.panel.dock
+@msg	id must be a dimension id
+@msg	image has no bounds
+@msg	image {_1} is linked already
+@msg	imageMap `{m}`: none, client or server
+@msg	index out of range
+@msg	instances must be 1..1000
+@msg	invalid `color`
+@msg	invalid anchor index {v}: expected a non-negative integer
+@msg	invalid anchor reference {v}: expected [subpath, anchor]
+@msg	invalid angle
+@msg	invalid brush: {e}
+@msg	invalid color
+@msg	invalid colour {c}
+@msg	invalid delta
+@msg	invalid point
+@msg	invalid size
+@msg	invalid t
+@msg	invalid tolerance
+@msg	its artboards all lie beyond the canvas (more than {_1} pt from the origin)
+@msg	its clipping masks are nested too deeply
+@msg	its metadata has no description
+@msg	its metadata has no direct length
+@msg	join two different paths
+@msg	justify must be auto|left|center|right|justifyAll
+@msg	kbps must be a positive number, not {kbps}
+@msg	keywords must be a list of words or a comma-separated string
+@msg	keywords must be at most {MAX_KEYWORD} characters, without control characters
+@msg	kind must be 1, 2 or 3, or give a preset `name` (see perspective.presets.list)
+@msg	kind must be graphic, fillColor, strokeColor, fillGradient, strokeGradient, fillPattern, strokePattern, charStyle or paraStyle
+@msg	knockout must be "on", "off", "neutral" or a bool, not {v}
+@msg	layer `{name}` has no art to export
+@msg	layer must name a layer or sublayer
+@msg	layers can't be intertwined: select the objects in them
+@msg	layers go only at the top level or in layers, objects in layers and groups
+@msg	layers must be true or false
+@msg	layout must be gridByRow, gridByColumn, row or column
+@msg	leading must be a number or "auto"
+@msg	left/right must be non-negative widths
+@msg	level `{t}`: 2 or 3
+@msg	line {line}: more than {MAX_CSV_COLS} columns
+@msg	line {line}: unclosed quote
+@msg	line {line}: value for `{var}` must match its variable kind
+@msg	lineEndings `{other}`: lf or crlf

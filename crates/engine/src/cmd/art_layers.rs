@@ -11,7 +11,7 @@ use vectorcraft_pathops as po;
 
 use super::anim::Anim;
 use super::edit::selected_roots;
-use super::*;
+use super::{cmd, CommandSpec, has_doc, NodeId, Session, Value, Result, bad, str_param, EngineError, ids_param};
 
 /// The name of a drawing's colour art sublayer.
 pub const COLOUR_ART: &str = "Colour Art";
@@ -186,7 +186,7 @@ fn paint_at(s: &mut Session, p: &Value) -> Result<Value> {
                 }
             }
             let refs: Vec<(&PathData, FillRule)> = lines.iter().map(|l| (l, FillRule::NonZero)).collect();
-            let walls = po::boolean_n(&refs, |v| v.iter().any(|b| *b));
+            let walls = po::boolean_n(&refs, |v| !v.is_empty());
             let Some(r) = walls.bounds() else { return Err(bad(C, "the drawing has no lines to paint inside")) };
             let outside = r.inflate(10.0, 10.0);
             let open =
@@ -215,7 +215,7 @@ fn paint_at(s: &mut Session, p: &Value) -> Result<Value> {
 fn fill(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "art.fill";
     // Given ids stand in for the selection: an object inside a group also given goes, as there.
-    let ids = match ids_param(p, "ids") {
+    let ids = match ids_param(p, "ids", C)? {
         Some(v) => {
             let d = &s.doc()?.doc;
             super::edit::roots_of(d, d.paint_order(v))

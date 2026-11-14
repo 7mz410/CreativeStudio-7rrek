@@ -14,7 +14,7 @@ use super::mesh::Meshes;
 use super::palette::Palettes;
 use super::peg::{MAX_PEGS, Pegs};
 use super::rig::Rig;
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Value, Result, str_param, bad, EngineError};
 
 /// The extension character templates are saved with (a 7rrek document inside).
 pub const EXTENSION: &str = "7rrekchar";

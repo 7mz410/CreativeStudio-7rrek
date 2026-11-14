@@ -5,7 +5,7 @@ use vectorcraft_doc::{Document, NodeId};
 
 use super::anim::{Anim, ease_param, frame_param, row_of, row_param, show};
 use super::peg::{MAX_PEGS, Peg, PegKey, Pegs};
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Result, bad, index};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

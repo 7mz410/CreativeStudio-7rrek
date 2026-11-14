@@ -4,6 +4,7 @@
 SP=$(mktemp -d)
 export PATH="/opt/homebrew/opt/rustup/bin:$HOME/.cargo/bin:$PATH"
 CS=$HOME/Documents/CreativeStudio
+export CRAFT_FONTS_DIR=$CS/craft-fonts  # apps embed their web fonts (UI face, Arabic) from it
 for a in "$@"; do
   echo "===== $a"
   cd $CS/$a || continue
@@ -14,6 +15,7 @@ for a in "$@"; do
     arqam) (cd apps/gridcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     klmat) (cd apps/wordcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     trteeb) (cd apps/designcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
+    muhandes) (cd apps/cadcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     sf7aat) (cd apps/pdfcraft-web && trunk build --release) >/dev/null 2>$SP/$a.err; out=dist/web ;;
     lamasat) cargo xtask web >/dev/null 2>$SP/$a.err; out=target/web-site ;;
     *) cargo xtask web >/dev/null 2>$SP/$a.err; out=target/web/dist ;;

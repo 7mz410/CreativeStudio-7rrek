@@ -75,7 +75,7 @@ pub(crate) fn project(doc: &mut Document, c: &Cam, rect: Rect) {
 use serde_json::json;
 
 use super::anim::{row_param, show};
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Value, Result, number_or, bad};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![
@@ -143,6 +143,7 @@ fn depths(s: &mut Session, _: &Value) -> Result<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use vectorcraft_doc::NodeId;
 
     fn cam(x: f64, z: f64) -> Cam {
         Cam { x, y: 50.0, zoom: 1.0, rotation: 0.0, ease: None, z }

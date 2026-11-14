@@ -13,7 +13,7 @@
 
 use serde_json::{Value, json};
 
-use super::*;
+use super::{CommandSpec, EngineError, Result, Session, always, bad, cmd, importmatches, str_param};
 
 /// The most bytes of a file read.
 const MAX_BYTES: usize = 4 << 20;
@@ -35,7 +35,7 @@ const MAX_UNREAD: usize = 1000;
 const UNREAD_SHOWN: usize = 80;
 
 /// What `shortcutSet.read` says about a file that isn't a text shortcut set.
-pub const NOT_READABLE: &str = "This shortcut file is in a form VectorCraft can't read.";
+pub const NOT_READABLE: &str = "This shortcut file is in a form rsm can't read.";
 
 /// The extensions of shortcut sets other apps save (File › Open lists them).
 pub const EXTS: &[&str] = &["kys"];

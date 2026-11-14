@@ -1,0 +1,200 @@
+@msg	not a PDF presets file (format `{_1}`)
+@msg	not a PDF presets file: {e}
+@msg	not a Word document: its WordDocument stream doesn't start with a file information block
+@msg	not a Word document: its compound file has no WordDocument stream
+@msg	not a Word document: its main part is not a WordprocessingML document
+@msg	not a Word document: its package has no main document part
+@msg	not a closed path
+@msg	not a flattener presets file (format `{_1}`)
+@msg	not a flattener presets file: {e}
+@msg	not a layer or group
+@msg	not a library file: {e}
+@msg	not a mesh envelope point
+@msg	not a perspective grid presets file (format `{_1}`)
+@msg	not a perspective grid presets file: {e}
+@msg	not a print presets file (format `{_1}`)
+@msg	not a print presets file: {e}
+@msg	not a stored or deflated central record
+@msg	not a valid SVGZ file: {e}
+@msg	not an RTF file: it doesn't start with {\\rtf
+@msg	not an image rsm reads (see document.formats)
+@msg	not area type (text in a frame) outside perspective
+@msg	not editing an opacity mask
+@msg	not type on a path outside perspective
+@msg	nothing prints
+@msg	nothing to bind
+@msg	nothing to change
+@msg	nothing to change: give dx, dy, hScale, vScale or rotation
+@msg	nothing to crop
+@msg	nothing to export
+@msg	nothing to export: the document has no visible art
+@msg	nothing to mark
+@msg	nothing to print: every artboard picked is blank
+@msg	nothing to print: the document has no art that prints
+@msg	object is not a path
+@msg	object transparency cannot be sampled onto highlighted characters; disable Transparency in Eyedropper Options or select the whole object
+@msg	object {_1} can't be set as point type
+@msg	object {_1} has lost its file's contents: relink it
+@msg	object {_1} has no path
+@msg	object {_1} has no size
+@msg	object {_1} is hidden or locked, or on a locked artboard
+@msg	object {_1} is not a placed document
+@msg	object {_1} is not an Intertwine group
+@msg	object {_1} is not an image
+@msg	object {_1} is not an image or a linked file
+@msg	object {_1} is not an image or a placed document
+@msg	object {_1} is not in this Intertwine group
+@msg	object {_1} needs a 3D effect at index {index}
+@msg	object {id} has anchors 0–{_1} for `corners`, not {past}
+@msg	object {id} has {n} anchors, so no anchor {past}
+@msg	objects must be none, move or copy
+@msg	objects were left out
+@msg	offset out of range
+@msg	on must be true or false
+@msg	only groups, layers, type and images have a Contents (Characters) row
+@msg	only interior mesh lines can be deleted
+@msg	only solid colours can be added (not gradients or patterns)
+@msg	only solid-colour swatches can be spot colours
+@msg	only this Affinity file's embedded preview could be read: use File › Open to see it with its warning, or export SVG or PDF from Affinity first
+@msg	only this Affinity file's embedded preview could be read; use File › Open to see it with its warning
+@msg	onto, above, below, icon and a column place belong to window.panel.float and window.panel.dock
+@msg	onto, above, below, icon and a column place take no anchor, side, zone or before
+@msg	onto, above, below, icon and a column place take no x, y, width or height
+@msg	open a document to look for its linked files
+@msg	options must be an object (see file.formatOptions)
+@msg	order must be leftToRight or rightToLeft
+@msg	orientation must be portrait or landscape, not `{o}`
+@msg	outlineText {v}: true or false
+@msg	output intent profile: {e}
+@msg	output.destination: no RGB or CMYK profile is called “{name}”
+@msg	output.destination: {_1} files are CMYK, and “{name}” is an RGB profile
+@msg	output.destination: {e}
+@msg	output.inks: no ink is set to print
+@msg	output.outputIntent: no profile is called “{name}”, and a {std} output intent embeds its profile
+@msg	output.outputIntent: no profile is called “{name}”: a {std} output intent embeds a profile, or names a registered printing condition (outputConditionId and registry)
+@msg	output.outputIntent: {std} files print in CMYK, and “{name}” is an RGB profile
+@msg	output.outputIntent: “{name}” is a grey profile, which can't be a {std} output intent
+@msg	overlap: {o} pt is half a tile or more
+@msg	overlapping Shaper paths must be in the same layer or group
+@msg	overlapping edits
+@msg	page art conflicts with image data for {key}
+@msg	page art conflicts with pattern {name}
+@msg	page art conflicts with swatch {name}
+@msg	page art is missing image data for {key}
+@msg	page art is missing pattern {name}
+@msg	page art is missing swatch {name}
+@msg	page must be a whole number from 1
+@msg	page thumbnail: {e}
+@msg	page {page} of the PDF has no objects
+@msg	page {page}: `{file}` has {n} {artboards}
+@msg	page {page}: `{name}` has {n} {pages}
+@msg	pages must be a range such as "2-3" or a page number, not {v}
+@msg	pages: {e}
+@msg	panel position must be finite
+@msg	parameters must be an object
+@msg	params must be an object
+@msg	passwords can have up to {MAX_PASSWORD} bytes
+@msg	path has no open end
+@msg	paths must be strings
+@msg	pdfCompatible: false needs every artboard to keep the editable artwork
+@msg	pdfs `{m}`: single or multiple
+@msg	pickColorFrom is "artwork" or "swatches", not {v}
+@msg	pins and moved must be non-empty lists of the same length
+@msg	pins must be [[x,y]…]
+@msg	pins must be finite
+@msg	place is above, below or inside, not `{other}`
+@msg	plane must be left|right|ground
+@msg	plane must be left|right|ground|none
+@msg	point is outside the mesh
+@msg	points must be [t, left, right] with non-negative widths
+@msg	points must be a non-empty [[x,y,pressure?]…] list
+@msg	points must be a non-empty list of finite [x,y]
+@msg	points must be an array or null
+@msg	points must be finite
+@msg	points must be finite [x,y] pairs
+@msg	points must contain 1–4096 coordinates
+@msg	position must be normal, superscript or subscript
+@msg	position must be topLeft, topRight, bottomLeft or bottomRight
+@msg	positions must be between 0 and 100000 pt
+@msg	ppi must be a positive number, not {ppi}
+@msg	ppi must be between 1 and 2400
+@msg	preserve `{v}` is not transforms|bounds|fileDimensions|fit|fill
+@msg	preserveShape must be clippingMask|transparency
+@msg	preset `{id}`: mobile or density
+@msg	preset must be standard, diffuse, topLeft or right
+@msg	preset must be the name of a print preset
+@msg	previewMode must be default, pixel or overprint
+@msg	print settings: {e}
+@msg	procedures nest too deeply
+@msg	procedures nested too deeply
+@msg	quotes must be {double?, single?}
+@msg	quotes.{k} must be an opening and a closing quote, e.g. "“”"
+@msg	rasterEffectsPpi must be 1–2400 (72 screen, 150 medium, 300 high)
+@msg	rating must be a whole number from 0 to {MAX_RATING}
+@msg	rect and {k} contradict each other: give the area or the artboards
+@msg	rect applies to raster formats, not {_1}
+@msg	rect is [x, y, width, height] in points
+@msg	rect must be [x, y, width, height]
+@msg	rect must be [x, y, width, height] with a positive width and height
+@msg	rect needs finite numbers and a positive width and height
+@msg	redraw needs id
+@msg	redraw within must be a finite distance of 0 or more
+@msg	registration must be 0..8
+@msg	release a layer or a group
+@msg	replace keeps the replaced object's place and transform: drop template, at and rect
+@msg	replace: select the one object to replace
+@msg	resolution must be a number or screen|medium|high
+@msg	resolution must be between 1 and 2400 ppi
+@msg	rotation must be a number of degrees
+@msg	rotation must be finite
+@msg	rows and cols must be 1..50
+@msg	rows and columns must be 1..500
+@msg	rows of objects whose appearances differ can't be reordered together
+@msg	save the document first: Package collects a saved document
+@msg	save the document first: copy puts the file in its folder
+@msg	savedPreset: {e}
+@msg	scale `{s}`: a factor such as 2x, a width (100w), a height (100h) or a resolution (72ppi)
+@msg	scale must be a number above 0, at most 64
+@msg	scale must be non-zero
+@msg	scope must be selection or all (got {other})
+@msg	scribble is too long
+@msg	segment does not exist
+@msg	select a Shaper group
+@msg	select a blend to set easing or color shift
+@msg	select a compound shape
+@msg	select a graph
+@msg	select a group or layer with visible, unlocked members
+@msg	select a layer
+@msg	select a text object
+@msg	select an image (or an Image Trace group)
+@msg	select an image, or pass id
+@msg	select an object (or pass `id`)
+@msg	select an object with a freeform gradient
+@msg	select an object with an opacity mask
+@msg	select area type
+@msg	select area type (text in a frame)
+@msg	select area type and closed paths (at least one area type object)
+@msg	select area type whose first line can fit its frame
+@msg	select artwork to add its colours
+@msg	select artwork to make a group of its colours
+@msg	select artwork to recolour, or give a colour `group`
+@msg	select exactly two path ends to join
+@msg	select members of a compound shape
+@msg	select objects or give ids
+@msg	select objects to align to the guide
+@msg	select one Intertwine group
+@msg	select one image or pass id
+@msg	select paths
+@msg	select paths or compound paths
+@msg	select rows or objects to collect
+@msg	select something to export
+@msg	select something to export (or turn off selectedOnly)
+@msg	select text to redefine the style from
+@msg	select the art and, on top of it, the mask object
+@msg	select the art for the design
+@msg	select the art for the pattern tile
+@msg	select the art to add first
+@msg	select the art to collect (or give its ids)
+@msg	select the content and a path on top
+@msg	select the images to relink, or pass ids
+@msg	select the images, or pass ids

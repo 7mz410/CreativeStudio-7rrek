@@ -14,7 +14,7 @@ use vectorcraft_doc::{Appearance, AppearanceItem, Document, FillLayer, Node, Opa
 use vectorcraft_geom::{Point, Rect};
 
 use super::edit::{roots_of, selected_roots};
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Result, str_param, bad, ids_param, EngineError};
 
 const KEY: &str = "textures";
 pub const MAX_TEXTURES: usize = 64;
@@ -358,7 +358,7 @@ fn apply(s: &mut Session, p: &Value) -> Result<Value> {
         return Err(bad(C, format!("texture `{name}` not found")));
     }
 
-    let ids = match ids_param(p, "ids") {
+    let ids = match ids_param(p, "ids", C)? {
         Some(v) => v,
         None => selected_roots(s)?,
     };
@@ -402,7 +402,7 @@ fn apply(s: &mut Session, p: &Value) -> Result<Value> {
 fn remove(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "texture.remove";
     // Given ids take the same roots as the selection: an object inside a listed group is the group's.
-    let ids = match ids_param(p, "ids") {
+    let ids = match ids_param(p, "ids", C)? {
         Some(v) => {
             let d = &s.doc()?.doc;
             for id in &v {
@@ -477,6 +477,7 @@ fn delete(s: &mut Session, p: &Value) -> Result<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use vectorcraft_doc::NodeId;
 
     #[test]
     fn a_textured_stroke_exports_with_its_grain_at_2_zoom_levels_same_look() {

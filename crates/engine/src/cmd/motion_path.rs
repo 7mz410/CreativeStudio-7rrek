@@ -11,7 +11,7 @@ use vectorcraft_geom::arc::ArcPath;
 use vectorcraft_geom::{Affine, Point};
 
 use super::anim::{Anim, eased, row_param, show};
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Result, id_param, bad};
 
 pub const KEY: &str = "motionPaths";
 

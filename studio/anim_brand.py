@@ -124,10 +124,40 @@ TARGETED = {
     ],
 }
 
+# Upstream split some files (sync 2026-11-14): rules move with the text they match, and rules for
+# text upstream rewrote are added in its new form.
+MOVED = [
+    ('crates/ui-egui/src/menus.rs', '.filter(', 'crates/ui-egui/src/menus/bar.rs'),
+    ('crates/ui-egui/src/menus.rs', '            "rsm",', 'crates/ui-egui/src/menus/tree.rs'),
+    ('crates/ui-egui/src/tests_nativemenu.rs', '', 'crates/ui-egui/src/tests/nativemenu.rs'),
+    ('crates/engine/src/cmd/fileio/mod.rs', '', 'crates/engine/src/cmd/fileio/formats.rs'),
+    ('crates/ui-egui/src/io.rs', '', 'crates/ui-egui/src/io/open.rs'),
+    ('crates/ui-egui/src/chrome.rs', 'window_title(', 'crates/ui-egui/src/chrome/tests.rs'),
+    ('crates/ui-egui/src/chrome.rs', 'assert_eq!(app.last', 'crates/ui-egui/src/chrome/tests.rs'),
+    ('crates/ui-egui/src/chrome.rs', 'ViewportCommand', 'crates/ui-egui/src/chrome/tests.rs'),
+    ('crates/ui-egui/src/dialogs/save_options.rs', '', 'crates/ui-egui/src/dialogs/save_options/tests.rs'),
+]
+for old, start, new in MOVED:
+    move = [p for p in TARGETED.get(old, []) if p[0].startswith(start)]
+    TARGETED[old] = [p for p in TARGETED.get(old, []) if p not in move]
+    TARGETED.setdefault(new, []).extend(move)
+for rel, pairs in {
+    'apps/vectorcraft/src/titlebar.rs': [('.with_title("rsm")', '.with_title("7rrek")')],
+    'apps/vectorcraft/build.rs': [('.set("ProductName", "rsm")', '.set("ProductName", "7rrek")'),
+                                  ('.set("FileDescription", "7rrek vector illustration editor")', '.set("FileDescription", "7rrek animation")')],
+    'apps/vectorcraft/src/mac_save_format.rs': [('Some(&["rsm".to_owned()][..])', 'Some(&["7rrek".to_owned()][..])')],
+    'crates/engine/src/cmd/findfiles/walk.rs': [('"rsm doesn\'t search other apps', '"7rrek doesn\'t search other apps')],
+    'apps/vectorcraft-cli/tests/it/fileio.rs': [('Readable formats: .rsm"', 'Readable formats: .7rrek"')],
+    'crates/engine/src/cmd/fileio/tests.rs': [('        [\n            "rsm",\n            "svg",', '        [\n            "7rrek",\n            "svg",')],
+}.items():
+    TARGETED.setdefault(rel, []).extend(pairs)
+
 
 def apply_targeted(rel: str, text: str) -> str:
     for a, b in TARGETED.get(rel, []):
         if b not in text:
+            if a not in text:
+                print(f'MISSING in {rel}: {a[:70]!r}')
             text = text.replace(a, b)
     return text
 
@@ -135,16 +165,19 @@ def apply_targeted(rel: str, text: str) -> str:
 # Tests whose expectations name a saved document `.rsm`: they now expect `.7rrek`. Opening `.rsm` is
 # still covered by crates/format/tests/studio_extension.rs. Idempotent: no `.rsm` left after one run.
 EXT_TEST_FILES = {
-    'crates/engine/src/tests_package.rs',
-    'crates/engine/src/tests_save.rs',
-    'crates/engine/src/tests_saveoptions.rs',
+    'crates/engine/src/tests/package.rs',
+    'crates/engine/src/tests/save.rs',
+    'crates/engine/src/tests/saveoptions.rs',
     'crates/engine/src/cmd/fileio/tests.rs',
     'crates/engine/src/cmd/fileio/tests_affinity.rs',
     'crates/engine/src/cmd/fileio/tests_batch.rs',
     'crates/ui-egui/src/dialogs/tests_package.rs',
     'crates/ui-egui/src/dialogs/save_options.rs',
-    'crates/ui-egui/src/tests_nativeoptions.rs',
-    'crates/ui-egui/src/tests_saveext.rs',
+    'crates/ui-egui/src/dialogs/save_options/tests.rs',
+    'crates/engine/src/cmd/addons/document/tests.rs',
+    'crates/ui-egui/src/addons/document/tests.rs',
+    'crates/ui-egui/src/tests/nativeoptions.rs',
+    'crates/ui-egui/src/tests/saveext.rs',
 }
 
 

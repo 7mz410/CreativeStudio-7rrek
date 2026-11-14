@@ -1,0 +1,380 @@
+# Reusable: builds the unsigned macOS (.dmg), Windows (.zip or .msi) and Linux (.tar.gz) packages of
+# one Craft app for a tag, then creates or updates the GitHub Release with the assets and
+# SHA256SUMS.txt. The packaging itself is each app's own scripts (packaging/macos, linux, windows);
+# this workflow only builds the right inputs, runs them, renames the outputs to the asset stem and
+# publishes. Asset names are what the launcher (mansa, crates/core/src/platform.rs) parses:
+# <app>-<version>-<os>-<arch>[-portable].<ext>, plus SHA256SUMS.txt.
+#
+# Per-app inputs (the table is studio/RELEASES.md): every craft app calls this from its own repo,
+# with the caller's repo checked out:
+#   uses: 7mz410/CreativeStudio-7rrek/.github/workflows/build-release.yml@main
+#   with: { app: photocraft, package: photocraft, bundle: PhotoCraft.app, version_var: PHOTOCRAFT_VERSION, tag: "${{ github.ref_name }}" }
+#   permissions: { contents: write }
+#
+# Nothing is signed: Gatekeeper and SmartScreen will warn, see the release notes in the README.
+name: Build release (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        description: "Asset name prefix and launcher stem, e.g. photocraft. Renamed files use it."
+        type: string
+        required: true
+      tag:
+        description: "Release tag, e.g. v0.0.2-test. The version is the tag without the v. A version with a '-' is a pre-release."
+        type: string
+        required: true
+      package:
+        description: "Name the packaging scripts give their files (<package>-<version>-...): the cargo package of the GUI app, e.g. vectorcraft for rsm. Equals app for most apps."
+        type: string
+        required: true
+      version_var:
+        description: "Environment variable the app's packaging scripts read the version from, e.g. PHOTOCRAFT_VERSION (packaging/env.sh)."
+        type: string
+        required: true
+      bundle:
+        description: "macOS app folder inside the .dmg (the name the user sees), e.g. rsm.app. Checked after packaging."
+        type: string
+        required: true
+      binary:
+        description: "Executable to check in the Linux tarball and to zip in the generic Windows portable build. Empty: the package name."
+        type: string
+        default: ""
+      fonts_ref:
+        description: "storytold/craft-fonts commit to build with (apps pin the one their build expects)."
+        type: string
+        default: 3d9ab3a132ed0eff457e424226a435a901da30d3
+      i18n_repo:
+        description: "craft-i18n repository whose catalogs the build embeds (CRAFT_I18N_DIR). Empty: none, the app builds as it always did."
+        type: string
+        default: ""
+      i18n_ref:
+        description: "Commit of i18n_repo to build with."
+        type: string
+        default: ""
+      macos_script:
+        description: "macOS packaging script, run from the repo root."
+        type: string
+        default: packaging/macos/package.sh
+      macos_args:
+        description: "Arguments for macos_script. aarch64 only: the releases ship Apple silicon builds."
+        type: string
+        default: "--arch aarch64"
+      linux_script:
+        description: "Linux packaging script, run from the repo root."
+        type: string
+        default: packaging/linux/package.sh
+      linux_args:
+        description: "Arguments for linux_script. Only the plain tar.gz is published (no AppImage or deb)."
+        type: string
+        default: "--formats tar"
+      windows_script:
+        description: "Windows packaging script (pwsh), e.g. packaging/windows/package.ps1. Empty: the generic build of binary as a portable zip (rsm)."
+        type: string
+        default: ""
+      windows_args:
+        description: "Arguments for windows_script, e.g. -Arch x64."
+        type: string
+        default: "-Arch x64"
+      mcpb_cli:
+        description: "Headless CLI with an `mcp` subcommand, e.g. effectcraft-cli. Set: also publishes Claude Desktop extensions (<app>-<version>-<os>-<arch>.mcpb) built from the caller's studio/mcpb/manifest.json. Needs the macOS script to make <package>-cli-<version>-macos-aarch64.zip and the Windows portable zip to hold <cli>.exe."
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-release-${{ inputs.app }}-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  macos:
+    name: macOS aarch64 (.dmg)
+    runs-on: macos-14
+    env:
+      CRAFT_FONTS_DIR: ${{ github.workspace }}/craft-fonts
+      CRAFT_FONTS_REQUIRED: "1"
+      CRAFT_I18N_DIR: ${{ inputs.i18n_ref != '' && format('{0}/craft-i18n', github.workspace) || '' }}
+      CRAFT_I18N_REQUIRED: ${{ inputs.i18n_ref != '' && '1' || '' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: storytold/craft-fonts
+          ref: ${{ inputs.fonts_ref }}
+          path: craft-fonts
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: inputs.i18n_ref != ''
+        with:
+          repository: ${{ inputs.i18n_repo }}
+          ref: ${{ inputs.i18n_ref }}
+          path: craft-i18n
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+        with:
+          targets: aarch64-apple-darwin
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          key: release-macos-aarch64
+      - name: Install resvg (some apps draw their DMG background with it)
+        run: brew install resvg
+      - name: Build and package (ad-hoc signed, not notarized)
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          v="${TAG#v}"
+          export "${{ inputs.version_var }}=$v"
+          ${{ inputs.macos_script }} ${{ inputs.macos_args }}
+          cd dist/release
+          for f in "${{ inputs.package }}-$v-"*; do
+            [ -e "$f" ] || continue
+            new="${{ inputs.app }}${f#"${{ inputs.package }}"}"
+            [ "$f" = "$new" ] || mv "$f" "$new"
+          done
+          mkdir -p ../cli
+          if [ -n "${{ inputs.mcpb_cli }}" ]; then mv ./*-cli-*-macos-*.zip ../cli/; fi
+          rm -f ./*-cli-*
+          ls -lh
+      - if: inputs.mcpb_cli != ''
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cli-macos
+          path: dist/cli/*.zip
+          if-no-files-found: error
+      - name: Check the .dmg shows the app
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          v="${TAG#v}"
+          dmg="dist/release/${{ inputs.app }}-$v-macos-aarch64.dmg"
+          mnt="$RUNNER_TEMP/dmg-check"
+          mkdir -p "$mnt"
+          hdiutil attach -nobrowse -readonly -mountpoint "$mnt" "$dmg" >/dev/null
+          rc=0
+          test -d "$mnt/${{ inputs.bundle }}" || { echo "::error::${{ inputs.bundle }} missing from $dmg"; rc=1; }
+          # The executable Info.plist names must be in the bundle, or macOS calls the app damaged.
+          app="$mnt/${{ inputs.bundle }}"
+          exe=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$app/Contents/Info.plist" 2>/dev/null || true)
+          test -n "$exe" && test -x "$app/Contents/MacOS/$exe" || { echo "::error::$app: CFBundleExecutable '$exe' is not in Contents/MacOS"; rc=1; }
+          icon=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIconFile' "$app/Contents/Info.plist" 2>/dev/null || true)
+          test -z "$icon" || test -f "$app/Contents/Resources/${icon%.icns}.icns" || { echo "::error::$app: icon '$icon' is not in Contents/Resources"; rc=1; }
+          # Verify a copy without the volume's Finder metadata, as the launcher installs it
+          # (strict codesign calls that metadata "detritus").
+          copy="$RUNNER_TEMP/app-copy/${{ inputs.bundle }}"; rm -rf "$RUNNER_TEMP/app-copy"; mkdir -p "$RUNNER_TEMP/app-copy"
+          ditto --norsrc --noextattr --noacl "$app" "$copy"
+          codesign --verify --strict --deep "$copy" || { echo "::error::$app fails codesign --verify"; rc=1; }
+          ls -la "$mnt"
+          hdiutil detach "$mnt" >/dev/null
+          exit $rc
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-macos
+          path: dist/release/*.dmg
+          if-no-files-found: error
+
+  windows:
+    name: Windows x64 (portable .zip)
+    runs-on: windows-latest
+    env:
+      CRAFT_FONTS_DIR: ${{ github.workspace }}\craft-fonts
+      CRAFT_FONTS_REQUIRED: "1"
+      CRAFT_I18N_DIR: ${{ inputs.i18n_ref != '' && format('{0}\craft-i18n', github.workspace) || '' }}
+      CRAFT_I18N_REQUIRED: ${{ inputs.i18n_ref != '' && '1' || '' }}
+      # Static CRT: no Visual C++ redistributable needed (same as packaging/windows/package.ps1).
+      CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_RUSTFLAGS: "-C target-feature=+crt-static"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: storytold/craft-fonts
+          ref: ${{ inputs.fonts_ref }}
+          path: craft-fonts
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: inputs.i18n_ref != ''
+        with:
+          repository: ${{ inputs.i18n_repo }}
+          ref: ${{ inputs.i18n_ref }}
+          path: craft-i18n
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          key: release-windows-x64
+      - name: Build and package
+        shell: pwsh
+        env:
+          TAG: ${{ inputs.tag }}
+          PKG: ${{ inputs.package }}
+          BIN: ${{ inputs.binary || inputs.package }}
+          WIN_SCRIPT: ${{ inputs.windows_script }}
+          WIN_ARGS: ${{ inputs.windows_args }}
+          VERSION_VAR: ${{ inputs.version_var }}
+          CLI: ${{ inputs.mcpb_cli }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $v = $env:TAG.TrimStart('v')
+          Set-Item -Path ("env:" + $env:VERSION_VAR) -Value $v
+          if ($env:WIN_SCRIPT) {
+            # The app's own script builds and packages (MSI and portable zip).
+            Invoke-Expression "& '$env:WIN_SCRIPT' $env:WIN_ARGS"
+            if ($LASTEXITCODE -ne 0) { throw "$env:WIN_SCRIPT failed ($LASTEXITCODE)" }
+          } else {
+            # Generic: the executable and the licences, zipped at the top level.
+            $pkgs = @('-p', $env:PKG); if ($env:CLI) { $pkgs += @('-p', $env:CLI) }
+            cargo build --release --locked @pkgs --target x86_64-pc-windows-msvc
+            if ($LASTEXITCODE -ne 0) { throw "cargo build failed ($LASTEXITCODE)" }
+            $stage = Join-Path $env:RUNNER_TEMP 'stage'
+            Remove-Item -Recurse -Force $stage -ErrorAction SilentlyContinue
+            New-Item -ItemType Directory -Force -Path $stage | Out-Null
+            Copy-Item "target\x86_64-pc-windows-msvc\release\$env:BIN.exe" $stage
+            if ($env:CLI) { Copy-Item "target\x86_64-pc-windows-msvc\release\$env:CLI.exe" $stage }
+            Copy-Item LICENSE-MIT, LICENSE-APACHE, NOTICE $stage
+            New-Item -ItemType Directory -Force -Path dist\release | Out-Null
+            Compress-Archive -Path "$stage\*" -DestinationPath "dist\release\$env:PKG-$v-windows-x64-portable.zip"
+          }
+          # Rename to the asset stem (<app>-<version>-...).
+          Get-ChildItem dist\release -File | Where-Object { $_.Name.StartsWith("$env:PKG-$v-") } | ForEach-Object {
+            $new = "${{ inputs.app }}" + $_.Name.Substring($env:PKG.Length)
+            if ($new -ne $_.Name) { Rename-Item -Path $_.FullName -NewName $new }
+          }
+          Get-ChildItem dist\release | Format-Table Name, Length
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-windows
+          path: |
+            dist/release/*.zip
+            dist/release/*.msi
+          if-no-files-found: error
+
+  linux:
+    name: Linux x86_64 (.tar.gz)
+    # Oldest hosted image: the binary needs glibc 2.35 or newer (Ubuntu 22.04+).
+    runs-on: ubuntu-22.04
+    env:
+      CRAFT_FONTS_DIR: ${{ github.workspace }}/craft-fonts
+      CRAFT_FONTS_REQUIRED: "1"
+      CRAFT_I18N_DIR: ${{ inputs.i18n_ref != '' && format('{0}/craft-i18n', github.workspace) || '' }}
+      CRAFT_I18N_REQUIRED: ${{ inputs.i18n_ref != '' && '1' || '' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: storytold/craft-fonts
+          ref: ${{ inputs.fonts_ref }}
+          path: craft-fonts
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: inputs.i18n_ref != ''
+        with:
+          repository: ${{ inputs.i18n_repo }}
+          ref: ${{ inputs.i18n_ref }}
+          path: craft-i18n
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libxkbcommon-dev libwayland-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev \
+            libxcursor-dev libasound2-dev libgtk-3-dev libfontconfig1-dev libfreetype-dev pkg-config cmake
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          key: release-linux-x86_64
+      - name: Build and package (tar.gz)
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          v="${TAG#v}"
+          export "${{ inputs.version_var }}=$v"
+          ${{ inputs.linux_script }} ${{ inputs.linux_args }}
+          cd dist/release
+          for f in "${{ inputs.package }}-$v-"*; do
+            [ -e "$f" ] || continue
+            new="${{ inputs.app }}${f#"${{ inputs.package }}"}"
+            [ "$f" = "$new" ] || mv "$f" "$new"
+          done
+          rm -f ./*-cli-*
+          bin="${{ inputs.binary || inputs.package }}"
+          tar -tzf "${{ inputs.app }}-$v-linux-x86_64.tar.gz" | grep -E "(^|/)bin/$bin\$"
+          ls -lh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-linux
+          path: dist/release/*.tar.gz
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    needs: [macos, windows, linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ inputs.tag }}
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: release-*
+          path: artifacts
+          merge-multiple: true
+      - if: inputs.mcpb_cli != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: caller
+          sparse-checkout: studio/mcpb
+      - if: inputs.mcpb_cli != ''
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: cli-macos
+          path: cli
+      - name: Claude Desktop extensions (.mcpb)
+        if: inputs.mcpb_cli != ''
+        env:
+          CLI: ${{ inputs.mcpb_cli }}
+          APP: ${{ inputs.app }}
+        run: |
+          set -euo pipefail
+          v="${TAG#v}"
+          # mcpb <os-arch> <platform> <cli file name> <zip holding it>: an .mcpb is a zip of
+          # manifest.json and server/<cli>.
+          mcpb() {
+            d="$RUNNER_TEMP/mcpb-$1"; rm -rf "$d"; mkdir -p "$d/server" "$RUNNER_TEMP/x-$1"
+            unzip -q -o "$4" -d "$RUNNER_TEMP/x-$1"
+            bin=$(find "$RUNNER_TEMP/x-$1" -type f -name "$3" | head -1)
+            test -n "$bin" || { echo "::error::$3 not in $4"; exit 1; }
+            install -m 755 "$bin" "$d/server/$3"
+            sed -e "s/__VERSION__/$v/" -e "s/__CLI__/$3/g" -e "s/__PLATFORM__/$2/" caller/studio/mcpb/manifest.json > "$d/manifest.json"
+            jq -e . "$d/manifest.json" >/dev/null
+            (cd "$d" && zip -q -r -X "$GITHUB_WORKSPACE/artifacts/$APP-$v-$1.mcpb" manifest.json server)
+          }
+          mcpb macos-aarch64 darwin "$CLI" cli/*-macos-aarch64.zip
+          mcpb windows-x64 win32 "$CLI.exe" artifacts/*-windows-x64-portable.zip
+          ls -l artifacts/*.mcpb
+      - name: Checksums
+        working-directory: artifacts
+        run: |
+          set -euo pipefail
+          ls -l
+          shopt -s nullglob
+          files=(*.dmg *.zip *.tar.gz *.msi *.mcpb)
+          sha256sum -- "${files[@]}" > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - name: Create or update the release
+        working-directory: artifacts
+        run: |
+          set -euo pipefail
+          pre=()
+          case "$TAG" in *-*) pre=(--prerelease) ;; esac
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" --clobber -- *
+          else
+            gh release create "$TAG" --title "${{ inputs.app }} $TAG" --target "$GITHUB_SHA" \
+              --notes "Unsigned builds. macOS: right-click the app and choose Open the first time (or run xattr -dr com.apple.quarantine). Windows: SmartScreen warning, choose More info > Run anyway." \
+              "${pre[@]}" -- *
+          fi
+          gh release view "$TAG" --json tagName,isPrerelease,assets --jq '{tagName, isPrerelease, assets: [.assets[].name]}'

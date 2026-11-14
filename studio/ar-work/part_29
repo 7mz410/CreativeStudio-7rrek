@@ -1,0 +1,200 @@
+	Duplicate Objects
+	Off-Artboard Art
+	Duplicate Anchors
+	Tiny Handles
+	Collinear Anchors
+	Nearly Coincident Anchors
+	Nearly Closed Paths
+	Filled Open Paths
+	Needless Clipping Groups
+	Needless Compound Paths
+	Needless Groups
+	Empty Artboards
+	Protect Corners
+	Gap
+	Include Clip Groups
+@msg	`tolerance` must be from 1 to 100
+@msg	`gap` must be from 0 to 6 pt
+@msg	Simplify Anchors: the paths have too many anchors to simplify at once
+@msg	Rejoin Path Pieces: too many paths to rejoin at once
+@msg	None of these issues are left: check again
+@msg	`kinds` must be a list of issue kinds
+@msg	missing `kind`
+	Simplify Anchors (Keep Shape)
+	Deep Ungroup
+	Rejoin Path Pieces
+	Color Effects
+	Color Effects Panel
+	Exposure
+	Exposure…
+	Desaturate
+	Adjustment
+	Add as Effect
+	Apply as Filter
+	Select objects to adjust their colors.
+	Brightness/Contrast
+	Hue/Saturation
+	Temperature/Tint
+@msg	`{id}` is not a colour adjustment
+@msg	missing `effect`
+@msg	`params` must be an object
+	Path Precision Tools
+	Anchor Eraser Brush
+	Extend Path Tool
+	Measure & Inspect Tool
+	Anchor Inspector
+	Add Points at Crossings
+	Split at Crossings
+	Trim at Crossings Tool
+	Trim at Crossings
+	Extend Path
+	Measure & Inspect
+	Set Anchor
+	Make Smooth
+	Make Corner
+	Equalize Handles
+	Remove Points, Keep Shape
+	Add Points to Segments…
+	Add Points to Segments
+	Open a document to edit its anchor points.
+	Anchors selected: {count}
+	Direct-select anchor points to edit them.
+	In:
+	Out:
+	Add Points
+	Points per segment
+	Close Path:
+	Keep Handles
+	Straight
+	Stretch Curve
+@msg	direct-select the anchor points to remove
+@msg	select segments, or paths, to add points to
+@msg	select open paths to close
+@msg	the paths are too many or too tangled to find where they cross (at most 10000 segments)
+@msg	the paths have too many anchors to edit at once
+	Parametric Shape Tool
+	Parametric Shape
+	Edit Parametric Shape
+	Convert to Parametric Shape
+	Ring
+	Heart
+	Gear
+	Speech Bubble
+	Count:
+	Thickness:
+	Inner Radius:
+	Head:
+	Shaft:
+	Point:
+	Tooth Height:
+	Tail:
+	Tip:
+	Open a document to draw parametric shapes.
+	Select a parametric shape to edit it. With none selected, these set the next shape.
+@msg	the object is not an editable parametric shape
+@msg	select plain rectangles, ellipses or regular polygons to convert
+@msg	the shape's numbers are out of range
+@msg	`kind` must be one of: rectangle, ellipse, polygon, star, ring, arrow, cross, heart, gear, bubble
+@msg	`count` must be a whole number from 3 to 1000
+@msg	`{key}` must be from {lo} to {hi}
+	Smart Pen
+	Smart Pen Tool
+	Smart Pen Panel
+	Next Segment
+	Curved
+	Retract Handles
+	Close or Join
+	Open a document to draw with the Smart Pen.
+	Straight or Curved Segment
+@msg	the path is locked or hidden
+@msg	`id` is not a path
+@msg	the path has no open subpath
+@msg	the subpath is closed
+@msg	the subpath is closed or too short to close
+@msg	the path is too short to remove a point from
+@msg	the segment can't be bent that far
+@msg	give `{a}` and `{b}`
+@msg	`t` must be from 0 to 1
+@msg	`segment` must be "straight" or "curved"
+@msg	`mode` must be "free", "keepAngles" or "symmetric"
+@msg	`{key}` must be [x, y]
+	Select by Color Kind
+	Objects with Spot Colors
+	Objects with Color Effects
+	RGB Images
+	CMYK Images
+	Grayscale Images
+@msg	`kind` must be spotColors, colorEffects, rgbImages, cmykImages or grayImages
+	Dot Color from Art
+	Basic Character Formats
+	Case
+@msg	{label} must be a number
+@msg	{label} must be a number of at least 0.1
+	Advanced Character Formats
+	Basic Paragraph Formats
+	Composition
+	Horizontal Scale
+	Vertical Scale
+@msg	{label} must be a number from {min} to {max}
+@msg	{label} must be a whole number from {min} to {max}
+	Character Color
+	OpenType Features
+	Stylistic Sets
+	Set {n}
+@msg	features lists at most {max} tags
+@msg	unknown OpenType feature `{t}`
+@msg	{label} must be a number above 0 and at most {max}
+@msg	{label} must be at most {max} characters
+@msg	{label} must be one character
+@msg	at most {max} tab stops
+@msg	unknown align `{other}`
+@msg	no character style `{name}`
+	Duotone…
+	Duotone
+	Print Ink Fixes…
+	Print Ink Fixes
+	Inks
+	Tone 1
+	Tone 2
+	Tone 3
+	Tone 4
+	Curve
+	Reset to Linear
+	Reset to Inverse
+	Skip Objects with Spot Colors
+	Ink Limit
+	Exclude Pure Black
+	Remove White Overprint
+	Overprint Black
+	Text Only
+@msg	give `inkLimit`, `removeWhiteOverprint` or `overprintBlack`
+@msg	Print Ink Fixes works on CMYK documents: choose File › Document Color Mode › CMYK Color first
+@msg	`{key}` must be 0..{max}
+	Find Nearest Swatch…
+	Find Nearest Swatch
+	Apply Nearest Swatch
+	Apply Fill to Stroke
+	Apply Stroke to Fill
+	Select objects to find the swatches nearest their colors.
+@msg	select objects or give `color`
+@msg	`color` is not a colour
+	Corner Tool
+	Slide Anchor Along Path
+	Set Corners
+	Remove Corners
+	Corners selected: {count}
+	Apply to Selected Anchors
+@msg	`radius` must be from 0 to 1000000 pt
+@msg	`t` must be a number from -0.98 to 0.98
+@msg	choose anchors where two sides meet at an angle: only those take a corner
+@msg	give `anchor`, the index of the anchor to slide
+@msg	that anchor can't slide: an end of an open path has nowhere to go
+	Shared Edge Merge Tool
+	Merge Shared Edge
+	Keep Shared Points Together
+	Shared Edges
+	Coincidence:
+@msg	`a` and `b` must be two different paths
+@msg	`diameter` must be from 0.25 to 200 pt
+@msg	`tolerance` must be from 0 to 3 pt
+@msg	`follow` must be "average", "a" or "b"

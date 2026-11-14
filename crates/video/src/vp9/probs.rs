@@ -9,7 +9,7 @@
 //! entropy codes the recorded symbols with the updated probabilities.
 
 use crate::vp9::bool::BoolEncoder;
-use crate::vp9::tables::*;
+use crate::vp9::tables::{DEFAULT_COEF_PROBS, DEFAULT_SKIP_PROB, DEFAULT_INTER_MODE_PROBS, DEFAULT_IS_INTER_PROB, DEFAULT_SINGLE_REF_PROB, DEFAULT_PARTITION_PROBS, DEFAULT_MV_JOINT_PROBS, DEFAULT_MV_SIGN_PROB, DEFAULT_MV_CLASS_PROBS, DEFAULT_MV_CLASS0_BIT_PROB, DEFAULT_MV_BITS_PROB, DEFAULT_MV_CLASS0_FR_PROBS, DEFAULT_MV_FR_PROBS, PARETO_TABLE, inv_map_table};
 
 /// Coefficient probabilities `[ptype][ref][band][ctx][3]` for 4×4 transforms (band 0 uses
 /// contexts 0..3 only).

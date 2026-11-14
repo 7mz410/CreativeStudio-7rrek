@@ -1,0 +1,200 @@
+@msg	select the linked images or placed documents, or pass ids
+@msg	select the object to copy from
+@msg	select the objects (or give their ids)
+@msg	select the objects to attach to the path
+@msg	select the objects to bind
+@msg	select two or more objects to intertwine
+@msg	select two or more slices to combine
+@msg	select type on a path
+@msg	selection `{m}`: one or each
+@msg	settings is an object of document.exportForScreens params
+@msg	settings must be an object
+@msg	show `{show}`: all, missing, modified or embedded
+@msg	show must be true or false
+@msg	size must be "small", "medium", "large" or a number of points over 0 up to {_1}
+@msg	size must be positive
+@msg	sizeMode is "fixed" or "pressure", not `{other}`
+@msg	sizeMode is "fixed" or "pressure", not {other}
+@msg	sizeVariation must be 0 or more
+@msg	smallCaps must be true or false
+@msg	sort `{x}`: name, kind or status
+@msg	source paths are too large for Shaper
+@msg	spot, mode and group apply to solid colours only
+@msg	status `{s}`: linked, embedded, missing or modified
+@msg	steps must be 1..1000
+@msg	steps must be 1..{MAX_STEPS}
+@msg	stop {i}: `plates` must be four numbers from 0 to 1 (C, M, Y, K)
+@msg	stopped before the archive was finished
+@msg	strokeMode must be within|along|across, got {m}
+@msg	strokeOptions must be an object of stroke.set options
+@msg	strokeWidth must be a positive number of pixels
+@msg	subpath {si} is not an open subpath
+@msg	subpaths required when joining the same path
+@msg	swatchConflict must be "merge" or "add", not {v}
+@msg	text must be {characterSet?, platform?, removeLineReturns?, removeParagraphReturns?, replaceSpaces?}
+@msg	text transform is collapsed or unrepresentable
+@msg	text.replaceSpaces must be a whole number from 2 to 100
+@msg	text.{key} `{v}`: use "{_1}" or "{_2}"
+@msg	textureImage: give {path} or {name, dataBase64} of an image file, or a texture as effect.list gives it
+@msg	textureImage: {e}
+@msg	that makes more than {MAX_PIECES} slices
+@msg	that object is not in the overlap
+@msg	the Affinity document has no page with a size
+@msg	the CMYK image couldn't be written
+@msg	the PDF security settings were saved without their passwords: give openPassword or permissionsPassword again, or security without passwordRequired to export unprotected
+@msg	the RTF file has too many paragraphs or formatting changes to place as type (at most {MAX_PARAGRAPHS} paragraphs and {MAX_RUNS} runs)
+@msg	the RTF file is too large to place as type (at most {_1} MB)
+@msg	the SVG expands to more than {0} nested SVG images
+@msg	the SVG expands to more than {0} objects
+@msg	the SVG has no drawable objects
+@msg	the SVGZ file unpacks to more than {_1} MB
+@msg	the Word document has more than {MAX_PAGES} pages of properties, too many to place
+@msg	the Word document has more than {MAX_RUNS} runs of character or paragraph properties, too many to place
+@msg	the Word document has more than {_1} MB of formatting properties, too many to place
+@msg	the Word document has too much text or formatting to place as type (at most {MAX_PARAGRAPHS} paragraphs, {MAX_RUNS} runs and {_1} MB of text)
+@msg	the Word document has too much text to place as type (at most {_1} MB)
+@msg	the Word document is encrypted or protected with a password; save it without one to place it
+@msg	the Word document is too large to place (its {name} stream holds more than {_1} MB)
+@msg	the Word document was last saved with fast save, which rsm doesn't read; save it again with fast save turned off
+@msg	the Word document was saved by Word 6.0 or Word 95, which rsm doesn't read; save it as a Word 97-2003 document
+@msg	the Word document's text is made of more than {MAX_PIECES} pieces, too many to place
+@msg	the action set ids are not a list
+@msg	the active paint is not a gradient
+@msg	the artboards don't fit on the canvas: fewer artboards, less spacing or a smaller size
+@msg	the character's size can't be measured
+@msg	the compound shape is too complex to expand
+@msg	the container of the listed objects is gone
+@msg	the copy `{user_id}` can't be read as a library
+@msg	the copy would leave the canvas
+@msg	the cut cannot be made on this art: {e}
+@msg	the data isn't an EMF or WMF picture
+@msg	the data isn't an EPS or PostScript picture
+@msg	the deferred paste is no longer available
+@msg	the design is too big to draw at every data point of this graph
+@msg	the design is too big to draw in every column of this graph
+@msg	the dialog it was opened over is no longer open
+@msg	the dictionary stack overflowed
+@msg	the editing data's hash has no place
+@msg	the entities the document declares expand to too much text
+@msg	the envelope's content has no bounds
+@msg	the envelope's mesh is malformed
+@msg	the file holds no `variableSets` element
+@msg	the file is larger than {_1} MB
+@msg	the file is too large
+@msg	the file was updated or encrypted already
+@msg	the first character of a line has no character before it to kern: it moves only up and down (dy)
+@msg	the font {_1} is not available
+@msg	the format has no file extension
+@msg	the graphic can't be read: {e}
+@msg	the graphic is empty
+@msg	the graphic's data is damaged
+@msg	the graphic's document has no artboard
+@msg	the header `{cell}` for `{name}` would read back as the variable `{other}`: rename one of them
+@msg	the image `{path}` isn't followed: {r}
+@msg	the image has no embedded pixels
+@msg	the image is empty
+@msg	the image is fully transparent
+@msg	the image is not on an artboard; pass rect
+@msg	the image's pixels are missing
+@msg	the image's pixels aren't in the document
+@msg	the image's pixels can't be read: {e}
+@msg	the image's transparency doesn't fit it
+@msg	the job would print more than {MAX_PAGES} pages
+@msg	the job would print more than {_1} pages
+@msg	the layers hold no art to mask
+@msg	the layout moved
+@msg	the library has a group `{name}` already
+@msg	the library has no group `{name}`
+@msg	the library has no item `{item}`
+@msg	the library has no item `{other}`
+@msg	the library holds {MAX_GROUPS} groups already
+@msg	the library holds {MAX_ITEMS} items of this kind already
+@msg	the name is empty
+@msg	the object has no fill, stroke or effect
+@msg	the object has no graphic style (pass `name`)
+@msg	the objects don't match the plan
+@msg	the open and permissions passwords must differ
+@msg	the operand stack overflowed
+@msg	the page has no area
+@msg	the page's type in an unread object's box isn't in its page art
+@msg	the paint behind the proxy is not a gradient
+@msg	the parent must be a layer or sublayer
+@msg	the path can't be extended
+@msg	the path can't be inside one of the objects to attach
+@msg	the path has no segments to measure
+@msg	the path is empty
+@msg	the path is too short to shorten that much
+@msg	the picture has no objects
+@msg	the program runs too long
+@msg	the program uses too much memory
+@msg	the rectangle must have a width and a height
+@msg	the rectangle needs a size and must lie on the canvas
+@msg	the selected art has no width
+@msg	the selection draws nothing
+@msg	the selection has no area
+@msg	the selection has no art to export
+@msg	the selection has no bounds
+@msg	the selection has no graphic style
+@msg	the slice would leave the canvas
+@msg	the spot colour couldn't be added
+@msg	the subpath has no ends to extend (it is closed or a single point)
+@msg	the symbols are nested too deeply to expand their instances
+@msg	the text file is too large to place as type (at most {_1} MB)
+@msg	the text is empty
+@msg	the text is over {_1} MB
+@msg	the top object must be a path
+@msg	the trace was cancelled
+@msg	the trailer has no size
+@msg	the type object is flattened to nothing
+@msg	the value of axis `{tag}` must be a number or null
+@msg	the variable library declares more than {MAX_LIBRARY_DATASETS} data sets
+@msg	the variable library declares more than {MAX_LIBRARY_ENTITIES} entities
+@msg	the variable library declares more than {MAX_LIBRARY_VARIABLES} variables
+@msg	the variable library declares no variables
+@msg	the variable library is larger than {MAX_LIBRARY_BYTES} bytes
+@msg	the variable library is not UTF-8
+@msg	the variable library is not well-formed XML: {e}
+@msg	the variable library nests elements more than {MAX_LIBRARY_NESTING} deep
+@msg	the variable library's document type declaration holds something other than entities of plain text
+@msg	the variable library's entities expand to more than {MAX_LIBRARY_BYTES} bytes
+@msg	the window has no dock
+@msg	the written PDF has no catalog
+@msg	the written PDF has no cross-reference table
+@msg	the written PDF's metadata can't be edited
+@msg	there are no colour swatches to draw
+@msg	there is already a design named `{name}`
+@msg	there is already a design named `{to}`
+@msg	there is already a toolbar named `{name}`
+@msg	there is already a toolbar named `{to}`
+@msg	there is no library: create one first
+@msg	these paths are too degenerate for Shaper
+@msg	thumbnail: no page {v} (the {what} has {count})
+@msg	tileRange of {what}: {e}
+@msg	title can't be empty
+@msg	to (the new name) is required
+@msg	to must be fill or stroke
+@msg	to must be smooth or corner
+@msg	too large for a zip archive: package to a folder
+@msg	too many Shaper edits
+@msg	too many `points` (at most 100000)
+@msg	too many characters: at most {MAX_CHARS}
+@msg	too many dots for this size: lower the frequency
+@msg	too many filters over one file
+@msg	too many overlapping paths for Shaper
+@msg	too many saved clips
+@msg	too many saved graphics states
+@msg	toolbar (a toolbar's name) must be a string
+@msg	toolbar name can't be empty
+@msg	transparentImages {v}: "flatten" (the default) or "omit"
+@msg	two saved selections would be named `{_1}`
+@msg	type dimension cannot be represented with this text transform
+@msg	type dimension must be finite
+@msg	unexpected resources
+@msg	unknown CMYK profile `{name}`
+@msg	unknown File Info field `{k}`
+@msg	unknown OpenType feature `{t}` in featureChanges (the tags `features` takes)
+@msg	unknown PDF preset `{name}` (presets: {_1})
+@msg	unknown Warp style
+@msg	unknown alignToPath `{a}`
+@msg	unknown arrowhead {v}
+@msg	unknown artboardLayout key `{k}` (layout, columns, spacing, rightToLeft)

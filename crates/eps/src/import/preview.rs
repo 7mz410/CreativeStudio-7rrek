@@ -28,7 +28,14 @@ pub(super) fn preview(bytes: &[u8], ps: &[u8], frame: Rect) -> Option<Preview> {
     epsi(ps).and_then(|img| image_doc(img, frame)).map(|document| Preview { document, what: IMAGE })
 }
 
+/// Most pixels a TIFF preview may have: its RGBA copy is four bytes each besides the decoded image.
+const MAX_PREVIEW_PIXELS: u64 = 1 << 26;
+
 fn tiff_rgba(tiff: &[u8]) -> Option<image::RgbaImage> {
+    let size = image::ImageReader::with_format(std::io::Cursor::new(tiff), image::ImageFormat::Tiff).into_dimensions();
+    if size.is_ok_and(|(w, h)| u64::from(w) * u64::from(h) > MAX_PREVIEW_PIXELS) {
+        return None;
+    }
     match image::load_from_memory_with_format(tiff, image::ImageFormat::Tiff) {
         Ok(img) => Some(img.to_rgba8()),
         Err(_) => crate::tiff::palette_rgba(tiff),
@@ -99,7 +106,16 @@ fn epsi(ps: &[u8]) -> Option<image::RgbaImage> {
         }
         hex.extend(l.strip_prefix('%')?.bytes().filter(u8::is_ascii_hexdigit));
     }
+    hex.truncate(row * h * 2);
+    // A trailing half byte would decode padded with zero: the preview is cut short, so none.
+    if hex.len() % 2 != 0 {
+        return None;
+    }
     let bytes = super::lex::hex_decode(&hex)?;
+    // A preview with its samples missing is none, not a blank image of the size it claims.
+    if bytes.len() < row * h {
+        return None;
+    }
     let max = (1u32 << depth) - 1;
     let mut img = image::RgbaImage::new(w as u32, h as u32);
     for (x, y, px) in img.enumerate_pixels_mut() {

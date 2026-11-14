@@ -66,9 +66,9 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     }
 
     let t = Tokens::get(ui.ctx());
-    let sel_id = ui.id().with("selected_texture");
-    let new_name_id = ui.id().with("new_texture_name");
-    let new_kind_id = ui.id().with("new_texture_kind");
+    let sel_id = ui.scope_id().with("selected_texture");
+    let new_name_id = ui.scope_id().with("new_texture_name");
+    let new_kind_id = ui.scope_id().with("new_texture_kind");
 
     let mut selected: Option<String> = ui.data(|d| d.get_temp(sel_id));
     let mut new_name: String = ui.data(|d| d.get_temp(new_name_id).unwrap_or_default());
@@ -177,7 +177,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     // Add new texture row
     ui.horizontal(|ui| {
         ui.add(TextEdit::singleline(&mut new_name).hint_text(tl!("Name")).desired_width(70.0));
-        egui::ComboBox::from_id_salt("new_kind_combo").selected_text(tl!(kind_label(&new_kind))).width(75.0).show_ui(ui, |ui| {
+        craft_ui::ComboBox::from_id_salt("new_kind_combo").selected_text(tl!(kind_label(&new_kind))).width(75.0).show_ui(ui, |ui| {
             for k in ["pencil", "chalk", "charcoal", "grain"] {
                 ui.selectable_value(&mut new_kind, k.to_string(), tl!(kind_label(k)));
             }

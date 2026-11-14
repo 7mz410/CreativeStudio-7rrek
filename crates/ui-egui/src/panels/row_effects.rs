@@ -243,7 +243,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 FxKind::MotionBlur => tl!("Motion Blur"),
             };
 
-            let open_id = ui.id().with(("fx_open", i));
+            let open_id = ui.scope_id().with(("fx_open", i));
             let mut open = ui.data_mut(|d| *d.get_temp_mut_or(open_id, true));
 
             widgets::divider(ui);
@@ -280,7 +280,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             ui.horizontal(|ui| {
                 ui.label(tl!("Applies To:"));
                 let mut sel = part.clone();
-                egui::ComboBox::from_id_salt(("fx_part", i)).selected_text(part_label).width(120.0).show_ui(ui, |ui| {
+                craft_ui::ComboBox::from_id_salt(("fx_part", i)).selected_text(part_label).width(120.0).show_ui(ui, |ui| {
                     for (value, label) in options {
                         ui.selectable_value(&mut sel, value.to_string(), label);
                     }
@@ -297,7 +297,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     .and_then(|m_id| layers.iter().find(|(id, _)| *id == m_id).map(|(_, name)| name.as_str()))
                     .unwrap_or_else(|| tl!("None"));
                 let mut selected_matte = cur_matte;
-                egui::ComboBox::from_id_salt(("fx_matte", i)).selected_text(cur_matte_name).width(120.0).show_ui(ui, |ui| {
+                craft_ui::ComboBox::from_id_salt(("fx_matte", i)).selected_text(cur_matte_name).width(120.0).show_ui(ui, |ui| {
                     ui.selectable_value(&mut selected_matte, None, tl!("None"));
                     for (id, name) in &layers {
                         if Some(*id) != active_row_id {
@@ -354,7 +354,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                                 acts.push(Act::Key { index: i, params: params.clone() });
                             }
 
-                            let text_id = ui.id().with(("glow_hex", i));
+                            let text_id = ui.scope_id().with(("glow_hex", i));
                             let mut text_hex = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| color_str.clone());
                             if ui.add(TextEdit::singleline(&mut text_hex).desired_width(70.0)).changed() {
                                 ui.data_mut(|d| d.insert_temp(text_id, text_hex.clone()));
@@ -412,7 +412,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                                 acts.push(Act::Key { index: i, params: params.clone() });
                             }
 
-                            let text_id = ui.id().with(("shadow_hex", i));
+                            let text_id = ui.scope_id().with(("shadow_hex", i));
                             let mut text_hex = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| color_str.clone());
                             if ui.add(TextEdit::singleline(&mut text_hex).desired_width(70.0)).changed() {
                                 ui.data_mut(|d| d.insert_temp(text_id, text_hex.clone()));
@@ -465,7 +465,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                                 acts.push(Act::Key { index: i, params: params.clone() });
                             }
 
-                            let text_id = ui.id().with(("tint_hex", i));
+                            let text_id = ui.scope_id().with(("tint_hex", i));
                             let mut text_hex = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| color_str.clone());
                             if ui.add(TextEdit::singleline(&mut text_hex).desired_width(70.0)).changed() {
                                 ui.data_mut(|d| d.insert_temp(text_id, text_hex.clone()));
@@ -614,7 +614,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     }
                     FxKind::Curves => {
                         let cur_points_str = params.get("points").map(|v| v.to_string()).unwrap_or_else(|| "[[0,0],[255,255]]".to_string());
-                        let text_id = ui.id().with(("curves_pts", i));
+                        let text_id = ui.scope_id().with(("curves_pts", i));
                         let mut text_pts = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| cur_points_str.clone());
                         ui.horizontal(|ui| {
                             ui.label(tl!("Points:"));
@@ -650,7 +650,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                                 acts.push(Act::Key { index: i, params: params.clone() });
                             }
 
-                            let text_id = ui.id().with(("fade_hex", i));
+                            let text_id = ui.scope_id().with(("fade_hex", i));
                             let mut text_hex = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| color_str.clone());
                             if ui.add(TextEdit::singleline(&mut text_hex).desired_width(70.0)).changed() {
                                 ui.data_mut(|d| d.insert_temp(text_id, text_hex.clone()));
@@ -739,7 +739,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                                 acts.push(Act::Key { index: i, params: params.clone() });
                             }
 
-                            let text_id = ui.id().with(("chroma_hex", i));
+                            let text_id = ui.scope_id().with(("chroma_hex", i));
                             let mut text_hex = ui.data_mut(|d| d.get_temp::<String>(text_id)).unwrap_or_else(|| color_str.clone());
                             if ui.add(TextEdit::singleline(&mut text_hex).desired_width(70.0)).changed() {
                                 ui.data_mut(|d| d.insert_temp(text_id, text_hex.clone()));
@@ -834,7 +834,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                         ui.horizontal(|ui| {
                             ui.label(tl!("Type:"));
                             let type_label = if gtype == "radial" { tl!("Radial") } else { tl!("Linear") };
-                            egui::ComboBox::from_id_salt(("fx_grad_type", i)).selected_text(type_label).show_ui(ui, |ui| {
+                            craft_ui::ComboBox::from_id_salt(("fx_grad_type", i)).selected_text(type_label).show_ui(ui, |ui| {
                                 ui.selectable_value(&mut gtype, "linear".to_string(), tl!("Linear"));
                                 ui.selectable_value(&mut gtype, "radial".to_string(), tl!("Radial"));
                             });

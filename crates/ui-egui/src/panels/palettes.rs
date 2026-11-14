@@ -27,7 +27,7 @@ enum Act {
 
 /// The palette picked in the list, by index (panel-local; not in the document).
 fn picked_id() -> Id {
-    Id::new("palettes_picked")
+    Id::unique("palettes_picked")
 }
 
 fn set_picked(ctx: &egui::Context, i: Option<usize>) {

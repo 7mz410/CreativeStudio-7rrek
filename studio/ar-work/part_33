@@ -1,0 +1,200 @@
+@msg	no HP-GL format
+@msg	no New Document profile called `{shown}` ({_1})
+@msg	no SVG filter at index {k}
+@msg	no arrowheads file here
+@msg	no character has code {code}
+@msg	no custom arrowhead {name} (see stroke.arrowheads.list)
+@msg	no file to open
+@msg	no instructions
+@msg	no layer to rename
+@msg	no random numbers ({e})
+@msg	no selected or given object has a visible 3D effect
+@msg	no such artboard {v}
+@msg	no symbol named `{_1}`
+@msg	node {_1} already has the text variable `{_2}`
+@msg	not a DCS file
+@msg	not a RegExp object
+@msg	not a regular expression
+@msg	not an action set: the text doesn't start with /version and a number
+@msg	nothing to repeat
+@msg	numbers out of order in {_1} quantifier
+@msg	object {_1} needs a 3D effect
+@msg	object {_1}: a hollow Extrude & Bevel has no caps: turn on Cap to map a graphic
+@msg	object {_1}: with a depth of 0 the object has one face: map its graphics onto the front
+@msg	object {_1}: {_2}
+@msg	object {_1}: {e}
+@msg	object {_1}: {name} at index {index} has no lighting presets; set its lights with effect.setParams
+@msg	opacity must be a number
+@msg	operand too large
+@msg	order is a whole number from 0 to {others}, not `{v}`
+@msg	path chunks must share their boundary point
+@msg	pdfCompatible: false needs the artboards to keep the editable artwork when useArtboards is false
+@msg	point x must be a number
+@msg	point y must be a number
+@msg	points must be [x,y] pairs
+@msg	points must be finite canvas points
+@msg	range out of order in character class
+@msg	reduce of an empty array with no initial value
+@msg	regular expression flag '{_1}' given twice
+@msg	sampled text would exceed the canvas (coordinates out of range)
+@msg	select an SVG filter
+@msg	select an object with a 3D effect
+@msg	select an object with a 3D effect, or give its id in ids
+@msg	select one layer, group or object to rename
+@msg	select the art to weed
+@msg	select type on a path or area type
+@msg	side is left or right, not `{v}`
+@msg	source text transform is collapsed or unrepresentable
+@msg	table must be true or false
+@msg	takes one name
+@msg	target text transform is collapsed or unrepresentable
+@msg	that makes too many pieces (at most 100000) or dash steps: simplify the dash pattern or make the dashes longer
+@msg	the Layers panel is not shown
+@msg	the Layers panel's search, filter or Show Layers Only hides its row
+@msg	the Objects on Path group is hidden or locked
+@msg	the SVG file is larger than {MAX_IMPORT_BYTES} bytes
+@msg	the XML operation needs an XML or XMLList value
+@msg	the XPath expression does not evaluate to a node-set
+@msg	the XPath expression ends early
+@msg	the XPath expression has an unmatched )
+@msg	the XPath expression has an unmatched ]
+@msg	the XPath expression has an unmatched closing bracket
+@msg	the XPath expression selects a namespace node, which is not an XML value
+@msg	the XPath expression selects the root node, which is not an XML value
+@msg	the XPath function {name} needs a node-set
+@msg	the XPath function {name} takes the wrong number of arguments
+@msg	the XPath name functions need a node-set
+@msg	the XPath prefix {shown} is not bound to a namespace
+@msg	the XPath variable ${shown} is not bound
+@msg	the argument list is not an object
+@msg	the artwork is too large for EPS: what follows 256 MB of PostScript was left out
+@msg	the bitmaps hold more pixels than one file may
+@msg	the code runs past its last instruction
+@msg	the curve tolerance must be from 0.01 to 10 points
+@msg	the custom dictionary couldn't be saved to {_1}: {e}
+@msg	the custom dictionary {_1} can't be read ({why}), so it is left as it is
+@msg	the document already has an SVG filter named {name}
+@msg	the document has another SVG filter named {name}: use svgFilter.apply, or svgFilter.define with `replace` to edit it
+@msg	the document has no SVG filter named {name}
+@msg	the document has no SVG filter named {r}
+@msg	the document has no color swatches
+@msg	the document's swatches hold {_1} colors; the document reduction takes at most 255
+@msg	the file isn't valid SVG: {e}
+@msg	the file names no plate
+@msg	the function's prototype is not an object
+@msg	the guide is hidden or locked
+@msg	the library's file is outside the read roots
+@msg	the method needs an XML value
+@msg	the paint is not a freeform gradient (apply one with paint.editGradient {kind})
+@msg	the parameters or body do not form one function
+@msg	the pasted SVG filter {name} draws differently from the document's filter of that name, and no free name fits it
+@msg	the pen table holds more than 255 pens
+@msg	the plates can't be kept
+@msg	the position table does not match the instructions
+@msg	the prompt's text is longer than {MAX_PROMPT_BYTES} bytes
+@msg	the radix must be between 2 and 36
+@msg	the right side of 'in' is not an object
+@msg	the right side of 'instanceof' is not a function
+@msg	the selected art is nested more than {MAX_DEPTH} levels deep
+@msg	the selected art is too large to measure
+@msg	the selection has no outlines to weed around
+@msg	the value bind was called on is not a function
+@msg	the value is not a constructor
+@msg	the value is not a function
+@msg	the value is not a valid XML name
+@msg	the value is not an XML attribute name
+@msg	the value is not an XML name
+@msg	the weeding lines cross the art's outlines too many times to measure; use fewer lines
+@msg	the weeding lines pass too close to too many outline segments to measure; use fewer lines or a smaller gap
+@msg	the weeding lines would be more than {max_pieces} pieces
+@msg	the {_1} plate lies outside the file
+@msg	this is a binary DXF file, which can't be read: save it from the CAD app as an ASCII DXF and open that
+@msg	this warp's points can't be edited: use Reset with Mesh first
+@msg	toExponential() digits must be between 0 and 20
+@msg	toFixed() digits must be between 0 and 20
+@msg	toISOString is not a function
+@msg	toPrecision() argument must be between 1 and 21
+@msg	toSource: a getter cannot be written as source
+@msg	toSource: an array with properties besides its elements, a property that is not enumerable or another prototype cannot be written as source
+@msg	toSource: an object with a property that is not enumerable, or whose prototype is not Object.prototype, cannot be written as source
+@msg	toSource: the source is too long
+@msg	toSource: the value contains itself
+@msg	toSource: the value has too many entries
+@msg	toSource: the value is nested too deep
+@msg	toString is not a function
+@msg	too many arguments
+@msg	too many quantifiers
+@msg	unknown OpenType feature `{t}` (liga, calt, dlig, smcp, frac, onum, tnum, ordn, swsh, ss01–ss20, salt, titl, pnum, lnum, sups, subs, numr, dnom, aalt; prefix - to turn off; swsh, ss01–ss20, salt, titl, pnum, lnum, sups, subs, numr, dnom and aalt take an alternate's number as `tag=N` with N from 0 to {_1}, as `salt=2`)
+@msg	unknown dither `{d}` (diffusion, pattern, noise or none)
+@msg	unknown panel `{panel}`
+@msg	unknown parameter `{key}`
+@msg	unknown parameter `{within}settings.{format}`; {why}
+@msg	unknown parameter `{within}{key}`; {why}
+@msg	unknown reduction `{reduction}` (selective, perceptual, adaptive, web, gray, blackWhite, uniform or document)
+@msg	unmatched ')'
+@msg	unterminated character class
+@msg	unterminated group
+@msg	wordGap and lineGap need area type in the selection
+@msg	xpath needs its variables as an object
+@msg	xpath needs the expression as a string
+@msg	{GRANT_NOT_REMOVED}, and its settings and cache can't be moved back from {_1} to {_2}: {e}
+@msg	{_1} is not a folder: {e}
+@msg	{_1}: {_2} and {_3} are in the way
+@msg	{code}: {0}
+@msg	{dir}: {e}
+@msg	{file} names more than one linked JavaScript file
+@msg	{k}: a custom arrowhead's path needs an area to fill and at most {most} anchors and {most} subpaths, each anchor within {far} head units of its tip
+@msg	{k}: bad custom arrowhead path: {e}
+@msg	{k}: bad custom arrowhead: {e}
+@msg	{k}: custom must be a name
+@msg	{path}: copy takes a DCS file only when its plates are inside it; relink to it where its plate files are
+@msg	{path}: larger than {_1} MB
+@msg	{shown} is not an XPath 1.0 function
+@msg	{v} names no layer or sublayer
+@msg	{what} is not a function
+@msg	{what} would print more than {MAX_COPIES_PER_SHEET} copies on a sheet: scale it up
+@msg	{what} {i} out of range
+@msg	A profile supports one Revolve effect. Edit the existing effect's options instead.
+@msg	Add Points at Crossings: a path went missing
+@msg	CSS options: {e}
+@msg	CSV has a header but no data rows
+@msg	CSV holds NUL bytes: save it as UTF-8, or as UTF-16 with a byte-order mark
+@msg	CSV is empty
+@msg	CSV is larger than {MAX_CSV_BYTES} bytes
+@msg	CSV is not UTF-16
+@msg	CSV is not UTF-8
+@msg	CSV would be larger than {MAX_CSV_BYTES} bytes
+@msg	Choose original artwork, not a dimension's generated paths
+@msg	Contour: select paths or shapes
+@msg	Contour: the Offset Path effect is not available
+@msg	Create needs fills, strokes or both
+@msg	DXF options: {e}
+@msg	DXF scale must be a positive number up to {_1}, not {scale}
+@msg	DXF {field} `{s}`: {allowed}
+@msg	Dimension is locked or hidden
+@msg	Dimension mode does not match its source
+@msg	Draw Inside needs exactly one selected path, compound path or text
+@msg	EPS Save writes all artwork: use document.export for selected-only EPS
+@msg	EPS flattener: {e}
+@msg	EPS options: {e}
+@msg	EPS {field} `{s}`: {allowed}
+@msg	Export for Screens writes png, png8, jpg, webp, gif, tiff, bmp, tga, psd, svg, svgz, pdf, eps, ai or vectorcraft
+@msg	Flare click coordinates must be finite numbers
+@msg	HTML Text applies to object slices of type only
+@msg	Identify Objects By is XML ID: the name must be a valid XML ID (start with a letter, underscore or colon; no spaces)
+@msg	Image Trace failed: internal error: its thread stopped (please report this bug)
+@msg	Image Trace failed: {e}
+@msg	Image Trace finished, but its document was closed
+@msg	Image Trace finished, but the image or its settings changed meanwhile: trace it again
+@msg	Invalid dimension offset
+@msg	Invalid point
+@msg	Join: a subpath went missing
+@msg	Lock Workspace is not available in rsm
+@msg	Move Panel to New Window is not available: floating panels stay in the main window
+@msg	Offset Path: the path is too complex to offset
+@msg	Offset Path: {e}
+@msg	PDF content is incomplete or exceeds the reader's limits; no document was imported
+@msg	PDF flattener: {e}
+@msg	PDF options: {e}
+@msg	Recolor Artwork is no longer open
+@msg	SVG is not UTF-8, UTF-16 or ISO 8859-1

@@ -13,7 +13,7 @@ use vectorcraft_doc::recolor::{ColorVisitor, Reach, recolor_node};
 use vectorcraft_doc::{Appearance, AppearanceItem, Document, FillLayer, ImageBlob, Node, OpacityMask};
 
 use super::anim::{Anim, row_param, show};
-use super::*;
+use super::{cmd, NodeId, CommandSpec, has_doc, Value, Result, bad, Session};
 
 const KEY: &str = "cutters";
 /// Most cutters a document takes.

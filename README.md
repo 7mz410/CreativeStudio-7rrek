@@ -37,7 +37,7 @@ Fifteen free, open-source apps with an Arabic interface laid out right to left. 
 
 | App | | What it's for | Saves as | Based on |
 |---|---|---|---|---|
-| [rsm](https://github.com/7mz410/CreativeStudio-rsm) | رسم | Vector illustration | `.rsm` | VectorCraft |
+| [rsm](https://github.com/7mz410/CreativeStudio-7rrek) | رسم | Vector illustration | `.rsm` | VectorCraft |
 | **7rrek** | حرّك | Animation | `.7rrek` | VectorCraft (via rsm) |
 | [tlween](https://github.com/7mz410/CreativeStudio-tlween) | تلوين | Image editing | `.tlween` | PhotoCraft |
 | [lamasat](https://github.com/7mz410/CreativeStudio-lamasat) | لمسات | Photo library and raw development | — | LightCraft |

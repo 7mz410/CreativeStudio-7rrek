@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build, sign and (optionally) notarize the macOS release artifacts:
 #
-#   $DIST/vectorcraft-<version>-macos-<arch>.dmg          7rrek.app on a drag-to-Applications DMG
+#   $DIST/vectorcraft-<version>-macos-<arch>.dmg          rsm.app on a drag-to-Applications DMG
 #   $DIST/vectorcraft-cli-<version>-macos-<arch>.zip      the headless CLI
 #
 # Usage: packaging/macos/package.sh [--arch universal|aarch64|x86_64] [--skip-build]
@@ -39,7 +39,7 @@ export MACOSX_DEPLOYMENT_TARGET=11.0
 IDENTITY="${MACOS_SIGN_IDENTITY:--}"
 SHORT_VERSION="${VERSION%%-*}"
 WORK="$CARGO_TARGET_DIR/macos-package"
-APP="$WORK/7rrek.app"
+APP="$WORK/rsm.app"
 DMG="$DIST/vectorcraft-$VERSION-macos-$ARCH.dmg"
 CLI_ZIP="$DIST/vectorcraft-cli-$VERSION-macos-$ARCH.zip"
 
@@ -101,23 +101,25 @@ notarize() {
 # connection there (NSURLErrorDomain -1005, "Error 68") fails them although notarization worked.
 # Both are idempotent, so retry with a pause; a missing or bad ticket still fails every try.
 stapler_retry() {
-  local try
+  local try op="$1" target="$2"
   for try in 1 2 3 4; do
-    xcrun stapler "$1" "$2" && return 0
+    xcrun stapler "$op" "$target" && return 0
     [[ "$try" = 4 ]] && break
-    echo "stapler $1 failed (try $try of 4); retrying in $((try * 20)) s" >&2
+    echo "stapler $op failed (try $try of 4); retrying in $((try * 20)) s" >&2
     sleep $((try * 20))
   done
-  echo "error: stapler $1 $(basename "$2") failed 4 times" >&2
+  echo "error: stapler $op $(basename "$target") failed 4 times" >&2
   exit 1
 }
 
-# ---- 7rrek.app ----------------------------------------------------------------------------
+# ---- rsm.app ----------------------------------------------------------------------------
 echo "==> assembling $APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 # Executable and icon carry the display name (CFBundleExecutable / CFBundleIconFile).
 cp "$WORK/bin/vectorcraft" "$APP/Contents/MacOS/VectorCraft"
 cp "$ROOT/assets/app-icon/vectorcraft.icns" "$APP/Contents/Resources/VectorCraft.icns"
+cp "$ROOT/assets/app-icon/rsm-document.icns" "$APP/Contents/Resources/rsm-document.icns"
+cp "$WORK/bin/vectorcraft-cli" "$APP/Contents/MacOS/rsm-cli"
 sed -e "s/@VERSION@/$VERSION/g" -e "s/@SHORT_VERSION@/$SHORT_VERSION/g" \
   -e "s/@BUILD_SHA@/${VECTORCRAFT_BUILD_SHA:-unknown}/g" \
   "$HERE/Info.plist.in" >"$APP/Contents/Info.plist"
@@ -128,6 +130,7 @@ copy_docs "$APP/Contents/Resources"
 
 # Sign inside-out: nested code first, then the bundle itself (no --deep on the final signature).
 # Today the only nested code is the main executable; frameworks/helpers would be signed here too.
+sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/rsm-cli"
 sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP/Contents/MacOS/VectorCraft"
 sign --options runtime --entitlements "$HERE/entitlements.plist" "$APP"
 codesign --verify --strict --deep --verbose=2 "$APP"
@@ -144,7 +147,7 @@ fi
 echo "==> building $DMG"
 STAGE="$WORK/dmg"
 mkdir -p "$STAGE"
-ditto "$APP" "$STAGE/7rrek.app"
+ditto "$APP" "$STAGE/rsm.app"
 ln -s /Applications "$STAGE/Applications"
 # Finder window layout: background, icon size and positions (packaging/macos/dmg/README.md).
 mkdir -p "$STAGE/.background"
@@ -170,7 +173,7 @@ hdiutil_retry() {
     sleep $((attempt * 10))
   done
 }
-hdiutil_retry create create -srcfolder "$STAGE" -volname "7rrek" -fs HFS+ -format UDZO -imagekey zlib-level=9 -ov "$DMG"
+hdiutil_retry create create -srcfolder "$STAGE" -volname "rsm" -fs HFS+ -format UDZO -imagekey zlib-level=9 -ov "$DMG"
 sign "$DMG"
 codesign --verify --strict --verbose=2 "$DMG"
 # The app inside the image must still pass --strict, so a makehybrid-style regression can't ship.
@@ -178,7 +181,7 @@ MOUNT="$WORK/dmg-check"
 rm -rf "$MOUNT"
 mkdir -p "$MOUNT"
 hdiutil_retry attach attach -nobrowse -readonly -mountpoint "$MOUNT" "$DMG" >/dev/null
-if ! codesign --verify --strict --deep --verbose=2 "$MOUNT/7rrek.app"; then
+if ! codesign --verify --strict --deep --verbose=2 "$MOUNT/rsm.app"; then
   hdiutil_retry detach detach "$MOUNT" >/dev/null || true
   exit 1
 fi

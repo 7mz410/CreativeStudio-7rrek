@@ -16,8 +16,8 @@ mod pulses;
 #[allow(dead_code)]
 pub(crate) mod tables;
 
-use lpc::*;
-use tables::*;
+use lpc::{smlawb, smulwb, sat16, rshift_round, MAX_LPC_ORDER, nlsf2a, inverse32_varq, div32_varq, smulww};
+use tables::{LTP_TAPS_0, LTP_TAPS_1, LTP_TAPS_2, TYPE_ACTIVE, TYPE_INACTIVE, GAIN_MSB, UNIFORM8, DELTA_GAIN, NLSF_STAGE1, NLSF_SEL_WB, NLSF_SEL_NBMB, NLSF_STAGE2, NLSF_EXT, NLSF_INTERP, PITCH_HIGH, PITCH_LOW, PITCH_CONTOUR, LTP_PERIODICITY, LTP_FILTER, LTP_SCALE, UNIFORM4, STEREO_WEIGHTS_Q13, STEREO_PRED_JOINT, UNIFORM3, UNIFORM5, MID_ONLY};
 
 use crate::opus::range::RangeEncoder;
 

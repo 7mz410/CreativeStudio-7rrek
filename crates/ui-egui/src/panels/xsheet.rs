@@ -36,12 +36,12 @@ struct Edit {
 }
 
 fn edit_id() -> Id {
-    Id::new("xsheet_edit")
+    Id::unique("xsheet_edit")
 }
 
 #[cfg(test)]
 fn cells_id() -> Id {
-    Id::new("xsheet_cells")
+    Id::unique("xsheet_cells")
 }
 
 fn columns_of(sheet: &Value) -> Vec<Column> {

@@ -2,7 +2,7 @@
 //! with LSB escapes, the recursive shell code, LSBs and signs, written in exactly the order the
 //! decoder reads them.
 
-use super::tables::*;
+use super::tables::{PULSE_COUNT, SHELL_16, SHELL_8, SHELL_4, SHELL_2, RATE_LEVEL, EXC_LSB, EXC_SIGN};
 use crate::opus::range::RangeEncoder;
 
 /// Largest pulse magnitude the quantiser produces (keeps every 16-sample block codable).

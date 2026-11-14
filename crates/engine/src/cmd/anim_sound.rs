@@ -8,7 +8,7 @@ use vectorcraft_doc::Document;
 use vectorcraft_format::{base64_decode, base64_encode};
 
 use super::anim::{Anim, Sound, frame_param};
-use super::*;
+use super::{cmd, Result, bad, CommandSpec, has_doc, Session, str_param};
 use crate::EngineError;
 
 /// Loudest gain a sound clip takes (its file's level times this).

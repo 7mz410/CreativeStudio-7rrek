@@ -45,7 +45,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             .horizontal(|ui| {
                 let (th, _) = ui.allocate_exact_size(egui::vec2(THUMB, THUMB), egui::Sense::hover());
                 if let Some(st) = app.session.active() {
-                    let a = vectorcraft_doc::ExportAsset { id, name, nodes: vec![vectorcraft_doc::NodeId(id)] };
+                    let a = vectorcraft_doc::ExportAsset { id, name, nodes: vec![vectorcraft_doc::NodeId(id)], format_3d: None };
                     super::asset_export::paint_thumb(ui, st, &a, th);
                 }
                 ui.selectable_label(current == Some(id), text)

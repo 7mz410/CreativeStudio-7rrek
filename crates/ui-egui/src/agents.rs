@@ -45,7 +45,7 @@ pub trait AgentsService {
 }
 
 fn open_id() -> egui::Id {
-    egui::Id::new("studio_agents_open")
+    egui::Id::unique("studio_agents_open")
 }
 
 /// Help › AI Agents… asked for the window (commands have no egui context; the next frame opens it).
@@ -65,9 +65,9 @@ pub fn show(app: &mut VectorcraftApp, ctx: &Context) {
     }
     let t = Tokens::get(ctx);
     let mut started = None;
-    let mut error: Option<String> = ctx.data(|d| d.get_temp(egui::Id::new("studio_agents_error")));
+    let mut error: Option<String> = ctx.data(|d| d.get_temp(egui::Id::unique("studio_agents_error")));
     egui::Window::new(tl!("AI Agents"))
-        .id(egui::Id::new("studio_agents"))
+        .id(egui::Id::unique("studio_agents"))
         .open(&mut open)
         .resizable(false)
         .collapsible(false)
@@ -124,10 +124,10 @@ pub fn show(app: &mut VectorcraftApp, ctx: &Context) {
         d.insert_temp(open_id(), open);
         match &error {
             Some(e) => {
-                d.insert_temp(egui::Id::new("studio_agents_error"), e.clone());
+                d.insert_temp(egui::Id::unique("studio_agents_error"), e.clone());
             }
             None => {
-                d.remove::<String>(egui::Id::new("studio_agents_error"));
+                d.remove::<String>(egui::Id::unique("studio_agents_error"));
             }
         }
     });

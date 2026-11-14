@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 use serde::Deserialize;
 use serde_json::{Value, json};
 
-use super::*;
+use super::{cmd, CommandSpec, has_doc, always, Session, Result, bad, EngineError};
 
 /// Most items of one kind a spec may hold.
 const MAX_ITEMS: usize = 1_000;

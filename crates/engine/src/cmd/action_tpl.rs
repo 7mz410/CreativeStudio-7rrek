@@ -14,7 +14,7 @@ use super::mesh::Meshes;
 use super::peg::{PegKey, Pegs};
 use super::rig::{Pose, Rig};
 use super::row_fx::RowFxList;
-use super::*;
+use super::{cmd, CommandSpec, has_doc, Session, Result, bad, str_param};
 
 pub const EXTENSION: &str = "7rrekaction";
 const KEY: &str = "actions";
@@ -283,6 +283,7 @@ fn ids_in(n: &Node) -> Vec<u64> {
     v
 }
 
+#[allow(clippy::cognitive_complexity)] // shortcut: one command body per action kind; split per kind when it grows again.
 fn save(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "action.save";
     let row = row_param(s, p, C)?;
@@ -497,6 +498,7 @@ fn list(s: &mut Session, _p: &Value) -> Result<Value> {
     Ok(json!({ "actions": actions }))
 }
 
+#[allow(clippy::cognitive_complexity)] // shortcut: one command body per action kind; split per kind when it grows again.
 fn paste(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "action.paste";
     let row = row_param(s, p, C)?;

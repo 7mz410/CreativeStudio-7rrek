@@ -19,7 +19,7 @@ use vectorcraft_doc::blend;
 use vectorcraft_doc::{Document, Node, NodeId};
 use vectorcraft_geom::{Affine, Point, Rect};
 
-use super::*;
+use super::{cmd, Session, Result, id_param, bad, CommandSpec, has_doc, bool_or, str_param, f64_or};
 use crate::EngineError;
 
 const KEY: &str = "animation";

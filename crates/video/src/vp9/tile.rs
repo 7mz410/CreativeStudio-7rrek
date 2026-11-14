@@ -8,7 +8,7 @@
 
 use crate::vp9::mc::{Mv, PhasePlanes, RefPlane, clamp_for_plane, predict};
 use crate::vp9::probs::{self, P, Writer, cost, tree_cost};
-use crate::vp9::tables::*;
+use crate::vp9::tables::{ROW_SCAN_4X4, COL_SCAN_4X4, DEFAULT_SCAN_4X4, KF_PARTITION_PROBS, KF_Y_MODE_PROBS, KF_UV_MODE_PROBS, COEFBAND_4X4, ENERGY_CLASS, MV_REF_16X16, MV_REF_8X8, MODE_2_COUNTER, COUNTER_TO_CONTEXT};
 use crate::vp9::transform::{ADST_ADST, ADST_DCT, DCT_ADST, DCT_DCT, Quant};
 use crate::vp9::{BLOCK_8X8, BLOCK_16X16, Mi, Plane};
 
