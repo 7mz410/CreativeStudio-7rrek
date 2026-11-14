@@ -1,0 +1,48 @@
+tr_24	line 58	{n} linked file not found|{n} linked files not found	لم يُعثر على {n} ملف مرتبط
+tr_24	line 60	({n} linked file not found)|({n} linked files not found)	(لم يُعثر على {n} ملف مرتبط)
+tr_25	line 10	Packaged {n} file ({note}) in {folder}|Packaged {n} files ({note}) in {folder}	تم تحزيم {n} ملف ({note}) في {folder}
+tr_25	line 61	Loaded “{name}”: {n} step was left out|Loaded “{name}”: {n} steps were left out	تم تحميل ”{name}“: تم استبعاد {n} خطوة
+tr_25	line 133	Discarded {n} recovered document|Discarded {n} recovered documents	تم تجاهل {n} مستند مسترد
+tr_25	line 134	Restored {n} recovered document: save it to keep it|Restored {n} recovered documents: save them to keep them	تم استرداد {n} مستند مسترد: احفظه للاحتفاظ به
+tr_25	line 135	Opened with {n} note: {first}|Opened with {n} notes: {first}	تم الفتح مع {n} ملاحظة: {first}
+tr_25	line 136	{notice}. Opened with {n} note: {first}|{notice}. Opened with {n} notes: {first}	{notice}. تم الفتح مع {n} ملاحظة: {first}
+tr_25	line 137	Saved {path} with {n} note: {first}|Saved {path} with {n} notes: {first}	تم حفظ {path} مع {n} ملاحظة: {first}
+tr_25	line 138	Embedded {n} image; {missing} missing: relink them first|Embedded {n} images; {missing} missing: relink them first	تم تضمين {n} صورة؛ {missing} مفقودة: أعد ربطها أولاً
+tr_25	line 139	Embedded {n} image|Embedded {n} images	تم تضمين {n} صورة
+tr_25	line 140	Relinked {n} image|Relinked {n} images	تمت إعادة ربط {n} صورة
+tr_25	line 141	Relinked {n} image; not in that folder: {names}|Relinked {n} images; not in that folder: {names}	تمت إعادة ربط {n} صورة؛ ليست في ذلك المجلد: {names}
+tr_25	line 142	Relinked {n} image; {name} couldn't be relinked: {reason}|Relinked {n} images; {name} couldn't be relinked: {reason}	تمت إعادة ربط {n} صورة؛ تعذرت إعادة ربط {name}: {reason}
+tr_25	line 143	Updated {n} image|Updated {n} images	تم تحديث {n} صورة
+tr_25	line 144	Replaced {n} image|Replaced {n} images	تم استبدال {n} صورة
+tr_25	line 145	Broke {n} link|Broke {n} links	تم قطع {n} ارتباط
+tr_25	line 146	Broke {n} link; {missing} can't be read: relink or update them first|Broke {n} links; {missing} can't be read: relink or update them first	تم قطع {n} ارتباط؛ تعذرت قراءة {missing}: أعد ربطها أو حدّثها أولاً
+tr_25	line 147	{n} linked file can't be read here: its preview shows|{n} linked files can't be read here: their previews show	تعذرت قراءة {n} ملف مرتبط هنا: تظهر معاينته
+tr_25	line 148	{n} image couldn't be decoded and shows as a crossed box|{n} images couldn't be decoded and show as crossed boxes	تعذر فك ترميز {n} صورة وتظهر كمربع ذي علامة شطب
+tr_25	line 149	{n} linked image changed on disk: Update Links shows the new version|{n} linked images changed on disk: Update Links shows the new versions	تغيرت {n} صورة مرتبطة على القرص: يؤدي تحديث الارتباطات إلى إظهار النسخة الجديدة
+tr_25	line 150	Updated {n} linked file changed on disk|Updated {n} linked files changed on disk	تم تحديث {n} ملف مرتبط تغير على القرص
+tr_25	line 152	Exported {what} with {n} note: {first}|Exported {what} with {n} notes: {first}	تم تصدير {what} مع {n} ملاحظة: {first}
+tr_25	line 153	{n} font file is now in {folder}|{n} font files are now in {folder}	{n} ملف خط موجود الآن في {folder}
+tr_25	line 154	{n} font file is now in {folder}; {failed} couldn't be added: {reason}|{n} font files are now in {folder}; {failed} couldn't be added: {reason}	{n} ملف خط موجود الآن في {folder}؛ تعذرت إضافة {failed}: {reason}
+tr_25	line 155	{n} font isn't available here: its text shows in another font|{n} fonts aren't available here: their text shows in another font	{n} خط غير متاح هنا: يظهر نصه بخط آخر
+tr_25	line 156	Copied the CSS of {n} object|Copied the CSS of {n} objects	تم نسخ CSS لـ {n} كائن
+tr_25	line 157	Downloaded {n} file|Downloaded {n} files	تم تنزيل {n} ملف
+tr_25	line 158	Exported {n} file to {folder}|Exported {n} files to {folder}	تم تصدير {n} ملف إلى {folder}
+tr_25	line 160	{n} color is out of the CMYK gamut|{n} colors are out of the CMYK gamut	{n} لون خارج نطاق ألوان CMYK
+tr_26	line 168	Packaged {n} file in {folder}|Packaged {n} files in {folder}	تم تحزيم {n} ملف في {folder}
+tr_26	line 169	Packaged {n} file {note}|Packaged {n} files {note}	تم تحزيم {n} ملف {note}
+tr_26	line 170	Packaged {n} file|Packaged {n} files	تم تحزيم {n} ملف
+tr_30	line 151	Exported {n} document|Exported {n} documents	تم تصدير {n} مستند
+tr_30	line 152	Exported {n} document; {title} wasn't written: {error}|Exported {n} documents; {title} wasn't written: {error}	تم تصدير {n} مستند؛ لم يُكتب {title}: {error}
+tr_30	line 154	Traced {n} image|Traced {n} images	تم تتبع {n} صورة
+tr_30	line 155	{n} image couldn't be traced|{n} images couldn't be traced	تعذر تتبع {n} صورة
+tr_30	line 156	Traced {n} image; not traced: {failed}|Traced {n} images; not traced: {failed}	تم تتبع {n} صورة؛ لم يتم تتبع: {failed}
+tr_31	line 46	Selected {n} linked image|Selected {n} linked images	تم تحديد {n} صورة مرتبطة
+tr_31	line 47	Selected {n} embedded image|Selected {n} embedded images	تم تحديد {n} صورة مضمنة
+tr_31	line 48	Selected {n} missing image|Selected {n} missing images	تم تحديد {n} صورة مفقودة
+tr_31	line 49	Selected {n} modified image|Selected {n} modified images	تم تحديد {n} صورة معدلة
+tr_31	line 50	Selected {n} image|Selected {n} images	تم تحديد {n} صورة
+tr_31	line 51	{selected}; {n} more is hidden or locked|{selected}; {n} more are hidden or locked	{selected}؛ وهناك {n} كائن إضافي مخفي أو مقفل
+tr_31	line 52	{selected}; {n} more is on a template layer|{selected}; {n} more are on template layers	{selected}؛ وهناك {n} كائن إضافي على طبقات القوالب
+tr_31	line 53	{selected}; {n} more is outside the isolated group|{selected}; {n} more are outside the isolated group	{selected}؛ وهناك {n} كائن إضافي خارج المجموعة المعزولة
+tr_31	line 54	{selected}; {n} more can't be selected now|{selected}; {n} more can't be selected now	{selected}؛ وهناك {n} كائن إضافي لا يمكن تحديده الآن
+tr_31	line 156	Opened with {n} plug-in effect deferred. Effect › Refresh Deferred Effects runs it.|Opened with {n} plug-in effects deferred. Effect › Refresh Deferred Effects runs them.	تم الفتح مع تأجيل {n} تأثير مكون إضافي. تأثير › تحديث التأثيرات المؤجلة يشغلها.

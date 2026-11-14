@@ -1,0 +1,200 @@
+يكتب الحفظ لوحة رسم واحدة: سمِّ واحدة، أو صدّر عدة لوحات باستخدام document.export
+حدد بُعداً أولاً
+حدد أبعاداً لتحديثها
+حدد أبعاداً فقط
+حدد كائنين أو أكثر، أو مجموعة
+تتطلب أداة التشكيل من 1 إلى 64 مساراً مصدرياً
+تبديل x/y مخصص للمخططات المبعثرة
+خيارات النص: {e}
+قيمة `align` هي start أو center أو end
+يجب أن تكون `anchors` مصفوفة من أزواج [subpath, anchor]
+يجب أن تسرد `anchors` فهارس نقاط الربط (0، 1، 2…)، وليس {k}
+يجب أن تسرد `anchors` فهارس نقاط الربط (0، 1، 2…)، وليس {v}
+يجب أن تكون `artboards` قائمة بفهارس لوحات الرسم
+المعلمة `asset` هي معرف الأصل (انظر assets.list)
+يجب أن تكون `at` إزاحة بايت
+يجب أن يكون `autoLeading` رقماً
+يجب أن تكون `background` إما "" أو "matte" أو #rrggbb
+يجب أن يكون `burasagari` إما "none" أو "standard" أو "forced"
+يجب أن يكون `center` بتنسيق [x, y]
+يجب أن يكون `charAlign` إما "romanBaseline" أو "emBoxTop" أو "emBoxCenter" أو "emBoxBottom" أو "icfTop" أو "icfBottom"
+يجب أن يكون `charDirection` إما "default" أو "leftToRight" أو "rightToLeft"
+يتطلب `clearStroke` وجود `stroke: false` و`ids: []` وعدم وجود `stop`
+يجب أن تكون `clear` قائمة بمعرفات كائنات نصية، وليس {v}
+يجب أن تسرد `clear` كائنات نصية؛ {_1} ليس واحداً منها
+يجب ألا تسرد `clear` المعرف `id`
+يحتاج `color` إلى `rule` لإنشاء السمة منه
+المعلمة `colors` فارغة
+قيمة `columnType` هي vertical أو uniform أو repeating أو sliding
+يجب أن تكون `columns` عدداً صحيحاً من 1 إلى 50
+يجب ألا تكون `commands` فارغة
+يقترن `contents` مع `to`
+يجب أن تكون `corners` إما sharp أو round أو square، وليس `{other}`
+يجب أن تسرد `corners` فهارس نقاط الربط (0، 1، 2…)، وليس {v}
+يجب أن يكون `count` عدداً صحيحاً من 1 إلى 100
+حجم `dataBase64` أكبر من حد الوحدة
+القيمة `dataBase64` ليست ترميز base64 صالحاً
+لا يمكن دمج `defaultsOnly` مع `ids` أو `reverse` أو `append`
+يجزئ `depth` و`childLimit` الملخص: مرر `summary: true`
+المعلمة `design` هي اسم تصميم، أو null للأعمدة البسيطة
+المعلمة `design` هي اسم تصميم، أو null للعلامة الافتراضية
+المعلمة `destinationFolder` مطلوبة عندما تكون الوجهة `folder`
+يجب أن تكون `destination` إما `none` أو `saveAndClose` أو `folder`
+يجب أن يكون `diameter` من 0.1 إلى 2500 نقطة
+يجب أن تكون `digits` واحدة من {_1}
+قيمة `dimImages` هي نسبة مئوية أو false
+يجب أن يكون `direction` إما "auto" أو "leftToRight" أو "rightToLeft"
+القيمة `each` هي القيمة التي يمثلها تصميم واحد، أكبر من 0
+يجب أن يكون `end` إما "start" أو "end"
+ينطبق `ends` على ضم مسارين بالضبط
+يجب أن يكون `event` واحداً من {_1}
+يجب أن يكون `every` إما "all" أو "odd" أو "even"، وليس {v}
+يجب أن يكون `expand` إما true أو false
+يجب أن تكون `files` من 1 إلى 1000 مسار لملفات الخطوط التي وجدها آخر بحث لـ text.findFontFiles
+يجب أن يكون `folder` مسار مجلد مطلقاً
+يجب أن يكون `fontAxes` كائناً يحتوي على علامات المحاور وقيمها، مثل {"wght"}
+يجب أن يكون `format` سلسلة نصية
+يجب أن يكون `format` واحداً من {_1}
+قيمة `fractions` هي chop أو scale
+يجب أن يختلف `from` عن `to`
+يحتوي `from` على إطار فارغ
+يجب أن يكون `from` عدداً صحيحاً غير سالب
+يجب أن يكون `from` نص مساحة أو نصاً على مسار
+يجب أن يكون `gid` معرف حرف، وليس {v}
+ينتمي `glyphAlternate` إلى حرف واحد، وليس إلى نمط أحرف (text.setGlyphAlternate يعينه)
+يجب أن يكون `guide` فهرس خط إرشادي (guide.list)
+يجب أن يكون `hAlign` إما default أو left أو center أو right
+يجب أن يكون `id` معرف عقدة
+يجب أن يكون `id` معرف كائن، وليس {v}
+يجب أن تسمي `ids` مجموعات كائنات على مسار أو كائنات بداخلها
+يقبل `ids` ما يصل إلى {MAX_INSPECT_IDS} معرف كحد أقصى
+يجب أن يكون `imageMap` إما none أو rectangle أو polygon
+يجب أن يكون `includeArtboardFill` إما true أو false
+يجب أن يكون `includeSubdirs` إما true أو false
+يجب أن يكون `index` فهرس نقطة
+يجب أن يكون `index` عدداً صحيحاً أو null
+يجب أن تكون `indices` مصفوفة غير فارغة من فهارس العناصر
+المعلمة `items` هي قائمة بتنسيق {kind, item}
+المعلمة `items` فارغة
+يجب أن تكون `items` قائمة بتنسيق {id, points}
+يجب أن تكون `items` قائمة بتنسيق {{id, anchors?}}، وليس {v}
+يجب أن تكون `items` مصفوفة بتنسيق {id, anchors}
+يجب أن تكون `items` مصفوفة بتنسيق {{id, corners?}}، وليس {v}
+يجب أن تكون `kashida` إما "none" أو "short" أو "medium" أو "long" أو "stylistic"
+قيمة `kind` واحدة من {_1}
+يجب أن يكون `kind` إما "round" أو "invertedRound" أو "chamfer"، وليس {v}
+يجب أن يكون `kind` إما `text` أو `visibility` أو `image` أو `graph`
+يجب أن يكون `kind` سلسلة نصية
+يجب أن يكون `kind` إما image أو noImage أو htmlText
+يجب أن يكون `kinsoku` إما "none" أو "hard" أو "soft"
+يجب أن يكون `label` اسماً غير فارغ لا يتجاوز 200 حرف
+يجب أن تكون `language` اسم لغة أو علامتها، مثل "Turkish" أو "tr"
+يجب أن يكون `leadingModel` إما "romanBaseline" أو "emBoxTop"
+يجب أن يكون `leading` من 0.1 إلى 5000، أو null للتلقائي
+يجب أن يكون `length` رقماً لا يتجاوز 1,000,000 نقطة في كلا الاتجاهين
+يجب أن يكون `line` إما true أو false
+لا يمكن أن تكون `minAngle` ({min_angle}°) أكبر من `maxAngle` ({max_angle}°)
+يجب أن يكون `mode` إما "handles" أو "straight" أو "smooth"
+يجب أن يكون `mode` إما "straight" أو "bezier" أو "arc"
+يجب أن يكون `mode` واحداً من {_1}
+يجب أن يكون `mojikumi` إما "none" أو "yakumonoHankaku" أو "gyomatsuYakumonoHankaku" أو "gyomatsuYakumonoZenkaku" أو "yakumonoZenkaku" أو "lineEndHalf"
+المعلمة `names` هي قائمة بأسماء الإعدادات المسبقة
+تسرد `names` أسماء الإعدادات المسبقة
+يجب أن تكون `names` قائمة بالأسماء
+يجب أن تكون `names` قائمة بأسماء العينات
+يجب أن تكون `names` مصفوفة بأسماء الأنماط
+المعلمة `new` هي اسم تصميم، أو true
+يجب أن يكون `path` مجلداً
+يجب أن يكون `path` كائن مسار
+يجب أن يكون `pivot` عدداً صحيحاً من 0 إلى 8
+يجب أن تكون `points` قائمة بنقاط [x, y]
+يجب أن تكون `points` قائمة بفهارس النقاط
+يجب أن تكون `points` مصفوفة من فهارس النقاط
+يجب أن تكون `points` فهارس نقاط
+يجب أن يكون `port` إما "in" أو "out"
+قيمة `position` هي above أو below
+يجب أن يكون `preset` سلسلة نصية
+يجب أن تكون قيمة `ratio` من 0.1 إلى 0.5
+يجب أن يكون `rect` بتنسيق [x, y, width, height] بحجم موجب
+يجب أن يكون `relation` إما overlap أو inside أو outside
+يجب أن يكون `reversed` إما true أو false
+يجب أن يكون `rotate` رقماً محدداً
+يجب أن يكون `rule` إما nonZero أو evenOdd
+يجب أن يكون `scale` رقماً في النطاق (0, 100]
+يجب أن يكون `scope` إما "selection" أو "document"، وليس {other}
+يجب أن يكون `script` سلسلة نصية
+المعلمة `seriesIndexes` هي قائمة غير فارغة من فهارس السلاسل
+يتطلب `seriesIndexes` وجود `type` أو `valueAxis`
+يجب أن يكون `shift` عدداً من النقاط
+يجب أن يكون `showCenter` إما true أو false
+يجب أن يكون `singleWordJustification` إما "fullJustify" أو "alignLeft" أو "alignCenter" أو "alignRight"
+القيمة `size` هي نسبة مئوية من حجم النص الأساسي، من 1 إلى 100
+المعلمتان `source` و`target` هما نفس الكائن
+يجب أن يكون `source` إما `folder` أو `datasets`
+يجب أن يكون `spacing` رقماً
+يجب أن يكون `spacing` عدداً من النقاط، 0 أو أكثر، أو "auto"
+يجب أن يكون `start` رقماً محدداً
+يجب أن تكون `starts` مصفوفة من فهارس نقاط الربط (أو nulls)
+يجب أن يكون `status` إما linked أو embedded أو missing أو modified، أو قائمة بها
+يجب أن يكون `stop` فهرس نقطة توقف
+ينسق `story` القصة بأكملها: لا تدرج `start` أو `end`
+يأخذ `story` القصة بأكملها: لا تدرج `start` أو `end`
+ينطبق `strokeMode` على الحدود (stroke: true)
+يجب أن يكون `style` إما roman أو japanese
+يجب أن يكون `subpaths` فهرسين صحيحين
+يجب أن يكون `symbol` اسم رمز
+يجب أن يكون `target` إما "object" أو "contents"، وليس {v}
+تنطبق `tint` على الألوان العامة والخاصة
+تقترن `tint` مع عينة `swatch` عامة أو خاصة
+يجب أن تكون `tint` رقماً (%)
+تتطلب `tint` لوناً عاماً أو خاصاً
+المعلمة `to` متسلسلة بالفعل
+المعلمة `to` هي الاسم الجديد للتصميم
+يجب أن يكون `to` بتنسيق [x, y]
+يجب أن يكون `to` مساراً مغلقاً أو نص مساحة أو نصاً على مسار غير `from`
+يجب أن يكون `to` عدداً صحيحاً
+يأخذ `to` صفوف تكديس كائن واحد، وليس صفوفاً محاذاة
+يجب أن يكون `useLab` إما true أو false
+يجب أن يكون `vAlign` إما default أو top أو middle أو baseline أو bottom
+يجب أن تكون `values` قائمة
+يجب أن تكون `values` كائناً
+يجب أن تحدد `values` إما hex أو rgb أو cmyk أو lab أو gray
+تحدد `values` نوعاً مرتين
+لا يمكن تحرير `{_1}` أو إزالته
+`{_1}` مدمج ومدرج دائماً
+`{_1}` ليس ملف خط وجده آخر بحث لـ text.findFontFiles
+سيتم الكتابة فوق `{_1}` بواسطة الحزمة: اختر مجلداً أو اسماً مختلفاً
+لا يحتوي `{file}` على رسم لإدراجه
+حجم `{file}` يتجاوز {_1} ميغابايت
+ينتمي `{f}` إلى نسخة rsm قيد التشغيل
+`{f}` هو نسخة من مستند مفتوح الآن
+`{id}` ليس تنسيقاً قابلاً للكتابة (انظر document.formats)
+`{id}` ليست مكتبة محملة
+لا يحتوي `{key}` على ألوان
+المعلمة `{key}` هي اسم تصميم
+المعلمة `{key}` هي اسم تصميم أو قائمة بها
+`{key}` أطول من {MAX_NAME} حرفاً
+`{key}` خارج النطاق
+يجب أن يكون `{key}` بتنسيق [min, desired, max] أو {{min?, desired?, max?}}، بالنسبة المئوية
+يجب أن يكون `{key}` عدداً صحيحاً غير سالب
+يجب أن يكون `{key}` رقماً من {_1} إلى {_2}
+يجب أن يكون `{key}` عدداً صحيحاً بقيمة لا تقل عن 0، وليس {n}
+يجب أن يكون `{key}` فهرس عنصر مظهر (ترتيب التلوين) أو null
+يجب أن يكون `{key}` مصفوفة بمعرفات أصول (انظر assets.list)
+يجب أن تكون قيمة `{key}` من 0 إلى 180 درجة، وليس {a}
+يجب أن تكون قيمة `{key}` من {_1} إلى {shift_max}
+`{key}`: ليس لوناً: {v}
+المعلمة `{k}.family` مطلوبة
+قيمة `{k}` هي رقم بين 0 و1
+قيمة `{k}` هي true أو false
+المعلمة `{k}` ليست إعداد تصدير: {_1}
+يجب أن تكون `{k}` إزاحة بايت
+يجب أن يكون `{k}` رقماً
+يجب أن يكون `{k}` عدداً من النقاط
+يجب أن يكون `{k}` سلسلة نصية
+يجب أن يكون `{k}` عدداً صحيحاً
+يجب أن تكون قيمة `{k}` من {lo} إلى {hi} لـ {key}
+يجب أن يكون `{k}` من نوع {what}، وليس {v}
+المعلمة `{l}` ليست لوناً عاماً أو خاصاً
+المعلمة `{m}` ليست صورة نقطية: استخدم clipboard.importSvg أو importPdf أو importText
+لا يمكن حذف `{name}`

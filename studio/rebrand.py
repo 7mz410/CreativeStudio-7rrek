@@ -38,6 +38,8 @@ VISIBLE = [
     'crates/eps/src/import/tests_generators.rs', 'crates/metafile/src/tests/import.rs',
 ]
 VISIBLE_DIRS = ['crates/engine/src/cmd', 'crates/eps/src/import']
+# Upstream turned these folders' mod.rs into a file beside them.
+VISIBLE += ['crates/engine/src/cmd.rs', 'crates/eps/src/import.rs']
 # interp.rs answers PostScript's `product` with the upstream name.
 NOT_VISIBLE = {'crates/eps/src/import/interp.rs'}
 # The CLI's own name in its help and messages.

@@ -10,7 +10,9 @@ ph = lambda s: sorted(re.findall(r'\{[^}]*\}', s))
 bad = 0
 for k, t in zip(keys, tr):
     ctx, src = k.split('\t', 1)
-    forms = t.split('|') if ctx == '@plural' else [t]
+    forms = t.split('|') if ctx in ('@plural', '@msgplural') else [t]
+    if ctx == '@msgplural' and len(forms) != 6:
+        print('FORMS', repr(src), '->', len(forms), 'forms, Arabic needs 6 (zero|one|two|few|many|other)'); bad += 1
     for f in forms:
         if ph(src.split('|')[-1]) != ph(f) and ph(src.split('|')[0]) != ph(f):
             print('PLACEHOLDER', repr(src), '->', repr(f)); bad += 1
