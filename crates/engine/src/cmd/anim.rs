@@ -629,7 +629,15 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(query "anim.info", "Timeline", [], None, "{} → {fps, frames, current, rows: [{id, name, keys: [{frame, id}]}]}", has_doc, info),
         cmd!("anim.goto", "Go to Frame", [], None, "{frame} show a frame (1-based). View state: not an undo step → {frame}", has_doc, goto),
         cmd!("anim.next", "Next Frame", [], None, "{} the next frame, wrapping to the first. View state: not an undo step → {frame}", has_doc, next),
-        cmd!("anim.prev", "Previous Frame", [], None, "{} the previous frame, wrapping to the last. View state: not an undo step → {frame}", has_doc, prev),
+        cmd!(
+            "anim.prev",
+            "Previous Frame",
+            [],
+            None,
+            "{} the previous frame, wrapping to the last. View state: not an undo step → {frame}",
+            has_doc,
+            prev
+        ),
         cmd!(
             "anim.keyframe",
             "Insert Keyframe",

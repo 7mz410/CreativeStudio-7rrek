@@ -3057,8 +3057,8 @@
 	  — {n} characters from another font	  — {n} حرف من خط آخر
 	[Normal Character Style]	[نمط الحروف العادي]
 	[Normal Paragraph Style]	[نمط الفقرة العادي]
-	Top-to-Top Leading	تباعد أسطر من أعلى لأعلى
-	Bottom-to-Bottom Leading	تباعد أسطر من أسفل لأسفل
+	Top-to-Top Leading	تباعد الأسطر من أعلى لأعلى
+	Bottom-to-Bottom Leading	تباعد الأسطر من أسفل لأسفل
 	Burasagari	Burasagari
 	Force	إجباري
 	About	حول
@@ -3262,9 +3262,9 @@ axis	Both	كلاهما
 @msg	bad shortcut	اختصار غير صالح
 @msg	bad stream length	طول تيار بيانات غير صالح
 @msg	bad trailer	ذيل ملف غير صالح
-@msg	balance must be between 0 and 100	التوازن يجب أن يكون بين 0 و100
+@msg	balance must be between 0 and 100	يجب أن تكون balance بين 0 و100
 @msg	batch step {_1} (`{id}`) failed: {e}	فشلت خطوة الدفعة {_1} (`{id}`): {e}
-@msg	brightness must be dark|mediumDark|mediumLight|light	السطوع يجب أن يكون dark|mediumDark|mediumLight|light
+@msg	brightness must be dark|mediumDark|mediumLight|light	يجب أن تكون brightness إحدى dark|mediumDark|mediumLight|light
 @msg	can't encode the document: {0}	تعذّر ترميز المستند: {0}
 @msg	can't parse shortcut `{c}`	تعذّر تحليل الاختصار `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	تعذّر تحليل الاختصار `{s}` لـ `{k}`
@@ -3285,7 +3285,7 @@ axis	Both	كلاهما
 @msg	compound paths can only contain paths	المسارات المركّبة تحتوي مسارات فقط
 @msg	compressed (RLE) bitmaps can't be read yet	الصور النقطية المضغوطة (RLE) غير مقروءة بعد
 @msg	damaged	تالف
-@msg	decimals must be {_1}–{_2} (got {_3})	المنازل العشرية يجب أن تكون {_1}–{_2} (القيمة {_3})
+@msg	decimals must be {_1}–{_2} (got {_3})	يجب أن تكون decimals من {_1} إلى {_2} (القيمة {_3})
 @msg	divide into 1 to {MAX_PIECES} slices	التقسيم إلى 1 حتى {MAX_PIECES} شريحة
 @msg	effect {k} is `{_1}`, not `{id}`	التأثير {k} هو `{_1}`، وليس `{id}`
 @msg	empty brush stroke	ضربة فرشاة فارغة
@@ -3300,8 +3300,8 @@ axis	Both	كلاهما
 @msg	image '{key}' has no pixels and was left out	الصورة '{key}' بلا بكسلات وتم استبعادها
 @msg	image data `{_1}` is missing	بيانات الصورة `{_1}` مفقودة
 @msg	image would be too large; lower the resolution	الصورة ستكون كبيرة جداً؛ قلّل الدقة
-@msg	index must be a number or first, previous, next or last	الفهرس يجب أن يكون رقماً أو first أو previous أو next أو last
-@msg	index must be a number or first, previous, next or last, not `{other}`	الفهرس يجب أن يكون رقماً أو first أو previous أو next أو last، وليس `{other}`
+@msg	index must be a number or first, previous, next or last	يجب أن يكون index رقماً أو first أو previous أو next أو last
+@msg	index must be a number or first, previous, next or last, not `{other}`	يجب أن يكون index رقماً أو first أو previous أو next أو last، وليس `{other}`
 @msg	installing from a path is not available on the web; pass the module as `dataBase64`	التثبيت من مسار غير متاح على الويب؛ مرّر الوحدة كـ `dataBase64`
 @msg	internal error in `{cmd}`: {msg} (the document was left as it was before; please report this bug)	خطأ داخلي في `{cmd}`: {msg} (بقي المستند كما كان؛ يرجى الإبلاغ عن هذا الخلل)
 @msg	internal error: {msg} (please report this bug)	خطأ داخلي: {msg} (يرجى الإبلاغ عن هذا الخلل)
@@ -3314,7 +3314,7 @@ axis	Both	كلاهما
 @msg	its Windows metafile preview was opened instead, which may simplify the art	فُتحت معاينة Windows metafile بدلاً منه، وقد يبسّط ذلك العمل
 @msg	its preview was placed instead, at screen resolution	وُضعت معاينته بدلاً منه، بدقة الشاشة
 @msg	join needs open paths	الوصل يحتاج مسارات مفتوحة
-@msg	lang must be one of {_1}	اللغة يجب أن تكون أحد {_1}
+@msg	lang must be one of {_1}	يجب أن تكون lang إحدى {_1}
 @msg	layers can't be wrap objects	الطبقات لا يمكن أن تكون كائنات التفاف
 @msg	missing `folder`	`folder` مفقود
 @msg	missing `id` (see plugin.list)	`id` مفقود (راجع plugin.list)
@@ -3441,9 +3441,9 @@ axis	Both	كلاهما
 @msg	paths: give at least one file	paths: أعطِ ملفاً واحداً على الأقل
 @msg	pattern missing	النقش مفقود
 @msg	patterns nested too deeply are filled with mid-grey	النقوش المتداخلة بعمق كبير تُعبّأ برمادي متوسط
-@msg	percent must be above 0 and at most 6400, not {p}	النسبة يجب أن تكون فوق 0 وحتى 6400، وليس {p}
+@msg	percent must be above 0 and at most 6400, not {p}	يجب أن تكون percent فوق 0 وحتى 6400، وليس {p}
 @msg	pick a colour, gradient or pattern to save as a swatch	اختر لوناً أو تدرّجاً أو نقشاً لحفظه كعينة
-@msg	plane must be left, right or ground	المستوى يجب أن يكون left أو right أو ground
+@msg	plane must be left, right or ground	يجب أن يكون plane إما left أو right أو ground
 @msg	plug-in ABI: {0}	ABI الإضافة: {0}
 @msg	plug-in exceeded its {0}	الإضافة تجاوزت {0}
 @msg	plug-in failed: {0}	فشلت الإضافة: {0}
@@ -3460,8 +3460,8 @@ axis	Both	كلاهما
 @msg	recovery copy `{file}`: {e}	نسخة الاستعادة `{file}`: {e}
 @msg	resolutions must be between 1 and 2400 ppi	الدقة يجب أن تكون بين 1 و2400 ppi
 @msg	result would exceed the canvas (coordinates out of range)	النتيجة ستتجاوز مساحة العمل (إحداثيات خارج النطاق)
-@msg	scale must be a number from {_1} to {_2}, not {_3}	المقياس يجب أن يكون رقماً من {_1} إلى {_2}، وليس {_3}
-@msg	scale must be a number from {_1} to {_2}, not {s}	المقياس يجب أن يكون رقماً من {_1} إلى {_2}، وليس {s}
+@msg	scale must be a number from {_1} to {_2}, not {_3}	يجب أن يكون scale رقماً من {_1} إلى {_2}، وليس {_3}
+@msg	scale must be a number from {_1} to {_2}, not {s}	يجب أن يكون scale رقماً من {_1} إلى {_2}، وليس {s}
 @msg	select (or target) objects whose appearance isn't basic	حدد (أو استهدف) كائنات مظهرها ليس أساسياً
 @msg	select a Live Paint group	حدد مجموعة تلوين حي
 @msg	select a blend	حدد مزجاً
@@ -3949,7 +3949,7 @@ axis	Both	كلاهما
 	Drag to move out of the set	اسحب للنقل خارج المجموعة
 @msg	its type is to come in as outlines, which only its page has	نصه سيأتي كمخططات، وهي موجودة في صفحته فقط
 @msg	`freeform.lines` must be an array	يجب أن يكون `freeform.lines` مصفوفة
-@msg	axis must be "vertical", "horizontal" or an angle in degrees, not `{v}`	يجب أن يكون المحور "vertical" أو "horizontal" أو زاوية بالدرجات، وليس `{v}`
+@msg	axis must be "vertical", "horizontal" or an angle in degrees, not `{v}`	يجب أن يكون axis "vertical" أو "horizontal" أو زاوية بالدرجات، وليس `{v}`
 @msg	closing needs three anchors	الإغلاق يحتاج ثلاث نقاط ربط
 @msg	freeform line {i} must be an array of point indices	يجب أن يكون الخط الحر {i} مصفوفة من أرقام النقاط
 @msg	give corners of the path: anchors where its sides meet at an angle	حدد زوايا المسار: نقاط الربط التي تلتقي فيها أضلاعه بزاوية
@@ -3962,7 +3962,7 @@ axis	Both	كلاهما
 @msg	Updated {_1} linked file(s) changed on disk	تم تحديث {_1} ملف مرتبط تغيّر على القرص
 @msg	below and above must name a panel floating in another group	يجب أن يسمي below وabove لوحة عائمة في مجموعة أخرى
 @msg	give only one of onto, below and above	حدد واحداً فقط من onto وbelow وabove
-@msg	column must be true or a number from 1	يجب أن يكون العمود true أو رقماً من 1
+@msg	column must be true or a number from 1	يجب أن يكون column إما true أو رقماً من 1
 @msg	No fonts are missing in this document	لا توجد خطوط مفقودة في هذا المستند
 @msg	7rrek doesn't search the Shared or Public folder in Users: {path}	لا يبحث حرّك في مجلد Shared أو Public في Users: {path}
 @msg	7rrek doesn't search other apps' or the system's folders: {path}	لا يبحث حرّك في مجلدات البرامج الأخرى أو النظام: {path}
@@ -4102,19 +4102,19 @@ axis	Both	كلاهما
 	Resize panels	تغيير حجم اللوحات
 	Resize panel window	تغيير حجم نافذة اللوحة
 @msg	Invalid panel layout; restored the default dock	تخطيط اللوحات غير صالح؛ أُعيد الترتيب الافتراضي
-@msg	action is required	الإجراء مطلوب
+@msg	action is required	action مطلوب
 @msg	anchor must name a registered panel	يجب أن يسمي anchor لوحة مسجلة
 @msg	before must name a panel	يجب أن يسمي before لوحة
 @msg	docking action contains an unknown panel or an excessive split path	إجراء الترتيب يحتوي لوحة غير معروفة أو مسار تقسيم زائد
-@msg	group must be true or false	يجب أن تكون المجموعة true أو false
+@msg	group must be true or false	يجب أن يكون group إما true أو false
 @msg	move requires a destination panel	النقل يحتاج لوحة وجهة
 @msg	move requires an existing destination panel	النقل يحتاج لوحة وجهة موجودة
 @msg	onto must name a floating panel	يجب أن يسمي onto لوحة عائمة
 @msg	panel group is empty	مجموعة اللوحات فارغة
 @msg	panel must name a registered panel	يجب أن يسمي panel لوحة مسجلة
 @msg	saved panel layout is invalid; reset the workspace first	تخطيط اللوحات المحفوظ غير صالح؛ أعد تعيين مساحة العمل أولاً
-@msg	zone must be a string	يجب أن تكون المنطقة نصاً
-@msg	zone must be tab, center, left, right, top or bottom	يجب أن تكون المنطقة tab أو center أو left أو right أو top أو bottom
+@msg	zone must be a string	يجب أن يكون zone نصاً
+@msg	zone must be tab, center, left, right, top or bottom	يجب أن يكون zone إحدى tab أو center أو left أو right أو top أو bottom
 @msg	{key} must be a finite coordinate	يجب أن يكون {key} إحداثياً محدوداً
 @msg	x and y must be provided together	يجب إدخال x وy معاً
 @msg	invalid restored panel group	مجموعة لوحات مستعادة غير صالحة
@@ -4471,7 +4471,7 @@ imageTrace	Outline	الخط الخارجي
 @msg	check a layer to export	تحقق من الطبقة للتصدير
 @msg	select the art to export first	حدد الفن المراد تصديره أولاً
 @msg	handle must be in or out	يجب أن يكون المقبض داخل أو خارج
-@msg	index must be ≥ 0	يجب أن يكون الفهرس ≥ 0
+@msg	index must be ≥ 0	يجب أن يكون index ≥ 0
 @msg	missing number `{key}`	الرقم المفقود `{key}`
 @msg	no saved selection recalled	لم يتم تذكر أي تحديد محفوظ
 @msg	no such spine point	لا يوجد مثل هذه النقطة العمود الفقري
@@ -4481,7 +4481,7 @@ imageTrace	Outline	الخط الخارجي
 @msg	no history to clear	لا يوجد تاريخ لمسحه
 @msg	objects can't be nested more than 32 deep	لا يمكن تداخل الكائنات بأكثر من 32 عمقًا
 @msg	the SVG's elements are nested more than {0} deep	عناصر SVG متداخلة بعمق أكبر من {0}
-@msg	select a blend or give `id`	حدد مزيجًا أو قم بإعطاء "معرف".
+@msg	select a blend or give `id`	حدّد مزيجاً أو أعطِ `id`.
 @msg	select an Intertwine group	حدد مجموعة متشابكة
 @msg	t, dx and dy must be finite	يجب أن تكون t وdx وdy محدودة
 @msg	the blend has no spine	المزيج ليس له عمود فقري
@@ -4564,7 +4564,7 @@ effect	Soft	مرن
 @msg	The shape is too complex for a 3D effect	الشكل معقد للغاية بالنسبة للتأثير ثلاثي الأبعاد
 @msg	The 3D surface is too complex; simplify the shape	السطح ثلاثي الأبعاد معقد للغاية؛ تبسيط الشكل
 	Transform Objects	تحويل الكائنات
-@msg	unknown parameter `{key}`; did you mean `{near}`?	معلمة غير معروفة `{key}`؛ هل تقصد '{near}'؟
+@msg	unknown parameter `{key}`; did you mean `{near}`?	معلمة غير معروفة `{key}`؛ هل تقصد `{near}`؟
 @msg	unknown parameter `{key}`; the command takes no parameters	معلمة غير معروفة `{key}`؛ الأمر لا يأخذ أي معلمات
 @msg	unknown parameter `{key}`; the command takes: {keys}	معلمة غير معروفة `{key}`؛ يستغرق الأمر: {keys}
 	1 Layer	1 طبقة
@@ -4998,7 +4998,7 @@ theme	Appearance	المظهر
 	Screen Mode Controls	عناصر تحكم وضع الشاشة
 	Drawer menu	قائمة الدرج
 	Toolbar: Show Controls	شريط الأدوات: إظهار عناصر التحكم
-@msg	control must be fillStroke, coloring, drawMode or screenMode	يجب أن يكون عنصر التحكم fillStroke أو coloring أو drawMode أو screenMode
+@msg	control must be fillStroke, coloring, drawMode or screenMode	يجب أن يكون control إحدى fillStroke أو coloring أو drawMode أو screenMode
 @msg	unknown control `{name}`: fillStroke, coloring, drawMode or screenMode	عنصر تحكم غير معروف `{name}`: fillStroke أو coloring أو drawMode أو screenMode
 @msg	give a fraction `t` from 0 to 1	حدد كسراً `t` من 0 إلى 1
 @msg	give the path `id`	حدد معرف المسار `id`
@@ -5102,7 +5102,7 @@ theme	Appearance	المظهر
 	This system has no screen color sampler	لا يحتوي هذا النظام على أداة أخذ عينات لون الشاشة
 	Color blindness – Tritanopia-type	عمى الألوان – نوع تريتانوبيا
 	Panels Except Tools and Control	اللوحات باستثناء الأدوات والتحكم
-	Reset Tracking and Kerning	إعادة ضبط التباعد وتعديل المسافات بين الحروف
+	Reset Tracking and Kerning	إعادة ضبط التتبّع وتقارب الحروف
 	Reset Horizontal Scale	إعادة ضبط المقياس الأفقي
 @msg	span must be "object" or "selection", got {v}	يجب أن يكون span هو "object" أو "selection"، تم استلام {v}
 @msg	span: "selection" places a `gradient`, not a swatch	span: "selection" يضع `gradient`، وليس عينة لون
@@ -5560,7 +5560,7 @@ swatch	Bright Violet	بنفسجي ساطع
 @msg	objects inside a blend, envelope, repeat or Intertwine group can't be attached to a path	لا يمكن إرفاق الكائنات داخل مجموعة مزج أو غلاف أو تكرار أو تشابك بمسار
 @msg	only a dock group above or below others collapses, not one beside another	تُطوى فقط مجموعة الإرساء التي فوق أو تحت المجموعات الأخرى، وليس المجاورة لها
 @msg	panel floats; collapse its group with window.panel.float {panel, collapsed}	اللوحة عائمة؛ اطوِ مجموعتها باستخدام window.panel.float {panel, collapsed}
-@msg	panel is not in a dock group	اللوحة ليست في مجموعة إرساء
+@msg	panel is not in a dock group	اللوحة (panel) ليست في مجموعة إرساء
 @msg	part of the program isn't valid PostScript text	جزء من البرنامج ليس نص PostScript صالحاً
 @msg	replace: the object to replace was changed or deleted	استبدال: الكائن المراد استبداله تم تغييره أو حذفه
 @msg	select an Objects on Path group	حدد مجموعة كائنات على المسار
@@ -6323,7 +6323,7 @@ digits	Malayalam	الماليالامية
 	Dock Control Bar	إرساء شريط التحكم
 	Drag to the window's left or right edge to dock	اسحب إلى الحافة اليسرى أو اليمنى للنافذة للإرساء
 @msg	the library has another item of that kind named `{name}`	تحتوي المكتبة على عنصر آخر من هذا النوع باسم `{name}`
-@msg	kerning must be a number, "auto", or "optical"	يجب أن يكون تقنين الأحرف رقماً، أو "auto"، أو "optical"
+@msg	kerning must be a number, "auto", or "optical"	يجب أن يكون kerning رقماً، أو "auto"، أو "optical"
 @msg	the selection has no gradient fill	التحديد لا يحتوي على تعبئة تدرج لوني
 @msg	the selection has no gradient stroke	التحديد لا يحتوي على حدود تدرج لوني
 @msg	the selection has no pattern fill	التحديد لا يحتوي على تعبئة نمط
@@ -6696,30 +6696,30 @@ digits	Malayalam	الماليالامية
 @msg	The 3D object is too complex to export	الكائن ثلاثي الأبعاد معقد جداً بحيث لا يمكن تصديره
 @msg	the object has no 3D effect (Extrude & Bevel, Revolve, Inflate or Rotate)	الكائن لا يحتوي على تأثير ثلاثي الأبعاد (بثق وشطف، تدوير، نفخ، أو تدوير)
 @msg	its 3D effect builds no solid	تأثيره ثلاثي الأبعاد لا يُنشئ مجسماً
-@msg	bevel must be none or one of {_1}	يجب أن يكون الشطف none أو واحداً من {_1}
+@msg	bevel must be none or one of {_1}	يجب أن يكون bevel إما none أو واحداً من {_1}
 @msg	{_1} can't build solids from this art: its symbol instances, blends and clipping groups hold too many objects	لا يمكن لـ {_1} إنشاء مجسمات من هذا الرسم: نُسخ الرموز والمزائج ومجموعات القص تحتوي على كائنات كثيرة جداً
 @msg	{label} can't build a solid from the instance of symbol "{symbol}": the symbol's art isn't available	لا يمكن لـ {label} إنشاء مجسم من نسخة الرمز "{symbol}": رسم الرمز غير متاح
 @msg	{_1}: the clipping path is too complex to cut the art with	{_1}: مسار القص معقد جداً لقص الرسم به
 @msg	{_1} takes at most {MAX_MEMBERS} objects	يقبل {_1} ما يصل إلى {MAX_MEMBERS} كائن كحد أقصى
 @msg	{_1} can't build solids from art nested more than {MAX_DEPTH} levels deep	لا يمكن لـ {_1} إنشاء مجسمات من رسم متداخل بأكثر من {MAX_DEPTH} مستويات عمقاً
 @msg	Revolve paint is too complex for this surface; reduce Segments or simplify the gradient	تلوين التدوير معقد جداً لهذا السطح؛ قلل المقاطع أو بسّط التدرج
-@msg	Revolve edge must be left or right	يجب أن تكون حافة التدوير left أو right
-@msg	Revolve cap must be a boolean	يجب أن يكون غطاء التدوير قيمة منطقية
+@msg	Revolve edge must be left or right	يجب أن تكون edge للتدوير إما left أو right
+@msg	Revolve cap must be a boolean	يجب أن يكون cap للتدوير قيمة منطقية
 @msg	the revolved object has no fill or stroke	الكائن المدوّر لا يحتوي على تعبئة أو حدود
 @msg	lightColor must be an opaque RGB color in #rrggbb form	يجب أن يكون lightColor لون RGB معتماً بتنسيق #rrggbb
 @msg	lights must contain one to ten lights	يجب أن تحتوي lights على ضوء واحد إلى عشرة أضواء
 @msg	each light must be an object	يجب أن يكون كل ضوء كائناً
 @msg	unknown light setting: use color, intensity, rotation, height, softness or behind	إعداد ضوء غير معروف: استخدم color أو intensity أو rotation أو height أو softness أو behind
 @msg	light {key} must be a number from {min} to {max}	يجب أن يكون ضوء {key} رقماً من {min} إلى {max}
-@msg	light color must use opaque #rrggbb	يجب أن يستخدم لون الضوء تنسيق #rrggbb معتماً
-@msg	light behind must be true or false	يجب أن يكون الضوء في الخلف إما true أو false
-@msg	shadow must be true or false	يجب أن يكون الظل إما true أو false
+@msg	light color must use opaque #rrggbb	يجب أن يستخدم color للضوء صيغة #rrggbb معتمة
+@msg	light behind must be true or false	يجب أن تكون قيمة behind للضوء إما true أو false
+@msg	shadow must be true or false	يجب أن يكون shadow إما true أو false
 @msg	shadowPosition must be behind or below	يجب أن يكون shadowPosition إما behind أو below
 @msg	{key} must be a number from {min} to {max}	يجب أن يكون {key} رقماً من {min} إلى {max}
 @msg	each of `{GRAPHICS}` must be an object	يجب أن يكون كل عنصر في `{GRAPHICS}` كائناً
 @msg	`{GRAPHICS}` entries take symbol, face, x, y, scale and rotation, not `{k}`	تقبل مدخلات `{GRAPHICS}` كلاً من symbol وface وx وy وscale وrotation، وليس `{k}`
 @msg	each of `{GRAPHICS}` needs `symbol`, the name of a symbol	يحتاج كل عنصر في `{GRAPHICS}` إلى `symbol`، وهو اسم الرمز
-@msg	`{GRAPHICS}` face must be front or back	يجب أن يكون وجه `{GRAPHICS}` إما front أو back
+@msg	`{GRAPHICS}` face must be front or back	يجب أن يكون face في `{GRAPHICS}` إما front أو back
 @msg	`{GRAPHICS}` {key} must be a number from {lo} to {hi}	يجب أن يكون {key} في `{GRAPHICS}` رقماً من {lo} إلى {hi}
 @msg	`{GRAPHICS}` must be an array	يجب أن يكون `{GRAPHICS}` مصفوفة
 @msg	Graphics map onto the Plane, Extrude and Revolve object types	تُخطط الرسومات على أنواع الكائنات Plane وExtrude وRevolve
@@ -7116,7 +7116,7 @@ digits	Malayalam	الماليالامية
 	Gem	جوهرة
 	Pathfinder Options	خيارات باثفايندر
 	Divide and Outline Will Remove Unpainted Artwork	التقسيم والتخطيط سيزيلان الرسوم غير الملونة
-@msg	precision must be from 0.001 to 10 pt	يجب أن تكون الدقة من 0.001 إلى 10 نقاط
+@msg	precision must be from 0.001 to 10 pt	يجب أن تكون precision من 0.001 إلى 10 نقاط
 @msg	`pathfinder` must be an object	يجب أن يكون `pathfinder` كائناً
 	Add to Brushes	إضافة إلى الفُرش
 	Brush Library	مكتبة الفُرش
@@ -8840,7 +8840,7 @@ breakText	Glyphs	أحرف
 @msg	margin: a {m} pt margin leaves no imageable area on the paper	الهامش: هامش بحجم {m} نقطة لا يترك أي مساحة قابلة للطباعة على الورق
 @msg	matrix must be finite and invertible, depth finite	يجب أن تكون المصفوفة محددة وقابلة للانعكاس، والعمق محدداً
 @msg	matte: {e}	اللون غير اللامع: {e}
-@msg	member is for order front, forward, backward or back	العضو مخصص للترتيب للأمام أو إلى الأمام أو إلى الخلف أو للخلف
+@msg	member is for order front, forward, backward or back	member مخصص لـ order بالقيم front أو forward أو backward أو back
 @msg	missing `artboards`	المعلمة `artboards` مفقودة
 @msg	missing `at` [x, y]	المعلمة `at` [x, y] مفقودة
 @msg	missing `attrs`	المعلمة `attrs` مفقودة
@@ -8910,7 +8910,7 @@ breakText	Glyphs	أحرف
 @msg	missing target	الهدف مفقود
 @msg	missing to	المعلمة to مفقودة
 @msg	missing x, y	قيمتا x وy مفقودتان
-@msg	mode is set, add or toggle, not `{other}`	الوضع هو set أو add أو toggle، وليس `{other}`
+@msg	mode is set, add or toggle, not `{other}`	قيمة mode هي set أو add أو toggle، وليس `{other}`
 @msg	mode must be "cmyk" or "rgb"	يجب أن يكون الوضع "cmyk" أو "rgb"
 @msg	mode must be area|onPath, got {o}	يجب أن يكون الوضع area|onPath، تم الحصول على {o}
 @msg	more than 10000 linked files: package dependencies in smaller parts	أكثر من 10,000 ملف مرتبط: قم بتحزيم التبعيات في أجزاء أصغر
@@ -8924,7 +8924,7 @@ breakText	Glyphs	أحرف
 @msg	name (a toolbar's name) is required	الاسم (اسم شريط الأدوات) مطلوب
 @msg	name (a toolbar's name) must be a string	يجب أن يكون الاسم (اسم شريط الأدوات) سلسلة نصية
 @msg	name must be a toolbar's name	يجب أن يكون الاسم اسم شريط أدوات
-@msg	names is empty	قائمة الأسماء فارغة
+@msg	names is empty	names فارغة
 @msg	names must be an array of symbol names	يجب أن تكون names مصفوفة بأسماء الرموز
 @msg	need `anchor` or `segment` + `t`	يلزم `anchor` أو `segment` + `t`
 @msg	need at least one anchor	يلزم نقطة ربط واحدة على الأقل
@@ -9121,7 +9121,7 @@ breakText	Glyphs	أحرف
 @msg	page art is missing image data for {key}	تفتقر رسوم الصفحة إلى بيانات الصورة لـ {key}
 @msg	page art is missing pattern {name}	تفتقر رسوم الصفحة إلى النمط {name}
 @msg	page art is missing swatch {name}	تفتقر رسوم الصفحة إلى العينة {name}
-@msg	page must be a whole number from 1	يجب أن تكون الصفحة عدداً صحيحاً يبدأ من 1
+@msg	page must be a whole number from 1	يجب أن تكون page عدداً صحيحاً يبدأ من 1
 @msg	page thumbnail: {e}	صورة مصغرة للصفحة: {e}
 @msg	page {page} of the PDF has no objects	الصفحة {page} من ملف PDF لا تحتوي على كائنات
 @msg	page {page}: `{file}` has {n} {artboards}	الصفحة {page}: يحتوي `{file}` على {n} {artboards}
@@ -9133,7 +9133,7 @@ breakText	Glyphs	أحرف
 @msg	params must be an object	يجب أن تكون params كائناً
 @msg	passwords can have up to {MAX_PASSWORD} bytes	يمكن أن تصل كلمات المرور إلى {MAX_PASSWORD} بايت
 @msg	path has no open end	المسار ليس له نهاية مفتوحة
-@msg	paths must be strings	يجب أن تكون المسارات سلاسل نصية
+@msg	paths must be strings	يجب أن تكون paths سلاسل نصية
 @msg	pdfCompatible: false needs every artboard to keep the editable artwork	يتطلب pdfCompatible: false وجود كل لوحة رسم للاحتفاظ بالرسم القابل للتحرير
 @msg	pdfs `{m}`: single or multiple	ملفات pdf `{m}`: إما single أو multiple
 @msg	pickColorFrom is "artwork" or "swatches", not {v}	قيمة pickColorFrom هي "artwork" أو "swatches"، وليس {v}
@@ -9408,7 +9408,7 @@ breakText	Glyphs	أحرف
 @msg	these paths are too degenerate for Shaper	هذه المسارات تالفة جداً بالنسبة لأداة التشكيل
 @msg	thumbnail: no page {v} (the {what} has {count})	صورة مصغرة: لا توجد صفحة {v} (يحتوي {what} على {count})
 @msg	tileRange of {what}: {e}	tileRange لـ {what}: {e}
-@msg	title can't be empty	لا يمكن أن يكون العنوان فارغاً
+@msg	title can't be empty	لا يمكن أن يكون title فارغاً
 @msg	to (the new name) is required	المعلمة to (الاسم الجديد) مطلوبة
 @msg	to must be fill or stroke	يجب أن يكون to إما fill أو stroke
 @msg	to must be smooth or corner	يجب أن يكون to إما smooth أو corner
@@ -9438,7 +9438,7 @@ breakText	Glyphs	أحرف
 @msg	unknown artboardLayout key `{k}` (layout, columns, spacing, rightToLeft)	مفتاح artboardLayout غير معروف `{k}` (layout, columns, spacing, rightToLeft)
 @msg	unknown attribute `{attribute}`	سمة غير معروفة `{attribute}`
 @msg	unknown attribute `{k}`	سمة غير معروفة `{k}`
-@msg	unknown axis `{other}` (vertical|horizontal|free)	محور غير معروف `{other}` (عمودي|أفقي|حر)
+@msg	unknown axis `{other}` (vertical|horizontal|free)	محور غير معروف `{other}` (vertical|horizontal|free)
 @msg	unknown blend mode `{b}`	نمط مزج غير معروف `{b}`
 @msg	unknown blend mode {b}	نمط مزج غير معروف {b}
 @msg	unknown brush type `{o}`	نوع فرشاة غير معروف `{o}`
@@ -9462,41 +9462,41 @@ breakText	Glyphs	أحرف
 @msg	unknown language `{language}` (one of {_1})	لغة غير معروفة `{language}` (واحدة من {_1})
 @msg	unknown language `{l}` (one of {_1})	لغة غير معروفة `{l}` (واحدة من {_1})
 @msg	unknown method `{m}` ({_1})	طريقة غير معروفة `{m}` ({_1})
-@msg	unknown mode `{other}` (gray, rgb, hsb, lab, cmyk or web)	نمط غير معروف `{other}` (رمادي، rgb، hsb، lab، cmyk أو ويب)
-@msg	unknown mode `{other}` (mono|cmyk)	نمط غير معروف `{other}` (أحادي|cmyk)
-@msg	unknown mode `{other}` (rgb|cmyk|gray|global)	نمط غير معروف `{other}` (rgb|cmyk|رمادي|عام)
-@msg	unknown mode `{other}` (set, add, subtract)	نمط غير معروف `{other}` (تعيين، إضافة، طرح)
+@msg	unknown mode `{other}` (gray, rgb, hsb, lab, cmyk or web)	نمط غير معروف `{other}` (gray، rgb، hsb، lab، cmyk أو web)
+@msg	unknown mode `{other}` (mono|cmyk)	نمط غير معروف `{other}` (mono|cmyk)
+@msg	unknown mode `{other}` (rgb|cmyk|gray|global)	نمط غير معروف `{other}` (rgb|cmyk|gray|global)
+@msg	unknown mode `{other}` (set, add, subtract)	نمط غير معروف `{other}` (set، add، subtract)
 @msg	unknown mode `{o}`	نمط غير معروف `{o}`
 @msg	unknown mode {m}	نمط غير معروف {m}
 @msg	unknown model `{other}`	نموذج غير معروف `{other}`
-@msg	unknown model `{other}` (keep, new or document)	نموذج غير معروف `{other}` (إبقاء، جديد أو مستند)
+@msg	unknown model `{other}` (keep, new or document)	نموذج غير معروف `{other}` (keep، new أو document)
 @msg	unknown op {o}	عملية غير معروفة {o}
 @msg	unknown order `{o}`: toggle, front, forward, backward or back	ترتيب غير معروف `{o}`: تبديل، في المقدمة، إلى الأمام، إلى الخلف أو في الخلفية
-@msg	unknown overprints `{v}` (preserve, simulate or discard)	طباعة متراكبة غير معروفة `{v}` (احتفاظ، محاكاة أو تجاهل)
+@msg	unknown overprints `{v}` (preserve, simulate or discard)	طباعة متراكبة غير معروفة `{v}` (preserve، simulate أو discard)
 @msg	unknown panel	لوحة غير معروفة
-@msg	unknown pieLegend `{v}` (none, standard or wedges)	وسيلة إيضاح للمخطط الدائري غير معروفة `{v}` (بلا، قياسي أو قطاعات)
-@msg	unknown piePosition `{v}` (even, ratio or stacked)	موضع مخطط دائري غير معروف `{v}` (متساوٍ، نسبي أو مكدس)
-@msg	unknown pieSort `{v}` (none, all or first)	ترتيب مخطط دائري غير معروف `{v}` (بلا، الكل أو الأول)
+@msg	unknown pieLegend `{v}` (none, standard or wedges)	وسيلة إيضاح للمخطط الدائري غير معروفة `{v}` (none، standard أو wedges)
+@msg	unknown piePosition `{v}` (even, ratio or stacked)	موضع مخطط دائري غير معروف `{v}` (even، ratio أو stacked)
+@msg	unknown pieSort `{v}` (none, all or first)	ترتيب مخطط دائري غير معروف `{v}` (none، all أو first)
 @msg	unknown plate `{n}`	لوح طباعي غير معروف `{n}`
 @msg	unknown preference `{k}`	تفضيل غير معروف `{k}`
 @msg	unknown profile {id} (see stroke.widthProfile.list)	ملف تعريف {id} غير معروف (راجع stroke.widthProfile.list)
 @msg	unknown proof target `{t}`	هدف معاينة غير معروف `{t}`
-@msg	unknown quotes key `{k}` (double, single)	مفتاح علامات اقتباس غير معروف `{k}` (مزدوجة، مفردة)
+@msg	unknown quotes key `{k}` (double, single)	مفتاح علامات اقتباس غير معروف `{k}` (double، single)
 @msg	unknown resolution `{v}`	دقة غير معروفة `{v}`
 @msg	unknown rule `{rule}` ({_1})	قاعدة غير معروفة `{rule}` ({_1})
 @msg	unknown rule `{r}` (see color.harmony)	قاعدة غير معروفة `{r}` (راجع color.harmony)
 @msg	unknown setting `{k}`	إعداد غير معروف `{k}`
-@msg	unknown shape `{v}` (circle|ellipse|square|diamond|line)	شكل غير معروف `{v}` (دائرة|قطع ناقص|مربع|معين|خط)
-@msg	unknown spacing `{o}` (smooth|steps|distance)	تباعد غير معروف `{o}` (ناعم|خطوات|مسافة)
+@msg	unknown shape `{v}` (circle|ellipse|square|diamond|line)	شكل غير معروف `{v}` (circle|ellipse|square|diamond|line)
+@msg	unknown spacing `{o}` (smooth|steps|distance)	تباعد غير معروف `{o}` (smooth|steps|distance)
 @msg	unknown tileType `{t}` ({_1})	نوع تجزئة غير معروف `{t}` ({_1})
 @msg	unknown units	وحدات غير معروفة
 @msg	unknown units `{u}`	وحدات غير معروفة `{u}`
-@msg	unknown value axis `{v}` (left, right or both)	محور قيم غير معروف `{v}` (يسار، يمين أو كلاهما)
-@msg	unknown variation `{v}` (tintsShades|warmCool|vividMuted)	تنوع غير معروف `{v}` (ظلال وتدرجات|دافئ وبارد|حيوي وخافت)
+@msg	unknown value axis `{v}` (left, right or both)	محور قيم غير معروف `{v}` (left، right أو both)
+@msg	unknown variation `{v}` (tintsShades|warmCool|vividMuted)	تنوع غير معروف `{v}` (tintsShades|warmCool|vividMuted)
 @msg	unknown warp style `{s}`	نمط التواء غير معروف `{s}`
-@msg	unknown {key} `{v}` (none, short or full)	{key} غير معروف `{v}` (بلا، قصير أو كامل)
+@msg	unknown {key} `{v}` (none, short or full)	{key} غير معروف `{v}` (none، short أو full)
 @msg	unknown {key} profile `{n}`	ملف تعريف {key} غير معروف `{n}`
-@msg	unknown {k} key `{key}` (size, position)	مفتاح {k} غير معروف `{key}` (الحجم، الموضع)
+@msg	unknown {k} key `{key}` (size, position)	مفتاح {k} غير معروف `{key}` (size، position)
 @msg	unreadable object	عنصر لا يمكن قراءته
 @msg	unsafe destination file name	اسم ملف الوجهة غير آمن
 @msg	use paths or compound paths	استخدم مسارات أو مسارات مركبة
@@ -9507,12 +9507,12 @@ breakText	Glyphs	أحرف
 @msg	variable `{name}` is already defined	المتغير `{name}` معرف بالفعل
 @msg	variable `{name}` is declared twice	المتغير `{name}` معلن عنه مرتين
 @msg	variable `{to}` already exists	المتغير `{to}` موجود بالفعل
-@msg	view is required	العرض مطلوب
+@msg	view is required	view مطلوب
 @msg	view must be one of {_1}	يجب أن يكون العرض واحداً من {_1}
 @msg	warpStyle can only edit an applied Warp effect	يمكن لـ warpStyle تعديل تأثير التواء مطبق فقط
 @msg	width and height must be more than 0 and at most {limit}	يجب أن يكون العرض والارتفاع أكبر من 0 وبحد أقصى {limit}
 @msg	width factors must be finite	يجب أن تكون عوامل العرض محدودة
-@msg	width must be positive	يجب أن يكون العرض موجباً
+@msg	width must be positive	يجب أن يكون width موجباً
 @msg	width out of range	العرض خارج النطاق
 @msg	width/height must be > 0	يجب أن يكون العرض/الارتفاع > 0
 @msg	x and y must be finite numbers	يجب أن يكون x و y عددين محدودين
@@ -9572,7 +9572,7 @@ breakText	Glyphs	أحرف
 @msg	{k} must be > 0	يجب أن يكون {k} > 0
 @msg	{k} must be a number (pt) or a length such as "210 mm"	يجب أن يكون {k} عدداً (نقطة) أو طولاً مثل "210 mm"
 @msg	{k} must be a number from {min} to {max}	يجب أن يكون {k} عدداً من {min} إلى {max}
-@msg	{k} must be a number or "auto"	يجب أن يكون {k} عدداً أو "تلقائي"
+@msg	{k} must be a number or "auto"	يجب أن يكون {k} عدداً أو "auto"
 @msg	{k} must be a string	يجب أن يكون {k} سلسلة نصية
 @msg	{k} must be text	يجب أن يكون {k} نصاً
 @msg	{k} must be true or false	يجب أن يكون {k} إما true أو false
@@ -9616,3 +9616,5 @@ breakText	Glyphs	أحرف
 	Grommets	ثقوب معدنية
 	Grommet Inset	إزاحة الثقوب
 	Diameter	القطر
+	Rig	الهيكل
+	Sound	الصوت

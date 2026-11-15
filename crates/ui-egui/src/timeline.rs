@@ -195,23 +195,34 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
         })
         .response
         .on_hover_text(tl!("How the tween speeds up and slows down"));
-        if ui.button(tl!("Camera Key")).on_hover_text(tl!("Keep what the camera sees at this frame")).clicked() {
-            run_reporting(app, "anim.cameraKey");
-        }
-        if ui.button(tl!("Add Peg")).on_hover_text(tl!("Hang the current layer from a new peg")).clicked() {
-            run_reporting(app, "peg.add");
-        }
-        if ui.button(tl!("Peg Key")).on_hover_text(tl!("Key the current layer's peg at this frame")).clicked() {
-            run_reporting(app, "peg.key");
-        }
-        cutter_menu(app, ui);
-        blend_menu(app, ui);
-        if ui.button(tl!("Import Sound…")).on_hover_text(tl!("Add a WAV, MP3 or Ogg sound at this frame")).clicked() {
-            run_reporting(app, "anim.soundImportAs");
-        }
-        if ui.button(tl!("Lip Sync")).on_hover_text(tl!("Pick the current layer's mouth drawings from the first sound")).clicked() {
-            run_reporting(app, "anim.lipSync");
-        }
+        // The rarer actions sit in menus so the bar fits a laptop-wide window without scrolling
+        // (they are also under the Animation menu).
+        ui.menu_button(tl!("Rig"), |ui| {
+            if ui.button(tl!("Camera Key")).on_hover_text(tl!("Keep what the camera sees at this frame")).clicked() {
+                run_reporting(app, "anim.cameraKey");
+                ui.close();
+            }
+            if ui.button(tl!("Add Peg")).on_hover_text(tl!("Hang the current layer from a new peg")).clicked() {
+                run_reporting(app, "peg.add");
+                ui.close();
+            }
+            if ui.button(tl!("Peg Key")).on_hover_text(tl!("Key the current layer's peg at this frame")).clicked() {
+                run_reporting(app, "peg.key");
+                ui.close();
+            }
+            cutter_menu(app, ui);
+            blend_menu(app, ui);
+        });
+        ui.menu_button(tl!("Sound"), |ui| {
+            if ui.button(tl!("Import Sound…")).on_hover_text(tl!("Add a WAV, MP3 or Ogg sound at this frame")).clicked() {
+                run_reporting(app, "anim.soundImportAs");
+                ui.close();
+            }
+            if ui.button(tl!("Lip Sync")).on_hover_text(tl!("Pick the current layer's mouth drawings from the first sound")).clicked() {
+                run_reporting(app, "anim.lipSync");
+                ui.close();
+            }
+        });
         ui.add_space(8.0);
         // Onion skin: one keyframe on each side, faint.
         if ui.selectable_label(onion, tl!("Onion Skin")).on_hover_text(tl!("Show the keyframes before and after faintly")).clicked() {
@@ -222,12 +233,16 @@ fn controls(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens, current: u32, fra
             run_reporting(app, "anim.lightTable");
         }
         ui.add_space(8.0);
-        if ui.button(tl!("Export GIF…")).on_hover_text(tl!("Export Animated GIF")).clicked() {
-            run_reporting(app, "anim.exportGifAs");
-        }
-        if ui.button(tl!("Export Video…")).on_hover_text(tl!("Export the frames as a WebM video")).clicked() {
-            run_reporting(app, "anim.exportVideoAs");
-        }
+        ui.menu_button(tl!("Export"), |ui| {
+            if ui.button(tl!("Export GIF…")).on_hover_text(tl!("Export Animated GIF")).clicked() {
+                run_reporting(app, "anim.exportGifAs");
+                ui.close();
+            }
+            if ui.button(tl!("Export Video…")).on_hover_text(tl!("Export the frames as a WebM video")).clicked() {
+                run_reporting(app, "anim.exportVideoAs");
+                ui.close();
+            }
+        });
     }
 }
 
@@ -517,7 +532,21 @@ mod tests {
     fn the_timeline_shows_rows_frames_and_controls() {
         let mut app = app_with_keys();
         let text = painted_text(&mut app, super::timeline);
-        for s in ["Timeline", "8 / 24", "Keyframe", "Blank Keyframe", "Clear Keyframe", "Motion Tween", "Export GIF…", "Layer 1", "1", "5", "10"] {
+        for s in [
+            "Timeline",
+            "8 / 24",
+            "Keyframe",
+            "Blank Keyframe",
+            "Clear Keyframe",
+            "Motion Tween",
+            "Rig",
+            "Sound",
+            "Export",
+            "Layer 1",
+            "1",
+            "5",
+            "10",
+        ] {
             assert!(text.lines().any(|l| l == s), "{s} in {text}");
         }
     }
