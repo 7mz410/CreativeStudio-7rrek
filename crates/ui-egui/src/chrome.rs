@@ -69,8 +69,10 @@ pub fn app_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
             if captions_left > 0.0 {
                 ui.add_space(captions_left);
             }
-            // With the system title bar the OS draws its own icon: no in-app brand mark.
-            if !system {
+            // With the system title bar the OS draws its own icon: no in-app brand mark. A narrow
+            // window in Safe Mode gives the mark's room to the Safe Mode label.
+            let narrow_safe = vectorcraft_plugins::safe_mode::active() && ui.max_rect().width() < 640.0;
+            if !system && !narrow_safe {
                 let (r, _) = ui.allocate_exact_size(vec2(MARK, MARK), Sense::hover());
                 crate::brand::paint_mark(ui, r);
                 ui.add_space(6.0);
