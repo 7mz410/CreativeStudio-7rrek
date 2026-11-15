@@ -92,7 +92,7 @@ concurrency:
 jobs:
   macos:
     name: macOS aarch64 (.dmg)
-    runs-on: macos-14
+    runs-on: macos-15
     env:
       CRAFT_FONTS_DIR: ${{ github.workspace }}/craft-fonts
       CRAFT_FONTS_REQUIRED: "1"
@@ -209,6 +209,7 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
           PKG: ${{ inputs.package }}
+          APP: ${{ inputs.app }}
           BIN: ${{ inputs.binary || inputs.package }}
           WIN_SCRIPT: ${{ inputs.windows_script }}
           WIN_ARGS: ${{ inputs.windows_args }}
@@ -230,7 +231,8 @@ jobs:
             $stage = Join-Path $env:RUNNER_TEMP 'stage'
             Remove-Item -Recurse -Force $stage -ErrorAction SilentlyContinue
             New-Item -ItemType Directory -Force -Path $stage | Out-Null
-            Copy-Item "target\x86_64-pc-windows-msvc\release\$env:BIN.exe" $stage
+            # The exe takes the app's name: the launcher looks for <app>.exe at the zip's root.
+            Copy-Item "target\x86_64-pc-windows-msvc\release\$env:BIN.exe" "$stage\$env:APP.exe"
             if ($env:CLI) { Copy-Item "target\x86_64-pc-windows-msvc\release\$env:CLI.exe" $stage }
             Copy-Item LICENSE-MIT, LICENSE-APACHE, NOTICE $stage
             New-Item -ItemType Directory -Force -Path dist\release | Out-Null

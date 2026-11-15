@@ -1,0 +1,21 @@
+{
+  "manifest_version": "0.2",
+  "name": "rsm",
+  "display_name": "rsm (رسم)",
+  "version": "__VERSION__",
+  "description": "Draw vector illustrations with Claude: shapes, paths, text, colours, effects, and export (SVG, PDF, PNG).",
+  "long_description": "rsm is the vector illustration app of Creative Studio. This extension lets Claude drive it: if rsm is open with its control port (127.0.0.1:7979) Claude draws in the open window, otherwise it runs the engine headless and saves files where you ask.",
+  "author": { "name": "Hamza Abu Ayyash", "url": "https://studio.creative.ps" },
+  "homepage": "https://rsm.studio.creative.ps",
+  "repository": { "type": "git", "url": "https://github.com/7mz410/CreativeStudio-rsm" },
+  "license": "MIT OR Apache-2.0",
+  "server": {
+    "type": "binary",
+    "entry_point": "server/__CLI__",
+    "mcp_config": {
+      "command": "${__dirname}/server/__CLI__",
+      "args": ["mcp"]
+    }
+  },
+  "compatibility": { "platforms": ["__PLATFORM__"] }
+}
