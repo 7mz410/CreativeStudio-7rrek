@@ -457,7 +457,7 @@ pub const FORMATS: &[Format] = &[
     Format { id: "bmp", label: "BMP", extensions: &["bmp"], mime: "image/bmp", read: true, write: true, raster: true, options: BMP_OPTIONS },
     Format {
         id: "template",
-        label: "rsm Template",
+        label: "7rrek Template",
         extensions: &["vctemplate"],
         mime: "application/json",
         read: true,

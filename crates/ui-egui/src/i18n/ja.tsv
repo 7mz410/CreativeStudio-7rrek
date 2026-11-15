@@ -7206,23 +7206,6 @@ breakText	Glyphs	字形
 	They connect on this computer only.	接続はこのコンピュータ内に限られます。
 	Adds this app to the agent's settings.	このアプリをエージェントの設定に追加します。
 	Restart the agent app afterwards.	追加後にエージェントアプリを再起動してください。
-	About 7rrek	7rrek について
-	Quit 7rrek	7rrek を終了
-	7rrek on GitHub	GitHub の 7rrek
-	7rrek Help…	7rrek ヘルプ…
-	Applies the next time 7rrek starts.	7rrek の次回起動時に適用されます。
-	7rrek read this script without running it.	7rrek はこのスクリプトを実行せずに読み取りました。
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	ファイルの各項目を 7rrek のツール、コマンド、パネルに対応付けます。対応を確認して、残りの項目を指定してください。
-	In 7rrek	7rrek での対応
-	7rrek copies the fonts to {folder}.	7rrek はフォントを {folder} にコピーします。
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	保存パネルの名前は「{typed}」で、7rrek がファイル形式の拡張子を付加しました。ファイルを置き換えると内容が上書きされます。
-	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek は前回正常に終了しませんでした。次のドキュメントに未保存の変更があります:
-	Welcome to 7rrek	7rrek へようこそ
-file-filter	7rrek Template	7rrek テンプレート
-	Hide 7rrek	7rrek を隠す
-	7rrek documents: one locked object, updated when the file changes.	7rrek ドキュメント：ロックされた 1 つのオブジェクト。ファイルの変更時に更新されます。
-@msg	not a 7rrek shortcut set (missing `overrides`)	VectorCraft のショートカットセットではありません (`overrides` がありません)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft は他のアプリやシステムのフォルダーを検索しません: {path}
 	Clear Keyframe	キーフレームを消去
 	Export Animated GIF…	アニメーション GIF を書き出し…
 	Frame Rate	フレームレート

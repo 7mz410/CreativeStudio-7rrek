@@ -8971,23 +8971,6 @@ breakText	Glyphs	字符
 	They connect on this computer only.	它們只在這台電腦上連線。
 	Adds this app to the agent's settings.	將本應用程式加入代理的設定。
 	Restart the agent app afterwards.	之後請重新啟動代理應用程式。
-	About 7rrek	關於 7rrek
-	Applies the next time 7rrek starts.	下次啟動 7rrek 時生效。
-	7rrek read this script without running it.	7rrek 已讀取此指令碼，但沒有執行。
-file-filter	7rrek Template	7rrek 範本
-@msg	not a 7rrek shortcut set (missing `overrides`)	不是 VectorCraft 快速鍵組 (沒有 `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft 不會搜尋其他應用程式或系統的資料夾：{path}
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	檔案中的每個項目都會對應到 7rrek 的工具、指令或面板。請檢查對應結果，並回答其餘項目。
-	In 7rrek	7rrek 中的對應
-	Quit 7rrek	結束 7rrek
-	7rrek copies the fonts to {folder}.	7rrek 會將字體複製到 {folder}。
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	儲存面板中的名稱是「{typed}」，7rrek 隨後加上了檔案類型的副檔名。取代該檔案會覆寫其內容。
-	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek 上次未正常結束。下列文件有未儲存的變更：
-	7rrek Help…	7rrek 說明…
-	7rrek on GitHub	GitHub 上的 7rrek
-	Welcome to 7rrek	歡迎使用 7rrek
-	Hide 7rrek	隱藏 7rrek
-	7rrek documents: one locked object, updated when the file changes.	7rrek 文件：單一鎖定物件，檔案變更時隨之更新。
 	Clear Keyframe	清除關鍵影格
 	Export Animated GIF…	轉存動畫 GIF…
 	Frame Rate	影格速率

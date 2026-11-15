@@ -7454,23 +7454,6 @@ breakText	Glyphs	Glifos
 	They connect on this computer only.	Se conectan solo en este ordenador.
 	Adds this app to the agent's settings.	Añade esta app a la configuración del agente.
 	Restart the agent app afterwards.	Reinicia la app del agente después.
-	About 7rrek	Acerca de 7rrek
-	Applies the next time 7rrek starts.	Se aplica la próxima vez que se inicie 7rrek.
-	7rrek read this script without running it.	7rrek leyó este script sin ejecutarlo.
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Cada entrada del archivo se asocia con una herramienta, un comando o un panel de 7rrek. Revisa las asociaciones y responde lo que falta.
-	In 7rrek	En 7rrek
-	Quit 7rrek	Salir de 7rrek
-	7rrek copies the fonts to {folder}.	7rrek copia las fuentes en {folder}.
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	El nombre en el panel de guardado era “{typed}”, y 7rrek añadió la extensión del tipo de archivo. Reemplazar el archivo sobrescribe su contenido.
-	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek no se cerró correctamente la última vez. Estos documentos tenían cambios sin guardar:
-	7rrek Help…	Ayuda de 7rrek…
-	7rrek on GitHub	7rrek en GitHub
-	Welcome to 7rrek	Te damos la bienvenida a 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	no es un conjunto de atajos de VectorCraft (falta `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft no busca en carpetas de otras aplicaciones ni del sistema: {path}
-	Hide 7rrek	Ocultar 7rrek
-	7rrek documents: one locked object, updated when the file changes.	Documentos de 7rrek: un objeto bloqueado que se actualiza cuando cambia el archivo.
-file-filter	7rrek Template	Plantilla de 7rrek
 	Clear Keyframe	Borrar fotograma clave
 	Export Animated GIF…	Exportar GIF animado…
 	Frame Rate	Velocidad de fotogramas

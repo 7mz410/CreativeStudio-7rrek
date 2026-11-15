@@ -8911,23 +8911,6 @@ breakText	Glyphs	Glyphen
 	They connect on this computer only.	Sie verbinden sich nur auf diesem Computer.
 	Adds this app to the agent's settings.	Fügt diese App zu den Einstellungen des Agenten hinzu.
 	Restart the agent app afterwards.	Starte die Agenten-App danach neu.
-	About 7rrek	Über 7rrek
-	Applies the next time 7rrek starts.	Gilt ab dem nächsten Start von 7rrek.
-	7rrek read this script without running it.	7rrek hat dieses Skript gelesen, ohne es auszuführen.
-file-filter	7rrek Template	rsm-Vorlage
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Jeder Eintrag der Datei wird einem Werkzeug, einem Befehl oder einem Bedienfeld von 7rrek zugeordnet. Prüfen Sie die Zuordnungen und beantworten Sie, was noch offen ist.
-	In 7rrek	In 7rrek
-	Quit 7rrek	7rrek beenden
-	7rrek copies the fonts to {folder}.	7rrek kopiert die Schriften nach {folder}.
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Der Name im Speichern-Dialog war „{typed}“, und 7rrek hat die Erweiterung des Dateityps angefügt. Beim Ersetzen wird der Inhalt der Datei überschrieben.
-	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek wurde beim letzten Mal nicht normal beendet. Diese Dokumente hatten ungespeicherte Änderungen:
-	7rrek Help…	rsm-Hilfe…
-	7rrek on GitHub	7rrek auf GitHub
-	Welcome to 7rrek	Willkommen bei 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	kein VectorCraft-Tastaturbefehlssatz (`overrides` fehlt)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft durchsucht keine Ordner anderer Apps oder des Systems: {path}
-	Hide 7rrek	7rrek ausblenden
-	7rrek documents: one locked object, updated when the file changes.	rsm-Dokumente: ein gesperrtes Objekt, das aktualisiert wird, wenn sich die Datei ändert.
 	Clear Keyframe	Schlüsselbild löschen
 	Export Animated GIF…	Animiertes GIF exportieren…
 	Frame Rate	Bildrate

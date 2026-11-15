@@ -7453,7 +7453,3 @@ breakText	Glyphs	Glifler
 	Grommets	Kuşgözleri
 	Grommet Inset	Kuşgözlerinin kenara uzaklığı
 	Diameter	Çap
-	Welcome to 7rrek	7rrek'a hoş geldiniz
-@msg	not a 7rrek shortcut set (missing `overrides`)	7rrek kısayol seti değil ("geçersiz kılmalar" eksik)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft diğer uygulamaların veya sistemin klasörlerini aramaz: {path}
-file-filter	7rrek Template	7rrek Şablonu

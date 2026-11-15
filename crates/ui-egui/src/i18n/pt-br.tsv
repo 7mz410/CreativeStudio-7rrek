@@ -9395,23 +9395,6 @@ swatch	Yellow Green	Verde-amarelado
 	They connect on this computer only.	Eles se conectam apenas neste computador.
 	Adds this app to the agent's settings.	Adiciona este app às configurações do agente.
 	Restart the agent app afterwards.	Depois reinicie o app do agente.
-	About 7rrek	Sobre o 7rrek
-	Applies the next time 7rrek starts.	Aplica na próxima inicialização do 7rrek.
-	7rrek read this script without running it.	O 7rrek leu este script sem executá-lo.
-	Quit 7rrek	Sair do 7rrek
-	7rrek copies the fonts to {folder}.	O 7rrek copia as fontes para {folder}.
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	O nome no painel de salvamento era “{typed}”, e o 7rrek adicionou a extensão do tipo de arquivo. Substituir o arquivo sobrescreve o conteúdo.
-	7rrek Help…	Ajuda do 7rrek…
-	7rrek didn't quit normally last time. These documents had unsaved changes:	O 7rrek não fechou normalmente da última vez. Estes documentos tinham alterações não salvas:
-	7rrek on GitHub	7rrek no GitHub
-	Welcome to 7rrek	Bem-vindo ao 7rrek
-	Hide 7rrek	Ocultar o 7rrek
-	7rrek documents: one locked object, updated when the file changes.	Documentos do 7rrek: um objeto bloqueado, atualizado quando o arquivo muda.
-@msg	not a 7rrek shortcut set (missing `overrides`)	não é um conjunto de atalhos do VectorCraft (falta `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	O VectorCraft não pesquisa pastas de outros aplicativos nem do sistema: {path}
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Cada entrada do arquivo é associada a uma ferramenta, comando ou painel do 7rrek. Confira as correspondências e resolva o que sobrar.
-	In 7rrek	No 7rrek
-file-filter	7rrek Template	Modelo do 7rrek
 	Clear Keyframe	Limpar quadro-chave
 	Export Animated GIF…	Exportar GIF animado…
 	Frame Rate	Taxa de quadros

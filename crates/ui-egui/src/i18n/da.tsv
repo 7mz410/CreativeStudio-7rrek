@@ -6900,11 +6900,3 @@ breakText	Glyphs	Glyffer
 	Grommets	Maljer
 	Grommet Inset	Maljernes afstand fra kanten
 	Diameter	Diameter
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Hver post i filen matches med et rsm-værktøj, en kommando eller et panel. Kontrollér matchene, og angiv det, der mangler.
-	In 7rrek	I 7rrek
-	7rrek read this script without running it.	7rrek læste dette script uden at køre det.
-	Welcome to 7rrek	Velkommen til 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	ikke et VectorCraft-genvejssæt (`overrides` mangler)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft gennemsøger ikke andre programmers eller systemets mapper: {path}
-file-filter	7rrek Template	rsm-skabelon
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Navnet i gemmedialogen var »{typed}«, og 7rrek tilføjede filtypens filtypenavn. Hvis du erstatter filen, overskrives dens indhold.

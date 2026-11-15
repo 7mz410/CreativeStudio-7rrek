@@ -8931,23 +8931,6 @@ breakText	Glyphs	Гліфи
 	They connect on this computer only.	Вони підключаються лише на цьому комп’ютері.
 	Adds this app to the agent's settings.	Додає цю програму до налаштувань агента.
 	Restart the agent app afterwards.	Потім перезапустіть програму агента.
-	About 7rrek	Про програму 7rrek
-	Applies the next time 7rrek starts.	Застосовується при наступному запуску 7rrek.
-	7rrek read this script without running it.	7rrek прочитав цей сценарій, не запускаючи його.
-file-filter	7rrek Template	Шаблон 7rrek
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Кожен запис файлу зіставляється з інструментом, командою або панеллю 7rrek. Перевірте зіставлення й дайте відповідь на решту.
-	In 7rrek	У 7rrek
-	Quit 7rrek	Вийти з 7rrek
-	7rrek copies the fonts to {folder}.	7rrek копіює шрифти в {folder}.
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Назва у вікні збереження була «{typed}», а 7rrek додав розширення типу файлу. Заміна файлу перезапише його вміст.
-	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek не завершився нормально минулого разу. У цих документах були незбережені зміни:
-	7rrek Help…	Довідка 7rrek…
-	7rrek on GitHub	7rrek на GitHub
-	Welcome to 7rrek	Ласкаво просимо до 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	не є набором поєднань клавіш VectorCraft (відсутнє `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft не шукає в папках інших програм і системи: {path}
-	Hide 7rrek	Приховати 7rrek
-	7rrek documents: one locked object, updated when the file changes.	Документи 7rrek: один заблокований об’єкт, який оновлюється під час зміни файлу.
 	Clear Keyframe	Очистити ключовий кадр
 	Export Animated GIF…	Експорт анімованого GIF…
 	Frame Rate	Частота кадрів

@@ -53,7 +53,10 @@ TARGETED = {
         ('Readable formats: .rsm, .vectorcraft', 'Readable formats: .7rrek, .rsm, .vectorcraft'),
     ],
     'crates/ui-egui/src/tests_nativemenu.rs': [('assert_eq!(titles, ["rsm", "File"', 'assert_eq!(titles, ["7rrek", "File"')],
-    'crates/ui-egui/src/i18n/tests.rs': [('.find(|m| m.title == "rsm")', '.find(|m| m.title == "7rrek")')],
+    'crates/ui-egui/src/i18n/tests.rs': [('.find(|m| m.title == "rsm")', '.find(|m| m.title == "7rrek")'),
+                                         # The product name kept in English, and the format's file-filter label.
+                                         ('const MENU_KEEP_AS_IS: &[&str] = &[\n    "rsm",', 'const MENU_KEEP_AS_IS: &[&str] = &[\n    "7rrek",'),
+                                         ('for source in ["SVG", "PNG", "rsm", "unregistered filter"]', 'for source in ["SVG", "PNG", "7rrek", "unregistered filter"]')],
     'crates/ui-egui/src/dialogs/about.rs': [('egui::RichText::new("rsm").font(theme::semibold(22.0))', 'egui::RichText::new("7rrek").font(theme::semibold(22.0))')],
     'crates/ui-egui/src/dialogs/export_for_screens.rs': [
         ('    ("rsm", "vectorcraft", None, false),', '    ("7rrek", "vectorcraft", None, false),'),
@@ -149,6 +152,44 @@ for rel, pairs in {
     'crates/engine/src/cmd/findfiles/walk.rs': [('"rsm doesn\'t search other apps', '"7rrek doesn\'t search other apps')],
     'apps/vectorcraft-cli/tests/it/fileio.rs': [('Readable formats: .rsm"', 'Readable formats: .7rrek"')],
     'crates/engine/src/cmd/fileio/tests.rs': [('        [\n            "rsm",\n            "svg",', '        [\n            "7rrek",\n            "svg",')],
+    # Linux: .7rrek is a VectorCraft document too, listed before .rsm (which still opens).
+    'packaging/linux/ai.storyteller.vectorcraft.mime.xml': [
+        ('    <glob pattern="*.rsm"/>\n', '    <glob pattern="*.7rrek"/>\n    <glob pattern="*.rsm"/>\n'),
+    ],
+    'apps/vectorcraft/src/tests.rs': [
+        ('    ("rsm", "application/x-vectorcraft"),\n', '    ("7rrek", "application/x-vectorcraft"),\n    ("rsm", "application/x-vectorcraft"),\n'),
+    ],
+    # Engine and format messages the user reads, outside the files code() renames.
+    'crates/engine/src/cmd/fileio/formats.rs': [('        label: "rsm Template",', '        label: "7rrek Template",')],
+    'crates/format/src/lib.rs': [('rsm writes versions {MIN_VERSION} to {VERSION}', '7rrek writes versions {MIN_VERSION} to {VERSION}')],
+    'crates/engine/src/cmd/prefscmds.rs': [('a newer version of rsm (version {v})', 'a newer version of 7rrek (version {v})')],
+    'crates/engine/src/tests/prefs_file.rs': [('"newer version of rsm (version 2)"', '"newer version of 7rrek (version 2)"')],
+    # The window title is the app's name; 7rrek's menu bar has an Animation menu too.
+    'crates/ui-egui/tests/safe_mode.rs': [
+        ('assert_eq!(chrome::window_title(&app), "rsm");', 'assert_eq!(chrome::window_title(&app), "7rrek");'),
+        ('let menu_names = ["File", "Edit", "Object", "Type", "Select", "Effect", "View", "Window", "Help"];',
+         'let menu_names = ["File", "Edit", "Object", "Type", "Select", "Effect", "View", "Animation", "Window", "Help"];'),
+    ],
+    # A bare name typed in the save sheet gets the default format's extension, `.7rrek`.
+    'crates/ui-egui/src/tests/picks.rs': [
+        ('|p: &str| p == "/art/card.rsm"));', '|p: &str| p == "/art/card.7rrek"));'),
+        ('assert_eq!(*written.borrow(), ["/art/card.rsm"]);', 'assert_eq!(*written.borrow(), ["/art/card.7rrek"]);'),
+    ],
+    # The suggested name's extension in another case.
+    'crates/ui-egui/src/tests/saveext.rs': [('&["/art/Untitled-1.RSM", "ai"]', '&["/art/Untitled-1.7RREK", "ai"]')],
+    # Unused-option notes name the format by its label, which is the app's name for its own files.
+    'crates/engine/src/cmd/fileio/tests_exportas.rs': [
+        ("`marks` was not used: rsm files don't read it\", \"`svg` was not used: rsm files don't read it",
+         "`marks` was not used: 7rrek files don't read it\", \"`svg` was not used: 7rrek files don't read it"),
+        ("`artboard` was not used: rsm files don't read it", "`artboard` was not used: 7rrek files don't read it"),
+        ('[("vectorcraft", "rsm"), ("template", "rsm Template")]', '[("vectorcraft", "7rrek"), ("template", "7rrek Template")]'),
+    ],
+    'crates/engine/src/cmd/fileio/tests_screens.rs': [
+        ("`formats[0].separateArtboards` was not used: rsm files don't read it", "`formats[0].separateArtboards` was not used: 7rrek files don't read it"),
+    ],
+    'crates/engine/src/cmd/findfiles/tests.rs': [
+        ('("refused", "rsm doesn\'t search other apps', '("refused", "7rrek doesn\'t search other apps'),
+    ],
 }.items():
     TARGETED.setdefault(rel, []).extend(pairs)
 
@@ -217,7 +258,21 @@ def main():
                         cells[2:] = [c.replace('رسم', NAME_AR) for c in cells[2:]]
                     line = '\t'.join(cells)
                 rows.append(line)
-            o = '\n'.join(rows)
+            # rebrand.py adds studio/i18n rows whose rsm key isn't in the catalog yet; renamed, a key
+            # can repeat one renamed before, so keep each (kind, key) row once.
+            # The one kept is the first that names the app as 7rrek (not upstream's or rsm's name).
+            old_names = ('VectorCraft', 'rsm', 'وكتور') + (('رسم',) if rel.endswith('/ar.tsv') else ())
+            best = {}
+            for n, line in enumerate(rows):
+                cells = line.split('\t')
+                if len(cells) >= 3 and not line.startswith('#'):
+                    stale = any(w in c for c in cells[2:] for w in old_names)
+                    key = tuple(cells[:2])
+                    if key not in best or (best[key][1] and not stale):
+                        best[key] = (n, stale)
+            keep = {n for n, _ in best.values()}
+            o = '\n'.join(line for n, line in enumerate(rows)
+                           if n in keep or len(line.split('\t')) < 3 or line.startswith('#'))
             # Catalog keys that name the app by upstream's name where the source says 7rrek.
             o = o.replace('\tVectorCraft doesn\'t search other apps', '\t7rrek doesn\'t search other apps')
             o = o.replace('\tnot a VectorCraft shortcut set', '\tnot a 7rrek shortcut set')

@@ -9279,9 +9279,6 @@ breakText	Glyphs	字形
 	They connect on this computer only.	它们仅在这台电脑上连接。
 	Adds this app to the agent's settings.	将本应用添加到智能体的设置中。
 	Restart the agent app afterwards.	之后请重启智能体应用。
-file-filter	7rrek Template	7rrek 模板
-@msg	not a 7rrek shortcut set (missing `overrides`)	不是 VectorCraft 快捷键组 (缺少 `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft 不会搜索其他应用或系统的文件夹：{path}
 	Clear Keyframe	清除关键帧
 	Export Animated GIF…	导出动画 GIF…
 	Frame Rate	帧速率

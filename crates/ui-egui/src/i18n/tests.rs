@@ -1564,7 +1564,7 @@ const KEEPS_MENU_NAMES: [&str; 20] =
 /// names and the perspective grid presets (names, shown untranslated wherever else they appear).
 /// Each language's own name in the Language menu is left alone too.
 const MENU_KEEP_AS_IS: &[&str] = &[
-    "rsm",
+    "7rrek",
     "OpenType",
     "Essentials",
     "Essentials Classic",
@@ -4577,7 +4577,7 @@ fn render_site_labels_fall_back_to_english() {
     for (_, source) in RENDER_SITE_ROWS.iter().filter(|(ctx, _)| *ctx == "file-filter") {
         assert_eq!(tr_ctx(Lang::EN, "file-filter", source), *source);
     }
-    for source in ["SVG", "PNG", "rsm", "unregistered filter"] {
+    for source in ["SVG", "PNG", "7rrek", "unregistered filter"] {
         assert_eq!(tr_ctx(cs(), "file-filter", source), tr(cs(), source));
     }
     assert_eq!(fmt(tr(Lang::EN, "Preset {number}"), &[("number", "12")]), "Preset 12");

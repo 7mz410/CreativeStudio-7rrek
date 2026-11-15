@@ -7524,11 +7524,3 @@ breakText	Glyphs	Glyphs
 	Grommets	Zeilringen
 	Grommet Inset	Afstand van zeilringen tot de rand
 	Diameter	Diameter
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Elk item in het bestand is gekoppeld aan een rsm-gereedschap, -opdracht of -paneel. Controleer de overeenkomsten en geef aan wat er overblijft.
-	In 7rrek	In 7rrek
-	7rrek read this script without running it.	7rrek heeft dit script gelezen zonder het uit te voeren.
-	Welcome to 7rrek	Welkom bij 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	geen VectorCraft-sneltoetsenset (`overrides` ontbreekt)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft doorzoekt geen mappen van andere apps of van het systeem: {path}
-file-filter	7rrek Template	rsm-sjabloon
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	De naam in het opslagvenster was „{typed}”, en 7rrek heeft de extensie van het bestandstype toegevoegd. Als je het bestand vervangt, wordt de inhoud overschreven.

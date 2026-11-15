@@ -7532,11 +7532,3 @@ breakText	Glyphs	Merkit
 	Grommets	Purjerenkaat
 	Grommet Inset	Purjerenkaiden etäisyys reunasta
 	Diameter	Halkaisija
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Tiedoston jokainen merkintä vastaa rsmin työkalua, komentoa tai paneelia. Tarkista vastaavuudet ja vastaa jäljelle jääviin.
-	In 7rrek	rsmissa
-	7rrek read this script without running it.	7rrek luki tämän komentosarjan suorittamatta sitä.
-	Welcome to 7rrek	Tervetuloa rsmiin
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Tallennusikkunan nimi oli ”{typed}”, ja 7rrek lisäsi tiedostotyypin tunnisteen. Tiedoston korvaaminen kirjoittaa sen sisällön yli.
-@msg	not a 7rrek shortcut set (missing `overrides`)	ei VectorCraftin pikanäppäinjoukko (`overrides` puuttuu)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft ei hae muiden sovellusten tai järjestelmän kansioista: {path}
-file-filter	7rrek Template	rsm-malli

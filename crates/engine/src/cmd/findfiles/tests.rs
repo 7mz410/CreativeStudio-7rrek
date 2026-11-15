@@ -284,7 +284,7 @@ fn a_picked_folder_inside_other_apps_folders_is_refused() {
     let briefs = [
         ("missing", "the folder can't be read"),
         ("file.ttf", "the path isn't a folder"),
-        ("refused", "rsm doesn't search other apps' or the system's folders"),
+        ("refused", "7rrek doesn't search other apps' or the system's folders"),
         ("Users/Public/x", "rsm doesn't search the Shared or Public folder in Users"),
     ];
     for (picked, why) in briefs {

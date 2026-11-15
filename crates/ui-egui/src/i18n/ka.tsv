@@ -7611,7 +7611,3 @@ font-script	Japanese	იაპონური
 	Grommets	ლუვერები
 	Grommet Inset	ლუვერების დაშორება კიდიდან
 	Diameter	დიამეტრი
-	Welcome to 7rrek	კეთილი იყოს თქვენი მობრძანება rsm-ში
-@msg	not a 7rrek shortcut set (missing `overrides`)	ეს არ არის VectorCraft-ის მალსახმობების ნაკრები (აკლია `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft არ ეძებს სხვა აპების ან სისტემის საქაღალდეებში: {path}
-file-filter	7rrek Template	rsm-ის შაბლონი

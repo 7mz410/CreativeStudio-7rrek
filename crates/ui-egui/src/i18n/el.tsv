@@ -7450,11 +7450,3 @@ breakText	Glyphs	Γλύφοι
 	Grommets	Τρουκς
 	Grommet Inset	Απόσταση τρουκς από την άκρη
 	Diameter	Διάμετρος
-	7rrek read this script without running it.	Το 7rrek διάβασε αυτό το σενάριο χωρίς να το εκτελέσει.
-	In 7rrek	Στο 7rrek
-file-filter	7rrek Template	Πρότυπο 7rrek
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Κάθε καταχώριση του αρχείου αντιστοιχίζεται σε εργαλείο, εντολή ή πίνακα του 7rrek. Ελέγξτε τις αντιστοιχίσεις και συμπληρώστε όσα απομένουν.
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Το όνομα στο παράθυρο αποθήκευσης ήταν «{typed}» και το 7rrek πρόσθεσε την επέκταση του τύπου αρχείου. Αν αντικαταστήσετε το αρχείο, τα περιεχόμενά του θα χαθούν.
-	Welcome to 7rrek	Καλώς ήρθατε στο 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	δεν είναι σύνολο συντομεύσεων VectorCraft (λείπει το `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	Το VectorCraft δεν αναζητά στους φακέλους άλλων εφαρμογών ή του συστήματος: {path}

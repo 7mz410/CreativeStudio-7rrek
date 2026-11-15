@@ -6900,11 +6900,3 @@ breakText	Glyphs	Glif
 	Grommets	Mata ayam
 	Grommet Inset	Jarak mata ayam dari tepi
 	Diameter	Diameter
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Setiap entri dalam berkas dicocokkan dengan alat, perintah, atau panel 7rrek. Periksa kecocokannya dan jawab sisanya.
-	In 7rrek	Dalam 7rrek
-	7rrek read this script without running it.	7rrek membaca skrip ini tanpa menjalankannya.
-	Welcome to 7rrek	Selamat datang di 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	bukan set pintasan VectorCraft (tidak ada `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft tidak mencari di folder aplikasi lain atau folder sistem: {path}
-file-filter	7rrek Template	Templat 7rrek
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Nama di dialog simpan adalah “{typed}”, lalu 7rrek menambahkan ekstensi jenis file. Mengganti file akan menimpa kontennya.

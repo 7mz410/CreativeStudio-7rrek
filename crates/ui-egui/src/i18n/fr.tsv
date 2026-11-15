@@ -9309,23 +9309,6 @@ breakText	Glyphs	Glyphes
 	They connect on this computer only.	Ils se connectent uniquement sur cet ordinateur.
 	Adds this app to the agent's settings.	Ajoute cette app aux réglages de l’agent.
 	Restart the agent app afterwards.	Redémarrez ensuite l’app de l’agent.
-	About 7rrek	À propos de 7rrek
-	Applies the next time 7rrek starts.	S’applique au prochain démarrage de 7rrek.
-	7rrek read this script without running it.	7rrek a lu ce script sans l’exécuter.
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Chaque entrée du fichier est mise en correspondance avec un outil, une commande ou un panneau de 7rrek. Vérifiez les correspondances et répondez à ce qui reste.
-	In 7rrek	Dans 7rrek
-	Quit 7rrek	Quitter 7rrek
-	7rrek copies the fonts to {folder}.	7rrek copie les polices dans {folder}.
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Le nom dans la fenêtre d’enregistrement était « {typed} », puis 7rrek a ajouté l’extension du type de fichier. Remplacer le fichier écrase son contenu.
-	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek ne s’est pas fermé normalement la dernière fois. Ces documents comportaient des modifications non enregistrées :
-	7rrek Help…	Aide de 7rrek…
-	7rrek on GitHub	7rrek sur GitHub
-	Welcome to 7rrek	Bienvenue dans 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	ce n’est pas un jeu de raccourcis VectorCraft (`overrides` manquant)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft ne recherche pas dans les dossiers d’autres apps ni du système : {path}
-	Hide 7rrek	Masquer 7rrek
-	7rrek documents: one locked object, updated when the file changes.	Documents 7rrek : un objet verrouillé, mis à jour quand le fichier change.
-file-filter	7rrek Template	Modèle 7rrek
 	Clear Keyframe	Effacer l’image-clé
 	Export Animated GIF…	Exporter un GIF animé…
 	Frame Rate	Cadence d’images

@@ -6885,11 +6885,3 @@ breakText	Glyphs	Глифи
 	Grommets	Капси
 	Grommet Inset	Отстъп на капсите от ръба
 	Diameter	Диаметър
-	7rrek read this script without running it.	7rrek прочете този скрипт, без да го изпълнява.
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Всеки запис във файла се съпоставя с инструмент, команда или панел на 7rrek. Проверете съответствията и отговорете на останалите.
-	In 7rrek	Във 7rrek
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Името в панела за запазване беше „{typed}“, а 7rrek добави разширението на типа файл. Замяната на файла презаписва съдържанието му.
-	Welcome to 7rrek	Добре дошли във 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	не е набор от клавишни комбинации на VectorCraft (липсват `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft не търси в папките на други приложения или на системата: {path}
-file-filter	7rrek Template	Шаблон на 7rrek

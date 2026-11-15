@@ -9323,22 +9323,6 @@ breakText	Glyphs	Glyfy
 	They connect on this computer only.	Připojují se jen na tomto počítači.
 	Adds this app to the agent's settings.	Přidá tuto aplikaci do nastavení agenta.
 	Restart the agent app afterwards.	Poté aplikaci agenta restartujte.
-	About 7rrek	O aplikaci 7rrek
-	Quit 7rrek	Ukončit 7rrek
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Každá položka souboru je přiřazena k nástroji, příkazu nebo panelu rsmu. Zkontrolujte přiřazení a doplňte, co zbývá.
-	In 7rrek	Ve rsmu
-	7rrek on GitHub	7rrek na GitHubu
-	Hide 7rrek	Skrýt 7rrek
-	7rrek copies the fonts to {folder}.	7rrek zkopíruje písma do {folder}.
-	7rrek documents: one locked object, updated when the file changes.	Dokumenty 7rrek: jeden zamčený objekt, aktualizovaný při změně souboru.
-	7rrek didn't quit normally last time. These documents had unsaved changes:	7rrek se minule neukončil normálně. Tyto dokumenty měly neuložené změny:
-	7rrek read this script without running it.	7rrek tento skript přečetl, aniž by ho spustil.
-	Welcome to 7rrek	Vítejte ve rsmu
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Název v panelu ukládání byl „{typed}“ a 7rrek přidal příponu typu souboru. Nahrazením souboru se přepíše jeho obsah.
-	Applies the next time 7rrek starts.	Projeví se při příštím spuštění rsmu.
-@msg	not a 7rrek shortcut set (missing `overrides`)	nejde o sadu klávesových zkratek VectorCraft (chybí `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft neprohledává složky jiných aplikací ani systému: {path}
-file-filter	7rrek Template	Šablona 7rrek
 	Clear Keyframe	Vymazat klíčový snímek
 	Export Animated GIF…	Exportovat animovaný GIF…
 	Frame Rate	Snímková frekvence

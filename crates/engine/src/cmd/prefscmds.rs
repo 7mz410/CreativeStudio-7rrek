@@ -872,7 +872,7 @@ fn read_prefs_file(bytes: &[u8]) -> std::result::Result<Map<String, Value>, Stri
         None => return Err("not a preferences file: no `format`".into()),
     }
     match file.get("version").and_then(Value::as_u64) {
-        Some(v) if v > PREFS_VERSION => return Err(format!("the file was saved by a newer version of rsm (version {v})")),
+        Some(v) if v > PREFS_VERSION => return Err(format!("the file was saved by a newer version of 7rrek (version {v})")),
         Some(1..) => {}
         _ => return Err("not a preferences file: no `version`".into()),
     }

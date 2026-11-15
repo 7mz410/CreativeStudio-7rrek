@@ -7494,23 +7494,6 @@ breakText	Glyphs	Glifák
 	They connect on this computer only.	Csak ezen a számítógépen csatlakoznak.
 	Adds this app to the agent's settings.	Hozzáadja ezt az alkalmazást az ügynök beállításaihoz.
 	Restart the agent app afterwards.	Utána indítsd újra az ügynökalkalmazást.
-	About 7rrek	A 7rrek névjegye
-	Applies the next time 7rrek starts.	A 7rrek következő indításakor lép életbe.
-	7rrek read this script without running it.	A 7rrek futtatás nélkül olvasta be ezt a szkriptet.
-file-filter	7rrek Template	rsm-sablon
-	Hide 7rrek	7rrek elrejtése
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	A 7rrek a fájl minden bejegyzését megfelelteti valamelyik eszközének, parancsának vagy paneljének. Ellenőrizd a megfeleltetéseket, és válaszolj a még nyitott kérdésekre.
-	In 7rrek	A rsmban
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	A mentési panelen megadott név ez volt: „{typed}”, a 7rrek pedig hozzáadta a fájltípus kiterjesztését. A fájl felülírásakor a tartalma elvész.
-	Quit 7rrek	Kilépés a rsmból
-	7rrek copies the fonts to {folder}.	A 7rrek ide másolja a betűtípusokat: {folder}.
-	7rrek didn't quit normally last time. These documents had unsaved changes:	A 7rrek legutóbb nem szabályosan lépett ki. Ezekben a dokumentumokban mentetlen módosítások voltak:
-	7rrek documents: one locked object, updated when the file changes.	rsm-dokumentumok: egyetlen zárolt objektum, amely a fájl változásakor frissül.
-	7rrek Help…	7rrek súgó…
-	7rrek on GitHub	A 7rrek a GitHubon
-	Welcome to 7rrek	Üdvözöl a 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	nem VectorCraft-billentyűparancskészlet (hiányzik: `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	a VectorCraft nem keres más alkalmazások és a rendszer mappáiban: {path}
 	Clear Keyframe	Kulcskocka törlése
 	Export Animated GIF…	Animált GIF exportálása…
 	Frame Rate	Képkockasebesség

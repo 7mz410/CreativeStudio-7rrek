@@ -9164,11 +9164,3 @@ breakText	Glyphs	Glify
 @msg	{what} can't be intertwined	{what} nie można przeplatać
 @msg	{what} doesn't fit the paper with its bleed and marks	{what} nie mieści się na papierze wraz ze spadem i znacznikami
 @msg	{what} would print on more than {MAX_TILES} tiles: scale it down	{what}: wydruk zająłby ponad {MAX_TILES} kafelków: zmniejsz skalę
-	7rrek read this script without running it.	7rrek odczytał ten skrypt, nie uruchamiając go.
-	Welcome to 7rrek	Witamy w 7rrek
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Nazwa w oknie zapisu to „{typed}”, a 7rrek dodał rozszerzenie typu pliku. Zastąpienie pliku nadpisze jego zawartość.
-@msg	not a 7rrek shortcut set (missing `overrides`)	to nie jest zestaw skrótów VectorCraft (brak `overrides`)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft nie przeszukuje folderów innych aplikacji ani systemowych: {path}
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Każdy wpis pliku zostaje dopasowany do narzędzia, polecenia lub panelu 7rrek. Sprawdź dopasowania i uzupełnij pozostałe.
-	In 7rrek	W 7rrek
-file-filter	7rrek Template	Szablon 7rrek

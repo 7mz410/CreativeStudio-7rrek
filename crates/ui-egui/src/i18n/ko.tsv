@@ -8915,23 +8915,6 @@ breakText	Glyphs	글리프
 	They connect on this computer only.	이 컴퓨터에서만 연결됩니다.
 	Adds this app to the agent's settings.	이 앱을 에이전트 설정에 추가합니다.
 	Restart the agent app afterwards.	그런 다음 에이전트 앱을 다시 시작하세요.
-	About 7rrek	7rrek 정보
-	Quit 7rrek	7rrek 종료
-	7rrek on GitHub	GitHub의 7rrek
-	7rrek Help…	7rrek 도움말…
-	Applies the next time 7rrek starts.	다음에 rsm를 시작할 때 적용됩니다.
-	7rrek read this script without running it.	rsm가 이 스크립트를 실행하지 않고 읽었습니다.
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	파일의 각 항목은 rsm의 도구, 명령 또는 패널에 대응됩니다. 대응을 확인하고 남은 항목을 정하세요.
-	In 7rrek	rsm에서
-	7rrek copies the fonts to {folder}.	rsm가 글꼴을 {folder}에 복사합니다.
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	저장 패널의 이름은 “{typed}”였고, rsm가 파일 형식의 확장자를 붙였습니다. 파일을 바꾸면 내용을 덮어씁니다.
-	7rrek didn't quit normally last time. These documents had unsaved changes:	rsm가 지난번에 정상적으로 종료되지 않았습니다. 다음 문서에 저장되지 않은 변경 사항이 있었습니다:
-	Welcome to 7rrek	rsm에 오신 것을 환영합니다
-file-filter	7rrek Template	7rrek 템플릿
-	Hide 7rrek	7rrek 숨기기
-	7rrek documents: one locked object, updated when the file changes.	7rrek 문서: 잠긴 개체 하나로, 파일이 바뀌면 업데이트됩니다.
-@msg	not a 7rrek shortcut set (missing `overrides`)	VectorCraft 단축키 세트가 아닙니다(`overrides`가 없음)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft는 다른 앱이나 시스템의 폴더를 검색하지 않습니다: {path}
 	Clear Keyframe	키프레임 지우기
 	Export Animated GIF…	애니메이션 GIF 내보내기…
 	Frame Rate	프레임 속도

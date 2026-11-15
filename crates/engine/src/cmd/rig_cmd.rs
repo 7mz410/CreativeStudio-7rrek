@@ -42,7 +42,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Pose Joints",
             [],
             None,
-            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), angles?: [degrees, one per joint], joint?: joint index, angle?: degrees (sets one joint; give both or neither), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the pose key at the frame; joints not given keep the pose there, else 0 → {frame, angles}",
+            "{row?: layer id (default: the current layer's row), frame?: (default: the current frame), angles?: [degrees clockwise on screen, one per joint], joint?: joint index, angle?: degrees clockwise on screen (sets one joint; give both or neither), ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the pose key at the frame; joints not given keep the pose there, else 0 → {frame, angles}",
             has_doc,
             pose
         ),

@@ -8972,11 +8972,3 @@ digits	Hindi	Hindi
 	Grommets	Öljetter
 	Grommet Inset	Öljetternas avstånd från kanten
 	Diameter	Diameter
-	7rrek read this script without running it.	7rrek läste skriptet utan att köra det.
-	Each entry of the file is matched to a 7rrek tool, command or panel. Check the matches and answer what is left.	Varje post i filen matchas mot ett verktyg, kommando eller en panel i 7rrek. Kontrollera matchningarna och besvara det som återstår.
-	In 7rrek	I 7rrek
-	The name in the save panel was “{typed}”; 7rrek added the file type's extension. Replacing the file overwrites its contents.	Namnet i sparpanelen var ”{typed}”, och 7rrek lade till filtypens filändelse. Om du ersätter filen skrivs innehållet över.
-	Welcome to 7rrek	Välkommen till 7rrek
-@msg	not a 7rrek shortcut set (missing `overrides`)	inte en kortkommandouppsättning för VectorCraft (`overrides` saknas)
-@msg	7rrek doesn't search other apps' or the system's folders: {path}	VectorCraft söker inte i andra appars eller systemets mappar: {path}
-file-filter	7rrek Template	rsm-mall

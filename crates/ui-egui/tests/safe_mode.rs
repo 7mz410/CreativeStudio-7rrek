@@ -125,7 +125,7 @@ fn disable_and_continue_loads_every_plug_in_but_the_one_that_was_loading() {
     dialogs::confirm(&mut app).unwrap();
     assert!(!safe_mode::active() && kind(&app).is_none());
     assert!(registry::get("test.ui.x").is_none() && registry::get("test.ui.y").is_some(), "only the one that was loading is off");
-    assert_eq!(chrome::window_title(&app), "rsm");
+    assert_eq!(chrome::window_title(&app), "7rrek");
     assert!(dir.join("disabled.json").is_file(), "kept off at later launches");
     ui::end_launch();
 
@@ -196,7 +196,7 @@ fn a_disabled_list_that_cannot_be_saved_says_so() {
 fn the_safe_mode_label_leaves_the_menus_their_room() {
     let _f = fresh();
     safe_mode::set_active(Some(safe_mode::Source::Flag));
-    let menu_names = ["File", "Edit", "Object", "Type", "Select", "Effect", "View", "Window", "Help"];
+    let menu_names = ["File", "Edit", "Object", "Type", "Select", "Effect", "View", "Animation", "Window", "Help"];
     for width in [560.0, 720.0, 1280.0] {
         let ctx = egui::Context::default();
         theme::install_fonts(&ctx);

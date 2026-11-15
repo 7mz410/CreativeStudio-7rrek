@@ -2418,13 +2418,17 @@ fn pencil_pressure_becomes_a_width_profile_that_lasts_and_edits_locally() {
     assert!(w(2.0 / 3.0) > 1.9, "full pressure is twice the weight: {prof:?}");
     let back = vectorcraft_format::load(&vectorcraft_format::save(&doc, false)).unwrap();
     assert_eq!(back.node(id).unwrap().appearance.stroke().unwrap().profile.as_ref(), Some(&prof));
-    // One point moved: only the widths around it change.
+    // One point moved: only the widths around it change. The curve is smooth (PCHIP), so moving a
+    // point reshapes it as far as its neighbour's neighbour, and no further.
     let mut edited = prof.clone();
     let last = edited.points.len() - 1;
+    assert!(last >= 3, "{prof:?}");
     edited.points[last].1 = 3.0;
     edited.points[last].2 = 3.0;
-    assert_eq!(edited.at(0.0), prof.at(0.0));
-    assert_eq!(edited.at(0.5), prof.at(0.5));
+    let reach = prof.points[last - 2].0;
+    for t in [0.0, reach / 2.0, reach] {
+        assert_eq!(edited.at(t), prof.at(t), "t = {t}");
+    }
     assert_ne!(edited.at(1.0), prof.at(1.0));
     // Without the switch a pencil line keeps an even weight.
     let plain = NodeId(s.execute("path.freehand", &json!({"points": pts, "style": "pencil"})).unwrap()["id"].as_u64().unwrap());

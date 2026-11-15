@@ -41,7 +41,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Peg Key",
             [],
             None,
-            "{peg?: peg index (default: the peg holding the current layer), frame?: (default: the current frame), x?, y?: move (document points), dx?, dy?: added to the move, angle?: turn (degrees, about the pivot), sx?, sy?: scale (factors, 1 is unchanged), z?: multiplane depth it adds to its rows (document points; behind the stage is positive), dz?: added to z, ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the key at the frame; fields not given keep the value the peg has there → the key",
+            "{peg?: peg index (default: the peg holding the current layer), frame?: (default: the current frame), x?, y?: move (document points), dx?, dy?: added to the move, angle?: turn (degrees clockwise on screen, about the pivot), sx?, sy?: scale (factors, 1 is unchanged), z?: multiplane depth it adds to its rows (document points; behind the stage is positive), dz?: added to z, ease?: \"linear\" | \"easeIn\" | \"easeOut\" | \"easeInOut\" | [x1, y1, x2, y2] (eases toward the next key)} sets the key at the frame; fields not given keep the value the peg has there → the key",
             has_doc,
             key
         ),
