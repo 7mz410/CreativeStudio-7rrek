@@ -6,6 +6,7 @@ pub mod actions_builtin;
 pub mod actionset;
 mod addons;
 pub mod anim;
+mod anim_arcs;
 pub mod anim_camera;
 pub mod anim_draw;
 pub mod anim_mouth;
@@ -442,6 +443,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(palette::specs());
         v.extend(cutter::specs());
         v.extend(depth::specs());
+        v.extend(anim_arcs::specs());
         v.extend(mesh_cmd::specs());
         v.extend(curve_cmd::specs());
         v.extend(character::specs());
