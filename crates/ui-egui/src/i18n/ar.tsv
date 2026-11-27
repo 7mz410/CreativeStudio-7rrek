@@ -1726,7 +1726,6 @@
 	Outline	الخط الخارجي
 	Outline Others	تحويل الآخرين لخط خارجي
 	Outline Stroke	تحويل الحد إلى خط خارجي
-	Ink Outlines	تحبير الحدود
 	Outline Text	تحويل النص إلى خط خارجي
 	Outlines and Rules	الخطوط الخارجية والقواعد
 	Output	الإخراج
@@ -5615,6 +5614,10 @@ font-technology	Variable	متغير
 	Export GIF…	تصدير GIF…
 	Export Video…	تصدير فيديو…
 	Camera Key	مفتاح الكاميرا
+	Add Note	إضافة ملاحظة
+	Notes	الملاحظات
+	Mark Note Done	تعليم الملاحظة كمنجزة
+	Remove Note	حذف الملاحظة
 	Motion Arcs	مسارات الحركة
 	Animation Clip	مقطع تحريك
 	Animation Clips	مقاطع التحريك
