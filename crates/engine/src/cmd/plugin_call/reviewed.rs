@@ -77,6 +77,7 @@ pub(super) const ALLOWED: &[&str] = &[
     "addon.shapes.star",
     "addon.type.releasePath",
     "addon.type.textTweaker",
+    "anim.arcs",
     "anim.blankKeyframe",
     "anim.cameraInfo",
     "anim.cameraKey",
