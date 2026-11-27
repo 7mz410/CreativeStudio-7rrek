@@ -634,6 +634,7 @@ pub(super) const ALLOWED: &[&str] = &[
     "shape.arc",
     "shape.ellipse",
     "shape.flare",
+    "shape.ink",
     "shape.line",
     "shape.polarGrid",
     "shape.polygon",

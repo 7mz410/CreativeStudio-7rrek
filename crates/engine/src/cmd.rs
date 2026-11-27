@@ -63,6 +63,7 @@ mod halftone;
 pub mod help;
 pub mod ik;
 pub mod importmatches;
+mod ink;
 pub(crate) mod inline;
 mod interactivity;
 mod intertwine;
@@ -448,6 +449,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(anim_arcs::specs());
         v.extend(anim_clips::specs());
         v.extend(notes::specs());
+        v.extend(ink::specs());
         v.extend(mesh_cmd::specs());
         v.extend(curve_cmd::specs());
         v.extend(character::specs());
