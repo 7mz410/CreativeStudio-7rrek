@@ -32,6 +32,8 @@ pub struct HistoryEntry {
     pub(crate) color_mode_paints: Option<(vectorcraft_tools::PaintDefaults, vectorcraft_tools::PaintDefaults)>,
     /// Owned new-art snapshots included in both directional estimates.
     color_mode_bytes: usize,
+    /// Who made the step: the session's actor when it was made (`None` for the person at the app).
+    pub by: Option<String>,
 }
 
 impl Clone for HistoryEntry {
@@ -49,6 +51,7 @@ impl Clone for HistoryEntry {
             serial: self.serial,
             color_mode_paints: self.color_mode_paints.clone(),
             color_mode_bytes: self.color_mode_bytes,
+            by: self.by.clone(),
         }
     }
 }
@@ -94,6 +97,7 @@ impl HistoryEntry {
             serial: next_serial(),
             color_mode_paints: None,
             color_mode_bytes: 0,
+            by: None,
         }
     }
 
@@ -126,6 +130,7 @@ impl HistoryEntry {
             serial: next_serial(),
             color_mode_paints: None,
             color_mode_bytes: 0,
+            by: None,
         }
     }
 

@@ -1444,7 +1444,14 @@ fn dispatch(app: &mut VectorcraftApp, ctx: &egui::Context, req: &ControlRequest)
             if let Err(e) = crate::menus::check_params(&app.session, id, &params) {
                 return err(e);
             }
-            wrap(app.run(id, params))
+            // Undo steps an agent's request makes record that an agent made them.
+            let agent = req.method == "engine.execute";
+            let prev = agent.then(|| app.session.actor.replace("agent".into()));
+            let out = wrap(app.run(id, params));
+            if let Some(prev) = prev {
+                app.session.actor = prev;
+            }
+            out
         }
         "engine.commands" => ok(all_commands(app)),
         "document.inspect" => wrap(app.run("document.inspect", p.clone())),

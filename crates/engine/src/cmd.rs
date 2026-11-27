@@ -81,6 +81,7 @@ pub(crate) mod newart;
 pub mod newdoc;
 pub mod node_groups;
 pub mod nodes;
+mod notes;
 mod object;
 pub(crate) mod objects_on_path;
 mod opacitymask;
@@ -446,6 +447,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(depth::specs());
         v.extend(anim_arcs::specs());
         v.extend(anim_clips::specs());
+        v.extend(notes::specs());
         v.extend(mesh_cmd::specs());
         v.extend(curve_cmd::specs());
         v.extend(character::specs());

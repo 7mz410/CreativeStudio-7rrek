@@ -53,6 +53,9 @@ pub struct Session {
     pub prefs: Prefs,
     /// Whether Caps Lock is on, as the desktop host reports it; never saved with the preferences.
     pub caps_lock: bool,
+    /// Who is running commands now: `None` for the person at the app, `Some("agent")` for an agent
+    /// (MCP, the control channel). Each undo step made meanwhile records it ([`HistoryEntry::by`]).
+    pub actor: Option<String>,
     /// Fill/stroke for new art (the toolbar proxy).
     pub paint: PaintDefaults,
     /// Which proxy is in front (true = Fill, false = Stroke) — the X key toggles.

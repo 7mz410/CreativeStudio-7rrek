@@ -158,7 +158,9 @@ impl Headless {
             }
             None => self.session.check_params(id, params).map_err(|e| e.to_string())?,
         }
-        match id {
+        // Undo steps made by this call record that an agent made them.
+        let prev = self.session.actor.replace("agent".into());
+        let r = match id {
             "file.open" => self.open(params),
             "file.save" => self.save(params),
             "file.export" => self.export(params),
@@ -166,7 +168,9 @@ impl Headless {
             "tool.select" => self.select_tool(params),
             "tool.setOption" => self.session.set_tool_option_cmd(params),
             _ => self.session.execute(id, params).map_err(|e| e.to_string()),
-        }
+        };
+        self.session.actor = prev;
+        r
     }
 
     fn commands(&self) -> Value {
