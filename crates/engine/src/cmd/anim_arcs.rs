@@ -11,7 +11,7 @@ use serde_json::Value;
 pub fn specs() -> Vec<CommandSpec> {
     vec![cmd!(
         query "anim.arcs",
-        "Arcs",
+        "Motion Arcs",
         [],
         None,
         "{tracks: [name or node id] (at least one), from?: frame, to?: frame (1-based; default whole timeline), ground?: y of the ground line (y grows downward), travel?: px per frame a planted foot should move (default 0), check?: bool} tracks each part's bounds centre per frame: frames: [{frame, x, y, moved}] (moved: distance from the previous listed frame, 0 on the first; absent frames are skipped), lowest: {frame, y} (largest bottom edge), under: [frames whose bottom is below ground + 0.5], slides: [frames where a planted foot (bottom within 1 of ground on both frames) moves by more than 0.5 off travel] (under and slides need ground); crossings: [frames where the first two tracks swap their x order]; problems: [English strings for each under, slide and crossing]. check: an error listing the problems when there are any → {tracks, crossings, problems}",

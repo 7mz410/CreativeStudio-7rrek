@@ -15,7 +15,7 @@ pub fn specs() -> Vec<CommandSpec> {
     vec![
         cmd!(
             "anim.clip",
-            "Clip",
+            "Animation Clip",
             [],
             None,
             "{name, from: frame, to: frame (1-based, within the timeline, from ≤ to), loop?: bool (default true), fps?: 1–60 (default: the timeline's), remove?: bool} adds or replaces the clip called name; remove: true deletes it → {clips: [{name, from, to, loop, fps}]}",
@@ -24,7 +24,7 @@ pub fn specs() -> Vec<CommandSpec> {
         ),
         cmd!(
             query "anim.clips",
-            "Clips",
+            "Animation Clips",
             [],
             None,
             "{} → {clips: [{name, from, to, loop, fps}]}",
@@ -104,7 +104,7 @@ fn clip(s: &mut Session, p: &Value) -> Result<Value> {
         ),
     };
     let new = Clip { name, from, to, looped, fps };
-    let clips = s.edit("Clip", |d, _| {
+    let clips = s.edit("Animation Clip", |d, _| {
         let mut a = Anim::of(d);
         match a.clips.iter_mut().find(|c| c.name == new.name) {
             Some(c) => *c = new.clone(),
