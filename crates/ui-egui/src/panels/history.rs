@@ -49,15 +49,15 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         super::empty_state(ui, "history", tl!("No document"), tl!("Open a document to see its history."));
         return;
     };
-    let mut rows: Vec<(String, bool)> = vec![(tl!("Open").to_string(), false)];
-    rows.extend(st.history.undo.iter().map(|h| (shown(h), false)));
+    let mut rows: Vec<(String, bool, bool)> = vec![(tl!("Open").to_string(), false, false)];
+    rows.extend(st.history.undo.iter().map(|h| (shown(h), false, h.by.is_some())));
     let current = rows.len() - 1;
-    rows.extend(st.history.redo.iter().rev().map(|h| (shown(h), true)));
+    rows.extend(st.history.redo.iter().rev().map(|h| (shown(h), true, h.by.is_some())));
     let mut steps: Option<i64> = None;
     crate::widgets::list_box(ui, |ui| {
         ui.spacing_mut().item_spacing.y = 0.0;
         egui::ScrollArea::vertical().id_salt("hist").max_height(260.0).stick_to_bottom(true).show(ui, |ui| {
-            for (i, (label, future)) in rows.iter().enumerate() {
+            for (i, (label, future, by_agent)) in rows.iter().enumerate() {
                 let (r, resp) = ui.allocate_exact_size(vec2(ui.available_width(), 24.0), Sense::click());
                 if i == current {
                     ui.painter().rect_filled(r, 0.0, t.row_selected);
@@ -73,6 +73,16 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 );
                 let col = if *future { t.text_disabled } else { t.text };
                 ui.painter().text(r.left_center() + vec2(30.0, 0.0), egui::Align2::LEFT_CENTER, label, egui::FontId::proportional(12.5), col);
+                // Steps an agent made (through MCP or the control channel) carry a tag at the row's end.
+                if *by_agent {
+                    ui.painter().text(
+                        r.right_center() - vec2(8.0, 0.0),
+                        egui::Align2::RIGHT_CENTER,
+                        tl!("Agent"),
+                        egui::FontId::proportional(11.0),
+                        t.accent,
+                    );
+                }
                 if resp.clicked() && i != current {
                     steps = Some(steps_to(current, i));
                 }
@@ -195,6 +205,17 @@ mod tests {
             assert_eq!(step_name(ja, effect), plain_row.or(menu_row), "{effect}");
         }
         assert_eq!(step_name(ja, "No Such Step"), None);
+    }
+
+    /// A step an agent made carries the Agent tag; the person's own steps don't.
+    #[test]
+    fn agent_steps_are_tagged() {
+        let mut app = app_with_two_rectangles();
+        assert!(!listed(&mut app).iter().any(|t| t == "Agent"));
+        app.session.actor = Some("agent".into());
+        app.session.execute("shape.rectangle", &json!({"x": 100, "y": 10, "width": 20, "height": 20})).unwrap();
+        app.session.actor = None;
+        assert_eq!(listed(&mut app).iter().filter(|t| *t == "Agent").count(), 1);
     }
 
     fn app_with_two_rectangles() -> VectorcraftApp {

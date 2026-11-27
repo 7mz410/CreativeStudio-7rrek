@@ -554,3 +554,28 @@ pub(super) fn rotate_view_dial(p: &egui::Painter, c: Pos2, rotation: f64, t: &To
     p.circle_filled(c, 2.5, t.accent);
     p.text(c + vec2(0.0, 8.0), egui::Align2::CENTER_TOP, format!("{rotation:.0}°"), egui::FontId::proportional(11.0), t.text);
 }
+
+/// Canvas notes (`note.add`): a pin at each note's point with its text beside it; a note marked
+/// done turns green.
+pub(super) fn note_pins(app: &VectorcraftApp, p: &egui::Painter, xf: &Xf) {
+    let Some(notes) = app.session.active().and_then(|st| st.doc.unknown.get("notes")).and_then(|v| v.as_array()) else { return };
+    let t = Tokens::get(p.ctx());
+    for n in notes {
+        let (Some(x), Some(y)) = (n.get("x").and_then(|v| v.as_f64()), n.get("y").and_then(|v| v.as_f64())) else { continue };
+        let at = xf.to_screen(Point::new(x, y));
+        if !at.is_finite() || !xf.rect.expand(200.0).contains(at) {
+            continue;
+        }
+        let done = n.get("done").and_then(|v| v.as_bool()).unwrap_or(false);
+        let color = if done { t.success } else { t.warning };
+        let head = at - vec2(0.0, 14.0);
+        p.line_segment([at, head], Stroke::new(2.0, color));
+        p.circle(head, 6.0, color, Stroke::new(1.0, Color32::from_black_alpha(160)));
+        let text = n.get("text").and_then(|v| v.as_str()).unwrap_or_default();
+        let galley = p.layout(text.to_string(), egui::FontId::proportional(11.0), t.text, 220.0);
+        let badge = egui::Rect::from_min_size(head + vec2(10.0, -8.0), galley.size() + vec2(10.0, 6.0));
+        p.rect_filled(badge, CornerRadius::same(3), t.panel);
+        p.rect_stroke(badge, CornerRadius::same(3), Stroke::new(1.0, color), StrokeKind::Inside);
+        p.galley(badge.min + vec2(5.0, 3.0), galley, if done { t.text_dim } else { t.text });
+    }
+}

@@ -75,7 +75,7 @@ pub(crate) use task_bar::{has_colors, task_bar_rect, task_bar_shows_fonts, task_
 use tool_overlays::{DIAL_RADIUS, HiddenMarks};
 pub use tool_overlays::{HiddenChars, SpellingMarks};
 use tool_overlays::{
-    grid_repeat_overlay, hidden_chars_overlay, live_paint_gap_overlays, mirror_axis_overlay, nine_slice_overlay, original_path_overlay,
+    grid_repeat_overlay, hidden_chars_overlay, live_paint_gap_overlays, mirror_axis_overlay, nine_slice_overlay, note_pins, original_path_overlay,
     print_tiling_overlay, rotate_view_dial, shaper_widget_overlay, slice_overlay, spelling_overlay, thread_overlays,
 };
 pub(crate) use view::animated_zoom;
@@ -407,6 +407,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             print_tiling_overlay(app, &painter, &xf);
         }
         original_path_overlay(app, &painter, &xf);
+        note_pins(app, &painter, &xf);
 
         let overlays = selection_visuals(app, &painter, &xf, (hidden_chars, selection_marks, hover_still), revolve_edit, view_info);
         draw_overlays(&painter, &xf, &overlays, &t, HandleLook::of(&app.session.prefs));
