@@ -4,7 +4,8 @@
 use serde_json::json;
 use vectorcraft_geom::{Point, Rect, union_opt};
 
-use super::*;
+use super::{CommandSpec, Result, Session, bad, cmd, has_doc};
+use serde_json::Value;
 use crate::cmd::anim::{Anim, at_frame};
 
 pub fn specs() -> Vec<CommandSpec> {
