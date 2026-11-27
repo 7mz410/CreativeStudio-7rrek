@@ -82,6 +82,8 @@ pub(super) const ALLOWED: &[&str] = &[
     "anim.cameraInfo",
     "anim.cameraKey",
     "anim.cameraRemoveKey",
+    "anim.clip",
+    "anim.clips",
     "anim.depth",
     "anim.depths",
     "anim.drawings",
