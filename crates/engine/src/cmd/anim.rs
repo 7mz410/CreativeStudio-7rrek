@@ -78,6 +78,23 @@ fn unity() -> f32 {
     1.0
 }
 
+/// A named run of frames (`from` to `to`, 1-based) exported as one sprite sheet (see anim_clips.rs).
+/// `fps` None: the timeline's frame rate.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct Clip {
+    pub name: String,
+    pub from: u32,
+    pub to: u32,
+    #[serde(default = "yes", rename = "loop")]
+    pub looped: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fps: Option<u32>,
+}
+
+fn yes() -> bool {
+    true
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
 pub struct Anim {
@@ -97,6 +114,9 @@ pub struct Anim {
     pub camera: BTreeMap<u32, Cam>,
     /// Sound clips on the timeline.
     pub sounds: Vec<Sound>,
+    /// Named clips for sprite-sheet export (`anim.clip`).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub clips: Vec<Clip>,
     /// The locked in-between layers the frame shown added (removed on the next frame change).
     pub ghosts: Vec<u64>,
     /// The art the frame shown hid behind its bent or pegged copies (shown again on the next frame
@@ -170,6 +190,7 @@ impl Default for Anim {
             eases: BTreeMap::new(),
             camera: BTreeMap::new(),
             sounds: Vec::new(),
+            clips: Vec::new(),
             ghosts: Vec::new(),
             posed: Vec::new(),
             exposures: BTreeMap::new(),
@@ -207,6 +228,7 @@ impl Anim {
             e.retain(|f, _| (1..=MAX_FRAMES).contains(f));
         }
         self.sounds.retain(|c| c.gain.is_finite() && (0.0..=4.0).contains(&c.gain) && (1..=MAX_FRAMES).contains(&c.start));
+        self.clips.retain(|c| (1..=c.to).contains(&c.from) && c.to <= MAX_FRAMES && c.fps.is_none_or(|f| (1..=MAX_FPS).contains(&f)));
         self
     }
 

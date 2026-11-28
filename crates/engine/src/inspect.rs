@@ -309,6 +309,7 @@ fn document_base(s: &Session) -> Value {
         // The ruler guide that is the key instead (`select.key {guide}`): an index into `guide.list`.
         "keyGuide": st.selection.key_guide.and_then(|id| crate::cmd::guide_indexes(d, &[id]).first().copied()),
         "history": st.history.undo.iter().map(|h| h.label.clone()).collect::<Vec<_>>(),
+        "historyBy": st.history.undo.iter().map(|h| h.by.clone()).collect::<Vec<_>>(),
         "redo": st.history.redo.iter().rev().map(|h| h.label.clone()).collect::<Vec<_>>(),
         "objects": d.node_count(),
         "tool": s.tool_id(),

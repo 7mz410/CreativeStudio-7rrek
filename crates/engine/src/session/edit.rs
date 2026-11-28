@@ -16,6 +16,7 @@ impl Session {
             cmd::settle_interaction(self)?;
         }
         let menu = self.menu.clone();
+        let actor = self.actor.clone();
         let st = self.doc_mut()?;
         let before = st.doc.clone();
         let before_sel = st.selection.clone();
@@ -145,7 +146,14 @@ impl Session {
                         Some(l) if *l.selection == before_sel => l.selection.clone(),
                         _ => Arc::new(before_sel),
                     };
+                    let serial = st.history.step().0;
                     st.push_undo(label.to_string(), before, selection);
+                    // The step this edit made (not one it extended in an undo group) records who made it.
+                    if st.history.step().0 != serial
+                        && let Some(e) = st.history.undo.last_mut()
+                    {
+                        e.by = actor;
+                    }
                 }
                 Ok(v)
             }
